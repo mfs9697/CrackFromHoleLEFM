@@ -1,0 +1,284 @@
+\documentclass[11pt]{article}
+
+% --------------------------------------------------
+% Fonts and layout
+% --------------------------------------------------
+\usepackage{fontspec}
+
+\setmainfont{TeX Gyre Pagella}
+\setsansfont{TeX Gyre Heros}
+\setmonofont{Latin Modern Mono}
+
+\usepackage[a4paper,margin=1in]{geometry}
+\usepackage[protrusion=true,expansion=false]{microtype}
+\usepackage{setspace}
+\onehalfspacing
+
+% --------------------------------------------------
+% Math and graphics
+% --------------------------------------------------
+\usepackage{amsmath,amssymb,amsfonts}
+\usepackage{bm}
+\usepackage{graphicx}
+\usepackage{booktabs}
+
+% --------------------------------------------------
+% Section styling
+% --------------------------------------------------
+\usepackage{titlesec}
+\titleformat{\section}{\large\bfseries}{\thesection}{1em}{}
+\titleformat{\subsection}{\normalsize\bfseries}{\thesubsection}{1em}{}
+
+% --------------------------------------------------
+% Title
+% --------------------------------------------------
+\title{\textbf{Two-Stage Crack Initiation from a Hole Boundary:\\
+		Model Formulation, Implementation, and Current Progress}}
+\author{}
+\date{}
+
+% --------------------------------------------------
+\begin{document}
+	\maketitle
+	
+	\section{Problem Statement}
+	
+	The goal of this work is to extend a crack path modeling framework (previously developed for crack kinking and CZM-based propagation) to the problem of \textbf{crack initiation at a hole boundary}.
+	
+	The challenge arises from a fundamental limitation of Linear Elastic Fracture Mechanics (LEFM):
+	
+	\begin{itemize}
+		\item LEFM assumes a \emph{pre-existing crack}.
+		\item It does not provide a direct mechanism for \emph{crack initiation}.
+	\end{itemize}
+	
+	To overcome this, we propose a \textbf{two-stage approach}:
+	
+	\begin{enumerate}
+		\item \textbf{Stage I (Initiation):} Solve the elastic problem without a crack and determine where and when a crack should initiate using a stress-based criterion.
+		\item \textbf{Stage II (Post-initiation):} Introduce a short crack and analyze it using standard fracture mechanics tools.
+	\end{enumerate}
+	
+	This framework allows a consistent comparison between:
+	\begin{itemize}
+		\item LEFM-based modeling (new short-crack approach),
+		\item CZM-based crack growth (existing work).
+	\end{itemize}
+	
+	\section{Mathematical Model}
+	
+	\subsection{Stage I: Elastic Problem Without Crack}
+	
+	We consider a plate with one or more holes. The governing equations are:
+	
+	\begin{align}
+		\nabla \cdot \boldsymbol{\sigma} &= \mathbf{0} \quad \text{in } \Omega, \\
+		\boldsymbol{\sigma} &= \mathbf{C} : \boldsymbol{\varepsilon}, \\
+		\boldsymbol{\varepsilon} &= \frac{1}{2}(\nabla \mathbf{u} + \nabla \mathbf{u}^T),
+	\end{align}
+	
+	with appropriate boundary conditions.
+	
+	We solve this problem under a \textbf{unit load} and compute the circumferential stress along the hole boundary:
+	\[
+	\sigma_{\theta\theta}(\phi).
+	\]
+	
+	\subsection{Initiation Criterion}
+	
+	We assume crack initiation occurs when:
+	\[
+	\sigma_{\theta\theta}^{+}(\phi_*) = \sigma_c,
+	\]
+	where:
+	\begin{itemize}
+		\item $\sigma_c$ is a material strength parameter,
+		\item $\phi_*$ is the angle where $\sigma_{\theta\theta}$ is maximal.
+	\end{itemize}
+	
+	Since the problem is solved with unit load, we compute a scaling factor:
+	\[
+	\lambda_{\text{ini}} = \frac{\sigma_c}{\max_{\phi} \sigma_{\theta\theta}^{+}(\phi)}.
+	\]
+	
+	The initiation point is:
+	\[
+	\mathbf{x}_* = \mathbf{x}(\phi_*).
+	\]
+	
+	\subsection{Local Frame at Initiation}
+	
+	At $\mathbf{x}_*$ we define:
+	\begin{itemize}
+		\item $\mathbf{n}_{\text{mat}}$ --- normal pointing into the material,
+		\item $\mathbf{t}$ --- tangent vector along the boundary.
+	\end{itemize}
+	
+	Important correction:
+	\begin{itemize}
+		\item The radial direction from the hole center is \textbf{already pointing into the material}.
+		\item This vector must be used directly for crack growth direction.
+	\end{itemize}
+	
+	\subsection{Stage II: Short Crack Initialization}
+	
+	A short crack of length $a_0$ is introduced:
+	\[
+	\mathbf{x}_{\text{tip}} = \mathbf{x}_* + a_0 \, \mathbf{e}_{\text{dir}},
+	\]
+	
+	where:
+	\[
+	\mathbf{e}_{\text{dir}} = \cos\theta \, \mathbf{n}_{\text{mat}} + \sin\theta \, \mathbf{t}.
+	\]
+	
+	For $\theta = 0$, the crack propagates \textbf{radially into the solid}.
+	
+	\section{Geometric Construction}
+	
+	\subsection{Stage I Geometry}
+	
+	\begin{itemize}
+		\item Plate with circular hole(s)
+		\item Unstructured triangular mesh
+	\end{itemize}
+	
+	\subsection{Stage II Geometry}
+	
+	The domain is constructed as:
+	\[
+	\Omega = \text{Rectangle} \setminus (\text{Hole} \cup \text{Channel})
+	\]
+	
+	where the channel represents the short crack.
+	
+	\subsection{Channel Construction}
+	
+	Key requirements:
+	\begin{itemize}
+		\item The channel must start at the hole boundary
+		\item It must lie entirely in the material
+		\item Width must be zero at the mouth and increase smoothly
+	\end{itemize}
+	
+	Final adopted construction:
+	
+	\begin{itemize}
+		\item Midline: discretized segment from $\mathbf{x}_*$ to $\mathbf{x}_{\text{tip}}$
+		\item Width:
+		\[
+		w(s) = w \cdot s, \quad s \in [0,1]
+		\]
+		\item Channel polygon built using normal offsets:
+		\[
+		\mathbf{x}(s) \pm w(s)\mathbf{n}(s)
+		\]
+	\end{itemize}
+	
+	This produces a smooth \textbf{wedge-like channel}.
+	
+	\section{Implementation Summary}
+	
+	\subsection{Stage I}
+	
+	Implemented:
+	\begin{itemize}
+		\item \texttt{geom\_hole\_only.m}
+		\item \texttt{solve\_hole\_only.m}
+		\item \texttt{sample\_hole\_boundary\_stress.m}
+		\item \texttt{find\_hole\_initiation\_point.m}
+	\end{itemize}
+	
+	Results:
+	\begin{itemize}
+		\item Correct stress distribution
+		\item Stable identification of $\phi_*$ and $\lambda_{\text{ini}}$
+	\end{itemize}
+	
+	\subsection{Stage II Geometry}
+	
+	Implemented:
+	\begin{itemize}
+		\item \texttt{geom\_hole\_shortcrack.m}
+		\item \texttt{build\_domain\_hole\_pencil\_polyline.m}
+	\end{itemize}
+	
+	Key fixes:
+	\begin{itemize}
+		\item Corrected crack direction (was initially reversed)
+		\item Ensured channel lies outside the hole
+		\item Enforced zero-width at the mouth
+		\item Introduced smooth width ramp
+	\end{itemize}
+	
+	\subsection{Meshing}
+	
+	Implemented:
+	\begin{itemize}
+		\item \texttt{mesh\_hole\_pencil\_domain.m}
+	\end{itemize}
+	
+	Current behavior:
+	\begin{itemize}
+		\item Domain meshed as:
+		\[
+		\text{Rectangle} - \text{Hole} - \text{Channel}
+		\]
+		\item Suitable for geometry verification and further development
+	\end{itemize}
+	
+	\section{Current Status}
+	
+	The following components are now working:
+	
+	\begin{itemize}
+		\item Stage I elastic solution
+		\item Stress-based initiation criterion
+		\item Correct local frame definition
+		\item Short crack construction
+		\item Physically consistent channel geometry
+		\item Initial meshing of combined domain
+	\end{itemize}
+	
+	\section{Open Issues and Next Steps}
+	
+	\subsection{Immediate}
+	
+	\begin{itemize}
+		\item Improve mesh quality near crack mouth
+		\item Verify robustness for different hole positions and loads
+	\end{itemize}
+	
+	\subsection{Core Development}
+	
+	\begin{itemize}
+		\item Introduce true crack topology (duplicate nodes on faces)
+		\item Implement SIF extraction:
+		\begin{itemize}
+			\item $K_I$, $K_{II}$
+			\item Compare with LEFM predictions
+		\end{itemize}
+	\end{itemize}
+	
+	\subsection{Verification Strategy}
+	
+	\begin{itemize}
+		\item Compare with analytical solutions (hole + crack)
+		\item Compare with previous crack-kinking results
+		\item Compare with CZM simulations
+	\end{itemize}
+	
+	\section{Conclusion}
+	
+	A consistent two-stage framework for crack initiation at a hole boundary has been established.
+	
+	Key achievements:
+	\begin{itemize}
+		\item Overcoming LEFM limitation via stress-based initiation
+		\item Correct geometric construction of short crack
+		\item Integration with existing crack-path infrastructure
+	\end{itemize}
+	
+	The next phase will focus on fracture mechanics analysis and validation.
+	
+\end{document}
