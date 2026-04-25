@@ -2,10 +2,10 @@ function D = build_domain_hole_pencil_polyline(Pmid, A, B, holes, w, varargin)
 %BUILD_DOMAIN_HOLE_PENCIL_POLYLINE
 % Build geometric description for a rectangular plate with:
 %   - one or more holes,
-%   - a local pencil-like channel around a crack polyline Pmid.
+%   - and, if the crack starts on a circular hole, a merged appended-hole loop
+%     instead of a separate pencil channel.
 %
 %   D = build_domain_hole_pencil_polyline(Pmid, A, B, holes, w)
-%   D = build_domain_hole_pencil_polyline(..., 'tip', 'point', ...)
 %
 % Inputs:
 %   Pmid   : (N x 2) crack midline vertices, ordered mouth -> ... -> tip
@@ -13,36 +13,50 @@ function D = build_domain_hole_pencil_polyline(Pmid, A, B, holes, w, varargin)
 %   holes  : cell array of hole structs, e.g.
 %              { struct('type','circle','center',[xc yc],'r',R,'npoly',N), ... }
 %            or empty {}
-%   w      : channel half-width
+%   w      : legacy channel half-width; in merged mode, used to set the
+%            mouth half-shift eps unless overridden
 %
 % Name-value options:
-%   'join'        : 'miter' (default) or 'bevel'
-%   'miter_limit' : positive scalar (default 6)  [currently accepted, lightly used]
+%   'join'        : 'miter' (default) or 'bevel'   [legacy fallback only]
+%   'miter_limit' : positive scalar (default 6)    [legacy fallback only]
 %   'corner_tol'  : positive scalar (default 1e-10)
-%   'tip'         : 'point' (default) or 'flat'
+%   'tip'         : 'point' (default) or 'flat'    [legacy fallback only]
+%
+%   'mode'        : 'auto' (default), 'merged', or 'legacy'
+%                   auto   -> merged if crack starts on a supported hole,
+%                             otherwise legacy separate-channel geometry
+%                   merged -> force appended-hole construction
+%                   legacy -> force old separate channel construction
+%
+%   'mouth_eps'   : mouth half-shift used for appended hole construction
+%                   default = w
+%   'epsMode'     : 'arclength' (default) or 'angle'
+%   'nArc'        : retained-hole arc resolution (default 160)
+%   'nFace'       : appendix face resolution     (default 8)
+%   'nTip'        : appendix tip-cap resolution  (default 21)
+%   'tipRadius'   : tip-cap radius for appended hole (default = auto)
+%   'orientation' : 'cw' (default) or 'ccw' for appended inner loops
 %
 % Output:
 %   D      : geometry-description struct with fields
 %       .outerPoly       rectangle polygon [4 x 2], CCW
-%       .holeLoops       cell array of hole polygons
-%       .channelPoly     local channel polygon, CCW
+%       .holeLoops       cell array of inner polygons
+%       .channelPoly     [] in merged mode; legacy local channel polygon otherwise
 %       .Pmid            crack midline
 %       .A, .B, .w       copied inputs
 %       .holes           normalized hole list
-%       .channelGeom     debug struct for the local channel construction
+%       .channelGeom     debug struct
 %       .topology        auxiliary geometric/topological info
 %
 % Notes:
-%   - This function builds geometry only; it does not mesh.
-%   - Unlike the old edge-crack builder, this version does NOT connect the
-%     channel to the outer rectangle boundary.
-%   - The future mesher should interpret the domain as
+%   - In merged mode, the touched circular hole is replaced by a single
+%     appended-hole contour, and channelPoly is empty.
+%   - In legacy mode, the function reproduces the old behavior:
+%         outer rectangle - holes - separate channel
 %
-%         plate minus holes minus channel interior
-%
-%     with the channel mouth connected to the hole boundary.
-%
-%   - The start point Pmid(1,:) is expected to lie on the hole boundary.
+% Companion note:
+%   mesh_hole_pencil_domain.m should be adjusted to allow D.channelPoly = []
+%   and mesh only outerPoly minus holeLoops in merged mode.
 
     % ------------------------------------------------------------
     % checks
@@ -71,13 +85,34 @@ function D = build_domain_hole_pencil_polyline(Pmid, A, B, holes, w, varargin)
     addParameter(p, 'miter_limit', 6,       @(x) isnumeric(x) && isscalar(x) && x > 0);
     addParameter(p, 'corner_tol',  1e-10,   @(x) isnumeric(x) && isscalar(x) && x > 0);
     addParameter(p, 'tip',         'point', @(s) ischar(s) || isstring(s));
+
+    addParameter(p, 'mode',        'auto',  @(s) ischar(s) || isstring(s));
+    addParameter(p, 'mouth_eps',   [],      @(x) isempty(x) || (isnumeric(x) && isscalar(x) && x > 0));
+    addParameter(p, 'epsMode',     'arclength', @(s) ischar(s) || isstring(s));
+    addParameter(p, 'nArc',        160,     @(x) isnumeric(x) && isscalar(x) && x >= 8);
+    addParameter(p, 'nFace',       8,       @(x) isnumeric(x) && isscalar(x) && x >= 2);
+    addParameter(p, 'nTip',        21,      @(x) isnumeric(x) && isscalar(x) && x >= 5);
+    addParameter(p, 'tipRadius',   [],      @(x) isempty(x) || (isnumeric(x) && isscalar(x) && x > 0));
+    addParameter(p, 'orientation', 'cw',    @(s) ischar(s) || isstring(s));
+
     parse(p, varargin{:});
 
-    join       = tolower_safe(p.Results.join);
-    tipMode    = tolower_safe(p.Results.tip);
+    join         = tolower_safe(p.Results.join);
+    tipMode      = tolower_safe(p.Results.tip);
+    corner_tol   = p.Results.corner_tol;
+    modeReq      = tolower_safe(p.Results.mode);
+    epsMode      = tolower_safe(p.Results.epsMode);
+    orient       = tolower_safe(p.Results.orientation);
 
-    miter_limit = p.Results.miter_limit; %#ok<NASGU>
-    corner_tol  = p.Results.corner_tol;
+    mouth_eps    = p.Results.mouth_eps;
+    nArc         = p.Results.nArc;
+    nFace        = p.Results.nFace;
+    nTip         = p.Results.nTip;
+    tipRadius    = p.Results.tipRadius;
+
+    if isempty(mouth_eps)
+        mouth_eps = w;
+    end
 
     % ------------------------------------------------------------
     % outer rectangle
@@ -89,25 +124,12 @@ function D = build_domain_hole_pencil_polyline(Pmid, A, B, holes, w, varargin)
         0,  B ];
 
     % ------------------------------------------------------------
-    % hole loops
+    % hole loops (initial, before possible replacement)
     % ------------------------------------------------------------
     holeLoops = holes_to_loops(holes);
 
     % ------------------------------------------------------------
-    % local channel polygon
-    % ------------------------------------------------------------
-    [channelPoly, Gc] = build_local_channel_polygon(Pmid, w, ...
-        'join', join, ...
-        'corner_tol', corner_tol, ...
-        'tip', tipMode);
-
-    % ensure CCW orientation
-    if signed_polygon_area(channelPoly) < 0
-        channelPoly = flipud(channelPoly);
-    end
-
-    % ------------------------------------------------------------
-    % topology and diagnostics
+    % topology detection
     % ------------------------------------------------------------
     topo = struct();
 
@@ -123,26 +145,123 @@ function D = build_domain_hole_pencil_polyline(Pmid, A, B, holes, w, varargin)
         topo.channelTouchesHole = ~isempty(itouch);
         topo.touchingHoleIndex  = itouch;
         topo.touchDistance      = dtouch;
+    else
+        itouch = [];
     end
 
-    topo.channelArea = polyarea(channelPoly(:,1), channelPoly(:,2));
+    % ------------------------------------------------------------
+    % choose geometry mode
+    % ------------------------------------------------------------
+    switch modeReq
+        case 'legacy'
+            useMerged = false;
 
-    topo.bbox.outer   = polygon_bbox(outerPoly);
-    topo.bbox.channel = polygon_bbox(channelPoly);
-    topo.bbox.holes   = cell(size(holeLoops));
+        case 'merged'
+            useMerged = true;
+
+        case 'auto'
+            useMerged = topo.channelTouchesHole && ...
+                        ~isempty(itouch) && ...
+                        strcmpi(strtrim(holes{itouch}.type), 'circle');
+
+        otherwise
+            error('build_domain_hole_pencil_polyline:BadMode', ...
+                'Unknown mode "%s". Use auto, merged, or legacy.', modeReq);
+    end
+
+    % ------------------------------------------------------------
+    % build merged appended-hole OR legacy separate channel
+    % ------------------------------------------------------------
+    channelPoly = [];
+    channelGeom = struct();
+
+    if useMerged
+        if isempty(itouch)
+            error('build_domain_hole_pencil_polyline:NoTouchedHole', ...
+                'Merged mode requested, but Pmid(1,:) was not detected on a hole.');
+        end
+
+        hk = holes{itouch};
+        if ~strcmpi(strtrim(hk.type), 'circle')
+            error('build_domain_hole_pencil_polyline:UnsupportedMergedHole', ...
+                'Merged mode currently supports only circular holes.');
+        end
+
+        if exist('build_appended_hole_loop', 'file') ~= 2
+            error('build_domain_hole_pencil_polyline:MissingHelper', ...
+                'build_appended_hole_loop.m is required on the MATLAB path.');
+        end
+
+        % Infer local frame and crack angle from Pmid and the touched circular hole
+        [A0, n_in, t_hat, theta, a0, Gframe] = infer_local_frame_from_pmid(hk, Pmid, corner_tol);
+
+        [Vapp, Gapp] = build_appended_hole_loop(hk, A0, n_in, t_hat, theta, a0, mouth_eps, ...
+            'epsMode', epsMode, ...
+            'nArc', nArc, ...
+            'nFace', nFace, ...
+            'nTip', nTip, ...
+            'tipRadius', tipRadius, ...
+            'orientation', orient);
+
+        holeLoops{itouch} = Vapp;
+
+        channelGeom.mode   = 'merged_appended_hole';
+        channelGeom.frame  = Gframe;
+        channelGeom.append = Gapp;
+
+        topo.mode = 'merged_appended_hole';
+        topo.appendedHoleIndex = itouch;
+        topo.appendedHoleArea  = abs(signed_polygon_area(Vapp));
+
+        % no separate channel in merged mode
+        channelPoly = [];
+
+    else
+        % ---------- legacy separate-channel behavior ----------
+        [channelPoly, Gc] = build_local_channel_polygon(Pmid, w, ...
+            'join', join, ...
+            'corner_tol', corner_tol, ...
+            'tip', tipMode);
+
+        if signed_polygon_area(channelPoly) < 0
+            channelPoly = flipud(channelPoly);
+        end
+
+        channelGeom.mode = 'legacy_separate_channel';
+        channelGeom.legacy = Gc;
+
+        topo.mode = 'legacy_separate_channel';
+        topo.channelArea = polyarea(channelPoly(:,1), channelPoly(:,2));
+    end
+
+    % ------------------------------------------------------------
+    % diagnostics / flags
+    % ------------------------------------------------------------
+    topo.bbox.outer = polygon_bbox(outerPoly);
+    topo.bbox.holes = cell(size(holeLoops));
     for k = 1:numel(holeLoops)
         topo.bbox.holes{k} = polygon_bbox(holeLoops{k});
+    end
+
+    if ~isempty(channelPoly)
+        topo.bbox.channel = polygon_bbox(channelPoly);
+    else
+        topo.bbox.channel = [];
     end
 
     topo.flags = struct();
     topo.flags.tipInsidePlate = point_in_box(Pmid(end,:), [0, A, -B, B], 1e-12);
     topo.flags.midlineInsidePlate = all(Pmid(:,1) >= -1e-12 & Pmid(:,1) <= A + 1e-12 & ...
                                         Pmid(:,2) >= -B - 1e-12 & Pmid(:,2) <= B + 1e-12);
+
     topo.flags.startOnHole = topo.channelTouchesHole;
 
-    % crude overlap checks
-    topo.flags.channelInsidePlateBox = all(channelPoly(:,1) >= -1e-12 & channelPoly(:,1) <= A + 1e-12 & ...
-                                           channelPoly(:,2) >= -B - 1e-12 & channelPoly(:,2) <= B + 1e-12);
+    if ~isempty(channelPoly)
+        topo.flags.channelInsidePlateBox = all(channelPoly(:,1) >= -1e-12 & channelPoly(:,1) <= A + 1e-12 & ...
+                                               channelPoly(:,2) >= -B - 1e-12 & channelPoly(:,2) <= B + 1e-12);
+    else
+        topo.flags.channelInsidePlateBox = [];
+    end
 
     % ------------------------------------------------------------
     % output
@@ -151,7 +270,7 @@ function D = build_domain_hole_pencil_polyline(Pmid, A, B, holes, w, varargin)
 
     D.outerPoly   = outerPoly;
     D.holeLoops   = holeLoops;
-    D.channelPoly = channelPoly;
+    D.channelPoly = channelPoly;   % [] in merged mode
 
     D.Pmid        = Pmid;
     D.A           = A;
@@ -159,7 +278,7 @@ function D = build_domain_hole_pencil_polyline(Pmid, A, B, holes, w, varargin)
     D.w           = w;
     D.holes       = holes;
 
-    D.channelGeom = Gc;
+    D.channelGeom = channelGeom;
     D.topology    = topo;
 
     D.options = struct();
@@ -167,19 +286,82 @@ function D = build_domain_hole_pencil_polyline(Pmid, A, B, holes, w, varargin)
     D.options.miter_limit = p.Results.miter_limit;
     D.options.corner_tol  = corner_tol;
     D.options.tip         = tipMode;
+    D.options.mode        = modeReq;
+    D.options.mouth_eps   = mouth_eps;
+    D.options.epsMode     = epsMode;
+    D.options.nArc        = nArc;
+    D.options.nFace       = nFace;
+    D.options.nTip        = nTip;
+    D.options.tipRadius   = tipRadius;
+    D.options.orientation = orient;
 end
 
 
 % =========================================================================
-% local channel construction
+% merged-hole frame inference
+% =========================================================================
+
+function [A0, n_in, t_hat, theta, a0, G] = infer_local_frame_from_pmid(hole, Pmid, tol)
+% Infer the local hole frame and relative crack angle from the first crack segment.
+
+    c = hole.center(:).';
+    r = hole.r;
+
+    A = Pmid(1,:);
+    rc = A - c;
+    nr = norm(rc);
+    if nr <= tol
+        error('build_domain_hole_pencil_polyline:BadStartPoint', ...
+            'Pmid(1,:) is too close to the hole center.');
+    end
+
+    % Project mouth point onto the circle for robustness
+    A0 = c + r * rc / nr;
+
+    % Inward normal into the material
+    n_in = normalize_row(A0 - c);
+
+    % Circle tangent, sign chosen to align with the first crack segment
+    t_circ = [-n_in(2), n_in(1)];
+
+    d0 = Pmid(2,:) - Pmid(1,:);
+    if norm(d0) <= tol
+        error('build_domain_hole_pencil_polyline:DegenerateMouthSegment', ...
+            'The first segment of Pmid is degenerate.');
+    end
+    e_dir = normalize_row(d0);
+
+    if dot(t_circ, e_dir) >= 0
+        t_hat = t_circ;
+    else
+        t_hat = -t_circ;
+    end
+
+    % Relative angle in the local frame
+    theta = atan2(dot(e_dir, t_hat), dot(e_dir, n_in));
+
+    % Straight effective appendix length
+    a0 = norm(Pmid(end,:) - Pmid(1,:));
+
+    G = struct();
+    G.A_input = A;
+    G.A = A0;
+    G.center = c;
+    G.r = r;
+    G.e_dir = e_dir;
+    G.n_in = n_in;
+    G.t_hat = t_hat;
+    G.theta = theta;
+    G.a0 = a0;
+end
+
+
+% =========================================================================
+% legacy local channel construction
 % =========================================================================
 
 function [Poly, G] = build_local_channel_polygon(Pmid, w, varargin)
-%BUILD_LOCAL_CHANNEL_POLYGON Build a local pencil-like polygon around Pmid.
-%
-% Supports a general polyline, but is mainly intended for the current
-% short-crack case. The polygon is built from offset chains on both sides
-% of the polyline and closed at the mouth and tip.
+% Build the old separate pencil-like polygon around Pmid.
 
     p = inputParser;
     addParameter(p, 'join',       'miter', @(s) ischar(s) || isstring(s));
@@ -187,8 +369,8 @@ function [Poly, G] = build_local_channel_polygon(Pmid, w, varargin)
     addParameter(p, 'tip',        'point', @(s) ischar(s) || isstring(s));
     parse(p, varargin{:});
 
-    join        = tolower_safe(p.Results.join);
-    tipMode     = tolower_safe(p.Results.tip);
+    join       = tolower_safe(p.Results.join);
+    tipMode    = tolower_safe(p.Results.tip);
     corner_tol = p.Results.corner_tol;
 
     N = size(Pmid,1);
@@ -197,7 +379,6 @@ function [Poly, G] = build_local_channel_polygon(Pmid, w, varargin)
             'Pmid must contain at least two points.');
     end
 
-    % segment tangents and left normals
     tseg = zeros(N-1,2);
     nseg = zeros(N-1,2);
 
@@ -209,7 +390,7 @@ function [Poly, G] = build_local_channel_polygon(Pmid, w, varargin)
                 'Degenerate segment detected in Pmid.');
         end
         t = d / L;
-        n = [-t(2), t(1)];  % left normal
+        n = [-t(2), t(1)];
 
         tseg(i,:) = t;
         nseg(i,:) = n;
@@ -218,13 +399,11 @@ function [Poly, G] = build_local_channel_polygon(Pmid, w, varargin)
     upper = zeros(N,2);
     lower = zeros(N,2);
 
-    % mouth point: exact attachment to the hole boundary
     upper(1,:) = Pmid(1,:);
     lower(1,:) = Pmid(1,:);
-    
-    % interior vertices
+
     for i = 2:N-1
-        s = (i-1)/(N-1);   % 0 at mouth, 1 at tip
+        s = (i-1)/(N-1);
         wi = w * s;
 
         switch join
@@ -252,7 +431,6 @@ function [Poly, G] = build_local_channel_polygon(Pmid, w, varargin)
         end
     end
 
-    % tip end: full width
     ntip = nseg(end,:);
     ttip = tseg(end,:);
 
@@ -270,13 +448,13 @@ function [Poly, G] = build_local_channel_polygon(Pmid, w, varargin)
                 upper(end,:);
                 tipPt;
                 lower(end,:);
-                flipud(lower(1:end-1,:))];
+                flipud(lower(1:end-1,:)) ];
 
         otherwise
             error('build_domain_hole_pencil_polyline:UnknownTipMode', ...
                 'Unknown tip option "%s".', tipMode);
     end
-    % remove accidental consecutive duplicates
+
     Poly = remove_consecutive_duplicates(Poly, corner_tol);
 
     G = struct();
@@ -289,20 +467,14 @@ end
 
 
 function [xu, xl] = miter_join(xc, t1, n1, t2, n2, w, tol)
-%MITER_JOIN Compute left/right offset points at a polyline vertex by
-% intersecting adjacent offset lines.
-
-    % upper side = +w*n
     [okU, xu] = line_intersection( ...
         xc + w*n1, t1, ...
         xc + w*n2, t2, tol);
 
-    % lower side = -w*n
     [okL, xl] = line_intersection( ...
         xc - w*n1, t1, ...
         xc - w*n2, t2, tol);
 
-    % fallback if nearly parallel
     if ~okU
         nu = n1 + n2;
         if norm(nu) <= tol
@@ -324,9 +496,6 @@ end
 
 
 function [ok, x] = line_intersection(p1, d1, p2, d2, tol)
-%LINE_INTERSECTION Intersect two parametric lines:
-%   p1 + a*d1 = p2 + b*d2
-
     A = [d1(:), -d2(:)];
     b = (p2(:) - p1(:));
 
@@ -344,31 +513,11 @@ function [ok, x] = line_intersection(p1, d1, p2, d2, tol)
 end
 
 
-function P2 = remove_consecutive_duplicates(P, tol)
-%REMOVE_CONSECUTIVE_DUPLICATES Remove repeated consecutive vertices.
-
-    if isempty(P)
-        P2 = P;
-        return;
-    end
-
-    keep = true(size(P,1),1);
-    for i = 2:size(P,1)
-        if norm(P(i,:) - P(i-1,:), inf) <= tol
-            keep(i) = false;
-        end
-    end
-    P2 = P(keep,:);
-end
-
-
 % =========================================================================
 % helpers
 % =========================================================================
 
 function holes = normalize_holes(holes)
-%NORMALIZE_HOLES Normalize hole input to a cell array of structs.
-
     if isempty(holes)
         holes = {};
         return;
@@ -394,8 +543,6 @@ end
 
 
 function [itouch, dmin] = detect_hole_touch(x0, holes)
-%DETECT_HOLE_TOUCH Detect whether point x0 lies on/near a hole boundary.
-
     itouch = [];
     dmin = NaN;
 
@@ -441,38 +588,26 @@ end
 
 
 function bbox = polygon_bbox(P)
-%POLYGON_BBOX Bounding box of polygon vertices.
-% Returns [xmin xmax ymin ymax].
-
     bbox = [min(P(:,1)), max(P(:,1)), min(P(:,2)), max(P(:,2))];
 end
 
 
 function tf = point_in_box(x, box, tol)
-%POINT_IN_BOX Test if point x lies inside box = [xmin xmax ymin ymax].
-
     tf = (x(1) >= box(1) - tol) && (x(1) <= box(2) + tol) && ...
          (x(2) >= box(3) - tol) && (x(2) <= box(4) + tol);
 end
 
 
 function A = signed_polygon_area(P)
-%SIGNED_POLYGON_AREA Signed area of polygon P.
-% Positive for CCW orientation.
-
     x = P(:,1);
     y = P(:,2);
-
     x2 = [x(2:end); x(1)];
     y2 = [y(2:end); y(1)];
-
     A = 0.5 * sum(x .* y2 - x2 .* y);
 end
 
 
 function d = point_polygon_distance(x0, V)
-%POINT_POLYGON_DISTANCE Minimum distance from point x0 to polygon edges.
-
     if isempty(V)
         d = inf;
         return;
@@ -492,8 +627,6 @@ end
 
 
 function d = point_segment_distance(P, A, B)
-%POINT_SEGMENT_DISTANCE Distance from point P to segment AB.
-
     AB = B - A;
     L2 = dot(AB, AB);
 
@@ -510,20 +643,42 @@ function d = point_segment_distance(P, A, B)
 end
 
 
-function must_field(S, field)
-%MUST_FIELD Check struct field existence.
+function v = normalize_row(v)
+    v = v(:).';
+    nv = norm(v);
+    if nv <= 0
+        error('build_domain_hole_pencil_polyline:ZeroVector', ...
+            'Cannot normalize a zero vector.');
+    end
+    v = v / nv;
+end
 
+
+function P2 = remove_consecutive_duplicates(P, tol)
+    if isempty(P)
+        P2 = P;
+        return;
+    end
+
+    keep = true(size(P,1),1);
+    for i = 2:size(P,1)
+        if norm(P(i,:) - P(i-1,:), inf) <= tol
+            keep(i) = false;
+        end
+    end
+    P2 = P(keep,:);
+end
+
+
+function must_field(S, field)
     if ~isfield(S, field) || isempty(S.(field))
         error('build_domain_hole_pencil_polyline:MissingHoleField', ...
             'Required field "%s" is missing or empty.', field);
     end
 end
 
-function s = tolower_safe(x)
-%TOLOWER_SAFE Convert char/string to lowercase without relying on lower().
-%
-% This avoids rare name-resolution issues with lower in some MATLAB setups.
 
+function s = tolower_safe(x)
     if isstring(x)
         x = char(x);
     end

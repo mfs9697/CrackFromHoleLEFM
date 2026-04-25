@@ -35,8 +35,8 @@ function out = main_hole_initiation_stage12_geom()
     C.holes        = {C.hole};
     
     C.mesh1.hmin   = 2*pi*C.hole.r / C.hole.npoly;
-    %C.mesh1.hmax   = 0.006;
-    %C.mesh1.hgrad  = 1.15;
+    C.mesh1.hmax   = 15*C.mesh1.hmin;
+    C.mesh1.hgrad  = 1.3;
 
     C.stage1.nphi  = 1440;
 
