@@ -254,11 +254,11 @@ function plot_stage2_domain_description(D)
     xlabel('x')
     ylabel('y')
     if isfield(D, 'topology') && isfield(D.topology, 'mode') ...
-            && strcmpi(D.topology.mode, 'merged_appended_hole')
-        title('Stage II: appended-hole geometry description')
-    else
-        title('Stage II: hole + pencil-channel geometry description')
-    end
+        && strcmpi(D.topology.mode, 'merged_appended_hole')
+    title('Stage II: appended-hole geometry description')
+else
+    title('Stage II: hole + pencil-channel geometry description')
+end
 end
 
 

@@ -1,5 +1,7 @@
 function M = mesh_hole_pencil_domain(D, varargin)
-%MESH_HOLE_PENCIL_DOMAIN  Mesh geometry: rectangle - holes - pencil channel.
+%MESH_HOLE_PENCIL_DOMAIN  Mesh geometry:
+%   legacy mode : rectangle - holes - pencil channel
+%   merged mode : rectangle - appended-hole loops
 %
 %   M = mesh_hole_pencil_domain(D)
 %   M = mesh_hole_pencil_domain(D, 'Hmax', 0.005, 'Hgrad', 1.2)
@@ -8,8 +10,10 @@ function M = mesh_hole_pencil_domain(D, varargin)
 %   D   geometry-description struct from build_domain_hole_pencil_polyline
 %       Required fields:
 %         .outerPoly    [No x 2] outer boundary polygon (CCW)
-%         .holeLoops    cell array of hole polygons
-%         .channelPoly  [Nc x 2] local channel polygon
+%         .holeLoops    cell array of inner polygons
+%       Optional fields:
+%         .channelPoly  [Nc x 2] local channel polygon, or [] in merged mode
+%         .topology.mode = 'legacy_separate_channel' or 'merged_appended_hole'
 %
 % Name-value options:
 %   'Hmax'      : global max element size (default = [])
@@ -34,19 +38,9 @@ function M = mesh_hole_pencil_domain(D, varargin)
 %       .region      region metadata
 %
 % Notes:
-%   1) The domain meshed here is
-%          outer rectangle \ (holes U channel)
-%      i.e. the channel interior is removed.
-%   2) This creates a slit-like removed zone, but PDE Toolbox does NOT
-%      preserve paired crack-face topology explicitly. So this is suitable
-%      as a first meshing stage / geometry-debug stage.
-%   3) If later you need duplicated nodes on opposite crack faces for
-%      strict LEFM crack-face treatment, a custom topology mesher will still
-%      be needed. This function is the correct first bridge.
-%
-% Geometry conventions:
-%   - outerPoly should be CCW
-%   - hole loops and channel polygon are treated as interior voids
+%   - In merged mode, channelPoly is empty and the crack is represented
+%     through the modified appended-hole contour already stored in holeLoops.
+%   - In legacy mode, channelPoly is treated as a separate interior void.
 
     % ------------------------------------------------------------
     % parse options
@@ -72,65 +66,96 @@ function M = mesh_hole_pencil_domain(D, varargin)
     % ------------------------------------------------------------
     must(D, 'outerPoly');
     must(D, 'holeLoops');
-    must(D, 'channelPoly');
 
-    outerPoly  = D.outerPoly;
-    holeLoops  = D.holeLoops;
-    channelPoly = D.channelPoly;
+    outerPoly = D.outerPoly;
+    holeLoops = D.holeLoops;
 
-    validate_polygon(outerPoly,  'outerPoly');
-    validate_polygon(channelPoly,'channelPoly');
+    if isfield(D, 'channelPoly')
+        channelPoly = D.channelPoly;
+    else
+        channelPoly = [];
+    end
+
+    validate_polygon(outerPoly, 'outerPoly');
     for k = 1:numel(holeLoops)
         validate_polygon(holeLoops{k}, sprintf('holeLoops{%d}', k));
     end
+    if ~isempty(channelPoly)
+        validate_polygon(channelPoly, 'channelPoly');
+    end
 
-    % enforce orientations:
-    %   outer boundary -> CCW
-    %   inner void loops -> CW preferred for bookkeeping, though decsg uses SF
+    % enforce orientations
     if signed_polygon_area(outerPoly) < 0
         outerPoly = flipud(outerPoly);
     end
 
     for k = 1:numel(holeLoops)
         if signed_polygon_area(holeLoops{k}) > 0
-            holeLoops{k} = flipud(holeLoops{k});
+            holeLoops{k} = flipud(holeLoops{k});   % inner loops clockwise preferred
         end
     end
 
-    if signed_polygon_area(channelPoly) > 0
+    if ~isempty(channelPoly) && signed_polygon_area(channelPoly) > 0
         channelPoly = flipud(channelPoly);
     end
 
     % ------------------------------------------------------------
-    % build decomposed geometry:
-    %   R1 - H1 - H2 - ... - C1
+    % detect mode
     % ------------------------------------------------------------
-    polys = [{outerPoly}, holeLoops(:).', {channelPoly}];
-    names = cell(1, numel(polys));
-
-    names{1} = 'R1';
-    for k = 2:numel(polys)-1
-        names{k} = sprintf('H%d', k-1);
+    mode = 'legacy_separate_channel';
+    if isfield(D, 'topology') && isfield(D.topology, 'mode') && ~isempty(D.topology.mode)
+        mode = D.topology.mode;
+    elseif isempty(channelPoly)
+        mode = 'merged_appended_hole';
     end
-    names{end} = 'C1';
+
+    useChannel = ~isempty(channelPoly) && ~strcmpi(mode, 'merged_appended_hole');
+
+    % ------------------------------------------------------------
+    % build decomposed geometry
+    % ------------------------------------------------------------
+    if useChannel
+        polys = [{outerPoly}, holeLoops(:).', {channelPoly}];
+        names = cell(1, numel(polys));
+        names{1} = 'R1';
+        for k = 2:numel(polys)-1
+            names{k} = sprintf('H%d', k-1);
+        end
+        names{end} = 'C1';
+
+        sf = 'R1';
+        for k = 2:numel(names)
+            sf = [sf, '-', names{k}]; %#ok<AGROW>
+        end
+    else
+        polys = [{outerPoly}, holeLoops(:).'];
+        names = cell(1, numel(polys));
+        names{1} = 'R1';
+        for k = 2:numel(polys)
+            names{k} = sprintf('H%d', k-1);
+        end
+
+        sf = 'R1';
+        for k = 2:numel(names)
+            sf = [sf, '-', names{k}]; %#ok<AGROW>
+        end
+    end
 
     [gd, ns] = polygons_to_gd_ns(polys, names);
-
-    sf = 'R1';
-    for k = 2:numel(names)
-        sf = [sf, '-', names{k}]; %#ok<AGROW>
-    end
-
     [dl, bt] = decsg(gd, sf, ns);
 
     mdl = createpde();
     geometryFromEdges(mdl, dl);
 
     if plotGeom
-        figure('Name', 'mesh\_hole\_pencil\_domain: geometry', 'Color', 'w'); clf
+        figure('Name', 'mesh_hole_pencil_domain: geometry', 'Color', 'w'); clf
         pdegplot(mdl, 'EdgeLabels', 'on', 'FaceLabels', 'on');
         axis equal
-        title('PDE geometry with edge/face labels')
+        if useChannel
+            title('PDE geometry: rectangle - holes - channel')
+        else
+            title('PDE geometry: rectangle - appended-hole loops')
+        end
     end
 
     % ------------------------------------------------------------
@@ -156,7 +181,7 @@ function M = mesh_hole_pencil_domain(D, varargin)
     % ------------------------------------------------------------
     % basic boundary node sets
     % ------------------------------------------------------------
-    edgeSets = build_edge_sets_from_geometry(p, D);
+    edgeSets = build_edge_sets_from_geometry(p, outerPoly, holeLoops, channelPoly, D);
 
     % ------------------------------------------------------------
     % region metadata
@@ -167,12 +192,14 @@ function M = mesh_hole_pencil_domain(D, varargin)
     region.channelPoly = channelPoly;
     region.names       = names;
     region.nHoles      = numel(holeLoops);
+    region.mode        = mode;
+    region.useChannel  = useChannel;
 
     % ------------------------------------------------------------
     % optional mesh plot
     % ------------------------------------------------------------
     if plotMesh
-        figure('Name', 'mesh\_hole\_pencil\_domain: mesh', 'Color', 'w'); clf
+        figure('Name', 'mesh_hole_pencil_domain: mesh', 'Color', 'w'); clf
         triplot(t(:,1:3), p(:,1), p(:,2), 'Color', [0.75 0.75 0.75]); hold on
         axis equal; box on
 
@@ -180,9 +207,14 @@ function M = mesh_hole_pencil_domain(D, varargin)
         for k = 1:numel(holeLoops)
             plot_closed_polygon(holeLoops{k}, 'r-', 1.2);
         end
-        plot_closed_polygon(channelPoly, 'b-', 1.4);
 
-        title('Mesh of rectangle - holes - channel')
+        if useChannel
+            plot_closed_polygon(channelPoly, 'b-', 1.4);
+            title('Mesh of rectangle - holes - channel')
+        else
+            title('Mesh of rectangle - appended-hole loops')
+        end
+
         xlabel('x'); ylabel('y')
     end
 
@@ -211,13 +243,6 @@ end
 % =========================================================================
 
 function [gd, ns] = polygons_to_gd_ns(polys, names)
-%POLYGONS_TO_GD_NS Build decsg matrices for a list of polygons.
-%
-% Each polygon is encoded as a decsg polygon object:
-%   gd(:,j) = [2; Nv; x1;...;xNv; y1;...;yNv; zeros-padding]
-%
-% All columns are padded to equal length.
-
     nObj = numel(polys);
     if numel(names) ~= nObj
         error('mesh_hole_pencil_domain:NameCount', ...
@@ -231,7 +256,6 @@ function [gd, ns] = polygons_to_gd_ns(polys, names)
         P = polys{j};
         validate_polygon(P, sprintf('polys{%d}', j));
 
-        % remove duplicated closing point if present
         if size(P,1) >= 2 && norm(P(end,:) - P(1,:), inf) < 1e-14
             P = P(1:end-1,:);
         end
@@ -253,24 +277,15 @@ function [gd, ns] = polygons_to_gd_ns(polys, names)
 end
 
 
-function edgeSets = build_edge_sets_from_geometry(p, D)
-%BUILD_EDGE_SETS_FROM_GEOMETRY Build practical node sets from geometry.
-%
-% Fields:
-%   .left, .right, .top, .bottom
-%   .holes{k}
-%   .channel
-%   .corners.left_bottom, right_bottom, left_top, right_top
-
+function edgeSets = build_edge_sets_from_geometry(p, outerPoly, holeLoops, channelPoly, D)
     edgeSets = struct();
 
-    % outer box
     if isfield(D, 'A') && isfield(D, 'B')
         A = D.A;
         B = D.B;
     else
-        bb = [min(D.outerPoly(:,1)), max(D.outerPoly(:,1)), ...
-              min(D.outerPoly(:,2)), max(D.outerPoly(:,2))];
+        bb = [min(outerPoly(:,1)), max(outerPoly(:,1)), ...
+              min(outerPoly(:,2)), max(outerPoly(:,2))];
         A = bb(2);
         B = max(abs([bb(3), bb(4)]));
     end
@@ -290,21 +305,22 @@ function edgeSets = build_edge_sets_from_geometry(p, D)
     edgeSets.corners.left_top     = nearest_node(p, [0,  B]);
     edgeSets.corners.right_top    = nearest_node(p, [A,  B]);
 
-    % holes
-    edgeSets.holes = cell(size(D.holeLoops));
-    for k = 1:numel(D.holeLoops)
-        edgeSets.holes{k} = nodes_near_polygon_edges(p, D.holeLoops{k}, 20*tol);
+    edgeSets.holes = cell(size(holeLoops));
+    for k = 1:numel(holeLoops)
+        edgeSets.holes{k} = nodes_near_polygon_edges(p, holeLoops{k}, 20*tol);
     end
 
-    % backward-compatible single-hole field if only one hole exists
     if numel(edgeSets.holes) == 1
         edgeSets.hole = edgeSets.holes{1};
     else
         edgeSets.hole = [];
     end
 
-    % channel boundary nodes
-    edgeSets.channel = nodes_near_polygon_edges(p, D.channelPoly, 20*tol);
+    if ~isempty(channelPoly)
+        edgeSets.channel = nodes_near_polygon_edges(p, channelPoly, 20*tol);
+    else
+        edgeSets.channel = [];
+    end
 end
 
 
@@ -315,8 +331,6 @@ end
 
 
 function ids = nodes_near_polygon_edges(p, V, tol)
-%NODES_NEAR_POLYGON_EDGES Return node ids near polygon edges.
-
     if isempty(V)
         ids = [];
         return;
@@ -363,8 +377,6 @@ end
 
 
 function A = signed_polygon_area(P)
-%SIGNED_POLYGON_AREA Positive for CCW.
-
     x = P(:,1);
     y = P(:,2);
     x2 = [x(2:end); x(1)];
