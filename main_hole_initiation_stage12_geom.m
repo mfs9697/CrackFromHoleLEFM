@@ -159,6 +159,14 @@ function out = main_hole_initiation_stage12_geom()
     out.D  = D;
     out.M  = M;
 
+    Mc = collapse_pencil_faces_to_midline(M, D, ...
+        'EdgeIDs', [3 161], ...
+        'TipVertexID', 3);
+
+    out.Mc = Mc;
+
+    plot_collapsed_pencil_mesh(Mc, 'ShowOriginalFaces', true);
+
     fprintf('\n=== Current driver finished successfully ===\n');
 end
 
