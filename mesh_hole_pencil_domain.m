@@ -109,8 +109,6 @@ function M = mesh_hole_pencil_domain(D, varargin)
     mdl = createpde();
     geometryFromEdges(mdl, dl);
 
-    tipIDs = identify_sharp_pencil_geom_ids(mdl, D, 'Verbose', true);
-
     if plotGeom
         figure('Name', 'mesh_hole_pencil_domain: geometry', 'Color', 'w'); clf
         pdegplot(mdl, 'EdgeLabels', 'on', 'FaceLabels', 'on', 'VertexLabels', 'on');
