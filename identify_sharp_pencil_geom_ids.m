@@ -141,41 +141,75 @@ for eid = 1:nEdges
     end
 end
 
+
 % ------------------------------------------------------------
-% fallback: identify missing edge(s) by sampled-point distance
-% to the target pencil segments
+% fallback: identify missing edge(s) from tip-incident candidate edges
 % ------------------------------------------------------------
-if ~isfinite(e_upper) || ~isfinite(e_lower)
-    nEdges = get_num_edges(geom);
-    scoreU = inf(nEdges,1);
-    scoreL = inf(nEdges,1);
+if ~isfinite(e_upper) || ~isfinite(e_lower) || e_upper == e_lower
+    candE   = [];
+    candFar = [];
 
     for eid = 1:nEdges
-        [Pe, ok] = sample_geom_edge_points(geom, eid, 9);
-        if ~ok || size(Pe,1) < 2
+        [Pend, ok] = sample_geom_edge_endpoints(geom, eid);
+        if ~ok || size(Pend,1) ~= 2
             continue;
         end
 
-        % Mean distance of the sampled edge to each target segment
-        dU = point_to_segment_distance(Pe, segU(1,:), segU(2,:));
-        dL = point_to_segment_distance(Pe, segL(1,:), segL(2,:));
+        [va, da] = nearest_vertex_to_point(V, Pend(1,:));
+        [vb, db] = nearest_vertex_to_point(V, Pend(2,:));
 
-        % Add weak endpoint preference toward the correct mouth/tip pair
-        endPenaltyU = 0.25 * (min(vecnorm(Pe - mouthUpper, 2, 2)) + ...
-            min(vecnorm(Pe - xtip,      2, 2)));
-        endPenaltyL = 0.25 * (min(vecnorm(Pe - xtip,      2, 2)) + ...
-            min(vecnorm(Pe - mouthLower,2, 2)));
+        if da > 100*tol || db > 100*tol
+            continue;
+        end
 
-        scoreU(eid) = mean(dU) + endPenaltyU;
-        scoreL(eid) = mean(dL) + endPenaltyL;
+        % Keep only edges incident to the tip vertex (or extremely close to it)
+        isIncident = (va == v_tip) || (vb == v_tip) || ...
+                     (min(vecnorm(Pend - xtip, 2, 2)) <= 100*tol);
+
+        if ~isIncident
+            continue;
+        end
+
+        % Characteristic far endpoint of this edge away from the tip
+        if va == v_tip && vb ~= v_tip
+            Pfar = V(vb,:);
+        elseif vb == v_tip && va ~= v_tip
+            Pfar = V(va,:);
+        else
+            [~, imax] = max(vecnorm(Pend - xtip, 2, 2));
+            Pfar = Pend(imax,:);
+        end
+
+        candE(end+1,1)   = eid;   %#ok<AGROW>
+        candFar(end+1,:) = Pfar;  %#ok<AGROW>
     end
 
-    if ~isfinite(e_upper)
-        [~, e_upper] = min(scoreU);
+    if numel(candE) < 2
+        error('identify_sharp_pencil_geom_ids:TooFewCandidateEdges', ...
+            'Could not find two tip-incident candidate edges.');
     end
-    if ~isfinite(e_lower)
-        [~, e_lower] = min(scoreL);
+
+    costU = vecnorm(candFar - mouthUpper, 2, 2);
+    costL = vecnorm(candFar - mouthLower, 2, 2);
+
+    bestCost = inf;
+    bestPair = [NaN NaN];
+
+    for i = 1:numel(candE)
+        for j = 1:numel(candE)
+            if i == j
+                continue;
+            end
+            cij = costU(i) + costL(j);
+            if cij < bestCost
+                bestCost = cij;
+                bestPair = [i j];
+            end
+        end
     end
+
+    e_upper = candE(bestPair(1));
+    e_lower = candE(bestPair(2));
 end
 
 if ~isfinite(e_upper)
