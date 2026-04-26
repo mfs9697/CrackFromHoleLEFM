@@ -1,7 +1,5 @@
 function M = mesh_hole_pencil_domain(D, varargin)
-%MESH_HOLE_PENCIL_DOMAIN  Mesh geometry:
-%   legacy mode : rectangle - holes - pencil channel
-%   merged mode : rectangle - appended-hole loops
+%MESH_HOLE_PENCIL_DOMAIN  Mesh the appended-hole geometry.
 %
 %   M = mesh_hole_pencil_domain(D)
 %   M = mesh_hole_pencil_domain(D, 'Hmax', 0.005, 'Hgrad', 1.2)
@@ -11,9 +9,6 @@ function M = mesh_hole_pencil_domain(D, varargin)
 %       Required fields:
 %         .outerPoly    [No x 2] outer boundary polygon (CCW)
 %         .holeLoops    cell array of inner polygons
-%       Optional fields:
-%         .channelPoly  [Nc x 2] local channel polygon, or [] in merged mode
-%         .topology.mode = 'legacy_separate_channel' or 'merged_appended_hole'
 %
 % Name-value options:
 %   'Hmax'      : global max element size (default = [])
@@ -22,6 +17,8 @@ function M = mesh_hole_pencil_domain(D, varargin)
 %   'GeometricOrder' : 'linear' (default) or 'quadratic'
 %   'PlotGeom'  : logical, plot PDE geometry labels (default false)
 %   'PlotMesh'  : logical, plot mesh (default false)
+%   'Hvertex'   : optional manual PDE-geometry vertex refinement
+%   'Hedge'     : optional manual PDE-geometry edge refinement
 %
 % Output:
 %   M   struct with fields:
@@ -38,9 +35,10 @@ function M = mesh_hole_pencil_domain(D, varargin)
 %       .region      region metadata
 %
 % Notes:
-%   - In merged mode, channelPoly is empty and the crack is represented
-%     through the modified appended-hole contour already stored in holeLoops.
-%   - In legacy mode, channelPoly is treated as a separate interior void.
+%   - This version is merged-only: there is no separate channel geometry.
+%   - If manual Hvertex/Hedge is supplied, automatic tip identification is skipped.
+%   - If manual Hvertex/Hedge is not supplied, the function attempts to
+%     identify the sharp-pencil tip and two appended edges automatically.
 
     % ------------------------------------------------------------
     % parse options
@@ -62,6 +60,8 @@ function M = mesh_hole_pencil_domain(D, varargin)
     geometricOrder = char(ip.Results.GeometricOrder);
     plotGeom = ip.Results.PlotGeom;
     plotMesh = ip.Results.PlotMesh;
+    Hvertex = ip.Results.Hvertex;
+    Hedge   = ip.Results.Hedge;
 
     % ------------------------------------------------------------
     % checks
@@ -72,18 +72,9 @@ function M = mesh_hole_pencil_domain(D, varargin)
     outerPoly = D.outerPoly;
     holeLoops = D.holeLoops;
 
-    if isfield(D, 'channelPoly')
-        channelPoly = D.channelPoly;
-    else
-        channelPoly = [];
-    end
-
     validate_polygon(outerPoly, 'outerPoly');
     for k = 1:numel(holeLoops)
         validate_polygon(holeLoops{k}, sprintf('holeLoops{%d}', k));
-    end
-    if ~isempty(channelPoly)
-        validate_polygon(channelPoly, 'channelPoly');
     end
 
     % enforce orientations
@@ -93,54 +84,23 @@ function M = mesh_hole_pencil_domain(D, varargin)
 
     for k = 1:numel(holeLoops)
         if signed_polygon_area(holeLoops{k}) > 0
-            holeLoops{k} = flipud(holeLoops{k});   % inner loops clockwise preferred
+            holeLoops{k} = flipud(holeLoops{k});   % inner loops clockwise
         end
     end
 
-    if ~isempty(channelPoly) && signed_polygon_area(channelPoly) > 0
-        channelPoly = flipud(channelPoly);
+    % ------------------------------------------------------------
+    % build decomposed geometry: rectangle minus hole loops
+    % ------------------------------------------------------------
+    polys = [{outerPoly}, holeLoops(:).'];
+    names = cell(1, numel(polys));
+    names{1} = 'R1';
+    for k = 2:numel(polys)
+        names{k} = sprintf('H%d', k-1);
     end
 
-    % ------------------------------------------------------------
-    % detect mode
-    % ------------------------------------------------------------
-    mode = 'legacy_separate_channel';
-    if isfield(D, 'topology') && isfield(D.topology, 'mode') && ~isempty(D.topology.mode)
-        mode = D.topology.mode;
-    elseif isempty(channelPoly)
-        mode = 'merged_appended_hole';
-    end
-
-    useChannel = ~isempty(channelPoly) && ~strcmpi(mode, 'merged_appended_hole');
-
-    % ------------------------------------------------------------
-    % build decomposed geometry
-    % ------------------------------------------------------------
-    if useChannel
-        polys = [{outerPoly}, holeLoops(:).', {channelPoly}];
-        names = cell(1, numel(polys));
-        names{1} = 'R1';
-        for k = 2:numel(polys)-1
-            names{k} = sprintf('H%d', k-1);
-        end
-        names{end} = 'C1';
-
-        sf = 'R1';
-        for k = 2:numel(names)
-            sf = [sf, '-', names{k}]; %#ok<AGROW>
-        end
-    else
-        polys = [{outerPoly}, holeLoops(:).'];
-        names = cell(1, numel(polys));
-        names{1} = 'R1';
-        for k = 2:numel(polys)
-            names{k} = sprintf('H%d', k-1);
-        end
-
-        sf = 'R1';
-        for k = 2:numel(names)
-            sf = [sf, '-', names{k}]; %#ok<AGROW>
-        end
+    sf = 'R1';
+    for k = 2:numel(names)
+        sf = [sf, '-', names{k}]; %#ok<AGROW>
     end
 
     [gd, ns] = polygons_to_gd_ns(polys, names);
@@ -149,15 +109,13 @@ function M = mesh_hole_pencil_domain(D, varargin)
     mdl = createpde();
     geometryFromEdges(mdl, dl);
 
-    Hvertex = ip.Results.Hvertex;
-    Hedge   = ip.Results.Hedge;
-
+    % ------------------------------------------------------------
+    % optional automatic sharp-tip identification
+    % ------------------------------------------------------------
     tipIDs = [];
     useManualRefinement = ~isempty(Hvertex) || ~isempty(Hedge);
 
-    if ~useManualRefinement && strcmpi(mode, 'merged_appended_hole') && ...
-            isfield(D, 'channelGeom') && isfield(D.channelGeom, 'append')
-
+    if ~useManualRefinement && isfield(D, 'channelGeom') && isfield(D.channelGeom, 'append')
         tipIDs = identify_sharp_pencil_geom_ids(mdl, D, 'Verbose', true);
     end
 
@@ -165,11 +123,7 @@ function M = mesh_hole_pencil_domain(D, varargin)
         figure('Name', 'mesh_hole_pencil_domain: geometry', 'Color', 'w'); clf
         pdegplot(mdl, 'EdgeLabels', 'on', 'FaceLabels', 'on', 'VertexLabels', 'on');
         axis equal
-        if useChannel
-            title('PDE geometry: rectangle - holes - channel')
-        else
-            title('PDE geometry: rectangle - appended-hole loops')
-        end
+        title('PDE geometry: rectangle - appended-hole loops')
     end
 
     % ------------------------------------------------------------
@@ -195,9 +149,7 @@ function M = mesh_hole_pencil_domain(D, varargin)
     end
 
     if ~isempty(tipIDs)
-        Hface = Hmin;
-        Htip  = 0.5*Hmin;
-
+        [Hface, Htip] = choose_auto_refinement_sizes(Hmin, Hmax);
         gmArgs = [gmArgs, {'Hedge',   {[tipIDs.e_upper tipIDs.e_lower], Hface}}];
         gmArgs = [gmArgs, {'Hvertex', {[tipIDs.v_tip], Htip}}];
     end
@@ -210,19 +162,17 @@ function M = mesh_hole_pencil_domain(D, varargin)
     % ------------------------------------------------------------
     % basic boundary node sets
     % ------------------------------------------------------------
-    edgeSets = build_edge_sets_from_geometry(p, outerPoly, holeLoops, channelPoly, D);
+    edgeSets = build_edge_sets_from_geometry(p, outerPoly, holeLoops, D);
 
     % ------------------------------------------------------------
     % region metadata
     % ------------------------------------------------------------
     region = struct();
-    region.outerPoly   = outerPoly;
-    region.holeLoops   = holeLoops;
-    region.channelPoly = channelPoly;
-    region.names       = names;
-    region.nHoles      = numel(holeLoops);
-    region.mode        = mode;
-    region.useChannel  = useChannel;
+    region.outerPoly = outerPoly;
+    region.holeLoops = holeLoops;
+    region.names     = names;
+    region.nHoles    = numel(holeLoops);
+    region.mode      = 'merged_appended_hole';
 
     % ------------------------------------------------------------
     % optional mesh plot
@@ -237,13 +187,7 @@ function M = mesh_hole_pencil_domain(D, varargin)
             plot_closed_polygon(holeLoops{k}, 'r-', 1.2);
         end
 
-        if useChannel
-            plot_closed_polygon(channelPoly, 'b-', 1.4);
-            title('Mesh of rectangle - holes - channel')
-        else
-            title('Mesh of rectangle - appended-hole loops')
-        end
-
+        title('Mesh of rectangle - appended-hole loops')
         xlabel('x'); ylabel('y')
     end
 
@@ -251,16 +195,16 @@ function M = mesh_hole_pencil_domain(D, varargin)
     % output
     % ------------------------------------------------------------
     M = struct();
-    M.p        = p;
-    M.t        = t;
-    M.geom     = mdl;
-    M.meshobj  = msh;
+    M.p       = p;
+    M.t       = t;
+    M.geom    = mdl;
+    M.meshobj = msh;
 
-    M.dl       = dl;
-    M.bt       = bt;
-    M.gd       = gd;
-    M.ns       = ns;
-    M.sf       = sf;
+    M.dl = dl;
+    M.bt = bt;
+    M.gd = gd;
+    M.ns = ns;
+    M.sf = sf;
 
     M.edgeSets = edgeSets;
     M.region   = region;
@@ -306,7 +250,21 @@ function [gd, ns] = polygons_to_gd_ns(polys, names)
 end
 
 
-function edgeSets = build_edge_sets_from_geometry(p, outerPoly, holeLoops, channelPoly, D)
+function [Hface, Htip] = choose_auto_refinement_sizes(Hmin, Hmax)
+    if ~isempty(Hmin)
+        Hface = Hmin;
+        Htip  = 0.5 * Hmin;
+    elseif ~isempty(Hmax)
+        Hface = 0.25 * Hmax;
+        Htip  = 0.125 * Hmax;
+    else
+        error('mesh_hole_pencil_domain:NeedMeshScale', ...
+            'Automatic tip refinement requires Hmin or Hmax.');
+    end
+end
+
+
+function edgeSets = build_edge_sets_from_geometry(p, outerPoly, holeLoops, D)
     edgeSets = struct();
 
     if isfield(D, 'A') && isfield(D, 'B')
@@ -343,12 +301,6 @@ function edgeSets = build_edge_sets_from_geometry(p, outerPoly, holeLoops, chann
         edgeSets.hole = edgeSets.holes{1};
     else
         edgeSets.hole = [];
-    end
-
-    if ~isempty(channelPoly)
-        edgeSets.channel = nodes_near_polygon_edges(p, channelPoly, 20*tol);
-    else
-        edgeSets.channel = [];
     end
 end
 
