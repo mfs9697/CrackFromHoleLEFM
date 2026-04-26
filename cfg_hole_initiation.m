@@ -61,7 +61,7 @@ C.mesh2.hmax         = 0.010;
 C.mesh2.hhole        = 0.0025;
 C.mesh2.hcrack       = 0.0012;   % target size near short crack/tip
 C.mesh2.hgrad        = 1.25;
-C.mesh2.chw          = 0.0015;   % half-width of pencil channel around short crack
+C.mesh2.chw          = 0.0008;   % half-width of pencil channel around short crack
 C.mesh2.tip_radius   = 0.0020;   % radius of J-integral / SIF extraction contour
 C.mesh2.tip_ncircle  = 80;       % points for circle sampling if needed
 

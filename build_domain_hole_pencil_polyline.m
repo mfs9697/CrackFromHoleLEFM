@@ -139,6 +139,8 @@ function D = build_domain_hole_pencil_polyline(Pmid, A, B, holes, w, varargin)
     topo.channelTouchesHole = false;
     topo.touchingHoleIndex  = [];
     topo.touchDistance      = NaN;
+    topo.channelArea      = NaN;
+    topo.appendedHoleArea = NaN;
 
     if ~isempty(holes)
         [itouch, dtouch] = detect_hole_touch(Pmid(1,:), holes);
@@ -264,8 +266,6 @@ function D = build_domain_hole_pencil_polyline(Pmid, A, B, holes, w, varargin)
         topo.flags.channelInsidePlateBox = [];
     end
 
-    topo.channelArea      = NaN;
-    topo.appendedHoleArea = NaN;
 
     % ------------------------------------------------------------
     % output
