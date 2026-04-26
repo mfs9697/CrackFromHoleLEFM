@@ -52,6 +52,8 @@ function M = mesh_hole_pencil_domain(D, varargin)
     addParameter(ip, 'GeometricOrder', 'linear', @(s) ischar(s) || isstring(s));
     addParameter(ip, 'PlotGeom', false, @(x) islogical(x) && isscalar(x));
     addParameter(ip, 'PlotMesh', false, @(x) islogical(x) && isscalar(x));
+    addParameter(ip, 'Hvertex', [], @(x) isempty(x) || iscell(x));
+    addParameter(ip, 'Hedge',   [], @(x) isempty(x) || iscell(x));
     parse(ip, varargin{:});
 
     Hmax = ip.Results.Hmax;
@@ -147,6 +149,14 @@ function M = mesh_hole_pencil_domain(D, varargin)
     mdl = createpde();
     geometryFromEdges(mdl, dl);
 
+    tipIDs = [];
+
+    if strcmpi(mode, 'merged_appended_hole') && ...
+            isfield(D, 'channelGeom') && isfield(D.channelGeom, 'append')
+
+        tipIDs = identify_sharp_pencil_geom_ids(mdl, D, 'Verbose', true);
+    end
+
     if plotGeom
         figure('Name', 'mesh_hole_pencil_domain: geometry', 'Color', 'w'); clf
         pdegplot(mdl, 'EdgeLabels', 'on', 'FaceLabels', 'on');
@@ -171,6 +181,24 @@ function M = mesh_hole_pencil_domain(D, varargin)
     end
     if ~isempty(Hmin)
         gmArgs = [gmArgs, {'Hmin', Hmin}];
+    end
+
+    Hvertex = ip.Results.Hvertex;
+    Hedge   = ip.Results.Hedge;
+
+    if ~isempty(Hedge)
+        gmArgs = [gmArgs, {'Hedge', Hedge}];
+    end
+    if ~isempty(Hvertex)
+        gmArgs = [gmArgs, {'Hvertex', Hvertex}];
+    end
+
+    if ~isempty(tipIDs)
+        Hface = Hmin;
+        Htip  = 0.5*Hmin;
+
+        gmArgs = [gmArgs, {'Hedge',   {[tipIDs.e_upper tipIDs.e_lower], Hface}}];
+        gmArgs = [gmArgs, {'Hvertex', {[tipIDs.v_tip], Htip}}];
     end
 
     msh = generateMesh(mdl, gmArgs{:});

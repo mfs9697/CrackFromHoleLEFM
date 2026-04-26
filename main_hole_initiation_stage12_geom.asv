@@ -156,8 +156,10 @@ function out = main_hole_initiation_stage12_geom()
     fprintf('\n=== Current driver finished successfully ===\n');
 
     M = mesh_hole_pencil_domain(D, ...
-    'Hmax', 0.01, ...
-    'Hgrad', 1.15, ...
+    'Hmin', C.mesh1.hmin, ...
+    'Hmax', C.mesh1.hmax, ...
+    'Hgrad', C.mesh1.hgrad, ...
+    %'Hvertex', {v_tip, 0.5*C.mesh1.hmin}, ...
     'PlotGeom', true, ...
     'PlotMesh', true);
 end
@@ -254,11 +256,11 @@ function plot_stage2_domain_description(D)
     xlabel('x')
     ylabel('y')
     if isfield(D, 'topology') && isfield(D.topology, 'mode') ...
-        && strcmpi(D.topology.mode, 'merged_appended_hole')
-    title('Stage II: appended-hole geometry description')
-else
-    title('Stage II: hole + pencil-channel geometry description')
-end
+            && strcmpi(D.topology.mode, 'merged_appended_hole')
+        title('Stage II: appended-hole geometry description')
+    else
+        title('Stage II: hole + pencil-channel geometry description')
+    end
 end
 
 
