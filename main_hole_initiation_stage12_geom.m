@@ -1,26 +1,28 @@
 function out = main_hole_initiation_stage12_geom()
 %MAIN_HOLE_INITIATION_STAGE12_GEOM
-% Current main driver for the two-stage crack-initiation study.
+% Current main driver for the two-stage hole-initiation study.
 %
 % What it does at the current development stage:
 %   Stage I:
-%     1) build plate-with-hole mesh
-%     2) solve elastic problem at unit load
+%     1) build the plate-with-hole mesh
+%     2) solve the elastic problem at unit load
 %     3) sample sigma_tt along the hole boundary
-%     4) find initiation point and initiation load
+%     4) determine the initiation point and initiation load
 %
-%   Stage II (geometry only):
-%     5) define short crack at the initiation point for a chosen angle theta
-%     6) build combined geometry description: plate + hole + pencil channel
+%   Stage II:
+%     5) define a short crack at the initiation point for a chosen angle theta
+%     6) build the appended-hole geometry description
+%     7) mesh the appended-hole geometry as a T3 mesh with local tip refinement
 %
 % What it does NOT yet do:
-%     - mesh the hole+short-crack domain
+%     - collapse the two pencil faces to the crack midline
+%     - upgrade the collapsed mesh to quadratic
 %     - solve the Stage-II cracked problem
-%     - compute KI, KII
+%     - compute KI, KII, or the J-integral on the final cracked mesh
 %
 % Output:
 %   out struct with fields:
-%       .C, .G, .S1, .B, .I, .G2, .D
+%       .C, .G, .S1, .B, .I, .G2, .D, .M
 
     clc;
 
@@ -69,7 +71,7 @@ function out = main_hole_initiation_stage12_geom()
     %% ============================================================
     % 6. Stage II: choose a trial short-crack angle
     %% ============================================================
-    % By convention:
+    % Convention:
     %   e_dir = cos(theta)*n_in + sin(theta)*t_hat
     % so theta = 0 means radial inward growth.
     theta = 0.0;
@@ -87,48 +89,65 @@ function out = main_hole_initiation_stage12_geom()
         G2.crack.theta, G2.crack.thetaDeg);
 
     %% ============================================================
-    % 7. Stage II: combined geometric description
+    % 7. Stage II: appended-hole geometry description
     %% ============================================================
-    fprintf('\n=== Stage II: build hole + pencil-channel domain description ===\n');
+    fprintf('\n=== Stage II: build appended-hole geometry description ===\n');
 
     D = build_domain_hole_pencil_polyline( ...
         G2.crack.polyline, ...
         C.A, C.B, C.holes, C.mesh2.chw, ...
-        'join',        getf(C.mesh2, 'join', 'miter'), ...
-        'miter_limit', getf(C.mesh2, 'miter_limit', 6), ...
-        'corner_tol',  getf(C.mesh2, 'corner_tol', 1e-10), ...
-        'tip',         getf(C.mesh2, 'tip', 'point'));
+        'corner_tol', 1e-10, ...
+        'epsMode', 'arclength', ...
+        'nArc', 160, ...
+        'orientation', 'cw');
 
-    fprintf('Combined geometry description:\n');
+    fprintf('Appended-hole geometry description:\n');
     fprintf('  number of holes    = %d\n', numel(D.holeLoops));
 
-    if isfield(D, 'topology') && isfield(D.topology, 'mode') ...
-            && strcmpi(D.topology.mode, 'merged_appended_hole')
-
-        if isfield(D.topology, 'appendedHoleArea')
-            fprintf('  appended-hole area = %.8e\n', D.topology.appendedHoleArea);
-        else
-            fprintf('  appended-hole area = [not stored]\n');
-        end
-
+    if isfield(D, 'topology') && isfield(D.topology, 'appendedHoleArea') ...
+            && ~isnan(D.topology.appendedHoleArea)
+        fprintf('  appended-hole area = %.8e\n', D.topology.appendedHoleArea);
     else
-        if isfield(D, 'topology') && isfield(D.topology, 'channelArea')
-            fprintf('  channel area       = %.8e\n', D.topology.channelArea);
-        else
-            fprintf('  channel area       = [not stored]\n');
-        end
+        fprintf('  appended-hole area = [not stored]\n');
     end
 
     fprintf('  start on hole?     = %d\n', D.topology.flags.startOnHole);
     fprintf('  tip inside plate?  = %d\n', D.topology.flags.tipInsidePlate);
 
     %% ============================================================
-    % 8. Plot combined geometry description
+    % 8. Plot appended-hole geometry description
     %% ============================================================
     plot_stage2_domain_description(D);
 
     %% ============================================================
-    % 9. Return all current objects
+    % 9. Stage II: T3 mesh with explicit local tip refinement
+    %% ============================================================
+    fprintf('\n=== Stage II: mesh appended-hole geometry ===\n');
+
+    % Current geometry labels for the sharp pencil:
+    %   tip vertex : V3
+    %   pencil edges: E3 and E161
+    %
+    % These were read from the PDE geometry plot. If the appended-hole
+    % geometry changes, these labels may need updating.
+    v_tip = 3;
+    e_tip = [3 161];
+
+    M = mesh_hole_pencil_domain(D, ...
+        'Hmin', C.mesh1.hmin, ...
+        'Hmax', C.mesh1.hmax, ...
+        'Hgrad', C.mesh1.hgrad, ...
+        'Hedge', {e_tip, 0.8*C.mesh1.hmin}, ...
+        'Hvertex', {[v_tip], 0.1*C.mesh1.hmin}, ...
+        'PlotGeom', true, ...
+        'PlotMesh', true);
+
+    fprintf('Stage-II mesh summary:\n');
+    fprintf('  number of nodes    = %d\n', size(M.p,1));
+    fprintf('  number of elements = %d\n', size(M.t,1));
+
+    %% ============================================================
+    % 10. Return all current objects
     %% ============================================================
     out = struct();
     out.C  = C;
@@ -138,17 +157,9 @@ function out = main_hole_initiation_stage12_geom()
     out.I  = I;
     out.G2 = G2;
     out.D  = D;
+    out.M  = M;
 
     fprintf('\n=== Current driver finished successfully ===\n');
-
-    M = mesh_hole_pencil_domain(D, ...
-    'Hmin', C.mesh1.hmin, ...
-    'Hmax', C.mesh1.hmax, ...
-    'Hgrad', C.mesh1.hgrad, ...
-    'Hedge', {[3 161], 0.8*C.mesh1.hmin}, ...
-    'Hvertex', {[3], 0.1*C.mesh1.hmin}, ...
-    'PlotGeom', true, ...
-    'PlotMesh', true);
 end
 
 
@@ -195,10 +206,10 @@ function plot_stage1_local_frame(G, I)
         end
     end
 
-    x0   = I.x_star;
-    nmat = I.n_mat_star;    % into the solid
-    nhole = I.n_hole_star;  % into the hole
-    that = I.t_hat_star;
+    x0    = I.x_star;
+    nmat  = I.n_mat_star;    % into the solid
+    nhole = I.n_hole_star;   % into the hole
+    that  = I.t_hat_star;
 
     scl = 0.008;
 
@@ -214,8 +225,10 @@ function plot_stage1_local_frame(G, I)
     ylabel('y')
     title('Stage I: initiation point and local frame')
 end
+
+
 function plot_stage2_domain_description(D)
-% Plot rectangle, hole loop(s), channel polygon, and crack midline.
+% Plot rectangle, hole loop(s), optional legacy channel polygon, and crack midline.
 
     figure('Name', 'Stage II: domain description', 'Color', 'w'); clf
     hold on; axis equal; box on
@@ -224,39 +237,23 @@ function plot_stage2_domain_description(D)
     P = D.outerPoly;
     plot([P(:,1); P(1,1)], [P(:,2); P(1,2)], 'k-', 'LineWidth', 1.2);
 
-    % holes
+    % holes / appended-hole loop
     for k = 1:numel(D.holeLoops)
         H = D.holeLoops{k};
         plot([H(:,1); H(1,1)], [H(:,2); H(1,2)], 'r-', 'LineWidth', 1.3);
     end
 
-    % channel polygon (legacy mode only)
+    % legacy channel polygon if present
     if isfield(D, 'channelPoly') && ~isempty(D.channelPoly)
         Cc = D.channelPoly;
         plot([Cc(:,1); Cc(1,1)], [Cc(:,2); Cc(1,2)], 'b-', 'LineWidth', 1.5);
     end
 
-    % midline
+    % crack midline
     Pm = D.Pmid;
     plot(Pm(:,1), Pm(:,2), 'go-', 'LineWidth', 1.5, 'MarkerSize', 5);
 
     xlabel('x')
     ylabel('y')
-    if isfield(D, 'topology') && isfield(D.topology, 'mode') ...
-            && strcmpi(D.topology.mode, 'merged_appended_hole')
-        title('Stage II: appended-hole geometry description')
-    else
-        title('Stage II: hole + pencil-channel geometry description')
-    end
-end
-
-
-function v = getf(S, field, default)
-%GETF Get struct field or default.
-
-    if isstruct(S) && isfield(S, field) && ~isempty(S.(field))
-        v = S.(field);
-    else
-        v = default;
-    end
+    title('Stage II: appended-hole geometry description')
 end
