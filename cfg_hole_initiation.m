@@ -3,7 +3,7 @@ function C = cfg_hole_initiation()
 %
 % Two-stage model:
 %   Stage I  : elastic plate with hole, determine initiation point on hole boundary
-%   Stage II : insert a short crack at that point, determine initial direction
+%   Stage II : insert a short crack at that point, build sharp appended-hole geometry
 %
 % Output:
 %   C   struct with geometry, material, loading, meshing, and solver settings
@@ -11,93 +11,87 @@ function C = cfg_hole_initiation()
 %% ================== GEOMETRY ==================
 % Rectangular plate:
 %   x in [0, A], y in [-B, B]
-C.A = 0.30;                  % plate length
-C.B = 0.10;                  % half-height
+C.A = 0.30;
+C.B = 0.10;
 
 % Circular hole
 C.hole.type   = 'circle';
 C.hole.center = [0.150, -0.060];
 C.hole.r      = 0.030;
-C.hole.npoly  = 240;         % polygonal resolution for geometry construction
+C.hole.npoly  = 240;
 
-% Optional: future extension to multiple holes
+% Current project uses one hole
 C.holes = {C.hole};
 
 %% ================== MATERIAL ==================
-C.E  = 210e3;                % Young's modulus
-C.nu = 0.30;                 % Poisson ratio
-C.ps = 1;                    % 1 = plane strain, 0 = plane stress
+C.E  = 210e3;
+C.nu = 0.30;
+C.ps = 1;              % 1 = plane strain, 0 = plane stress
 
 % Fracture / initiation parameters
-C.sig_c = 300.0;             % critical tensile stress for initiation
-C.a0    = 0.004;             % short inserted crack length
+C.sig_c = 300.0;
+C.a0    = 0.004;
 
 %% ================== LOADING ==================
-% Use proportional loading:
-%   t = lambda * tbar
-%
-% For now: remote uniform vertical traction on top/bottom edges
 C.load.type = 'remote_tension_y';
-
-% Unit reference load. Actual initiation load is lambda_ini * sig0
 C.load.sig0 = 1.0;
 
 %% ================== BOUNDARY CONDITIONS ==================
-% Recommended default:
-%   - left-bottom corner: ux = 0, uy = 0
-%   - right-bottom corner: uy = 0
-% This removes rigid motions without polluting the stress field too much.
 C.bc.anchor_mode = 'minimal';
 
 %% ================== MESHING: HOLE-ONLY STAGE ==================
-C.mesh1.hmin      = 0.001; 
-C.mesh1.hmax      = 0.01;   % global max element size
-C.mesh1.hhole     = 0.001;  % target size near hole
-C.mesh1.hgrad     = 1.3;    % mesh growth factor
-C.mesh1.refineBox = [];      % optional [xmin xmax ymin ymax]
+% Base mesh scale tied to the polygonal resolution of the circular hole
+C.mesh1.hmin      = 2*pi*C.hole.r / C.hole.npoly;
+C.mesh1.hmax      = 15*C.mesh1.hmin;
+C.mesh1.hhole     = C.mesh1.hmin;
+C.mesh1.hgrad     = 1.3;
+C.mesh1.refineBox = [];
 
-%% ================== MESHING: SHORT-CRACK STAGE ==================
-C.mesh2.hmax         = 0.010;
-C.mesh2.hhole        = 0.0025;
-C.mesh2.hcrack       = 0.0012;   % target size near short crack/tip
-C.mesh2.hgrad        = 1.25;
-C.mesh2.chw          = 0.0008;   % half-width of pencil channel around short crack
-C.mesh2.tip_radius   = 0.0020;   % radius of J-integral / SIF extraction contour
-C.mesh2.tip_ncircle  = 80;       % points for circle sampling if needed
+%% ================== MESHING: SHORT-CRACK / APPENDED-HOLE STAGE ==================
+% Background Stage-II mesh uses the same scale as Stage I.
+% Local sharp-tip refinement is imposed later in mesh_hole_pencil_domain
+% through Hvertex/Hedge.
+C.mesh2.hmax        = C.mesh1.hmax;
+C.mesh2.hhole       = C.mesh1.hmin;
+C.mesh2.hcrack      = C.mesh1.hmin;
+C.mesh2.hgrad       = C.mesh1.hgrad;
+
+% Current tested mouth half-shift for the appended hole
+C.mesh2.chw         = 0.0008;
+
+% Tip-circle radius for later J-integral / SIF work
+C.mesh2.tip_radius  = 0.0020;
+C.mesh2.tip_ncircle = 80;
 
 %% ================== STAGE I: BOUNDARY STRESS SAMPLING ==================
-C.stage1.nphi       = 1440;   % number of angular sampling points on hole boundary
-C.stage1.avg_mode   = 'none'; % 'none' or 'arc_average'
-C.stage1.avg_rho    = 0.0;    % arc half-length for averaging, if used
+C.stage1.nphi     = 1440;
+C.stage1.avg_mode = 'none';
+C.stage1.avg_rho  = 0.0;
 
 %% ================== STAGE II: DIRECTION SEARCH ==================
-% Angle theta is measured from the outward hole normal at the initiation point.
-% Physically admissible crack directions usually go into the body,
-% so default search is centered around the inward normal = pi from outward normal.
-C.stage2.angle_mode   = 'relative_to_inward_normal';
-C.stage2.thmin_deg    = -75;
-C.stage2.thmax_deg    =  75;
-C.stage2.nth_coarse   = 61;
-C.stage2.nth_fine     = 41;
+C.stage2.angle_mode      = 'relative_to_inward_normal';
+C.stage2.thmin_deg       = -75;
+C.stage2.thmax_deg       =  75;
+C.stage2.nth_coarse      = 61;
+C.stage2.nth_fine        = 41;
 C.stage2.fine_halfwin_deg = 5.0;
-
-% Direction criterion
-C.stage2.criterion = 'local_symmetry';   % 'local_symmetry' or 'MTS'
+C.stage2.criterion       = 'local_symmetry';
 
 %% ================== SIF / POSTPROCESSING ==================
-C.sif.method = 'circle2';    % use SIF_LEFM_circle2
-C.sif.decomp = 'interaction_integral';  % documentation only
+C.sif.method     = 'circle2';
+C.sif.decomp     = 'interaction_integral';
 C.sif.tip_radius = C.mesh2.tip_radius;
 
 %% ================== SOLVER ==================
-C.solver.verbose = 1;
+C.solver.verbose        = 1;
 C.solver.check_symmetry = false;
-C.solver.linear_solver = 'backslash';
+C.solver.linear_solver  = 'backslash';
 
 %% ================== PLOTTING ==================
-C.plot.show_mesh1 = false;
-C.plot.show_mesh2 = true;
+% Centralized here so the driver no longer overrides them
+C.plot.show_mesh1        = true;
+C.plot.show_mesh2        = true;
 C.plot.show_stage1_stress = true;
-C.plot.show_stage2_scan = true;
+C.plot.show_stage2_scan   = true;
 
 end

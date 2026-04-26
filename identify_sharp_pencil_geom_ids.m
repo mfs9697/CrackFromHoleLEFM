@@ -110,8 +110,18 @@ function ids = identify_sharp_pencil_geom_ids(mdl, D, varargin)
         scoreL(eid) = edge_to_segment_score(Pe, segL);
     end
 
+    if ~any(isfinite(scoreU)) || ~any(isfinite(scoreL))
+        error('identify_sharp_pencil_geom_ids:NoFiniteEdgeMatches', ...
+        'Could not identify appended-pencil edges from the PDE geometry.');
+    end
+
     [bestU, e_upper] = min(scoreU);
     [bestL, e_lower] = min(scoreL);
+
+    if ~isfinite(bestU) || ~isfinite(bestL)
+        error('identify_sharp_pencil_geom_ids:BadEdgeMatches', ...
+            'Edge identification failed: non-finite score.');
+    end
 
     % If both segments accidentally chose the same edge, resolve by second best
     if e_upper == e_lower

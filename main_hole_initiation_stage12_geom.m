@@ -29,20 +29,6 @@ function out = main_hole_initiation_stage12_geom()
     %% ============================================================
     C = cfg_hole_initiation();
 
-    % Suggested refinement for smoother Stage-I stress results
-    % (edit these in cfg_hole_initiation.m later if you prefer)
-    C.hole.npoly   = 240;
-    C.holes        = {C.hole};
-    
-    C.mesh1.hmin   = 2*pi*C.hole.r / C.hole.npoly;
-    C.mesh1.hmax   = 15*C.mesh1.hmin;
-    C.mesh1.hgrad  = 1.3;
-
-    C.stage1.nphi  = 1440;
-
-    C.plot.show_mesh1 = true;
-    C.plot.show_mesh2 = true;
-
     %% ============================================================
     % 1. Stage I: geometry
     %% ============================================================
@@ -158,7 +144,9 @@ function out = main_hole_initiation_stage12_geom()
     M = mesh_hole_pencil_domain(D, ...
     'Hmin', C.mesh1.hmin, ...
     'Hmax', C.mesh1.hmax, ...
-    'Hgrad', C.mesh1.hgrad, ...  %'Hvertex', {v_tip, 0.5*C.mesh1.hmin}, ...
+    'Hgrad', C.mesh1.hgrad, ...
+    'Hedge', {[3 161], C.mesh1.hmin}, ...
+    'Hvertex', {[3], 0.5*C.mesh1.hmin}, ...
     'PlotGeom', true, ...
     'PlotMesh', true);
 end

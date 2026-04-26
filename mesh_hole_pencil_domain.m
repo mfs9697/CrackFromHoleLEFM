@@ -149,9 +149,13 @@ function M = mesh_hole_pencil_domain(D, varargin)
     mdl = createpde();
     geometryFromEdges(mdl, dl);
 
-    tipIDs = [];
+    Hvertex = ip.Results.Hvertex;
+    Hedge   = ip.Results.Hedge;
 
-    if strcmpi(mode, 'merged_appended_hole') && ...
+    tipIDs = [];
+    useManualRefinement = ~isempty(Hvertex) || ~isempty(Hedge);
+
+    if ~useManualRefinement && strcmpi(mode, 'merged_appended_hole') && ...
             isfield(D, 'channelGeom') && isfield(D.channelGeom, 'append')
 
         tipIDs = identify_sharp_pencil_geom_ids(mdl, D, 'Verbose', true);
@@ -159,7 +163,7 @@ function M = mesh_hole_pencil_domain(D, varargin)
 
     if plotGeom
         figure('Name', 'mesh_hole_pencil_domain: geometry', 'Color', 'w'); clf
-        pdegplot(mdl, 'EdgeLabels', 'on', 'FaceLabels', 'on');
+        pdegplot(mdl, 'EdgeLabels', 'on', 'FaceLabels', 'on', 'VertexLabels', 'on');
         axis equal
         if useChannel
             title('PDE geometry: rectangle - holes - channel')
@@ -182,9 +186,6 @@ function M = mesh_hole_pencil_domain(D, varargin)
     if ~isempty(Hmin)
         gmArgs = [gmArgs, {'Hmin', Hmin}];
     end
-
-    Hvertex = ip.Results.Hvertex;
-    Hedge   = ip.Results.Hedge;
 
     if ~isempty(Hedge)
         gmArgs = [gmArgs, {'Hedge', Hedge}];
