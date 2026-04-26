@@ -109,8 +109,6 @@ function M = mesh_hole_pencil_domain(D, varargin)
     mdl = createpde();
     geometryFromEdges(mdl, dl);
 
-    tipIDs = identify_sharp_pencil_geom_ids(mdl, D, 'Verbose', true);
-
     if plotGeom
         figure('Name', 'mesh_hole_pencil_domain: geometry', 'Color', 'w'); clf
         pdegplot(mdl, 'EdgeLabels', 'on', 'FaceLabels', 'on', 'VertexLabels', 'on');
@@ -131,19 +129,6 @@ function M = mesh_hole_pencil_domain(D, varargin)
     end
     if ~isempty(Hmin)
         gmArgs = [gmArgs, {'Hmin', Hmin}];
-    end
-
-    if ~isempty(Hedge)
-        gmArgs = [gmArgs, {'Hedge', Hedge}];
-    end
-    if ~isempty(Hvertex)
-        gmArgs = [gmArgs, {'Hvertex', Hvertex}];
-    end
-
-    if ~isempty(tipIDs)
-        [Hface, Htip] = choose_auto_refinement_sizes(Hmin, Hmax);
-        gmArgs = [gmArgs, {'Hedge',   {[tipIDs.e_upper tipIDs.e_lower], Hface}}];
-        gmArgs = [gmArgs, {'Hvertex', {[tipIDs.v_tip], Htip}}];
     end
 
     geomIDs = [];

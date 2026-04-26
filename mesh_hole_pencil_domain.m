@@ -36,9 +36,11 @@ function M = mesh_hole_pencil_domain(D, varargin)
 %
 % Notes:
 %   - This version is merged-only: there is no separate channel geometry.
-%   - If manual Hvertex/Hedge is supplied, automatic tip identification is skipped.
-%   - If manual Hvertex/Hedge is not supplied, the function attempts to
-%     identify the sharp-pencil tip and two appended edges automatically.
+%   - If manual Hvertex/Hedge is supplied, automatic tip refinement is skipped.
+%   - If manual Hvertex/Hedge is not supplied, the function first tries
+%     pure-geometry sharp-pencil identification. If that fails, it falls back
+%     to a temporary background mesh to recover the geometry IDs, then remeshes
+%     with local tip refinement.
 
     % ------------------------------------------------------------
     % parse options
@@ -117,37 +119,86 @@ function M = mesh_hole_pencil_domain(D, varargin)
     end
 
     % ------------------------------------------------------------
-    % mesh generation
+    % base mesh arguments (without local tip refinement)
     % ------------------------------------------------------------
-    gmArgs = {'GeometricOrder', geometricOrder};
+    gmArgsBase = {'GeometricOrder', geometricOrder};
 
     if ~isempty(Hmax)
-        gmArgs = [gmArgs, {'Hmax', Hmax}];
+        gmArgsBase = [gmArgsBase, {'Hmax', Hmax}];
     end
     if ~isempty(Hgrad)
-        gmArgs = [gmArgs, {'Hgrad', Hgrad}];
+        gmArgsBase = [gmArgsBase, {'Hgrad', Hgrad}];
     end
     if ~isempty(Hmin)
-        gmArgs = [gmArgs, {'Hmin', Hmin}];
+        gmArgsBase = [gmArgsBase, {'Hmin', Hmin}];
     end
 
+    % ------------------------------------------------------------
+    % geometry IDs for the sharp pencil
+    % ------------------------------------------------------------
     geomIDs = [];
     useManualRefinement = ~isempty(Hvertex) || ~isempty(Hedge);
 
     if ~useManualRefinement
-        geomIDs = identify_sharp_pencil_geom_ids(mdl, D, 'Verbose', true);
+        % First try the pure-geometry route
+        try
+            geomIDs = identify_sharp_pencil_geom_ids(mdl, D, 'Verbose', true);
+        catch MEgeom
+            fprintf(['mesh_hole_pencil_domain: geometry-only sharp-pencil identification failed:\n', ...
+            '  %s\n', ...
+            'Falling back to a temporary background mesh to recover geometry IDs.\n'], ...
+                MEgeom.message);
+
+            % Fallback: temporary background mesh, then identify IDs from it
+            try
+                msh0 = generateMesh(mdl, gmArgsBase{:});
+                geomIDs = identify_pencil_ids_from_temp_mesh_local(mdl, msh0, D, 'Verbose', true);
+            catch MEtmp
+                warning('mesh_hole_pencil_domain:GeomIDFallbackFailed', ...
+                    ['Temporary-mesh geometry-ID recovery also failed:\n  %s\n', ...
+                     'Proceeding without automatic local tip refinement.'], ...
+                     MEtmp.message);
+                geomIDs = [];
+            end
+        end
     end
 
-    if ~isempty(geomIDs)
-        [Hface, Htip] = choose_auto_refinement_sizes(Hmin, Hmax);
-        gmArgs = [gmArgs, {'Hedge',   {geomIDs.e_tip, Hface}}];
+    % ------------------------------------------------------------
+    % final mesh arguments
+    % ------------------------------------------------------------
+    gmArgs = gmArgsBase;
+
+    % Manual local refinement overrides automatic
+    if ~isempty(Hedge)
+        gmArgs = [gmArgs, {'Hedge', Hedge}];
+    elseif ~isempty(geomIDs)
+        [Hface, ~] = choose_auto_refinement_sizes(Hmin, Hmax);
+        gmArgs = [gmArgs, {'Hedge', {geomIDs.e_tip, Hface}}];
+    end
+
+    if ~isempty(Hvertex)
+        gmArgs = [gmArgs, {'Hvertex', Hvertex}];
+    elseif ~isempty(geomIDs)
+        [~, Htip] = choose_auto_refinement_sizes(Hmin, Hmax);
         gmArgs = [gmArgs, {'Hvertex', {[geomIDs.v_tip], Htip}}];
     end
 
+    % ------------------------------------------------------------
+    % generate final mesh
+    % ------------------------------------------------------------
     msh = generateMesh(mdl, gmArgs{:});
 
     p = msh.Nodes.';      % [np x 2]
     t = msh.Elements.';   % [nt x 3] or [nt x 6]
+
+    % If geomIDs were not available earlier, try once more on the final mesh
+    if isempty(geomIDs)
+        try
+            geomIDs = identify_pencil_ids_from_temp_mesh_local(mdl, msh, D, 'Verbose', false);
+        catch
+            geomIDs = [];
+        end
+    end
 
     % ------------------------------------------------------------
     % basic boundary node sets
@@ -163,6 +214,7 @@ function M = mesh_hole_pencil_domain(D, varargin)
     region.names     = names;
     region.nHoles    = numel(holeLoops);
     region.mode      = 'merged_appended_hole';
+    region.geomIDs   = geomIDs;
 
     % ------------------------------------------------------------
     % optional mesh plot
@@ -198,9 +250,6 @@ function M = mesh_hole_pencil_domain(D, varargin)
 
     M.edgeSets = edgeSets;
     M.region   = region;
-
-    M.region.geomIDs = geomIDs;
-    
 end
 
 
@@ -298,6 +347,176 @@ function edgeSets = build_edge_sets_from_geometry(p, outerPoly, holeLoops, D)
 end
 
 
+function ids = identify_pencil_ids_from_temp_mesh_local(mdl, msh, D, varargin)
+% Recover TipVertexID and the two sharp-pencil EdgeIDs from a temporary mesh.
+% This is a fallback when pure geometry-edge evaluation is unreliable.
+
+    ip = inputParser;
+    addParameter(ip, 'Tol', [], @(x) isempty(x) || (isnumeric(x) && isscalar(x) && x > 0));
+    addParameter(ip, 'Verbose', false, @(x)islogical(x) && isscalar(x));
+    parse(ip, varargin{:});
+
+    tolIn   = ip.Results.Tol;
+    verbose = ip.Results.Verbose;
+
+    must_field_local(D, 'channelGeom');
+    must_field_local(D.channelGeom, 'append');
+
+    Gapp = D.channelGeom.append;
+    must_field_local(Gapp, 'xtip');
+    must_field_local(Gapp, 'face_upper');
+    must_field_local(Gapp, 'face_lower');
+
+    xtip = Gapp.xtip(:).';
+    segU = Gapp.face_upper;
+    segL = Gapp.face_lower;
+
+    mouthUpper = farther_endpoint_local(segU, xtip);
+    mouthLower = farther_endpoint_local(segL, xtip);
+
+    p = msh.Nodes.';
+    geom = mdl.Geometry;
+
+    V = get_geom_vertices_2d_local(geom);
+    if isempty(V)
+        error('mesh_hole_pencil_domain:NoVerticesInFallback', ...
+            'Could not access geometry vertices from mdl.Geometry.');
+    end
+
+    [v_tip, d_tip] = nearest_vertex_to_point_local(V, xtip);
+    [v_up,  d_up ] = nearest_vertex_to_point_local(V, mouthUpper);
+    [v_lo,  d_lo ] = nearest_vertex_to_point_local(V, mouthLower);
+
+    if isempty(tolIn)
+        scale = max([1, norm(xtip), norm(mouthUpper-xtip), norm(mouthLower-xtip)]);
+        tol = 1e-8 * scale;
+    else
+        tol = tolIn;
+    end
+
+    n_tip = unique(findNodes(msh, 'region', 'Vertex', v_tip));
+    if isempty(n_tip)
+        n_tip = nearest_node(p, xtip);
+    else
+        n_tip = n_tip(1);
+    end
+
+    nEdges = get_num_edges_local(geom);
+
+    candE   = [];
+    candFar = [];
+
+    for eid = 1:nEdges
+        nEdge = unique(findNodes(msh, 'region', 'Edge', eid));
+        if isempty(nEdge)
+            continue;
+        end
+
+        isIncident = any(nEdge == n_tip) || min(vecnorm(p(nEdge,:) - xtip, 2, 2)) <= 50*tol;
+        if ~isIncident
+            continue;
+        end
+
+        [~, imax] = max(vecnorm(p(nEdge,:) - xtip, 2, 2));
+        Pfar = p(nEdge(imax), :);
+
+        candE(end+1,1)   = eid;   %#ok<AGROW>
+        candFar(end+1,:) = Pfar;  %#ok<AGROW>
+    end
+
+    if numel(candE) < 2
+        error('mesh_hole_pencil_domain:TooFewCandidateEdges', ...
+            'Could not find two tip-incident candidate edges in the temporary mesh.');
+    end
+
+    costU = vecnorm(candFar - mouthUpper, 2, 2);
+    costL = vecnorm(candFar - mouthLower, 2, 2);
+
+    bestCost = inf;
+    bestPair = [NaN NaN];
+
+    for i = 1:numel(candE)
+        for j = 1:numel(candE)
+            if i == j
+                continue;
+            end
+            cij = costU(i) + costL(j);
+            if cij < bestCost
+                bestCost = cij;
+                bestPair = [i j];
+            end
+        end
+    end
+
+    e_upper = candE(bestPair(1));
+    e_lower = candE(bestPair(2));
+
+    if verbose
+        fprintf('identify_pencil_ids_from_temp_mesh: v_tip = %d, dist = %.3e\n', v_tip, d_tip);
+        fprintf('identify_pencil_ids_from_temp_mesh: v_up  = %d, dist = %.3e\n', v_up,  d_up);
+        fprintf('identify_pencil_ids_from_temp_mesh: v_lo  = %d, dist = %.3e\n', v_lo,  d_lo);
+        fprintf('identify_pencil_ids_from_temp_mesh: e_upper = %d\n', e_upper);
+        fprintf('identify_pencil_ids_from_temp_mesh: e_lower = %d\n', e_lower);
+    end
+
+    ids = struct();
+    ids.v_tip  = v_tip;
+    ids.v_up   = v_up;
+    ids.v_lo   = v_lo;
+    ids.e_upper = e_upper;
+    ids.e_lower = e_lower;
+    ids.e_tip   = [e_upper e_lower];
+    ids.xtip    = xtip;
+    ids.mouthUpper = mouthUpper;
+    ids.mouthLower = mouthLower;
+    ids.vertex_dist_tip = d_tip;
+    ids.vertex_dist_up  = d_up;
+    ids.vertex_dist_lo  = d_lo;
+end
+
+
+function V = get_geom_vertices_2d_local(geom)
+    V = [];
+    if isprop(geom, 'Vertices')
+        VV = geom.Vertices;
+        if isnumeric(VV)
+            if size(VV,1) == 2
+                V = VV.';
+            elseif size(VV,2) == 2
+                V = VV;
+            end
+        end
+    end
+end
+
+
+function nEdges = get_num_edges_local(geom)
+    if isprop(geom, 'NumEdges')
+        nEdges = geom.NumEdges;
+    else
+        error('mesh_hole_pencil_domain:NoNumEdges', ...
+            'Could not access geom.NumEdges.');
+    end
+end
+
+
+function [ivid, dmin] = nearest_vertex_to_point_local(V, x)
+    d = vecnorm(V - x, 2, 2);
+    [dmin, ivid] = min(d);
+end
+
+
+function Pfar = farther_endpoint_local(seg, xref)
+    d1 = norm(seg(1,:) - xref);
+    d2 = norm(seg(2,:) - xref);
+    if d1 >= d2
+        Pfar = seg(1,:);
+    else
+        Pfar = seg(2,:);
+    end
+end
+
+
 function idx = nearest_node(p, xq)
     d2 = sum((p - xq).^2, 2);
     [~, idx] = min(d2);
@@ -349,6 +568,16 @@ function validate_polygon(P, name)
     end
 end
 
+
+function A = signed_polygon_area(P)
+    x = P(:,1);
+    y = P(:,2);
+    x2 = [x(2:end); x(1)];
+    y2 = [y(2:end); y(1)];
+    A = 0.5 * sum(x .* y2 - x2 .* y);
+end
+
+
 function plot_closed_polygon(P, style, lw)
     plot([P(:,1); P(1,1)], [P(:,2); P(1,2)], style, 'LineWidth', lw);
 end
@@ -357,6 +586,14 @@ end
 function must(S, field)
     if ~isfield(S, field) || isempty(S.(field))
         error('mesh_hole_pencil_domain:MissingField', ...
+            'Required field "%s" is missing or empty.', field);
+    end
+end
+
+
+function must_field_local(S, field)
+    if ~isfield(S, field) || isempty(S.(field))
+        error('mesh_hole_pencil_domain:MissingNestedField', ...
             'Required field "%s" is missing or empty.', field);
     end
 end
