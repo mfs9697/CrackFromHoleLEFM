@@ -132,9 +132,7 @@ function out = main_hole_initiation_stage12_geom()
     % geometry changes, these labels may need updating.
     %v_tip = 3;
     %e_tip = [3 161];
-    v_tip = geomIDs.v_tip;
-    e_tip = geomIDs.e_tip;
-
+    
     M = mesh_hole_pencil_domain(D, ...
         'Hmin', C.mesh1.hmin, ...
         'Hmax', C.mesh1.hmax, ...
@@ -143,6 +141,10 @@ function out = main_hole_initiation_stage12_geom()
         'Hvertex', {[v_tip], 0.1*C.mesh1.hmin}, ...
         'PlotGeom', true, ...
         'PlotMesh', true);
+
+    geomIDs = M.region.geomIDs;
+    v_tip = geomIDs.v_tip;
+    e_tip = geomIDs.e_tip;
 
     fprintf('Stage-II mesh summary:\n');
     fprintf('  number of nodes    = %d\n', size(M.p,1));

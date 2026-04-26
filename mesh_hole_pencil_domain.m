@@ -146,9 +146,14 @@ function M = mesh_hole_pencil_domain(D, varargin)
         gmArgs = [gmArgs, {'Hvertex', {[tipIDs.v_tip], Htip}}];
     end
 
-    msh = generateMesh(mdl, gmArgs{:});
+    geomIDs = [];
+    useManualRefinement = ~isempty(Hvertex) || ~isempty(Hedge);
 
-    geomIDs = identify_sharp_pencil_geom_ids(mdl, D, 'Verbose', true);
+    if ~useManualRefinement
+        geomIDs = identify_sharp_pencil_geom_ids(mdl, D, 'Verbose', true);
+    end
+
+    msh = generateMesh(mdl, gmArgs{:});
 
     p = msh.Nodes.';      % [np x 2]
     t = msh.Elements.';   % [nt x 3] or [nt x 6]
