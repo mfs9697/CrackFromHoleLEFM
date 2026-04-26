@@ -24,11 +24,6 @@ function [Vapp, G] = build_appended_hole_loop(hole, A, n_in, t_hat, theta, a0, e
 %   'nArc'        : number of points on retained hole arc     (default 160)
 %   'orientation' : 'cw' (default) or 'ccw'
 %
-% Compatibility options (accepted but ignored here):
-%   'nFace'       : ignored in sharp-tip version
-%   'nTip'        : ignored in sharp-tip version
-%   'tipRadius'   : ignored in sharp-tip version
-%
 % Outputs:
 %   Vapp   : [N x 2] closed polygon loop of the appended hole
 %            (last point is NOT repeated)
@@ -44,12 +39,6 @@ function [Vapp, G] = build_appended_hole_loop(hole, A, n_in, t_hat, theta, a0, e
     addParameter(ip, 'epsMode', 'arclength', @(s)ischar(s)||isstring(s));
     addParameter(ip, 'nArc', 160, @(x)isnumeric(x)&&isscalar(x)&&x>=8);
     addParameter(ip, 'orientation', 'cw', @(s)ischar(s)||isstring(s));
-
-    % accepted for compatibility with current caller, but ignored
-    addParameter(ip, 'nFace', [], @(x) isempty(x) || (isnumeric(x)&&isscalar(x)));
-    addParameter(ip, 'nTip', [], @(x) isempty(x) || (isnumeric(x)&&isscalar(x)));
-    addParameter(ip, 'tipRadius', [], @(x) isempty(x) || (isnumeric(x)&&isscalar(x)));
-
     parse(ip, varargin{:});
 
     epsMode = lower_safe(ip.Results.epsMode);
