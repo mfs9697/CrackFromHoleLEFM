@@ -133,24 +133,17 @@ function M = mesh_hole_pencil_domain(D, varargin)
         gmArgs = [gmArgs, {'Hmin', Hmin}];
     end
 
-    if ~isempty(Hedge)
-        gmArgs = [gmArgs, {'Hedge', Hedge}];
-    end
-    if ~isempty(Hvertex)
-        gmArgs = [gmArgs, {'Hvertex', Hvertex}];
-    end
-
-    if ~isempty(tipIDs)
-        [Hface, Htip] = choose_auto_refinement_sizes(Hmin, Hmax);
-        gmArgs = [gmArgs, {'Hedge',   {[tipIDs.e_upper tipIDs.e_lower], Hface}}];
-        gmArgs = [gmArgs, {'Hvertex', {[tipIDs.v_tip], Htip}}];
-    end
-
     geomIDs = [];
     useManualRefinement = ~isempty(Hvertex) || ~isempty(Hedge);
 
     if ~useManualRefinement
         geomIDs = identify_sharp_pencil_geom_ids(mdl, D, 'Verbose', true);
+    end
+
+    if ~isempty(geomIDs)
+        [Hface, Htip] = choose_auto_refinement_sizes(Hmin, Hmax);
+        gmArgs = [gmArgs, {'Hedge',   {geomIDs.e_tip, Hface}}];
+        gmArgs = [gmArgs, {'Hvertex', {[geomIDs.v_tip], Htip}}];
     end
 
     msh = generateMesh(mdl, gmArgs{:});
