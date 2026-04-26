@@ -148,8 +148,6 @@ function M = mesh_hole_pencil_domain(D, varargin)
 
     msh = generateMesh(mdl, gmArgs{:});
 
-    geomIDs = identify_sharp_pencil_geom_ids(mdl, D, 'Verbose', true);
-
     p = msh.Nodes.';      % [np x 2]
     t = msh.Elements.';   % [nt x 3] or [nt x 6]
 
@@ -202,9 +200,6 @@ function M = mesh_hole_pencil_domain(D, varargin)
 
     M.edgeSets = edgeSets;
     M.region   = region;
-
-    M.region.geomIDs = geomIDs;
-    
 end
 
 

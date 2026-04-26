@@ -130,8 +130,10 @@ function out = main_hole_initiation_stage12_geom()
     %
     % These were read from the PDE geometry plot. If the appended-hole
     % geometry changes, these labels may need updating.
-    v_tip = 3;
-    e_tip = [3 161];
+    %v_tip = 3;
+    %e_tip = [3 161];
+    v_tip = geomIDs.v_tip;
+    e_tip = geomIDs.e_tip;
 
     M = mesh_hole_pencil_domain(D, ...
         'Hmin', C.mesh1.hmin, ...

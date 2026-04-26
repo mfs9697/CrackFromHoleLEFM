@@ -5,7 +5,7 @@ function ids = identify_sharp_pencil_geom_ids(mdl, D, varargin)
 %
 % Usage:
 %   ids = identify_sharp_pencil_geom_ids(mdl, D)
-%   ids = identify_sharp_pencil_geom_ids(mdl, D, 'NSample', 25, 'Tol', 1e-8)
+%   ids = identify_sharp_pencil_geom_ids(mdl, D, 'Tol', 1e-8, 'Verbose', true)
 %
 % Required inputs:
 %   mdl : PDE model after geometryFromEdges(mdl, dl)
@@ -18,33 +18,36 @@ function ids = identify_sharp_pencil_geom_ids(mdl, D, varargin)
 % Output:
 %   ids struct with fields:
 %       .v_tip
+%       .v_up
+%       .v_lo
 %       .e_upper
 %       .e_lower
+%       .e_tip
 %       .xtip
-%       .face_upper
-%       .face_lower
-%       .vertex_dist
-%       .edge_score_upper
-%       .edge_score_lower
+%       .mouthUpper
+%       .mouthLower
+%       .vertex_dist_tip
+%       .vertex_dist_up
+%       .vertex_dist_lo
 %
 % Notes:
-%   - This helper uses geometry labels, not mesh node IDs.
-%   - It tries to sample PDE edges through the geometry object.
-%   - If your MATLAB release does not support the required geometry-edge
-%     evaluation calls, use PlotGeom with VertexLabels/EdgeLabels once
-%     and compare manually.
+%   - This helper uses GEOMETRY labels, not mesh node IDs.
+%   - It matches the two sharp pencil edges by endpoint-vertex pairs:
+%         upper face <-> {v_up, v_tip}
+%         lower face <-> {v_tip, v_lo}
+%   - This is intended for the sharp appended-hole geometry.
 
     ip = inputParser;
-    addParameter(ip, 'NSample', 25, @(x)isnumeric(x)&&isscalar(x)&&x>=3);
-    addParameter(ip, 'Tol', [], @(x) isempty(x) || (isnumeric(x)&&isscalar(x)&&x>0));
-    addParameter(ip, 'Verbose', false, @(x)islogical(x)&&isscalar(x));
+    addParameter(ip, 'Tol', [], @(x) isempty(x) || (isnumeric(x) && isscalar(x) && x > 0));
+    addParameter(ip, 'Verbose', false, @(x)islogical(x) && isscalar(x));
     parse(ip, varargin{:});
 
-    nSample = ip.Results.NSample;
     tolIn   = ip.Results.Tol;
     verbose = ip.Results.Verbose;
 
-    % -------------------- checks --------------------
+    % ------------------------------------------------------------
+    % checks
+    % ------------------------------------------------------------
     if ~isfield(D, 'channelGeom') || ~isfield(D.channelGeom, 'append')
         error('identify_sharp_pencil_geom_ids:MissingAppendData', ...
             'D.channelGeom.append is required.');
@@ -71,95 +74,105 @@ function ids = identify_sharp_pencil_geom_ids(mdl, D, varargin)
 
     geom = mdl.Geometry;
 
-    % -------------------- tolerance --------------------
     if isempty(tolIn)
         scale = max([1, norm(xtip), segment_length(segU), segment_length(segL)]);
-        tol = 1e-6 * scale;
+        tol = 1e-8 * scale;
     else
         tol = tolIn;
     end
 
-    % -------------------- vertex identification --------------------
-    V = get_geom_vertices_2d(geom);  % [Nv x 2]
+    % ------------------------------------------------------------
+    % target geometry points
+    % ------------------------------------------------------------
+    mouthUpper = farther_endpoint(segU, xtip);
+    mouthLower = farther_endpoint(segL, xtip);
+
+    % ------------------------------------------------------------
+    % geometry vertices
+    % ------------------------------------------------------------
+    V = get_geom_vertices_2d(geom);   % [Nv x 2]
     if isempty(V)
         error('identify_sharp_pencil_geom_ids:NoVertices', ...
             'Could not access geometry vertices from mdl.Geometry.');
     end
 
-    dV = vecnorm(V - xtip, 2, 2);
-    [dminV, v_tip] = min(dV);
+    [v_tip, d_tip] = nearest_vertex_to_point(V, xtip);
+    [v_up,  d_up ] = nearest_vertex_to_point(V, mouthUpper);
+    [v_lo,  d_lo ] = nearest_vertex_to_point(V, mouthLower);
 
     if verbose
-        fprintf('identify_sharp_pencil_geom_ids: nearest vertex to tip = %d, dist = %.3e\n', ...
-            v_tip, dminV);
+        fprintf('identify_sharp_pencil_geom_ids: v_tip = %d, dist = %.3e\n', v_tip, d_tip);
+        fprintf('identify_sharp_pencil_geom_ids: v_up  = %d, dist = %.3e\n', v_up,  d_up);
+        fprintf('identify_sharp_pencil_geom_ids: v_lo  = %d, dist = %.3e\n', v_lo,  d_lo);
     end
 
-    % -------------------- edge identification --------------------
+    if v_tip == v_up || v_tip == v_lo || v_up == v_lo
+        error('identify_sharp_pencil_geom_ids:VertexCollision', ...
+            ['The identified geometry vertices are not distinct. ', ...
+             'Check Tol or the appended-hole geometry.']);
+    end
+
+    % ------------------------------------------------------------
+    % geometry edges: identify by endpoint vertex pairs
+    % ------------------------------------------------------------
     nEdges = get_num_edges(geom);
 
-    scoreU = inf(nEdges,1);
-    scoreL = inf(nEdges,1);
+    e_upper = NaN;
+    e_lower = NaN;
 
     for eid = 1:nEdges
-        [Pe, ok] = sample_geom_edge_points(geom, eid, nSample);
-        if ~ok || size(Pe,1) < 2
+        [Pend, ok] = sample_geom_edge_endpoints(geom, eid);
+        if ~ok || size(Pend,1) ~= 2
             continue;
         end
 
-        scoreU(eid) = edge_to_segment_score(Pe, segU);
-        scoreL(eid) = edge_to_segment_score(Pe, segL);
-    end
+        [va, da] = nearest_vertex_to_point(V, Pend(1,:));
+        [vb, db] = nearest_vertex_to_point(V, Pend(2,:));
 
-    if ~any(isfinite(scoreU)) || ~any(isfinite(scoreL))
-        error('identify_sharp_pencil_geom_ids:NoFiniteEdgeMatches', ...
-        'Could not identify appended-pencil edges from the PDE geometry.');
-    end
+        % Skip if one of the sampled endpoints is not close to any geometry vertex
+        if da > 100*tol || db > 100*tol
+            continue;
+        end
 
-    [bestU, e_upper] = min(scoreU);
-    [bestL, e_lower] = min(scoreL);
-
-    if ~isfinite(bestU) || ~isfinite(bestL)
-        error('identify_sharp_pencil_geom_ids:BadEdgeMatches', ...
-            'Edge identification failed: non-finite score.');
-    end
-
-    % If both segments accidentally chose the same edge, resolve by second best
-    if e_upper == e_lower
-        scoreL2 = scoreL;
-        scoreL2(e_upper) = inf;
-        [bestL2, e_lower2] = min(scoreL2);
-
-        scoreU2 = scoreU;
-        scoreU2(e_lower) = inf;
-        [bestU2, e_upper2] = min(scoreU2);
-
-        % pick the better of the two conflict resolutions
-        if bestU + bestL2 <= bestL + bestU2
-            e_lower = e_lower2;
-            bestL   = bestL2;
-        else
-            e_upper = e_upper2;
-            bestU   = bestU2;
+        if same_unordered_pair([va vb], [v_up v_tip])
+            e_upper = eid;
+        elseif same_unordered_pair([va vb], [v_tip v_lo])
+            e_lower = eid;
         end
     end
 
+    if ~isfinite(e_upper)
+        error('identify_sharp_pencil_geom_ids:UpperEdgeNotFound', ...
+            'Could not identify the upper sharp-pencil edge from geometry endpoints.');
+    end
+    if ~isfinite(e_lower)
+        error('identify_sharp_pencil_geom_ids:LowerEdgeNotFound', ...
+            'Could not identify the lower sharp-pencil edge from geometry endpoints.');
+    end
+
+    if e_upper == e_lower
+        error('identify_sharp_pencil_geom_ids:EdgeCollision', ...
+            'Upper and lower sharp-pencil edges were identified as the same edge.');
+    end
+
     if verbose
-        fprintf('identify_sharp_pencil_geom_ids: upper edge = %d, score = %.3e\n', ...
-            e_upper, bestU);
-        fprintf('identify_sharp_pencil_geom_ids: lower edge = %d, score = %.3e\n', ...
-            e_lower, bestL);
+        fprintf('identify_sharp_pencil_geom_ids: e_upper = %d\n', e_upper);
+        fprintf('identify_sharp_pencil_geom_ids: e_lower = %d\n', e_lower);
     end
 
     ids = struct();
     ids.v_tip            = v_tip;
+    ids.v_up             = v_up;
+    ids.v_lo             = v_lo;
     ids.e_upper          = e_upper;
     ids.e_lower          = e_lower;
+    ids.e_tip            = [e_upper e_lower];
     ids.xtip             = xtip;
-    ids.face_upper       = segU;
-    ids.face_lower       = segL;
-    ids.vertex_dist      = dminV;
-    ids.edge_score_upper = bestU;
-    ids.edge_score_lower = bestL;
+    ids.mouthUpper       = mouthUpper;
+    ids.mouthLower       = mouthLower;
+    ids.vertex_dist_tip  = d_tip;
+    ids.vertex_dist_up   = d_up;
+    ids.vertex_dist_lo   = d_lo;
 end
 
 
@@ -168,11 +181,10 @@ end
 % =========================================================================
 
 function V = get_geom_vertices_2d(geom)
-% Try to extract geometry vertices as [Nv x 2].
+% Extract geometry vertices as [Nv x 2].
 
     V = [];
 
-    % Common case
     if isprop(geom, 'Vertices')
         VV = geom.Vertices;
         if isnumeric(VV)
@@ -184,7 +196,6 @@ function V = get_geom_vertices_2d(geom)
         end
     end
 
-    % Some releases may store vertices differently
     if isempty(V)
         try
             VV = geom.Vertices;
@@ -207,7 +218,6 @@ function nEdges = get_num_edges(geom)
         return;
     end
 
-    % fallback
     try
         nEdges = geom.NumEdges;
     catch
@@ -217,19 +227,19 @@ function nEdges = get_num_edges(geom)
 end
 
 
-function [P, ok] = sample_geom_edge_points(geom, edgeID, nSample)
-% Try several calling conventions to evaluate points on a geometry edge.
-% Returns sampled points P as [nSample x 2].
+function [Pend, ok] = sample_geom_edge_endpoints(geom, edgeID)
+% Evaluate only the two endpoints of a geometry edge.
+% Returns Pend as [2 x 2].
 
-    s = linspace(0,1,nSample);
-    P = [];
+    s = [0 1];
+    Pend = [];
     ok = false;
 
     % Try evaluate(geom, edgeID, s)
     try
         XY = evaluate(geom, edgeID, s);
-        P = normalize_xy_output(XY);
-        if size(P,1) >= 2
+        Pend = normalize_xy_output(XY);
+        if size(Pend,1) == 2
             ok = true;
             return;
         end
@@ -239,19 +249,19 @@ function [P, ok] = sample_geom_edge_points(geom, edgeID, nSample)
     % Try evaluate(geom, s, edgeID)
     try
         XY = evaluate(geom, s, edgeID);
-        P = normalize_xy_output(XY);
-        if size(P,1) >= 2
+        Pend = normalize_xy_output(XY);
+        if size(Pend,1) == 2
             ok = true;
             return;
         end
     catch
     end
 
-    % Try parameterized edge evaluation via geometry methods if available
+    % Try evaluateEdge(geom, edgeID, s)
     try
         XY = evaluateEdge(geom, edgeID, s); %#ok<NASGU>
-        P = normalize_xy_output(XY);
-        if size(P,1) >= 2
+        Pend = normalize_xy_output(XY);
+        if size(Pend,1) == 2
             ok = true;
             return;
         end
@@ -261,7 +271,7 @@ end
 
 
 function P = normalize_xy_output(XY)
-% Normalize sampled edge output to [N x 2].
+% Normalize edge-evaluation output to [N x 2].
 
     P = [];
 
@@ -277,47 +287,36 @@ function P = normalize_xy_output(XY)
 end
 
 
-function score = edge_to_segment_score(Pe, seg)
-% Score how well sampled geometry edge Pe matches target segment seg=[A;B].
+function [ivid, dmin] = nearest_vertex_to_point(V, x)
+% Find the nearest geometry vertex to point x.
 
-    A = seg(1,:);
-    B = seg(2,:);
-
-    % sample-to-segment distance
-    dCurve = point_to_segment_distance(Pe, A, B);
-    meanCurve = mean(dCurve);
-
-    % endpoint match score, allowing reversed orientation
-    E1 = Pe(1,:);
-    E2 = Pe(end,:);
-
-    sdir = norm(E1 - A) + norm(E2 - B);
-    srev = norm(E1 - B) + norm(E2 - A);
-    endScore = min(sdir, srev);
-
-    % midpoint proximity is a useful stabilizer
-    Mseg = 0.5*(A + B);
-    Medg = 0.5*(E1 + E2);
-    midScore = norm(Medg - Mseg);
-
-    score = endScore + 0.5*midScore + 0.25*meanCurve;
+    d = vecnorm(V - x, 2, 2);
+    [dmin, ivid] = min(d);
 end
 
 
-function d = point_to_segment_distance(P, A, B)
-% Distance from each point row in P to the segment AB.
+function tf = same_unordered_pair(a, b)
+% True if 1x2 integer arrays a and b match as unordered pairs.
 
-    AB = B - A;
-    L2 = max(dot(AB, AB), 1e-30);
+    tf = isequal(sort(a(:).'), sort(b(:).'));
+end
 
-    t = ((P - A) * AB.') / L2;
-    t = max(0, min(1, t));
 
-    Q = A + t .* AB;
-    d = vecnorm(P - Q, 2, 2);
+function Pfar = farther_endpoint(seg, xref)
+% Return the segment endpoint farther from xref.
+
+    d1 = norm(seg(1,:) - xref);
+    d2 = norm(seg(2,:) - xref);
+
+    if d1 >= d2
+        Pfar = seg(1,:);
+    else
+        Pfar = seg(2,:);
+    end
 end
 
 
 function L = segment_length(seg)
     L = norm(seg(2,:) - seg(1,:));
 end
+
