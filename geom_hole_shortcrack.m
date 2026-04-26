@@ -86,7 +86,7 @@ function G2 = geom_hole_shortcrack(C, I, theta, varargin)
     end
 
     % crack polyline: just one straight segment in this first paper
-    nseg = 5;
+    nseg = 2;
     s = linspace(0,1,nseg).';
     P = x0 + s.*(xtip - x0);
 
