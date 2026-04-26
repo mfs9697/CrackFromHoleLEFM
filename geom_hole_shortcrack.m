@@ -438,20 +438,6 @@ function hole = get_single_circular_hole(C)
     must(hole, 'r');
 end
 
-
-function v = normalize_row(v)
-%NORMALIZE_ROW Normalize a row vector.
-
-    v = v(:).';
-    nv = norm(v);
-    if nv <= 0
-        error('geom_hole_shortcrack:ZeroVector', ...
-            'Cannot normalize a zero vector.');
-    end
-    v = v / nv;
-end
-
-
 function edgeSets = build_edge_sets_basic(p, A, B, holes)
 %BUILD_EDGE_SETS_BASIC Basic geometric boundary-node sets.
 % Fallback only.

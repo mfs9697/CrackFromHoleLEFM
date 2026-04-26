@@ -240,76 +240,9 @@ function phiArc = long_circle_arc_excluding_point(phi_start, phi_end, phi_excl, 
     end
 end
 
-
-function v = normalize_row(v)
-    v = v(:).';
-    nv = norm(v);
-    if nv <= 0
-        error('build_appended_hole_loop:ZeroVector', ...
-            'Cannot normalize a zero vector.');
-    end
-    v = v / nv;
-end
-
-
-function s = lower_safe(x)
-    if isstring(x)
-        x = char(x);
-    end
-    if ~ischar(x)
-        error('build_appended_hole_loop:BadStringInput', ...
-            'Expected char or string input.');
-    end
-    s = x;
-    mask = (s >= 'A') & (s <= 'Z');
-    s(mask) = char(double(s(mask)) + ('a' - 'A'));
-end
-
-
 function x = wrap_2pi(x)
     x = mod(x, 2*pi);
     if x < 0
         x = x + 2*pi;
-    end
-end
-
-
-function P2 = remove_consecutive_duplicates(P, tol)
-    if isempty(P)
-        P2 = P;
-        return;
-    end
-    keep = true(size(P,1),1);
-    for i = 2:size(P,1)
-        if norm(P(i,:) - P(i-1,:), inf) <= tol
-            keep(i) = false;
-        end
-    end
-    P2 = P(keep,:);
-end
-
-
-function P2 = remove_last_if_equal_first(P, tol)
-    if size(P,1) >= 2 && norm(P(end,:) - P(1,:), inf) <= tol
-        P2 = P(1:end-1,:);
-    else
-        P2 = P;
-    end
-end
-
-
-function A = signed_polygon_area(P)
-    x = P(:,1);
-    y = P(:,2);
-    x2 = [x(2:end); x(1)];
-    y2 = [y(2:end); y(1)];
-    A = 0.5 * sum(x .* y2 - x2 .* y);
-end
-
-
-function must_field(S, field)
-    if ~isfield(S, field) || isempty(S.(field))
-        error('build_appended_hole_loop:MissingField', ...
-            'Required field "%s" is missing or empty.', field);
     end
 end

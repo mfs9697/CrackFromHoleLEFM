@@ -32,7 +32,7 @@ function [mdl, dl, bt, gd, ns, sf] = build_pde_geometry_with_holes(BoundOuter, h
 
     % Clean and standardize outer loop
     BoundOuter = remove_duplicate_last_point(BoundOuter);
-    BoundOuter = remove_consecutive_duplicates(BoundOuter);
+    BoundOuter = remove_consecutive_duplicates(BoundOuter,1e-12);
 
     if size(BoundOuter,1) < 3
         error('build_pde_geometry_with_holes:DegenerateOuter', ...
@@ -49,7 +49,7 @@ function [mdl, dl, bt, gd, ns, sf] = build_pde_geometry_with_holes(BoundOuter, h
         validate_loop(holeLoops{k}, sprintf('holeLoops{%d}', k));
 
         H = remove_duplicate_last_point(holeLoops{k});
-        H = remove_consecutive_duplicates(H);
+        H = remove_consecutive_duplicates(H,1e-12);
 
         if size(H,1) < 3
             error('build_pde_geometry_with_holes:DegenerateHole', ...
@@ -93,7 +93,6 @@ function [mdl, dl, bt, gd, ns, sf] = build_pde_geometry_with_holes(BoundOuter, h
     geometryFromEdges(mdl, dl);
 end
 
-
 % -------------------------------------------------------------------------
 function col = polygon_gd_column(P)
 %POLYGON_GD_COLUMN Build one decsg polygon column for loop P.
@@ -110,7 +109,6 @@ function col = polygon_gd_column(P)
     col = [2; Nv; P(:,1); P(:,2)];
 end
 
-
 % -------------------------------------------------------------------------
 function gd = pack_gd_columns(cols)
 %PACK_GD_COLUMNS Pad variable-length decsg columns and concatenate.
@@ -124,7 +122,6 @@ function gd = pack_gd_columns(cols)
     end
 end
 
-
 % -------------------------------------------------------------------------
 function validate_loop(P, name)
 %VALIDATE_LOOP Basic input validation for a polygon loop.
@@ -135,7 +132,6 @@ function validate_loop(P, name)
     end
 end
 
-
 % -------------------------------------------------------------------------
 function P = remove_duplicate_last_point(P)
     if size(P,1) >= 2
@@ -144,19 +140,6 @@ function P = remove_duplicate_last_point(P)
         end
     end
 end
-
-
-% -------------------------------------------------------------------------
-function P = remove_consecutive_duplicates(P)
-    keep = true(size(P,1),1);
-    for i = 2:size(P,1)
-        if norm(P(i,:) - P(i-1,:), inf) == 0
-            keep(i) = false;
-        end
-    end
-    P = P(keep,:);
-end
-
 
 % -------------------------------------------------------------------------
 function A = polygon_signed_area(P)

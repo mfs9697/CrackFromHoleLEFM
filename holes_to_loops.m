@@ -69,7 +69,7 @@ function holeLoops = holes_to_loops(holes)
         end
 
         H = remove_duplicate_last_point(H);
-        H = remove_consecutive_duplicates(H);
+        H = remove_consecutive_duplicates(H,1e-12);
 
         if size(H,1) < 3
             error('holes_to_loops:DegenerateLoop', ...
@@ -152,20 +152,6 @@ function P = remove_duplicate_last_point(P)
             P(end,:) = [];
         end
     end
-end
-
-
-% -------------------------------------------------------------------------
-function P = remove_consecutive_duplicates(P)
-%REMOVE_CONSECUTIVE_DUPLICATES Remove repeated neighboring vertices.
-
-    keep = true(size(P,1),1);
-    for i = 2:size(P,1)
-        if norm(P(i,:) - P(i-1,:), inf) == 0
-            keep(i) = false;
-        end
-    end
-    P = P(keep,:);
 end
 
 

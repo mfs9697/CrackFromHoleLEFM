@@ -255,8 +255,8 @@ function edgeSets = build_edge_sets(p, A, B, holes)
 
         switch lower(strtrim(hk.type))
             case 'circle'
-                must_field(hk, 'center', 'geom_hole_only:BadHoleSpec');
-                must_field(hk, 'r',      'geom_hole_only:BadHoleSpec');
+                must_field(hk, 'center');
+                must_field(hk, 'r');
 
                 c = hk.center(:).';
                 r = hk.r;
@@ -339,16 +339,6 @@ function must(S, field)
             'Required field C.%s is missing or empty.', field);
     end
 end
-
-
-function must_field(S, field, errid)
-%MUST_FIELD Error if struct field does not exist or is empty.
-
-    if ~isfield(S, field) || isempty(S.(field))
-        error(errid, 'Required field "%s" is missing or empty.', field);
-    end
-end
-
 
 function v = getf(S, field, default)
 %GETF Get struct field or default.

@@ -86,8 +86,8 @@ function D = build_domain_hole_pencil_polyline(Pmid, A, B, holes, w, varargin)
     parse(p, varargin{:});
 
     corner_tol = p.Results.corner_tol;
-    epsMode    = tolower_safe(p.Results.epsMode);
-    orient     = tolower_safe(p.Results.orientation);
+    epsMode    = lower_safe(p.Results.epsMode);
+    orient     = lower_safe(p.Results.orientation);
     nArc       = p.Results.nArc;
 
     mouth_eps = p.Results.mouth_eps;
@@ -363,16 +363,6 @@ function tf = point_in_box(x, box, tol)
          (x(2) >= box(3) - tol) && (x(2) <= box(4) + tol);
 end
 
-
-function A = signed_polygon_area(P)
-    x = P(:,1);
-    y = P(:,2);
-    x2 = [x(2:end); x(1)];
-    y2 = [y(2:end); y(1)];
-    A = 0.5 * sum(x .* y2 - x2 .* y);
-end
-
-
 function d = point_polygon_distance(x0, V)
     if isempty(V)
         d = inf;
@@ -389,55 +379,4 @@ function d = point_polygon_distance(x0, V)
         B = V(k+1,:);
         d = min(d, point_segment_distance(x0, A, B));
     end
-end
-
-
-function d = point_segment_distance(P, A, B)
-    AB = B - A;
-    L2 = dot(AB, AB);
-
-    if L2 <= 0
-        d = norm(P - A);
-        return;
-    end
-
-    t = dot(P - A, AB) / L2;
-    t = max(0, min(1, t));
-
-    Q = A + t * AB;
-    d = norm(P - Q);
-end
-
-
-function v = normalize_row(v)
-    v = v(:).';
-    nv = norm(v);
-    if nv <= 0
-        error('build_domain_hole_pencil_polyline:ZeroVector', ...
-            'Cannot normalize a zero vector.');
-    end
-    v = v / nv;
-end
-
-
-function must_field(S, field)
-    if ~isfield(S, field) || isempty(S.(field))
-        error('build_domain_hole_pencil_polyline:MissingHoleField', ...
-            'Required field "%s" is missing or empty.', field);
-    end
-end
-
-
-function s = tolower_safe(x)
-    if isstring(x)
-        x = char(x);
-    end
-    if ~ischar(x)
-        error('build_domain_hole_pencil_polyline:BadStringInput', ...
-            'Expected char or string input.');
-    end
-
-    s = x;
-    mask = (s >= 'A') & (s <= 'Z');
-    s(mask) = char(double(s(mask)) + ('a' - 'A'));
 end

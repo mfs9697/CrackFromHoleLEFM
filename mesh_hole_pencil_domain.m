@@ -356,16 +356,6 @@ function validate_polygon(P, name)
     end
 end
 
-
-function A = signed_polygon_area(P)
-    x = P(:,1);
-    y = P(:,2);
-    x2 = [x(2:end); x(1)];
-    y2 = [y(2:end); y(1)];
-    A = 0.5 * sum(x .* y2 - x2 .* y);
-end
-
-
 function plot_closed_polygon(P, style, lw)
     plot([P(:,1); P(1,1)], [P(:,2); P(1,2)], style, 'LineWidth', lw);
 end

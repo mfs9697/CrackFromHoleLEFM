@@ -321,11 +321,3 @@ end
 function L = segment_length(seg)
     L = norm(seg(2,:) - seg(1,:));
 end
-
-
-function must_field(S, field)
-    if ~isfield(S, field) || isempty(S.(field))
-        error('identify_sharp_pencil_geom_ids:MissingField', ...
-            'Required field "%s" is missing or empty.', field);
-    end
-end
