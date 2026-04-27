@@ -21,6 +21,7 @@
 \usepackage{bm}
 \usepackage{graphicx}
 \usepackage{booktabs}
+\usepackage{enumitem}
 
 % --------------------------------------------------
 % Section styling
@@ -33,7 +34,7 @@
 % Title
 % --------------------------------------------------
 \title{\textbf{Two-Stage Crack Initiation from a Hole Boundary:\\
-		Model Formulation, Implementation, and Current Progress}}
+		Current Formulation, Implementation, and Progress}}
 \author{}
 \date{}
 
@@ -43,145 +44,117 @@
 	
 	\section{Problem Statement}
 	
-	The goal of this work is to extend a crack path modeling framework (previously developed for crack kinking and CZM-based propagation) to the problem of \textbf{crack initiation at a hole boundary}.
+	The aim of this work is to extend the existing crack-path framework to the problem of \textbf{crack initiation at a hole boundary} and its subsequent treatment within Linear Elastic Fracture Mechanics (LEFM).
 	
-	The challenge arises from a fundamental limitation of Linear Elastic Fracture Mechanics (LEFM):
+	The central difficulty is well known: LEFM assumes the presence of a pre-existing crack and therefore does not directly determine \emph{where} a crack starts or \emph{when} crack initiation occurs. To overcome this limitation, we use a \textbf{two-stage procedure}:
 	
-	\begin{itemize}
-		\item LEFM assumes a \emph{pre-existing crack}.
-		\item It does not provide a direct mechanism for \emph{crack initiation}.
-	\end{itemize}
-	
-	To overcome this, we propose a \textbf{two-stage approach}:
-	
-	\begin{enumerate}
-		\item \textbf{Stage I (Initiation):} Solve the elastic problem without a crack and determine where and when a crack should initiate using a stress-based criterion.
-		\item \textbf{Stage II (Post-initiation):} Introduce a short crack and analyze it using standard fracture mechanics tools.
+	\begin{enumerate}[label=\textbf{Stage \Roman*.}]
+		\item Solve the elastic problem for the uncracked plate with hole(s), determine the critical boundary point from a stress-based criterion, and compute the load at which initiation occurs.
+		\item Introduce a short crack at the detected boundary point, construct a suitable geometric model for the post-initiation configuration, and prepare the mesh for subsequent fracture-mechanics analysis (stress intensity factors, kinking criterion, and crack path continuation).
 	\end{enumerate}
 	
-	This framework allows a consistent comparison between:
-	\begin{itemize}
-		\item LEFM-based modeling (new short-crack approach),
-		\item CZM-based crack growth (existing work).
-	\end{itemize}
+	The present report summarizes the current version of this framework and the changes introduced during the latest development stage.
 	
 	\section{Mathematical Model}
 	
 	\subsection{Stage I: Elastic Problem Without Crack}
 	
-	We consider a plate with one or more holes. The governing equations are:
-	
+	Let $\Omega$ denote a plate with one or more holes. The governing equations are those of linear elasticity:
 	\begin{align}
-		\nabla \cdot \boldsymbol{\sigma} &= \mathbf{0} \quad \text{in } \Omega, \\
-		\boldsymbol{\sigma} &= \mathbf{C} : \boldsymbol{\varepsilon}, \\
-		\boldsymbol{\varepsilon} &= \frac{1}{2}(\nabla \mathbf{u} + \nabla \mathbf{u}^T),
+		\nabla \cdot \bm{\sigma} &= \bm{0} \quad \text{in } \Omega, \\
+		\bm{\sigma} &= \mathbf{C} : \bm{\varepsilon}, \\
+		\bm{\varepsilon} &= \frac{1}{2}\left(\nabla \bm{u} + \nabla \bm{u}^{T}\right),
 	\end{align}
+	with the prescribed loading and boundary conditions.
 	
-	with appropriate boundary conditions.
-	
-	We solve this problem under a \textbf{unit load} and compute the circumferential stress along the hole boundary:
+	The problem is solved under a \textbf{unit remote load}. Along the hole boundary, the circumferential stress
 	\[
-	\sigma_{\theta\theta}(\phi).
+	\sigma_{\theta\theta}(\phi)
 	\]
+	is sampled and used to detect the most critical point.
 	
 	\subsection{Initiation Criterion}
 	
-	We assume crack initiation occurs when:
+	Crack initiation is assumed to occur when the tensile part of the circumferential stress reaches a material threshold:
 	\[
 	\sigma_{\theta\theta}^{+}(\phi_*) = \sigma_c,
 	\]
-	where:
-	\begin{itemize}
-		\item $\sigma_c$ is a material strength parameter,
-		\item $\phi_*$ is the angle where $\sigma_{\theta\theta}$ is maximal.
-	\end{itemize}
+	where $\sigma_c$ is the material strength parameter and $\phi_*$ is the angle at which the positive circumferential stress is maximal.
 	
-	Since the problem is solved with unit load, we compute a scaling factor:
+	Since the elastic problem is solved under unit load, the initiation load factor is
 	\[
-	\lambda_{\text{ini}} = \frac{\sigma_c}{\max_{\phi} \sigma_{\theta\theta}^{+}(\phi)}.
+	\lambda_{\mathrm{ini}} = \frac{\sigma_c}{\max_{\phi}\sigma_{\theta\theta}^{+}(\phi)}.
+	\]
+	The corresponding initiation point is
+	\[
+	\bm{x}_* = \bm{x}(\phi_*).
 	\]
 	
-	The initiation point is:
+	\subsection{Local Frame at the Initiation Point}
+	
+	At $\bm{x}_*$ we define the local basis:
+	\begin{itemize}
+		\item $\bm{n}_{\mathrm{mat}}$ --- the normal directed from the hole boundary into the material,
+		\item $\bm{t}$ --- the positively oriented tangent along the boundary.
+	\end{itemize}
+	
+	A key correction established during development is that, for a circular hole, the radial direction from the hole center to the boundary point already points \emph{into the material}; thus no sign reversal is needed for radial crack growth.
+	
+	\subsection{Stage II: Initial Short Crack}
+	
+	A short crack of length $a_0$ is introduced from the initiation point:
 	\[
-	\mathbf{x}_* = \mathbf{x}(\phi_*).
+	\bm{x}_{\mathrm{tip}} = \bm{x}_* + a_0\,\bm{e}_{\mathrm{dir}},
 	\]
-	
-	\subsection{Local Frame at Initiation}
-	
-	At $\mathbf{x}_*$ we define:
-	\begin{itemize}
-		\item $\mathbf{n}_{\text{mat}}$ --- normal pointing into the material,
-		\item $\mathbf{t}$ --- tangent vector along the boundary.
-	\end{itemize}
-	
-	Important correction:
-	\begin{itemize}
-		\item The radial direction from the hole center is \textbf{already pointing into the material}.
-		\item This vector must be used directly for crack growth direction.
-	\end{itemize}
-	
-	\subsection{Stage II: Short Crack Initialization}
-	
-	A short crack of length $a_0$ is introduced:
+	where
 	\[
-	\mathbf{x}_{\text{tip}} = \mathbf{x}_* + a_0 \, \mathbf{e}_{\text{dir}},
+	\bm{e}_{\mathrm{dir}} = \cos\theta\,\bm{n}_{\mathrm{mat}} + \sin\theta\,\bm{t}.
 	\]
+	Here $\theta$ is the trial crack angle relative to the inward normal. In particular, $\theta=0$ corresponds to radial inward growth.
 	
-	where:
+	\section{Revision of the Stage II Geometry}
+	
+	\subsection{Earlier Channel-Based Idea}
+	
+	An earlier version of the Stage-II geometry used a narrow wedge-like channel built around the short-crack midline. Although this construction was useful at an exploratory stage, it mixed geometric modeling and mesh control too strongly and led to difficulties near the mouth and tip.
+	
+	\subsection{Current Sharp Appended-Hole Construction}
+	
+	The current formulation replaces the channel approach by a \textbf{merged sharp appended-hole geometry}.
+	
+	The idea is the following:
+	\begin{itemize}
+		\item a small arc segment is removed from the touched circular hole around the initiation point,
+		\item two straight faces are drawn from the arc endpoints to a single sharp tip,
+		\item the result is one modified inner boundary: the original hole with a sharp appended pencil.
+	\end{itemize}
+	
+	Thus, the Stage-II domain is no longer represented as
 	\[
-	\mathbf{e}_{\text{dir}} = \cos\theta \, \mathbf{n}_{\text{mat}} + \sin\theta \, \mathbf{t}.
+	\Omega = \text{Rectangle} \setminus (\text{Hole} \cup \text{Channel}),
 	\]
-	
-	For $\theta = 0$, the crack propagates \textbf{radially into the solid}.
-	
-	\section{Geometric Construction}
-	
-	\subsection{Stage I Geometry}
-	
-	\begin{itemize}
-		\item Plate with circular hole(s)
-		\item Unstructured triangular mesh
-	\end{itemize}
-	
-	\subsection{Stage II Geometry}
-	
-	The domain is constructed as:
+	but rather as
 	\[
-	\Omega = \text{Rectangle} \setminus (\text{Hole} \cup \text{Channel})
+	\Omega = \text{Rectangle} \setminus (\text{Modified hole loop}),
 	\]
+	where the modified hole loop already contains the short-crack pencil.
 	
-	where the channel represents the short crack.
-	
-	\subsection{Channel Construction}
-	
-	Key requirements:
+	This change has several advantages:
 	\begin{itemize}
-		\item The channel must start at the hole boundary
-		\item It must lie entirely in the material
-		\item Width must be zero at the mouth and increase smoothly
+		\item the crack-start geometry is sharper and mechanically more meaningful;
+		\item the two crack faces are represented explicitly as geometric edges;
+		\item local mesh refinement can be imposed through PDE Toolbox geometry labels rather than by artificial face discretization or tip rounding.
 	\end{itemize}
 	
-	Final adopted construction:
+	\subsection{Current Parameters of the Appended Pencil}
 	
-	\begin{itemize}
-		\item Midline: discretized segment from $\mathbf{x}_*$ to $\mathbf{x}_{\text{tip}}$
-		\item Width:
-		\[
-		w(s) = w \cdot s, \quad s \in [0,1]
-		\]
-		\item Channel polygon built using normal offsets:
-		\[
-		\mathbf{x}(s) \pm w(s)\mathbf{n}(s)
-		\]
-	\end{itemize}
-	
-	This produces a smooth \textbf{wedge-like channel}.
+	The narrowness of the appended mouth is now controlled by a small half-shift parameter. In the current working version, this parameter was reduced substantially in order to avoid sliver elements after the later collapse of the two crack faces onto the midline. The present value is small enough to keep the pencil narrow, while the meshing remains stable.
 	
 	\section{Implementation Summary}
 	
-	\subsection{Stage I}
+	\subsection{Stage I Components}
 	
-	Implemented:
+	The following components are implemented and working:
 	\begin{itemize}
 		\item \texttt{geom\_hole\_only.m}
 		\item \texttt{solve\_hole\_only.m}
@@ -189,96 +162,198 @@
 		\item \texttt{find\_hole\_initiation\_point.m}
 	\end{itemize}
 	
-	Results:
+	Stage I now robustly provides:
 	\begin{itemize}
-		\item Correct stress distribution
-		\item Stable identification of $\phi_*$ and $\lambda_{\text{ini}}$
+		\item the stress distribution along the hole boundary,
+		\item the critical boundary point,
+		\item the load factor for crack initiation,
+		\item the local basis $(\bm{n}_{\mathrm{mat}},\bm{t})$ at the initiation point.
 	\end{itemize}
 	
-	\subsection{Stage II Geometry}
+	\subsection{Stage II Geometry Components}
 	
-	Implemented:
+	The following Stage-II geometry components have now been revised or rewritten:
 	\begin{itemize}
 		\item \texttt{geom\_hole\_shortcrack.m}
+		\item \texttt{build\_appended\_hole\_loop.m}
 		\item \texttt{build\_domain\_hole\_pencil\_polyline.m}
 	\end{itemize}
 	
-	Key fixes:
+	Their current behavior is:
 	\begin{itemize}
-		\item Corrected crack direction (was initially reversed)
-		\item Ensured channel lies outside the hole
-		\item Enforced zero-width at the mouth
-		\item Introduced smooth width ramp
+		\item the crack midline is defined from the initiation point to the short-crack tip;
+		\item the touched circular hole is replaced by a merged sharp appended-hole loop;
+		\item the Stage-II geometric description is now \emph{merged-only}, i.e.\ the old separate channel branch has been removed from the main route.
 	\end{itemize}
 	
-	\subsection{Meshing}
+	\subsection{Stage II Meshing}
 	
-	Implemented:
+	The meshing routine
 	\begin{itemize}
 		\item \texttt{mesh\_hole\_pencil\_domain.m}
 	\end{itemize}
+	has been substantially simplified and updated.
 	
-	Current behavior:
+	Its current logic is:
+	\begin{enumerate}
+		\item build the PDE geometry for the rectangle minus the appended-hole loop;
+		\item identify the sharp pencil tip vertex and the two pencil-face edges;
+		\item apply local refinement at the tip and along the two crack faces;
+		\item generate a T3 mesh for the pre-collapse geometry.
+	\end{enumerate}
+	
+	\subsection{Automatic Recovery of Geometry Labels}
+	
+	A major issue during this development stage was the automatic determination of the geometry labels:
 	\begin{itemize}
-		\item Domain meshed as:
-		\[
-		\text{Rectangle} - \text{Hole} - \text{Channel}
-		\]
-		\item Suitable for geometry verification and further development
+		\item tip vertex label,
+		\item upper and lower pencil-edge labels.
 	\end{itemize}
+	
+	A new helper,
+	\begin{itemize}
+		\item \texttt{identify\_sharp\_pencil\_geom\_ids.m},
+	\end{itemize}
+	was introduced to perform this task from the PDE geometry.
+	
+	The current logic is:
+	\begin{itemize}
+		\item identify the geometry vertices nearest to the sharp tip and the two mouth points;
+		\item identify the two pencil edges from geometric information.
+	\end{itemize}
+	
+	However, in the current MATLAB environment, the pure geometry route is not always sufficient for robust edge identification. Therefore a fallback strategy was implemented in the meshing workflow:
+	\begin{itemize}
+		\item if geometry-only recovery fails, a temporary background mesh is generated;
+		\item the required geometry labels are then recovered from that temporary mesh;
+		\item the final mesh is regenerated with local refinement using the recovered labels.
+	\end{itemize}
+	
+	This fallback now works reliably and was successfully tested in the current version.
+	
+	\section{Collapse of the Two Pencil Faces onto the Crack Midline}
+	
+	A new step has now been introduced:
+	\begin{itemize}
+		\item \texttt{collapse\_pencil\_faces\_to\_midline.m}
+	\end{itemize}
+	together with the diagnostic plotting routine
+	\begin{itemize}
+		\item \texttt{plot\_collapsed\_pencil\_mesh.m}.
+	\end{itemize}
+	
+	The aim of this step is to convert the two-face pencil geometry into a true crack representation suitable for LEFM post-processing.
+	
+	The present collapse logic is as follows:
+	\begin{itemize}
+		\item the upper and lower face node sets are identified from the two pencil edges;
+		\item their coordinates are projected onto the crack midline;
+		\item the node numbering remains topologically distinct on the two faces, while the geometry collapses to a coincident crack line.
+	\end{itemize}
+	
+	This is the correct intermediate state before:
+	\begin{itemize}
+		\item upgrading the mesh to quadratic order,
+		\item computing stress intensity factors,
+		\item determining the LEFM kinking angle.
+	\end{itemize}
+	
+	\section{Representative Current Run}
+	
+	For the current test case, the framework produces the following representative values:
+	\begin{itemize}
+		\item initiation angle:
+		\[
+		\phi_* = 5.772677~\text{rad} = 330.750^\circ,
+		\]
+		\item initiation point:
+		\[
+		\bm{x}_* = [0.17617488,\,-0.07465864],
+		\]
+		\item critical positive circumferential stress under unit load:
+		\[
+		\max \sigma_{\theta\theta}^{+} = 5.30349354,
+		\]
+		\item initiation load factor:
+		\[
+		\lambda_{\mathrm{ini}} = 56.5664873,
+		\]
+		\item short-crack tip for $\theta=0$:
+		\[
+		\bm{x}_{\mathrm{tip}} = [0.17966486,\,-0.07661312].
+		\]
+	\end{itemize}
+	
+	For the current appended-hole mesh:
+	\begin{itemize}
+		\item appended-hole area is successfully computed,
+		\item geometry labels are recovered automatically via the fallback strategy,
+		\item the Stage-II mesh is generated successfully with
+		\[
+		1222 \text{ nodes}, \qquad 2182 \text{ elements}.
+		\]
+	\end{itemize}
+	
+	Thus, the current pipeline is operational up to the pre-collapse and initial collapse stages.
 	
 	\section{Current Status}
 	
-	The following components are now working:
-	
+	At present, the following components are working:
 	\begin{itemize}
-		\item Stage I elastic solution
-		\item Stress-based initiation criterion
-		\item Correct local frame definition
-		\item Short crack construction
-		\item Physically consistent channel geometry
-		\item Initial meshing of combined domain
+		\item Stage I elastic solution;
+		\item stress-based crack-initiation criterion;
+		\item correct local frame at the hole boundary;
+		\item short-crack initialization for a prescribed trial angle;
+		\item merged sharp appended-hole geometry;
+		\item T3 meshing of the appended-hole geometry;
+		\item automatic recovery of the relevant geometry labels for local refinement;
+		\item initial implementation of collapse of the two crack faces onto the midline;
+		\item visualization of the collapsed configuration.
 	\end{itemize}
 	
 	\section{Open Issues and Next Steps}
 	
-	\subsection{Immediate}
+	\subsection{Immediate Technical Tasks}
 	
+	The immediate next tasks are:
 	\begin{itemize}
-		\item Improve mesh quality near crack mouth
-		\item Verify robustness for different hole positions and loads
+		\item verify the collapsed mesh carefully, especially near the mouth and the tip;
+		\item check whether any triangles invert after collapse;
+		\item confirm that the two collapsed crack-face node sets lie on the same midline as intended.
 	\end{itemize}
 	
-	\subsection{Core Development}
+	\subsection{Fracture-Mechanics Development}
 	
+	The next core development step is to move from the collapsed geometric crack to actual LEFM post-processing:
 	\begin{itemize}
-		\item Introduce true crack topology (duplicate nodes on faces)
-		\item Implement SIF extraction:
-		\begin{itemize}
-			\item $K_I$, $K_{II}$
-			\item Compare with LEFM predictions
-		\end{itemize}
+		\item generate the quadratic crack mesh after collapse;
+		\item compute $K_I$ and $K_{II}$ for the short crack;
+		\item determine the corresponding kinking angle;
+		\item compare the result with the expected LEFM criterion and with the previously developed crack-path framework.
 	\end{itemize}
 	
-	\subsection{Verification Strategy}
+	\subsection{Further Verification}
 	
+	Further verification should include:
 	\begin{itemize}
-		\item Compare with analytical solutions (hole + crack)
-		\item Compare with previous crack-kinking results
-		\item Compare with CZM simulations
+		\item sensitivity to the mouth half-shift parameter;
+		\item stability with respect to local mesh refinement near the tip;
+		\item comparison of the LEFM-based short-crack prediction with subsequent crack-path continuation;
+		\item later comparison with CZM-based results.
 	\end{itemize}
 	
 	\section{Conclusion}
 	
-	A consistent two-stage framework for crack initiation at a hole boundary has been established.
+	The two-stage framework for crack initiation from a hole boundary has advanced significantly during the current development stage.
 	
-	Key achievements:
+	The main new achievements are:
 	\begin{itemize}
-		\item Overcoming LEFM limitation via stress-based initiation
-		\item Correct geometric construction of short crack
-		\item Integration with existing crack-path infrastructure
+		\item replacement of the old channel-based Stage-II geometry by a sharp appended-hole formulation;
+		\item simplification of the geometry and meshing code to the merged-only route;
+		\item implementation of automatic recovery of the tip and crack-face geometry labels, with a working fallback strategy;
+		\item initial implementation of the collapse of the two pencil faces onto the crack midline.
 	\end{itemize}
 	
-	The next phase will focus on fracture mechanics analysis and validation.
+	As a result, the project is now positioned at the correct transition point from geometric construction to fracture-mechanics evaluation. The immediate next phase is the verification of the collapsed mesh and the computation of stress intensity factors and kinking directions for the short crack.
 	
 \end{document}
