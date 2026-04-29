@@ -89,9 +89,9 @@ C.solver.linear_solver  = 'backslash';
 
 %% ================== PLOTTING ==================
 % Centralized here so the driver no longer overrides them
-C.plot.show_mesh1        = true;
-C.plot.show_mesh2        = true;
-C.plot.show_stage1_stress = true;
+C.plot.show_mesh1        = false;
+C.plot.show_mesh2        = false;
+C.plot.show_stage1_stress = false;
 C.plot.show_stage2_scan   = true;
 
 end
