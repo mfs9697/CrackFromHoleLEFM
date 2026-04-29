@@ -38,7 +38,13 @@ function [KI, KII, Aux] = compute_SIF_for_stage2(C, G2, Mc, S2, varargin)
         rI = G2.tip.radiusJ;
     end
 
-    [KI, KII] = SIF_LEFM_circle2(meshSIF, S2.U, V, matSIF, rI);
+    %[KI, KII] = SIF_LEFM_circle2(meshSIF, S2.U, V, matSIF, rI);
+    [KI, KII, Dbg] = SIF_LEFM_circle2_debug(meshSIF, S2.U, V, matSIF, rI, ...
+    'nthet', 200, ...
+    'plot', true, ...
+    'verbose', true);
+
+Aux.Dbg = Dbg;
 
     Aux = struct();
     Aux.meshSIF = meshSIF;
