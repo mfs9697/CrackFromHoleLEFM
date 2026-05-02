@@ -69,13 +69,13 @@ fprintf('\n=== Stage II: mesh, appendix-length, and contour-radius sensitivity =
 % ------------------------------------------------------------
 
 % Appendix lengths to test
-a0_list = [C0.a0, 5*C0.a0, 10*C0.a0];
+a0_list = [4*C0.a0];
 
 % Mesh refinement
 meshScaleList = [0.4];
 
 % Angles
-thetaDegProbe = -2:.5:1;
+thetaDegProbe = [-10 -5 0 5 10];
 thetaProbe    = deg2rad(thetaDegProbe);
 
 % Use relative contour radius again
@@ -683,6 +683,7 @@ Aux.V = V;
 Aux.rI = rI;
 Aux.Dbg = Dbg;
 end
+
 function Summary = local_make_summary_table_with_a0(T)
 
 good = T.valid & isfinite(T.KI) & isfinite(T.KII_over_KI);

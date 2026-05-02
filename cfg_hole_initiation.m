@@ -16,7 +16,7 @@ C.B = 0.10;
 
 % Circular hole
 C.hole.type   = 'circle';
-C.hole.center = [0.150, -0.060];
+C.hole.center = [0.5*C.A, 0.0]; %C.hole.center = [0.150, -0.060];
 C.hole.r      = 0.030;
 C.hole.npoly  = 240;
 
