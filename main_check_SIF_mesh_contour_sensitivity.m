@@ -68,6 +68,9 @@ fprintf('\n=== Stage II: mesh, appendix-length, and contour-radius sensitivity =
 % Study controls
 % ------------------------------------------------------------
 
+sifMethod = 'interaction_EDI';   % 'circle2_debug' or 'interaction_EDI'
+innerFactorEDI = 0.25;
+
 % Appendix lengths to test
 a0_list = [4*C0.a0];
 

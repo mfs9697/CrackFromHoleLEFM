@@ -39,16 +39,15 @@ function [KI, KII, Aux] = compute_SIF_for_stage2(C, G2, Mc, S2, varargin)
     end
 
     %[KI, KII] = SIF_LEFM_circle2(meshSIF, S2.U, V, matSIF, rI);
-    [KI, KII, Dbg] = SIF_LEFM_circle2_debug(meshSIF, S2.U, V, matSIF, rI, ...
-    'nthet', 200, ...
-    'plot', true, ...
-    'verbose', true);
-
-Aux.Dbg = Dbg;
+        [KI, KII, Dbg] = SIF_LEFM_circle2_debug(meshSIF, S2.U, V, matSIF, rI, ...
+        'nthet', 200, ...
+        'plot', false, ...
+        'verbose', false);
 
     Aux = struct();
     Aux.meshSIF = meshSIF;
     Aux.matSIF  = matSIF;
     Aux.V       = V;
     Aux.rI      = rI;
+    Aux.Dbg     = Dbg;
 end

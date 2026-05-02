@@ -49,10 +49,13 @@ function [KI, KII, Aux] = compute_SIF_for_stage2_interaction(C, G2, Mc, S2, vara
         'AuxK', 1.0, ...
         'Verbose', logical(ip.Results.Verbose));
 
+    Aux.meshSIF = meshSIF;
+    Aux.matSIF = matSIF;
     Aux.V = V;
     Aux.domain = domain;
+
     Aux.r_inner = r_inner;
     Aux.r_outer = r_outer;
-    Aux.r_outer_over_a0 = r_outer / G2.crack.a0;
     Aux.r_inner_over_a0 = r_inner / G2.crack.a0;
+    Aux.r_outer_over_a0 = r_outer / G2.crack.a0;
 end
