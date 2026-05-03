@@ -60,27 +60,51 @@ if doPlotStage1
 end
 
 %% ============================================================
-% 2. Mesh + contour-radius sensitivity loop
+% 2. Mesh + contour-radius / EDI-domain sensitivity loop
 %% ============================================================
-fprintf('\n=== Stage II: mesh, appendix-length, and contour-radius sensitivity ===\n');
+fprintf('\n=== Stage II: mesh, appendix-length, and SIF-domain sensitivity ===\n');
 
 % ------------------------------------------------------------
 % Study controls
 % ------------------------------------------------------------
 
+% SIF extraction method:
+%   'circle2_debug'    : old circular mode-separation diagnostic
+%   'interaction_EDI'  : new equivalent-domain interaction integral
+sifMethod = 'interaction_EDI';
+
+% For interaction_EDI:
+% Existing rI/rI_over_a0 lists are interpreted as OUTER EDI-domain radii.
+% The inner radius is chosen as:
+%   r_inner = innerFactorEDI * r_outer
+innerFactorEDI = 0.25;
+
+% Appendix lengths to test
+a0_list = [4*C0.a0];
+
+% Mesh refinement
+meshScaleList = [0.4];
+
+% Angles
+thetaDegProbe = -1:0.5:3;
+thetaProbe    = deg2rad(thetaDegProbe);
+
+% Radius mode:
+%   'relative' : r_outer = rI_over_a0 * a0
+%   'absolute' : r_outer prescribed directly
 radiusMode = 'relative';
-a0_list = [C0.a0, 1.5*C0.a0, 2.0*C0.a0];
-meshScaleList = 0.25;
-thetaDegProbe = [0 1 2 3];
-thetaProbe = deg2rad(thetaDegProbe);
-rI_over_a0_list = [0.20 0.25 0.30 0.35 0.40 0.45 0.50];
 
-% Debug controls.
-useDebugSIF = true;      % true: call SIF_LEFM_circle2_debug through local call below
-debugVerbose = false;    % set true only for one or two selected cases
-debugPlot = false;       % set true only for one selected case
+% Relative outer radii
+rI_over_a0_list = 0.5:0.1:0.7;
 
-% Mesh plotting.
+% Absolute outer radii, used only if radiusMode = 'absolute'
+rI_abs_list = [];
+
+% Debug controls
+debugVerbose = false;
+debugPlot    = false;
+
+% Mesh plotting
 doPlotMeshes = false;
 
 % ------------------------------------------------------------
@@ -88,7 +112,6 @@ doPlotMeshes = false;
 % ------------------------------------------------------------
 rows = [];
 
-% Optional: store selected debug outputs for later inspection.
 DebugStore = struct();
 DebugStore.items = {};
 DebugStore.count = 0;
@@ -110,12 +133,12 @@ for ia = 1:numel(a0_list)
 
         meshScale = meshScaleList(im);
 
-        % Scale the mesh, then override the appendix length.
         C = local_scale_mesh_config(C0, meshScale);
         C.a0 = a0;
 
         fprintf('\n------------------------------------------------------------\n');
         fprintf('Mesh scale = %.3f\n', meshScale);
+        fprintf('SIF method = %s\n', sifMethod);
         fprintf('------------------------------------------------------------\n');
 
         for it = 1:numel(thetaProbe)
@@ -144,7 +167,7 @@ for ia = 1:numel(a0_list)
                     nNode3, nElem3, nNode6, nElem6);
 
                 % ----------------------------------------------------
-                % Choose contour-radius list for this case
+                % Choose outer-radius list for this case
                 % ----------------------------------------------------
                 switch lower(strtrim(radiusMode))
                     case 'relative'
@@ -164,21 +187,42 @@ for ia = 1:numel(a0_list)
                     rI = rI_list(ir);
                     rfac = rfac_list(ir);
 
+                    % For circle2_debug:
+                    %   rI = circular contour radius.
+                    %
+                    % For interaction_EDI:
+                    %   rI = r_outer, the outer EDI-domain radius.
+                    r_outer = rI;
+                    r_inner = innerFactorEDI * r_outer;
+
                     try
-                        if useDebugSIF
-                            [KI, KII, AuxSIF] = local_compute_SIF_for_stage2_debug( ...
-                                C, G2, Mc, S2, rI, ...
-                                'verbose', debugVerbose, ...
-                                'plot', debugPlot);
-                        else
-                            [KI, KII, AuxSIF] = compute_SIF_for_stage2( ...
-                                C, G2, Mc, S2, ...
-                                'rI', rI);
+                        % ------------------------------------------------
+                        % SIF calculation
+                        % ------------------------------------------------
+                        switch lower(strtrim(sifMethod))
+
+                            case 'circle2_debug'
+                                [KI, KII, AuxSIF] = local_compute_SIF_for_stage2_debug( ...
+                                    C, G2, Mc, S2, rI, ...
+                                    'verbose', debugVerbose, ...
+                                    'plot', debugPlot);
+
+                            case 'interaction_edi'
+                                [KI, KII, AuxSIF] = compute_SIF_for_stage2_interaction( ...
+                                    C, G2, Mc, S2, ...
+                                    'r_inner', r_inner, ...
+                                    'r_outer', r_outer, ...
+                                    'Verbose', debugVerbose);
+
+                            otherwise
+                                error('Unknown sifMethod = %s.', sifMethod);
                         end
 
                         KII_over_KI = KII / KI;
 
-                        % Extract selected debug diagnostics if available.
+                        % ------------------------------------------------
+                        % Circular-method diagnostics
+                        % ------------------------------------------------
                         diag_JII_over_absint = nan;
                         diag_J2_sign_changes = nan;
                         diag_nearP_1e4 = nan;
@@ -213,31 +257,71 @@ for ia = 1:numel(a0_list)
                             end
                         end
 
+                        % ------------------------------------------------
+                        % Interaction-EDI diagnostics
+                        % ------------------------------------------------
+                        diag_I_modeI = nan;
+                        diag_I_modeII = nan;
+                        diag_nGP_used = nan;
+                        diag_nElem_used = nan;
+                        diag_r_inner_over_a0 = nan;
+                        diag_r_outer_over_a0 = nan;
+
+                        if isstruct(AuxSIF)
+                            if isfield(AuxSIF, 'I_modeI')
+                                diag_I_modeI = AuxSIF.I_modeI;
+                            end
+                            if isfield(AuxSIF, 'I_modeII')
+                                diag_I_modeII = AuxSIF.I_modeII;
+                            end
+                            if isfield(AuxSIF, 'nGP_used')
+                                diag_nGP_used = AuxSIF.nGP_used;
+                            end
+                            if isfield(AuxSIF, 'nElem_used')
+                                diag_nElem_used = AuxSIF.nElem_used;
+                            end
+                            if isfield(AuxSIF, 'r_inner_over_a0')
+                                diag_r_inner_over_a0 = AuxSIF.r_inner_over_a0;
+                            end
+                            if isfield(AuxSIF, 'r_outer_over_a0')
+                                diag_r_outer_over_a0 = AuxSIF.r_outer_over_a0;
+                            end
+                        end
+
                         rows = [rows; ...
                             a0, a0_over_base, ...
                             meshScale, thetaDeg, ...
-                            rfac, rI, ...
+                            rfac, rI, r_inner, r_outer, ...
                             KI, KII, KII_over_KI, ...
                             nNode3, nElem3, nNode6, nElem6, ...
                             diag_JII_over_absint, ...
                             diag_J2_sign_changes, ...
                             diag_nearP_1e4, diag_nearQ_1e4, ...
                             diag_minBaryP, diag_minBaryQ, ...
+                            diag_I_modeI, diag_I_modeII, ...
+                            diag_nGP_used, diag_nElem_used, ...
+                            diag_r_inner_over_a0, diag_r_outer_over_a0, ...
                             true]; %#ok<AGROW>
 
-                        fprintf(['  rI/a0 = %.4f | rI = %.4e | ', ...
-                            'KI = %.8e | KII = %+ .8e | KII/KI = %+ .8e'], ...
-                            rfac, rI, KI, KII, KII_over_KI);
+                        fprintf(['  r_outer/a0 = %.4f | r_outer = %.4e | ', ...
+                                 'r_inner = %.4e | KI = %.8e | KII = %+ .8e | ', ...
+                                 'KII/KI = %+ .8e'], ...
+                            rfac, r_outer, r_inner, KI, KII, KII_over_KI);
 
-                        if isfinite(diag_JII_over_absint)
+                        if strcmpi(sifMethod, 'circle2_debug') && isfinite(diag_JII_over_absint)
                             fprintf(' | JII/int|J2| = %+ .3e | J2 changes = %g', ...
                                 diag_JII_over_absint, diag_J2_sign_changes);
                         end
+
+                        if strcmpi(sifMethod, 'interaction_EDI') && isfinite(diag_nGP_used)
+                            fprintf(' | I_I = %+ .3e | I_II = %+ .3e | GP = %g | Elem = %g', ...
+                                diag_I_modeI, diag_I_modeII, diag_nGP_used, diag_nElem_used);
+                        end
+
                         fprintf('\n');
 
-                        % Store debug data only for selected cases to avoid
-                        % creating a huge Results object.
-                        if useDebugSIF && isstruct(AuxSIF) && isfield(AuxSIF, 'Dbg')
+                        % Store selected debug data only when available.
+                        if isstruct(AuxSIF)
                             keepThisDebug = ...
                                 abs(thetaDeg) < 1e-12 && ...
                                 (abs(rI - rI_list(1)) < 1e-14 || abs(rI - rI_list(end)) < 1e-14);
@@ -245,13 +329,16 @@ for ia = 1:numel(a0_list)
                             if keepThisDebug
                                 DebugStore.count = DebugStore.count + 1;
                                 DebugStore.items{DebugStore.count} = struct( ...
+                                    'sifMethod', sifMethod, ...
                                     'a0', a0, ...
                                     'a0_over_base', a0_over_base, ...
                                     'meshScale', meshScale, ...
                                     'thetaDeg', thetaDeg, ...
                                     'rI_over_a0', rfac, ...
                                     'rI', rI, ...
-                                    'Dbg', AuxSIF.Dbg);
+                                    'r_inner', r_inner, ...
+                                    'r_outer', r_outer, ...
+                                    'AuxSIF', AuxSIF);
                             end
                         end
 
@@ -259,21 +346,21 @@ for ia = 1:numel(a0_list)
                         rows = [rows; ...
                             a0, a0_over_base, ...
                             meshScale, thetaDeg, ...
-                            rfac, rI, ...
+                            rfac, rI, r_inner, r_outer, ...
                             nan, nan, nan, ...
                             nNode3, nElem3, nNode6, nElem6, ...
                             nan, nan, nan, nan, nan, nan, ...
+                            nan, nan, nan, nan, nan, nan, ...
                             false]; %#ok<AGROW>
 
-                        fprintf('  rI/a0 = %.4f | rI = %.4e FAILED: %s\n', ...
-                            rfac, rI, MEinner.message);
+                        fprintf('  r_outer/a0 = %.4f | r_outer = %.4e FAILED: %s\n', ...
+                            rfac, r_outer, MEinner.message);
                     end
                 end
 
             catch MEouter
-                fprintf('  theta failed before radius loop: %s\n', MEouter.message);
+                fprintf('  theta failed before radius/domain loop: %s\n', MEouter.message);
 
-                % Use available radius list for failed rows.
                 switch lower(strtrim(radiusMode))
                     case 'relative'
                         rfac_list = rI_over_a0_list(:).';
@@ -287,12 +374,16 @@ for ia = 1:numel(a0_list)
                     rI = rI_list(ir);
                     rfac = rfac_list(ir);
 
+                    r_outer = rI;
+                    r_inner = innerFactorEDI * r_outer;
+
                     rows = [rows; ...
                         a0, a0_over_base, ...
                         meshScale, thetaDeg, ...
-                        rfac, rI, ...
+                        rfac, rI, r_inner, r_outer, ...
                         nan, nan, nan, ...
                         nan, nan, nan, nan, ...
+                        nan, nan, nan, nan, nan, nan, ...
                         nan, nan, nan, nan, nan, nan, ...
                         false]; %#ok<AGROW>
                 end
@@ -309,18 +400,20 @@ T = array2table(rows, ...
     'VariableNames', { ...
     'a0', 'a0_over_base', ...
     'meshScale', 'thetaDeg', ...
-    'rI_over_a0', 'rI', ...
+    'rI_over_a0', 'rI', 'r_inner', 'r_outer', ...
     'KI', 'KII', 'KII_over_KI', ...
     'nNode3', 'nElem3', 'nNode6', 'nElem6', ...
     'JII_over_absint', ...
     'J2_sign_changes', ...
     'nearP_1e4', 'nearQ_1e4', ...
     'minBaryP', 'minBaryQ', ...
+    'I_modeI', 'I_modeII', ...
+    'nGP_used', 'nElem_used', ...
+    'r_inner_over_a0', 'r_outer_over_a0', ...
     'valid'});
 
-fprintf('\n=== Full mesh-appendix-contour sensitivity table ===\n');
+fprintf('\n=== Full mesh-appendix-SIF-domain sensitivity table ===\n');
 disp(T);
-
 %% ============================================================
 % 4. Summary statistics
 %% ============================================================
@@ -672,6 +765,7 @@ Aux.V = V;
 Aux.rI = rI;
 Aux.Dbg = Dbg;
 end
+
 function Summary = local_make_summary_table_with_a0(T)
 
 good = T.valid & isfinite(T.KI) & isfinite(T.KII_over_KI);
