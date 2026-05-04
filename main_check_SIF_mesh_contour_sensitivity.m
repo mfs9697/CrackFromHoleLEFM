@@ -77,13 +77,13 @@ sifMethod = 'interaction_EDI';
 % Existing rI/rI_over_a0 lists are interpreted as OUTER EDI-domain radii.
 % The inner radius is chosen as:
 %   r_inner = innerFactorEDI * r_outer
-innerFactorEDI = 0.25;
+innerFactorEDI = 0.1;
 
 % Appendix lengths to test
 a0_list = [4*C0.a0];
 
 % Mesh refinement
-meshScaleList = [0.4];
+meshScaleList = [0.25];
 
 % Angles
 thetaDegProbe = -1:0.5:3;

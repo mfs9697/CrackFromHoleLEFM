@@ -403,6 +403,7 @@ function aux = local_aux_LEFM_fields(x1, x2, KI, KII, E, nu, mu, kappa, Dmat)
     end
 
     sig = local_aux_stress_polar_to_cart(r, th, KI, KII);
+    eps_from_sig = Dmat \ sig;
 
     % Numerical derivative of auxiliary displacement wrt local x1.
     h = max(1e-7, 1e-5*r);
@@ -434,6 +435,8 @@ function aux = local_aux_LEFM_fields(x1, x2, KI, KII, E, nu, mu, kappa, Dmat)
     aux = struct();
     aux.sig = sig;
     aux.eps = eps;
+    aux.eps_from_sig = eps_from_sig;
+    aux.eps_mismatch = norm(eps - eps_from_sig) / max(norm(eps_from_sig), eps);
     aux.du_dx1 = du_dx1;
 end
 
@@ -443,34 +446,41 @@ end
 % =========================================================================
 
 function sig = local_aux_stress_polar_to_cart(r, th, KI, KII)
-% Standard isotropic LEFM stresses near a crack tip in local coordinates.
+%LOCAL_AUX_STRESS_POLAR_TO_CART
+% Standard isotropic LEFM stresses near a crack tip in local Cartesian
+% coordinates x1,x2.
+%
+% Despite the historical function name, the output is directly:
+%   sig = [sigma_11; sigma_22; sigma_12]
+%
+% The formulas below are the standard Cartesian crack-tip fields, not polar
+% components. Therefore no polar-to-Cartesian transformation is applied.
 
-    c = cos(th/2);
-    s = sin(th/2);
+    if r <= 0
+        sig = [0; 0; 0];
+        return;
+    end
 
-    ct = cos(th);
-    st = sin(th);
+    c  = cos(th/2);
+    s  = sin(th/2);
+    c3 = cos(3*th/2);
+    s3 = sin(3*th/2);
 
     fac = 1/sqrt(2*pi*r);
 
-    % Mode I polar stresses
-    srr_I = KI*fac*c*(1 - s*sin(3*th/2));
-    stt_I = KI*fac*c*(1 + s*sin(3*th/2));
-    srt_I = KI*fac*c*s*cos(3*th/2);
+    % Mode I: local Cartesian stresses
+    s11_I = KI*fac*c*(1 - s*s3);
+    s22_I = KI*fac*c*(1 + s*s3);
+    s12_I = KI*fac*c*s*c3;
 
-    % Mode II polar stresses
-    srr_II = -KII*fac*s*(2 + c*cos(3*th/2));
-    stt_II =  KII*fac*s*c*cos(3*th/2);
-    srt_II =  KII*fac*c*(1 - s*sin(3*th/2));
+    % Mode II: local Cartesian stresses
+    s11_II = -KII*fac*s*(2 + c*c3);
+    s22_II =  KII*fac*s*c*c3;
+    s12_II =  KII*fac*c*(1 - s*s3);
 
-    srr = srr_I + srr_II;
-    stt = stt_I + stt_II;
-    srt = srt_I + srt_II;
-
-    % Polar to Cartesian in local x1,x2.
-    s11 = srr*ct^2 + stt*st^2 - 2*srt*st*ct;
-    s22 = srr*st^2 + stt*ct^2 + 2*srt*st*ct;
-    s12 = (srr - stt)*st*ct + srt*(ct^2 - st^2);
+    s11 = s11_I + s11_II;
+    s22 = s22_I + s22_II;
+    s12 = s12_I + s12_II;
 
     sig = [s11; s22; s12];
 end
