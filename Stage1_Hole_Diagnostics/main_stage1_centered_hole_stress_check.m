@@ -56,17 +56,34 @@ function Results = main_stage1_centered_hole_stress_check()
         fprintf('\n------------------------------------------------------------\n');
         fprintf('Stage-I mesh scale = %.3f\n', meshScale);
         fprintf('------------------------------------------------------------\n');
+        % ------------------------------------------------------------
+        % Pass 1: coarse/moderate mesh
+        % ------------------------------------------------------------
+        G1  = geom_hole_only(C);
+        S1a = solve_hole_only(C, G1, 'lambda', 1.0);
+        B1  = sample_hole_boundary_stress(C, G1, S1a);
+        Icoarse = find_hole_initiation_point(C, B1);
 
-        G  = geom_hole_only(C);
-        S1 = solve_hole_only(C, G, 'lambda', 1.0);
-        B  = sample_hole_boundary_stress(C, G, S1);
-        Iauto = find_hole_initiation_point(C, B);
-        
-        C.mesh1.refineHoleAngles = Iauto.phi_star;
+        % ------------------------------------------------------------
+        % Use the coarse maximum to prescribe local refinement
+        % ------------------------------------------------------------
+        C.mesh1.refineHoleAngles = Icoarse.phi_star;
         C.mesh1.refineAngleHalfWidth = deg2rad(8);
         C.mesh1.hrefine = 0.5*C.mesh1.hhole;
 
-        Iauto = find_hole_initiation_point(C, B);
+        % ------------------------------------------------------------
+        % Pass 2: locally refined mesh
+        % ------------------------------------------------------------
+        G2  = geom_hole_only(C);
+        S1b = solve_hole_only(C, G2, 'lambda', 1.0);
+        B2  = sample_hole_boundary_stress(C, G2, S1b);
+        Irefined = find_hole_initiation_point(C, B2);
+
+        fprintf('Coarse  phi = %.5f deg, Kt = %.8f\n', ...
+            rad2deg(Icoarse.phi_star), Icoarse.sig_tt_pos_unit/C.load.sig0);
+
+        fprintf('Refined phi = %.5f deg, Kt = %.8f\n', ...
+            rad2deg(Irefined.phi_star), Irefined.sig_tt_pos_unit/C.load.sig0);
 
         Iforced = stage1_force_initiation_phi(C, B, phiExpected);
 
