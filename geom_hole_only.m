@@ -18,6 +18,9 @@ function G = geom_hole_only(C)
 %   C.mesh1.hhole
 %   C.mesh1.hgrad
 %   C.mesh1.refineBox   (currently stored only; not actively used)
+%   C.mesh1.refineHoleAngles      polar angle(s) on circular hole(s), radians
+%   C.mesh1.refineAngleHalfWidth  angular half-width about each angle, radians
+%   C.mesh1.hrefine               target size in selected angular sectors
 %
 % Optional plotting:
 %   C.plot.show_mesh1
@@ -39,10 +42,8 @@ function G = geom_hole_only(C)
 %   - It reuses the hole infrastructure from the CrackPath project:
 %         holes_to_loops
 %         build_pde_geometry_with_holes
-%   - Mesh generation currently uses a global Hmax/Hgrad only.
-%     The near-hole target size hhole is stored in metadata for future
-%     refinement logic, but PDE Toolbox's generateMesh interface here does
-%     not enforce a local sizing field directly.
+%   - Local circular-hole refinement is applied through PDE Toolbox
+%     Hvertex/Hedge controls when refineHoleAngles/hrefine are provided.
 
     % -------------------- required input --------------------
     must(C, 'A');
@@ -67,6 +68,10 @@ function G = geom_hole_only(C)
     Hhole = getf(mesh1, 'hhole', []);
     Hgrad = getf(mesh1, 'hgrad', 1.35);
 
+    refineHoleAngles     = getf(mesh1, 'refineHoleAngles', []);
+    refineAngleHalfWidth = getf(mesh1, 'refineAngleHalfWidth', []);
+    Hrefine              = getf(mesh1, 'hrefine', []);
+
     % currently only stored for future use
     refineBox = getf(mesh1, 'refineBox', []);
 
@@ -90,11 +95,23 @@ function G = geom_hole_only(C)
     [mdl, dl, bt, gd, ns, sf] = build_pde_geometry_with_holes(outerPoly, holeLoops);
 
     % -------------------- mesh generation --------------------
-    msh = generateMesh(mdl, ...
+    [Hedge, Hvertex, refineMeta] = build_local_hole_refinement( ...
+        mdl, holes, holeLoops, refineHoleAngles, refineAngleHalfWidth, Hrefine, Hhole);
+
+    gmArgs = { ...
         'Hmin', Hmin, ...
         'Hmax', Hmax, ...
         'Hgrad', max(1.01, Hgrad), ...
-        'GeometricOrder', 'linear');
+        'GeometricOrder', 'linear'};
+
+    if ~isempty(Hedge)
+        gmArgs = [gmArgs, {'Hedge', Hedge}]; %#ok<AGROW>
+    end
+    if ~isempty(Hvertex)
+        gmArgs = [gmArgs, {'Hvertex', Hvertex}]; %#ok<AGROW>
+    end
+
+    msh = generateMesh(mdl, gmArgs{:});
 
     p = msh.Nodes.';      % [np x 2]
     t = msh.Elements.';   % [nt x 3]
@@ -158,11 +175,12 @@ function G = geom_hole_only(C)
     G.meta.B         = B;
     G.meta.holes     = holes;
     G.meta.mesh1     = mesh1;
-    G.meta.Hmin      = Hmax;
+    G.meta.Hmin      = Hmin;
     G.meta.Hmax      = Hmax;
     G.meta.Hhole     = Hhole;
     G.meta.Hgrad     = Hgrad;
     G.meta.refineBox = refineBox;
+    G.meta.refinement = refineMeta;
 
     G.meta.decsg = struct( ...
         'dl', dl, ...
@@ -312,6 +330,177 @@ function ids = nodes_near_polygon_edges(p, V, tol)
     end
 
     ids = find(keep);
+end
+
+
+function [Hedge, Hvertex, meta] = build_local_hole_refinement( ...
+    mdl, holes, holeLoops, refineAngles, angleHalfWidth, hrefine, hhole)
+%BUILD_LOCAL_HOLE_REFINEMENT Convert circular-hole angle controls to PDE IDs.
+
+    Hedge = [];
+    Hvertex = [];
+
+    meta = struct();
+    meta.active = false;
+    meta.edgeIDs = [];
+    meta.vertexIDs = [];
+    meta.hrefine = [];
+    meta.refineHoleAngles = refineAngles;
+    meta.refineAngleHalfWidth = angleHalfWidth;
+
+    if isempty(refineAngles)
+        return;
+    end
+
+    if isempty(hrefine)
+        hrefine = hhole;
+    end
+
+    if isempty(hrefine) || ~(isnumeric(hrefine) && isscalar(hrefine) && isfinite(hrefine) && hrefine > 0)
+        warning('geom_hole_only:BadLocalRefinementSize', ...
+            ['C.mesh1.refineHoleAngles was provided, but C.mesh1.hrefine ', ...
+             'and C.mesh1.hhole are empty or invalid. Local refinement skipped.']);
+        return;
+    end
+
+    if isempty(angleHalfWidth)
+        angleHalfWidth = deg2rad(5);
+    end
+
+    if ~(isnumeric(refineAngles) && isvector(refineAngles) && all(isfinite(refineAngles(:))))
+        error('geom_hole_only:BadRefineAngles', ...
+            'C.mesh1.refineHoleAngles must be a finite numeric vector.');
+    end
+
+    if ~(isnumeric(angleHalfWidth) && isvector(angleHalfWidth) && all(isfinite(angleHalfWidth(:))) && all(angleHalfWidth(:) >= 0))
+        error('geom_hole_only:BadRefineAngleHalfWidth', ...
+            'C.mesh1.refineAngleHalfWidth must be a finite nonnegative scalar or vector.');
+    end
+
+    angles = refineAngles(:).';
+    widths = angleHalfWidth(:).';
+    if isscalar(widths)
+        widths = repmat(widths, size(angles));
+    elseif numel(widths) ~= numel(angles)
+        error('geom_hole_only:BadRefineAngleHalfWidth', ...
+            'C.mesh1.refineAngleHalfWidth must be scalar or match refineHoleAngles.');
+    end
+
+    edgeIDs = [];
+    vertexIDs = [];
+
+    geom = mdl.Geometry;
+    Vgeom = get_geom_vertices_2d_local(geom);
+
+    for ih = 1:numel(holes)
+        hk = holes{ih};
+        if ~isstruct(hk) || ~isfield(hk, 'type') || ~strcmpi(strtrim(hk.type), 'circle')
+            continue;
+        end
+
+        must_field(hk, 'center');
+        must_field(hk, 'r');
+
+        c = hk.center(:).';
+        r = hk.r;
+        scale = max([1, abs(c), r]);
+        tol = max(1e-8 * scale, 1e-6 * r);
+
+        if ih <= numel(holeLoops)
+            H = holeLoops{ih};
+            if ~isempty(H) && norm(H(end,:) - H(1,:), inf) == 0
+                H(end,:) = [];
+            end
+
+            for k = 1:size(H,1)
+                P1 = H(k,:);
+                P2 = H(1 + mod(k, size(H,1)), :);
+                Pmid = 0.5 * (P1 + P2);
+
+                phi = atan2([P1(2); P2(2); Pmid(2)] - c(2), ...
+                            [P1(1); P2(1); Pmid(1)] - c(1));
+                if any(angle_in_refinement_window(phi, angles, widths))
+                    eid = nearestEdge(geom, Pmid);
+                    edgeIDs = [edgeIDs; eid(:)]; %#ok<AGROW>
+                end
+            end
+        end
+
+        if ~isempty(Vgeom)
+            dv = abs(vecnorm(Vgeom - c, 2, 2) - r);
+            phiV = atan2(Vgeom(:,2) - c(2), Vgeom(:,1) - c(1));
+            onHole = dv <= tol;
+            inWindow = angle_in_refinement_window(phiV, angles, widths);
+            vertexIDs = [vertexIDs; find(onHole & inWindow)]; %#ok<AGROW>
+        end
+    end
+
+    edgeIDs = unique(edgeIDs(:).');
+    vertexIDs = unique(vertexIDs(:).');
+
+    if isempty(edgeIDs) && isempty(vertexIDs)
+        warning('geom_hole_only:NoLocalRefinementIDs', ...
+            ['Local hole refinement controls were provided, but no matching ', ...
+             'circular-hole geometry edges or vertices were found.']);
+        return;
+    end
+
+    if ~isempty(edgeIDs)
+        Hedge = {edgeIDs, hrefine};
+    end
+    if ~isempty(vertexIDs)
+        Hvertex = {vertexIDs, hrefine};
+    end
+
+    meta.active = true;
+    meta.edgeIDs = edgeIDs;
+    meta.vertexIDs = vertexIDs;
+    meta.hrefine = hrefine;
+    meta.refineHoleAngles = angles;
+    meta.refineAngleHalfWidth = widths;
+end
+
+
+function tf = angle_in_refinement_window(phi, centers, halfWidths)
+%ANGLE_IN_REFINEMENT_WINDOW True when phi is within any angular window.
+
+    phi = phi(:);
+    tf = false(size(phi));
+
+    for k = 1:numel(centers)
+        dphi = atan2(sin(phi - centers(k)), cos(phi - centers(k)));
+        tf = tf | (abs(dphi) <= halfWidths(k));
+    end
+end
+
+
+function V = get_geom_vertices_2d_local(geom)
+%GET_GEOM_VERTICES_2D_LOCAL Extract PDE geometry vertices as [Nv x 2].
+
+    V = [];
+
+    if isprop(geom, 'Vertices')
+        VV = geom.Vertices;
+        if isnumeric(VV)
+            if size(VV,1) == 2
+                V = VV.';
+            elseif size(VV,2) == 2
+                V = VV;
+            end
+        end
+    end
+
+    if isempty(V)
+        try
+            VV = geom.Vertices;
+            if size(VV,1) == 2
+                V = VV.';
+            else
+                V = VV;
+            end
+        catch
+        end
+    end
 end
 
 
