@@ -5,10 +5,8 @@ function Results = main_stage1_centered_hole_stress_check()
 % Purpose:
 %   1) Put the circular hole at the plate center.
 %   2) Check the boundary tangential-stress distribution.
-%   3) Check the stress concentration factor.
-%   4) Verify whether the numerical maximum occurs at the expected
-%      symmetry point.
-%   5) Optionally force the initiation point for Stage-II validation.
+%   3) Check stress-concentration convergence under iterative local
+%      refinement near the symmetry-equivalent maxima.
 
     clc;
     close all;
@@ -22,25 +20,28 @@ function Results = main_stage1_centered_hole_stress_check()
     fprintf('============================================================\n');
 
     %% Configuration
-    C0 = cfg_hole_initiation();
+    C = cfg_hole_initiation();
 
     % Centered-hole benchmark
-    C0.hole.center = [0.5*C0.A, 0.0];
-    C0.holes = {C0.hole};
+    C.hole.center = [0.5*C.A, 0.0];
 
     % Symmetry-friendly polygon and sampling
-    C0.hole.npoly = 360;
-    C0.mesh1.hmin  = 2*pi*C0.hole.r / C0.hole.npoly;
-    C0.mesh1.hhole = C0.mesh1.hmin;
-    C0.mesh1.hmax  = 10*C0.mesh1.hmin;
-    C0.stage1.nphi = 1440;
+    C.hole.npoly = 360;
+    C.mesh1.hmin  = 2*pi*C.hole.r / C.hole.npoly;
+    C.mesh1.hhole = C.mesh1.hmin;
+    C.mesh1.hmax  = 10*C.mesh1.hmin;
+    C.stage1.nphi = 1440;
+    C.holes = {C.hole};
 
-    % Mesh-density sensitivity
-    meshScaleList = [1.0 0.75 0.5 0.25];
-
-    % Expected symmetry point for vertical tension in our convention.
-    % Adjust if we later decide the expected point is pi instead.
-    phiExpected = 0.0;
+    % Iterative local-refinement controls
+    maxIter = 5;
+    tolKtRel = 5e-3;
+    baseHalfWidth = deg2rad(10);
+    minHalfWidth = deg2rad(3);
+    phiExpectedSet = [0, pi];
+    exportOutputs = true;
+    outputDir = fullfile(fileparts(mfilename('fullpath')), ...
+        'outputs', 'centered_hole_iterative_refinement');
 
     rows = [];
 
@@ -48,95 +49,156 @@ function Results = main_stage1_centered_hole_stress_check()
     CaseStore.items = {};
     CaseStore.count = 0;
 
-    for im = 1:numel(meshScaleList)
+    prevKt = NaN;
 
-        meshScale = meshScaleList(im);
-        C = local_scale_stage1_mesh(C0, meshScale);
+    for iter = 1:maxIter
+        if iter == 1
+            C.mesh1 = rmfield_safe(C.mesh1, { ...
+                'refineHoleAngles', 'refineAngleHalfWidth', 'hrefine'});
+            halfWidth = NaN;
+            hrefine = NaN;
+        else
+            halfWidth = max(minHalfWidth, baseHalfWidth/(iter - 1));
+            hrefine = C.mesh1.hhole/iter;
+
+            % The centered benchmark has two symmetry-equivalent peaks.
+            % Refining both avoids chasing one numerical tie-breaker.
+            C.mesh1.refineHoleAngles = phiExpectedSet;
+            C.mesh1.refineAngleHalfWidth = halfWidth;
+            C.mesh1.hrefine = hrefine;
+        end
 
         fprintf('\n------------------------------------------------------------\n');
-        fprintf('Stage-I mesh scale = %.3f\n', meshScale);
+        fprintf('Stage-I local-refinement iteration %d/%d\n', iter, maxIter);
+        if iter == 1
+            fprintf('  refinement: off\n');
+        else
+            fprintf('  refinement: angles = [0, 180] deg, half-width = %.3f deg, hrefine = %.6e\n', ...
+                rad2deg(halfWidth), hrefine);
+        end
         fprintf('------------------------------------------------------------\n');
-        % ------------------------------------------------------------
-        % Pass 1: coarse/moderate mesh
-        % ------------------------------------------------------------
-        G1  = geom_hole_only(C);
-        S1a = solve_hole_only(C, G1, 'lambda', 1.0);
-        B1  = sample_hole_boundary_stress(C, G1, S1a);
-        Icoarse = find_hole_initiation_point(C, B1);
 
-        % ------------------------------------------------------------
-        % Use the coarse maximum to prescribe local refinement
-        % ------------------------------------------------------------
-        C.mesh1.refineHoleAngles = Icoarse.phi_star;
-        C.mesh1.refineAngleHalfWidth = deg2rad(8);
-        C.mesh1.hrefine = 0.5*C.mesh1.hhole;
-
-        % ------------------------------------------------------------
-        % Pass 2: locally refined mesh
-        % ------------------------------------------------------------
-        G2  = geom_hole_only(C);
-        S1b = solve_hole_only(C, G2, 'lambda', 1.0);
-        B2  = sample_hole_boundary_stress(C, G2, S1b);
-        Irefined = find_hole_initiation_point(C, B2);
-
-        fprintf('Coarse  phi = %.5f deg, Kt = %.8f\n', ...
-            rad2deg(Icoarse.phi_star), Icoarse.sig_tt_pos_unit/C.load.sig0);
-
-        fprintf('Refined phi = %.5f deg, Kt = %.8f\n', ...
-            rad2deg(Irefined.phi_star), Irefined.sig_tt_pos_unit/C.load.sig0);
+        G  = geom_hole_only(C);
+        S1 = solve_hole_only(C, G, 'lambda', 1.0);
+        B  = sample_hole_boundary_stress(C, G, S1);
+        I  = find_hole_initiation_point(C, B);
 
         sig0 = C.load.sig0;
+        Kt = I.sig_tt_pos_unit / sig0;
+        if isfinite(prevKt)
+            dKtRel = abs(Kt - prevKt) / max(abs(prevKt), eps);
+        else
+            dKtRel = NaN;
+        end
 
-        Kt_auto   = Icoarse.sig_tt_pos_unit / sig0;
-        Kt_forced = Irefined.sig_tt_pos_unit / sig0;
+        dphiSym = local_min_symmetry_angle_diff(I.phi_star, phiExpectedSet);
 
-        dphi_auto = local_angle_diff(Icoarse.phi_star, phiExpected);
+        nRefEdges = 0;
+        nRefVertices = 0;
+        refineActive = false;
+        if isfield(G, 'meta') && isfield(G.meta, 'refinement')
+            refineActive = G.meta.refinement.active;
+            nRefEdges = numel(G.meta.refinement.edgeIDs);
+            nRefVertices = numel(G.meta.refinement.vertexIDs);
+        end
 
         rows = [rows; ...
-            meshScale, ...
-            size(G2.p,1), size(G2.t,1), ...
+            iter, ...
+            double(refineActive), ...
+            size(G.p,1), size(G.t,1), ...
             C.hole.npoly, C.stage1.nphi, ...
-            Icoarse.phi_star, rad2deg(Icoarse.phi_star), rad2deg(dphi_auto), ...
-            Icoarse.sig_tt_pos_unit, Kt_auto, ...
-            Irefined.phi_star, rad2deg(Irefined.phi_star), ...
-            Irefined.sig_tt_pos_unit, Kt_forced, ...
-            B2.eps_shift]; %#ok<AGROW>
+            hrefine, rad2deg(halfWidth), ...
+            nRefEdges, nRefVertices, ...
+            I.phi_star, rad2deg(I.phi_star), rad2deg(dphiSym), ...
+            I.sig_tt_pos_unit, Kt, dKtRel, ...
+            I.lambda_ini, B.eps_shift]; %#ok<AGROW>
 
-        fprintf('  auto phi     = %.8f rad = %.5f deg\n', ...
-            Icoarse.phi_star, rad2deg(Icoarse.phi_star));
-        fprintf('  forced phi   = %.8f rad = %.5f deg\n', ...
-            Irefined.phi_star, rad2deg(Irefined.phi_star));
-        fprintf('  Kt auto      = %.8f\n', Kt_auto);
-        fprintf('  Kt forced    = %.8f\n', Kt_forced);
+        fprintf('  peak phi       = %.8f rad = %.5f deg\n', ...
+            I.phi_star, rad2deg(I.phi_star));
+        fprintf('  symmetry error = %.5f deg\n', rad2deg(dphiSym));
+        fprintf('  Kt             = %.8f\n', Kt);
+        if isfinite(dKtRel)
+            fprintf('  relative dKt   = %.6e\n', dKtRel);
+        end
+        if refineActive
+            fprintf('  refined IDs    = %d edges, %d vertices\n', nRefEdges, nRefVertices);
+        end
+
+        exportFiles = struct();
+        if exportOutputs
+            exportFiles = stage1_export_iteration_outputs(outputDir, iter, C, G, S1, B, I);
+            fprintf('  outputs         = %s\n', outputDir);
+        end
 
         CaseStore.count = CaseStore.count + 1;
         CaseStore.items{CaseStore.count} = struct( ...
-            'meshScale', meshScale, ...
-            'C', C, 'G', G2, 'S1', S1b, 'B', B2, ...
-            'Iauto', Icoarse, 'Iforced', Irefined);
+            'iter', iter, ...
+            'C', C, 'G', G, 'S1', S1, 'B', B, 'I', I, ...
+            'Kt', Kt, 'dKtRel', dKtRel, ...
+            'dphiSym', dphiSym, ...
+            'exportFiles', exportFiles);
+
+        if iter > 1 && isfinite(dKtRel) && dKtRel < tolKtRel
+            fprintf('  convergence reached: relative dKt < %.3e\n', tolKtRel);
+            break;
+        end
+
+        prevKt = Kt;
     end
 
     T = array2table(rows, ...
         'VariableNames', { ...
-            'meshScale', 'nNodeT3', 'nElemT3', ...
+            'iter', 'refineActive', ...
+            'nNodeT3', 'nElemT3', ...
             'npoly', 'nphi', ...
-            'phi_auto_rad', 'phi_auto_deg', 'phi_auto_minus_expected_deg', ...
-            'sig_tt_auto', 'Kt_auto', ...
-            'phi_forced_rad', 'phi_forced_deg', ...
-            'sig_tt_forced', 'Kt_forced', ...
-            'eps_shift'});
+            'hrefine', 'refineHalfWidthDeg', ...
+            'nRefEdges', 'nRefVertices', ...
+            'phi_peak_rad', 'phi_peak_deg', 'phi_error_to_symmetry_deg', ...
+            'sig_tt_peak', 'Kt', 'dKt_rel', ...
+            'lambda_ini', 'eps_shift'});
 
-    fprintf('\n=== Stage-I centered-hole stress-concentration table ===\n');
+    fprintf('\n=== Stage-I centered-hole iterative-refinement table ===\n');
     disp(T);
 
     Results = struct();
     Results.Table = T;
     Results.CaseStore = CaseStore;
-    Results.phiExpected = phiExpected;
+    Results.phiExpectedSet = phiExpectedSet;
+    Results.tolKtRel = tolKtRel;
+    Results.outputDir = outputDir;
 
-    % Plot the finest case
+    % Plot the final iteration
     if CaseStore.count > 0
         last = CaseStore.items{CaseStore.count};
-        stage1_plot_boundary_stress(last.B, last.Icoarse, last.Irefined);
+        Iexpected = stage1_force_initiation_phi(last.C, last.B, nearest_expected_phi(last.I.phi_star, phiExpectedSet));
+        stage1_plot_boundary_stress(last.B, last.I, Iexpected);
     end
+end
+
+
+function Cmesh = rmfield_safe(Cmesh, fields)
+%RMFIELD_SAFE Remove fields that may or may not exist.
+
+    for k = 1:numel(fields)
+        if isfield(Cmesh, fields{k})
+            Cmesh = rmfield(Cmesh, fields{k});
+        end
+    end
+end
+
+
+function dphi = local_min_symmetry_angle_diff(phi, phiSet)
+%LOCAL_MIN_SYMMETRY_ANGLE_DIFF Distance to nearest symmetry-equivalent angle.
+
+    d = angle(exp(1i*(phi - phiSet(:))));
+    dphi = min(abs(d));
+end
+
+
+function phi0 = nearest_expected_phi(phi, phiSet)
+%NEAREST_EXPECTED_PHI Expected angle nearest to phi.
+
+    d = angle(exp(1i*(phi - phiSet(:))));
+    [~, idx] = min(abs(d));
+    phi0 = phiSet(idx);
 end
