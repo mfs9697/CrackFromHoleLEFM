@@ -61,6 +61,12 @@ function Results = main_stage1_centered_hole_stress_check()
         S1 = solve_hole_only(C, G, 'lambda', 1.0);
         B  = sample_hole_boundary_stress(C, G, S1);
         Iauto = find_hole_initiation_point(C, B);
+        
+        C.mesh1.refineHoleAngles = Iauto.phi_star;
+        C.mesh1.refineAngleHalfWidth = deg2rad(8);
+        C.mesh1.hrefine = 0.5*C.mesh1.hhole;
+
+        Iauto = find_hole_initiation_point(C, B);
 
         Iforced = stage1_force_initiation_phi(C, B, phiExpected);
 
