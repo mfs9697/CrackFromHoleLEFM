@@ -26,7 +26,7 @@ function Results = main_stage1_centered_hole_stress_check()
     C.hole.center = [0.5*C.A, 0.0];
 
     % Symmetry-friendly polygon and sampling
-    C.hole.npoly = 360;
+    C.hole.npoly = 90;
     C.mesh1.hmin  = 2*pi*C.hole.r / C.hole.npoly;
     C.mesh1.hhole = C.mesh1.hmin;
     C.mesh1.hmax  = 10*C.mesh1.hmin;
@@ -34,8 +34,8 @@ function Results = main_stage1_centered_hole_stress_check()
     C.holes = {C.hole};
 
     % Iterative local-refinement controls
-    maxIter = 5;
-    tolKtRel = 5e-3;
+    maxIter = 10;
+    tolKtRel = 1e-3;
     baseHalfWidth = deg2rad(10);
     minHalfWidth = deg2rad(3);
     phiExpectedSet = [0, pi];
@@ -128,6 +128,8 @@ function Results = main_stage1_centered_hole_stress_check()
         if exportOutputs
             exportFiles = stage1_export_iteration_outputs(outputDir, iter, C, G, S1, B, I);
             fprintf('  outputs         = %s\n', outputDir);
+            fprintf('  contour plot    = %s\n', exportFiles.holeContourPng);
+            fprintf('  contour csv     = %s\n', exportFiles.holeContourCsv);
         end
 
         CaseStore.count = CaseStore.count + 1;
