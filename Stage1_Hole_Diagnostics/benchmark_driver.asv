@@ -1,8 +1,0 @@
-addpath(genpath(pwd))
-
-C = cfg_hole_initiation();
-
-P = stage1_pde_toolbox_circular_hole_benchmark(C);
-
-fprintf('PDE Toolbox benchmark Kt = %.8f\n', P.Kt);
-yfprintf('Peak phi = %.5f deg\n', P.phi_peak_deg);

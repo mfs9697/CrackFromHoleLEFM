@@ -29,14 +29,14 @@ function Results = main_stage1_centered_hole_stress_check()
     C.hole.npoly = 360;
     C.mesh1.hmin  = 2*pi*C.hole.r / C.hole.npoly;
     C.mesh1.hhole = C.mesh1.hmin;
-    C.mesh1.hmax  = 10*C.mesh1.hmin;
+    C.mesh1.hmax  = 20*C.mesh1.hmin;
     C.stage1.nphi = 1440;
     C.holes = {C.hole};
 
     % Iterative local-refinement controls
-    maxIter = 5;
-    tolKtRel = 5e-3;
-    baseHalfWidth = deg2rad(10);
+    maxIter = 10;
+    tolKtRel = 1e-3;
+    baseHalfWidth = deg2rad(2);
     minHalfWidth = deg2rad(3);
     phiExpectedSet = [0, pi];
     exportOutputs = true;
