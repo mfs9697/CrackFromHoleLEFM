@@ -26,7 +26,7 @@ function Results = main_stage1_centered_hole_stress_check()
     C.hole.center = [0.5*C.A, 0.0];
 
     % Symmetry-friendly polygon and sampling
-    C.hole.npoly = 90;
+    C.hole.npoly = 360;
     C.mesh1.hmin  = 2*pi*C.hole.r / C.hole.npoly;
     C.mesh1.hhole = C.mesh1.hmin;
     C.mesh1.hmax  = 10*C.mesh1.hmin;
@@ -34,8 +34,8 @@ function Results = main_stage1_centered_hole_stress_check()
     C.holes = {C.hole};
 
     % Iterative local-refinement controls
-    maxIter = 10;
-    tolKtRel = 1e-3;
+    maxIter = 5;
+    tolKtRel = 5e-3;
     baseHalfWidth = deg2rad(10);
     minHalfWidth = deg2rad(3);
     phiExpectedSet = [0, pi];
@@ -168,6 +168,33 @@ function Results = main_stage1_centered_hole_stress_check()
     Results.phiExpectedSet = phiExpectedSet;
     Results.tolKtRel = tolKtRel;
     Results.outputDir = outputDir;
+    Results.PDEBenchmark = [];
+
+    if CaseStore.count > 0
+        last = CaseStore.items{CaseStore.count};
+        try
+            fprintf('\n=== PDE Toolbox circular-hole benchmark ===\n');
+            P = stage1_pde_toolbox_circular_hole_benchmark(last.C, ...
+                'Hmax', last.C.mesh1.hmax, ...
+                'Hmin', last.C.mesh1.hmin, ...
+                'Hgrad', last.C.mesh1.hgrad, ...
+                'Nphi', last.C.stage1.nphi, ...
+                'EpsShift', last.B.eps_shift);
+
+            Results.PDEBenchmark = P;
+
+            fprintf('  analysis type = %s\n', P.analysisType);
+            fprintf('  peak phi      = %.8f rad = %.5f deg\n', ...
+                P.phi_peak, P.phi_peak_deg);
+            fprintf('  Kt benchmark  = %.8f\n', P.Kt);
+            fprintf('  Kt custom     = %.8f\n', last.Kt);
+            fprintf('  rel. diff     = %.6e\n', ...
+                abs(last.Kt - P.Kt) / max(abs(P.Kt), eps));
+        catch ME
+            warning('main_stage1_centered_hole_stress_check:PDEBenchmarkFailed', ...
+                'PDE Toolbox benchmark failed: %s', ME.message);
+        end
+    end
 
     % Plot the final iteration
     if CaseStore.count > 0

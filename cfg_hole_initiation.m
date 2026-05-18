@@ -42,9 +42,9 @@ C.bc.anchor_mode = 'minimal';
 %% ================== MESHING: HOLE-ONLY STAGE ==================
 % Base mesh scale tied to the polygonal resolution of the circular hole
 C.mesh1.hmin      = 2*pi*C.hole.r / C.hole.npoly;
-C.mesh1.hmax      = 15*C.mesh1.hmin;
+C.mesh1.hmax      = 20*C.mesh1.hmin;
 C.mesh1.hhole     = C.mesh1.hmin;
-C.mesh1.hgrad     = 1.3;
+C.mesh1.hgrad     = 1.2;
 C.mesh1.refineBox = [];
 
 %% ================== MESHING: SHORT-CRACK / APPENDED-HOLE STAGE ==================
