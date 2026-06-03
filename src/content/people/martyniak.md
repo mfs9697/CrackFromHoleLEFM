@@ -9,8 +9,7 @@ academicTitle: "професор"
 email: "mrostyslav@gmail.com"
 order: 3
 featured: true
-# Якщо фото вже завантажено у public/people/martyniak.png, розкоментуйте наступний рядок:
-# photo: "/people/martyniak.png"
+photo: "/people/martynyak.png"
 
 profiles:
   - label: "Scopus"
