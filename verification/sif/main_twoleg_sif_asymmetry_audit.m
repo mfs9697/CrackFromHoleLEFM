@@ -123,9 +123,11 @@ function Results = main_twoleg_sif_asymmetry_audit(varargin)
     % Correlation is descriptive only; no causal interpretation is built in.
     good=isfinite(T.A_h_median)&isfinite(T.relVectorDifference);
     if nnz(good)>=3
-        Corr=table( ...
-            corr(T.A_h_median(good),T.relVectorDifference(good),'Type','Pearson'), ...
-            corr(T.A_h_median(good),T.relVectorDifference(good),'Type','Spearman'), ...
+        x=T.A_h_median(good);
+        y=T.relVectorDifference(good);
+        rp=local_corrcoef_scalar(x,y);
+        rs=local_corrcoef_scalar(local_tied_rank(x),local_tied_rank(y));
+        Corr=table(rp,rs, ...
             'VariableNames',{'Pearson_Ah_vs_error','Spearman_Ah_vs_error'});
     else
         Corr=table(NaN,NaN,'VariableNames', ...
@@ -180,4 +182,33 @@ function S=local_summary(T)
         'KI_old_mean','KI_old_std','KII_old_mean','KII_old_std', ...
         'KI_EDI_mean','KI_EDI_std','KII_EDI_mean','KII_EDI_std', ...
         'maxRelVectorDifference','maxFracNearEdgeP','maxFracNearEdgeQ'});
+end
+
+
+function r=local_corrcoef_scalar(x,y)
+    x=x(:); y=y(:);
+    x=x-mean(x); y=y-mean(y);
+    den=sqrt(sum(x.^2)*sum(y.^2));
+    if den<=eps
+        r=NaN;
+    else
+        r=sum(x.*y)/den;
+    end
+end
+
+
+function r=local_tied_rank(x)
+    x=x(:);
+    [xs,ord]=sort(x);
+    r=zeros(size(x));
+    i=1;
+    while i<=numel(x)
+        j=i;
+        while j<numel(x) && xs(j+1)==xs(i)
+            j=j+1;
+        end
+        rankMean=0.5*(i+j);
+        r(ord(i:j))=rankMean;
+        i=j+1;
+    end
 end
