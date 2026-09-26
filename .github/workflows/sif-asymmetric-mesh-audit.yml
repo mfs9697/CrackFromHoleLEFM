@@ -6,6 +6,10 @@ on:
       - audit/sif-asymmetric-mesh
   workflow_dispatch:
 
+concurrency:
+  group: sif-asymmetric-mesh-${{ github.ref }}
+  cancel-in-progress: true
+
 jobs:
   sif-audit:
     runs-on: ubuntu-latest
