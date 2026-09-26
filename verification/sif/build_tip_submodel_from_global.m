@@ -151,10 +151,21 @@ function [X,T,ringNode,outerVertices]=make_symmetric_cracked_disk(R,Nr,Nt,pow)
         end
     end
 
+    % Orientation is an element-ordering issue, not a geometric one.
+    % Enforce CCW ordering after construction without changing any node
+    % coordinates or mirror pairing.
     A=signed_areas(T,X);
-    if any(A<=0)
+    neg=A<0;
+    if any(neg)
+        tmp=T(neg,2);
+        T(neg,2)=T(neg,3);
+        T(neg,3)=tmp;
+    end
+
+    A=signed_areas(T,X);
+    if any(A<=100*eps(max(1,R^2)))
         error('build_tip_submodel_from_global:BadTemplate', ...
-            'Symmetric patch template contains non-CCW triangles.');
+            'Symmetric patch template contains a degenerate triangle.');
     end
 
     outerVertices=ringNode(end,:).';
