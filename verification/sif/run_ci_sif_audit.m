@@ -6,6 +6,13 @@ function run_ci_sif_audit
     outdir=fullfile('verification','sif','outputs');
     if ~exist(outdir,'dir'),mkdir(outdir);end
 
+    fprintf('\n=== 0. Historical one-leg old-method baseline ===\n');
+    main_reproduce_historical_oneleg_baseline( ...
+        'Sigma0',1.0, ...
+        'rOverA',[0.30 0.50 0.60], ...
+        'SaveOutputs',true, ...
+        'OutputDir',outdir);
+
     fprintf('\n=== 1. Auxiliary-field unit tests ===\n');
     R=runtests(fullfile('verification','sif','test_SIF_auxiliary_fields.m'));
     assertSuccess(R);
