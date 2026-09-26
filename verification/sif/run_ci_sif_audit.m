@@ -14,8 +14,9 @@ function run_ci_sif_audit
         'OutputDir',outdir);
 
     fprintf('\n=== 1. Auxiliary-field unit tests ===\n');
-    R=runtests(fullfile('verification','sif','test_SIF_auxiliary_fields.m'));
-    assertSuccess(R);
+    R1=runtests(fullfile('verification','sif','test_SIF_auxiliary_fields.m'));
+    R2=runtests(fullfile('verification','sif','test_interaction_integral_analytic.m'));
+    assertSuccess([R1(:);R2(:)]);
 
     fprintf('\n=== 2. Centered-hole parity: old versus EDI ===\n');
     main_check_centered_hole_EDI_parity( ...
