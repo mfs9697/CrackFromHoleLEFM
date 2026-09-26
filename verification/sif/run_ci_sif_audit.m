@@ -1,5 +1,5 @@
 function run_ci_sif_audit
-%RUN_CI_SIF_AUDIT  Reduced but end-to-end SIF verification run for CI.
+%RUN_CI_SIF_AUDIT  Reduced but end-to-end SIF verification run for CI.\n% The full parameter sweep is run only after these smoke/gate checks pass.
 
     addpath(genpath(pwd));
 
