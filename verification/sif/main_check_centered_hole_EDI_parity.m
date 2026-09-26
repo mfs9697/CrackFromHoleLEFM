@@ -28,7 +28,25 @@ function Results = main_check_centered_hole_EDI_parity(varargin)
     G=geom_hole_only(C0);
     S1=solve_hole_only(C0,G,'lambda',1.0);
     B=sample_hole_boundary_stress(C0,G,S1);
-    I=find_hole_initiation_point(C0,B);
+    % For a parity benchmark, do NOT use the numerically selected first
+    % maximizer on the sampled hole boundary: the discrete sampler may return
+    % phi = 2*pi-dphi instead of exactly zero and thereby break the intended
+    % reflection symmetry before the SIF extractor is even called.
+    %
+    % Freeze the geometrically exact rightmost point of the centered circle.
+    I=struct();
+    I.idx_star=NaN;
+    I.phi_star=0;
+    I.x_star=C0.hole.center+[C0.hole.r,0];
+    I.n_mat_star=[1,0];
+    I.n_hole_star=[-1,0];
+    I.t_hat_star=[0,1];
+    I.sig_tt_unit=NaN;
+    I.sig_tt_pos_unit=NaN;
+    I.lambda_ini=NaN;
+    I.sig_applied_ini=NaN;
+    I.all_max_idx=[];
+    I.selection_rule='exact_centered_hole_parity_point';
 
     C=local_scale_mesh_config(C0,ip.Results.MeshScale);
     C.a0=ip.Results.a0Factor*C0.a0;
