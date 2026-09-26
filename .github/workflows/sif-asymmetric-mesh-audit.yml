@@ -23,7 +23,7 @@ jobs:
       - name: Run reduced SIF verification suite
         uses: matlab-actions/run-command@v3
         with:
-          command: run_ci_sif_audit
+          command: addpath(genpath(pwd)); run_ci_sif_audit
 
       - name: Upload verification outputs
         if: always()
