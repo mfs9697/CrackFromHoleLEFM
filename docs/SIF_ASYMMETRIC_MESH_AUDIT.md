@@ -720,3 +720,40 @@ annuli, with [0.02,0.12] as the reference domain. Both methods are compared
 directly with the imposed exact KI/KII; neither extractor is treated as
 truth. The driver reports pure-mode cross leakage, vector error, contour/
 domain ranges, and the old P/Q interpolation mismatch diagnostics.
+
+
+## Step 4D result: exact SIF recovery on the approved literal crack-cut mesh
+
+Step 4D was run locally on 2026-09-27. The geometry gate passed before any
+SIF extraction. The cut mesh has 3078 T3 nodes, 5934 T3/T6 elements, 12089
+T6 nodes, 47 T3 crack-face pairs and 93 T6 crack-face pairs. The near-cut
+minimum quality is 0.751266 and the minimum angle is 30.084 degrees.
+
+On the exactly symmetric S0 mesh, the historical mirror/J method shows
+machine-level cross-mode leakage in the pure-mode tests. At the reference
+contour rI=0.08 it recovers KI=1.0002135 for pure mode I and KII=0.9995729
+for pure mode II. The old-method contour ranges over rI=0.02--0.14 are
+6.865e-4 for KI and 6.641e-4 for KII, i.e. modest sub-0.1% variation.
+
+The P/Q diagnostic mismatch at rI=0.08 is at roundoff level: median detJ
+mismatch 4.47e-15 and median barycentric-minimum mismatch 4.05e-15. This
+confirms that the approved S0 lattice is not only geometrically symmetric
+but also supplies effectively identical mirrored interpolation stencils to
+the old Ishikawa--Kitagawa--Okamura decomposition.
+
+The canonical FE-nodal EDI is substantially more accurate on the same exact
+fields. At the reference annulus [0.02,0.12], pure-I and pure-II errors are
+about 8e-7, with cross leakage about 2e-13--4e-13. Its domain ranges are
+about 2.42e-7 for KI and 7.48e-7 for KII.
+
+For the 5% and 1% mixed-mode cases, the old method preserves the imposed
+small KII very well: at rI=0.08 the KII errors are -2.14e-5 and -4.27e-6,
+respectively. FE-nodal EDI errors are roughly 4.14e-8 and 8.29e-9.
+
+Scientific conclusion: on a truly mirror-symmetric discrete mesh, the old
+mirror/J mode-separation method is internally sound and highly accurate.
+Therefore any degradation observed after controlled lower-half asymmetry can
+be attributed to loss of discrete mirror correspondence rather than to an
+intrinsic flaw of the continuum parity decomposition. The FE-nodal EDI now
+serves as the mesh-general comparison method, while exact KI/KII remain the
+ground truth in synthetic tests.
