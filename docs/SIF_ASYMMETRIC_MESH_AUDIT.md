@@ -354,3 +354,43 @@ controlled comparison/reproduction.
 Step 3C has been updated to use the canonical S0 mesh explicitly and prints
 the maximum mirror-coordinate error plus confirmation that the two negative-x
 crack faces have distinct node IDs.
+
+
+## Canonical S0 rerun: Step 2 and Step 3C
+
+The mirror-reflected S0 mesh was run locally on 2026-09-27.
+
+Step 2 regression:
+
+- maximum mirror-coordinate error: 0.000e+00;
+- upper/lower crack faces remain distinct;
+- fine mesh (Nr=16, Nth=128): KI recovery ratio = 1.0044 for pure mode I;
+- fine mesh: KII recovery ratio = 1.0044 for pure mode II;
+- pure-mode cross leakage is approximately 1e-14;
+- regression status: PASS at 2% tolerance.
+
+Compared with the previous same-diagonal synthetic topology, exact mirror
+reflection reduces pure-mode cross leakage from roughly 1e-6--1e-5 to
+machine precision, while leaving the imposed-mode recovery essentially
+unchanged.
+
+Step 3C on canonical S0:
+
+- outer-radius sweep recovered/input range: about 2.18% for mode I and
+  2.19% for mode II;
+- inner-radius sweep recovered/input range: about 1.87% for both modes;
+- pure mode I, pure mode II, and mixed mode share essentially the same
+  annulus dependence;
+- cross-mode leakage is at machine precision, roughly 1e-14.
+
+Therefore the approximately 2% annulus oscillation observed in the exact
+Williams-field test is not caused by the former non-mirrored connectivity.
+It persists on a strictly mirror-reflected mesh and is therefore attributed
+to finite T6 interpolation/quadrature of the nodally sampled singular field
+on this fixed radial/angular discretization. The topology asymmetry mainly
+manifested as tiny cross-mode leakage, which disappears on S0.
+
+This strengthens the Step 3 conclusion: the much larger KII-only annulus
+sensitivity of the numerical FEM crack-tip solution is a property of that
+discrete physical field and its extraction, not an intrinsic mode-II defect
+of the corrected EDI formulation.
