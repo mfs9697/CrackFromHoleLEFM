@@ -185,3 +185,25 @@ experiment, not on fitting the EDI result to the historical mirror/J value.
 The Williams-field driver has now been converted into a regression test:
 after the correction, recovered/input must approach one, pure-mode cross
 leakage must approach zero, and mode-II sign must remain positive.
+
+
+## Post-correction Williams-field regression
+
+The corrected EDI implementation was rerun locally on 2026-09-27.
+
+Fine mesh (Nr=16, Nth=128):
+
+- pure mode I: KI_recovered/KI_input = 1.0044;
+- pure mode II: KII_recovered/KII_input = 1.0044;
+- mixed mode: both modal recovery ratios = 1.0044;
+- pure-I cross leakage: KII = -2.2813e-7;
+- pure-II cross leakage: KI = 6.8440e-7.
+
+The coarse mesh (Nr=8, Nth=64) recovered approximately 0.9861 for both
+modes, so the refinement trend brackets unity and the fine-mesh error is
+about 0.44%.
+
+The post-fix regression therefore passes the configured 2% tolerance.
+Mode-II sign is confirmed independently by the pure-II exact field.
+
+Status of the EDI normalization/sign gate: **PASSED**.
