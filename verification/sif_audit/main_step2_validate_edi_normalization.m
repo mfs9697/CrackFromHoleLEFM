@@ -20,6 +20,6 @@ function Out = main_step2_validate_edi_normalization()
         'NthList', [64 128], ...
         'Verbose', true);
 
-    fprintf('\nSTEP 2 completed.\n');
-    fprintf('Inspect convergence of raw/input and 0.5*raw/input before editing EDI.\n');
+    fprintf('\nSTEP 2 regression completed.\n');
+    fprintf('Fine-mesh Williams-field recovery must remain within the configured tolerance.\n');
 end
