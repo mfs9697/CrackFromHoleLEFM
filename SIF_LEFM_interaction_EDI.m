@@ -256,13 +256,24 @@ function [KI, KII, Aux] = SIF_LEFM_interaction_EDI(mesh, U, V, mat, domain, vara
     %% ------------------------------------------------------------
     % 5. Convert interaction integrals to SIFs
     %% ------------------------------------------------------------
-    % With Kaux = 1:
-    %   I_modeI  = KI_actual  * Kaux / Eeff
-    %   I_modeII = KII_actual * Kaux / Eeff
+    % For the interaction integral implemented above, the standard
+    % isotropic relation is
     %
-    % The sign may need one global convention correction after validation.
-    KI  = Eeff * I_modeI  / Kaux;
-    KII = Eeff * I_modeII / Kaux;
+    %   I^(1,2) = 2/Eeff * (KI^(1) KI^(2) + KII^(1) KII^(2)).
+    %
+    % Therefore, using a unit pure-mode auxiliary field Kaux,
+    %
+    %   KI_actual  = Eeff/(2*Kaux) * I_modeI
+    %   KII_actual = Eeff/(2*Kaux) * I_modeII
+    %
+    % The factor 1/2 was independently verified on 2026-09-27 with exact
+    % leading-order Williams displacement fields on a polar crack annulus:
+    % the pre-correction implementation converged to K_recovered/K_input=2
+    % for pure mode I, pure mode II, and a mixed-mode field.
+    normalizationFactor = Eeff/(2*Kaux);
+
+    KI  = normalizationFactor * I_modeI;
+    KII = normalizationFactor * I_modeII;
 
     %% ------------------------------------------------------------
     % 6. Diagnostics
@@ -278,6 +289,8 @@ function [KI, KII, Aux] = SIF_LEFM_interaction_EDI(mesh, U, V, mat, domain, vara
 
     Aux.Kaux = Kaux;
     Aux.Eeff = Eeff;
+    Aux.normalizationFactor = normalizationFactor;
+    Aux.normalizationRelation = 'K = Eeff/(2*Kaux) * I';
     Aux.mu = mu;
     Aux.kappa = kappa;
     Aux.planeStrain = planeStrain;
