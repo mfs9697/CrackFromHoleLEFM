@@ -534,3 +534,44 @@ Conclusion: FE-nodal q is adopted as the canonical EDI weight for all
 subsequent asymmetry-audit experiments. `analytic_radial` is retained as a
 legacy/reproduction option until the audit is complete; the production
 default is not changed yet.
+
+
+## Step 4: graded concentric-ring mesh experiment
+
+A new synthetic crack-tip mesh family has been added to match the preferred
+concentric-ring construction used for illustration. The inner circle is
+uniformly subdivided, successive radial rings are geometrically spaced, and
+the angular nodes are staggered by half a sector on alternating rings. This
+produces a graded near-equilateral triangular mesh whose element size grows
+smoothly away from the crack tip.
+
+For nominal angular increment dtheta, the equilateral outward-triangle
+radial ratio is
+
+q_eq = cos(dtheta/2) + sqrt(3) sin(dtheta/2).
+
+The number of radial intervals is selected from q_eq, then the actual
+constant ratio q is adjusted slightly so the last ring lands exactly on the
+prescribed outer radius. With the default Ntheta=64, r0=0.005 and r1=0.20,
+the construction uses 46 radial intervals; q is approximately 1.0835, very
+close to the equilateral target. Because an exact tiling of a circular
+annulus by equilateral triangles is geometrically impossible while all ring
+nodes remain on concentric circles, triangle quality is reported explicitly
+instead of claiming every element is exactly equilateral.
+
+The baseline S0 mesh is created by building the upper half and reflecting
+its coordinates and connectivity exactly. Three controlled lower-half
+asymmetry cases are generated from the same ring radii: a smooth angular
+shift at unchanged nominal density, a roughly 1.5-times coarser lower
+angular spacing, and a 2-times coarser lower angular spacing. The positive
+x radial line is shared, while the negative-x upper/lower crack faces keep
+distinct node IDs.
+
+`main_step4_graded_ring_asymmetry_experiment` prescribes exact pure-I,
+pure-II, and small-mixed Williams fields on each mesh. The historical
+mirror/J extractor is swept over five contour radii, while the canonical
+interaction EDI uses FE-nodal q on a fixed annulus. Since the exact SIFs are
+known, both extractors are assessed against truth; neither is used as a
+reference for the other. Full meshes are plotted by default and mesh size,
+quality, grading ratio, extraction errors, and old-contour sensitivity are
+printed.
