@@ -394,3 +394,22 @@ This strengthens the Step 3 conclusion: the much larger KII-only annulus
 sensitivity of the numerical FEM crack-tip solution is a property of that
 discrete physical field and its extraction, not an intrinsic mode-II defect
 of the corrected EDI formulation.
+
+
+## Step 3D: canonical S0 mesh-refinement study
+
+A refinement driver has been added for the strictly mirror-reflected S0 mesh.
+It uses three levels: (Nr,Ntheta) = (8,64), (16,128), and (32,256).
+
+For every level the driver prints the complete mesh size: T3 vertices,
+T3 elements, T6 nodes, T6 elements, displacement DOFs, mirror-coordinate
+error, and whether the two crack faces remain distinct. It also opens a
+full-mesh figure for each level by default.
+
+The exact mixed Williams field KI=1, KII=0.35 is then reused for the same
+outer- and inner-annulus sweeps as Step 3C. Pure-mode recovery and cross-mode
+leakage are still checked at the baseline annulus for each level. The main
+convergence quantity is the range of recovered/input ratios over each
+annulus sweep. If the roughly 2% oscillation is a discretization effect,
+these ranges should decrease with refinement while S0 cross-mode leakage
+remains at machine precision.
