@@ -207,3 +207,39 @@ The post-fix regression therefore passes the configured 2% tolerance.
 Mode-II sign is confirmed independently by the pure-II exact field.
 
 Status of the EDI normalization/sign gate: **PASSED**.
+
+
+## Corrected same-field comparison
+
+After the independently verified factor-1/2 correction, the same FEM field
+was reevaluated locally:
+
+| Method | KI | KII |
+|---|---:|---:|
+| old mirror/J | 0.33973 | 0.0033961 |
+| corrected interaction EDI | 0.34004 | 0.0036663 |
+
+At the matched outer radius 0.0008:
+
+- mode-I difference relative to EDI is about 0.091%;
+- mode-II difference relative to EDI is about 7.37%;
+- the vector SIF difference relative to the EDI SIF norm is about 0.120%.
+
+Because KII is only about 1% of KI in this control case, its componentwise
+relative difference is much larger than the vector discrepancy. This result
+does **not** yet identify mesh asymmetry as the cause. Radius/domain
+sensitivity must be separated first.
+
+## Step 3: same-field radius/domain sweep
+
+The next gate solves the FEM field once and then performs:
+
+1. a matched outer-radius sweep with r/lastLeg = 0.2, 0.3, 0.4, 0.5, 0.6
+   for both the old contour and EDI outer domain;
+2. an EDI inner-radius sweep at fixed r_outer/lastLeg = 0.5.
+
+The old-method table also records JII/abs-integral cancellation, integrand
+sign changes, a P/Q element-size proxy from detJ, and barycentric-margin
+mismatch. This is intended to determine whether the residual small-mode
+difference is primarily contour/domain sensitivity or is already correlated
+with discrete P/Q asymmetry before deliberately asymmetric meshes are built.
