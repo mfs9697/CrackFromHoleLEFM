@@ -413,3 +413,55 @@ convergence quantity is the range of recovered/input ratios over each
 annulus sweep. If the roughly 2% oscillation is a discretization effect,
 these ranges should decrease with refinement while S0 cross-mode leakage
 remains at machine precision.
+
+
+## Step 3D result: S0 refinement
+
+The canonical S0 refinement study was run locally on 2026-09-27.
+
+Total meshes:
+
+- L1 (Nr=8, Ntheta=64): 585 T3 vertices, 1024 T3/T6 elements,
+  2193 T6 nodes, 4386 displacement DOFs;
+- L2 (Nr=16, Ntheta=128): 2193 T3 vertices, 4096 elements,
+  8481 T6 nodes, 16962 DOFs;
+- L3 (Nr=32, Ntheta=256): 8481 T3 vertices, 16384 elements,
+  33345 T6 nodes, 66690 DOFs.
+
+All three meshes have zero reported mirror-coordinate error and distinct
+upper/lower crack-face node IDs.
+
+Baseline exact-field recovery at annulus [0.024,0.12] is not monotone with
+refinement: mixed-mode vector error is about 0.42%, 1.80%, and 0.86% for
+L1, L2, and L3 respectively. Cross-mode leakage remains at machine
+precision.
+
+Outer-annulus recovery ranges decrease overall from about 4.25% at L1 to
+2.19% at L2 and 1.90% at L3. The inner-annulus range is non-monotone:
+about 0.94%, 1.87%, and 0.78%.
+
+Therefore the expected clean monotone convergence of annulus sensitivity is
+not yet demonstrated. The oscillatory behavior is consistent with the
+analytic radial weight having a sharp piecewise gradient whose circular
+boundaries cut elements and are integrated by Gauss-point inclusion/
+exclusion. Refinement changes the relative alignment of those boundaries
+with the T6/Gauss layout, producing aliasing-like oscillations.
+
+## Step 3E: FE-consistent weight-function check
+
+Before any deliberate mesh-asymmetry experiment, the EDI implementation is
+now given an optional `WeightFunction='fe_nodal'` mode. The default remains
+`analytic_radial` so prior audit results are reproducible.
+
+For `fe_nodal`, radial q values are assigned at all T6 nodes and q-gradient
+is computed using the same T6 shape-function derivatives as the displacement
+field. Gauss points are no longer accepted/rejected solely because their
+radius falls on one side of an analytic annulus boundary; elements that
+straddle a q transition contribute through the FE-interpolated gradient.
+
+`main_step3e_compare_edi_weight_functions` compares both weight choices on
+all three canonical S0 refinement levels using the same exact mixed Williams
+field and the same outer/inner annulus sweeps. A substantial reduction and
+smoother refinement trend with `fe_nodal` would identify annulus-boundary
+quadrature aliasing as the main source of the residual exact-field
+oscillation.
