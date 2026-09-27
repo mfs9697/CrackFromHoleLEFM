@@ -130,16 +130,16 @@ function Out = main_step3c_exact_field_edi_domain_sweep()
     S = struct();
 
     S.outerSweep = struct();
-    S.outerSweep.pureI_ratio_range = range(Touter.pureI_KI_ratio);
-    S.outerSweep.pureII_ratio_range = range(Touter.pureII_KII_ratio);
-    S.outerSweep.mixed_KI_ratio_range = range(Touter.mixed_KI_ratio);
-    S.outerSweep.mixed_KII_ratio_range = range(Touter.mixed_KII_ratio);
+    S.outerSweep.pureI_ratio_range = max(Touter.pureI_KI_ratio) - min(Touter.pureI_KI_ratio);
+    S.outerSweep.pureII_ratio_range = max(Touter.pureII_KII_ratio) - min(Touter.pureII_KII_ratio);
+    S.outerSweep.mixed_KI_ratio_range = max(Touter.mixed_KI_ratio) - min(Touter.mixed_KI_ratio);
+    S.outerSweep.mixed_KII_ratio_range = max(Touter.mixed_KII_ratio) - min(Touter.mixed_KII_ratio);
 
     S.innerSweep = struct();
-    S.innerSweep.pureI_ratio_range = range(Tinner.pureI_KI_ratio);
-    S.innerSweep.pureII_ratio_range = range(Tinner.pureII_KII_ratio);
-    S.innerSweep.mixed_KI_ratio_range = range(Tinner.mixed_KI_ratio);
-    S.innerSweep.mixed_KII_ratio_range = range(Tinner.mixed_KII_ratio);
+    S.innerSweep.pureI_ratio_range = max(Tinner.pureI_KI_ratio) - min(Tinner.pureI_KI_ratio);
+    S.innerSweep.pureII_ratio_range = max(Tinner.pureII_KII_ratio) - min(Tinner.pureII_KII_ratio);
+    S.innerSweep.mixed_KI_ratio_range = max(Tinner.mixed_KI_ratio) - min(Tinner.mixed_KI_ratio);
+    S.innerSweep.mixed_KII_ratio_range = max(Tinner.mixed_KII_ratio) - min(Tinner.mixed_KII_ratio);
 
     Out = struct();
     Out.outerSweep = Touter;
