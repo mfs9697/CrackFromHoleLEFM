@@ -30,7 +30,7 @@ function C = cfg_crack_path_two_leg_control(theta2_deg, varargin)
     ip = inputParser;
     addParameter(ip, 'A', 0.10, @(x)isnumeric(x) && isscalar(x) && x>0);
     addParameter(ip, 'B', 0.10, @(x)isnumeric(x) && isscalar(x) && x>0);
-    addParameter(ip, 'a', 0.02, @(x)isnumeric(x) && isscalar(x) && x>0);
+    addParameter(ip, 'crackLength', 0.02, @(x)isnumeric(x) && isscalar(x) && x>0);
     addParameter(ip, 'theta1_deg', -25.0, @(x)isnumeric(x) && isscalar(x));
     addParameter(ip, 'delta_over_a', 0.08, @(x)isnumeric(x) && isscalar(x) && x>0);
     addParameter(ip, 'ncoh', 40, @(x)isnumeric(x) && isscalar(x) && x>=2);
@@ -47,10 +47,11 @@ function C = cfg_crack_path_two_leg_control(theta2_deg, varargin)
 
     theta1 = deg2rad(S.theta1_deg);
     theta2 = deg2rad(theta2_deg);
-    delta  = S.delta_over_a * S.a;
+    a      = S.crackLength;
+    delta  = S.delta_over_a * a;
 
     P0 = [0.0, 0.0];
-    P1 = P0 + S.a    * [cos(theta1), sin(theta1)];
+    P1 = P0 + a      * [cos(theta1), sin(theta1)];
     P2 = P1 + delta  * [cos(theta2), sin(theta2)];
 
     C = struct();
@@ -60,10 +61,10 @@ function C = cfg_crack_path_two_leg_control(theta2_deg, varargin)
 
     C.P0   = P0;
     C.Pmid = [P0; P1; P2];
-    C.L    = [S.a; delta];
+    C.L    = [a; delta];
     C.theta = [theta1; theta2];
 
-    C.a = S.a;
+    C.a = a;
     C.delta = delta;
     C.theta1 = theta1;
     C.theta2 = theta2;
