@@ -605,3 +605,91 @@ Hard S0 validation checks were added: within-ring segment-length spread must
 be at roundoff level, crack-face nodes must lie on x2=0, and crack-seam
 triangle quality must be at least 0.8. Step 4 now prints these quantities
 before reporting any SIF results.
+
+## Step 4C: local crack cut in the approved literal parent lattice
+
+The preceding M/M+1 half-ring construction is retained as an experimental
+audit record. The approved parent for this step is the literal closed
+annular lattice in `build_literal_ring_lattice.m`, with the same N=64 equal
+angular segments on every ring and alternating angular phase
+0, Delta-theta/2, 0, Delta-theta/2, and so on. Its radial spacing remains
+r0=0.005, r1=0.20, Nr=46, q approximately 1.08349620. The parent builder and
+its triangulation are unchanged.
+
+The separate `build_literal_ring_crack_cut_mesh.m` inserts the ray
+x2=0, x1<0 after this closed parent T3 mesh has been constructed. Triangles
+whose interiors intersect the ray are split locally. New intersection
+vertices lie on their original edges, with one shared intersection per
+edge before the faces are separated. A phase-shifted ring intersects the
+ray on its polygon chord, at radius r*cos(pi/64); moving that intersection
+to the analytic circle would alter the approved parent geometry and is
+therefore avoided.
+
+Original seam vertices are retained, with their roundoff-sized `sin(pi)`
+y coordinates set to exact zero in the cut mesh. The returned parent mesh
+retains the unsnapped coordinates. Duplicate crack-face IDs have exactly
+identical coordinates and belong exclusively to their respective sides.
+Unsplit triangles that touch the lower seam only substitute lower-face
+IDs. Away from the ray, original vertex IDs, coordinates and triangle
+connectivity must remain unchanged. Parent-element provenance is recorded
+for every final T3 element, distinguishing actual subdivision from seam-ID
+substitution.
+
+The automatic T3 geometry audit must pass before T6 midside nodes are
+created. The resulting T6 mesh is then audited separately, including the
+topological separation of face midside nodes. The gate checks:
+
+- unchanged nodes and connectivity outside the ray-intersection neighborhood;
+- parent/child coverage and positive signed T3 areas;
+- face nodes on exact x2=0 with distinct, coincident upper/lower IDs;
+- no elements crossing the ray and no edges connecting the two crack faces;
+- near-cut quality Q >= 0.70 and minimum angle >= 25 degrees, using
+  Q = 4 sqrt(3) area / (a^2+b^2+c^2).
+
+`main_step4c_preview_literal_crack_cut` is a geometry-only driver. It shows
+the full mesh, a negative-x seam zoom, and a zoom where the crack meets the
+inner boundary. Split children are colored by side, and coincident face
+nodes are shown using different markers at the same coordinates. Optional
+`Visible='off'` and `OutputDir` arguments support headless PNG, MAT and JSON
+exports. The MAT output preserves both the original parent and final cut
+meshes for direct comparison.
+
+This step makes no changes to existing experimental mesh builders or SIF
+drivers, and performs no SIF calculation. Passing the geometry gate is a
+prerequisite for any later SIF experiment; it does not by itself establish
+an SIF result or approve a change to the SIF experiment.
+
+### Step 4C geometry result (MATLAB R2023a, 2026-09-27)
+
+Both T3 and T6 geometry gates passed. Of the 5,888 original triangles,
+46 intersect the ray through their interiors and are bisected. Another
+92 touch the ray only at an existing vertex; the 5,750 outside this
+neighborhood retain their exact connectivity. All 2,984 original nodes
+off the ray retain their exact coordinates. The largest roundoff-only
+normalization of an original on-ray y coordinate is 2.45e-17.
+
+The cut introduces 23 shared edge intersections and 47 lower-face copies,
+giving 3,078 T3 nodes and 5,934 triangles. The 9,011 topological edges then
+produce 12,089 T6 nodes. Each crack face has 47 T3 vertices and 93 T6
+nodes, with distinct IDs and exactly equal coordinates across the seam.
+The mesh has 220 boundary edges and Euler characteristic one.
+
+Minimum near-cut quality is 0.7512661928 and minimum angle is
+30.08398398 degrees. The minimum signed area is 5.46207368e-8; the maximum
+relative parent/child area discrepancy is 2.18e-16. The local bisections
+explain the quality reduction from the parent minimum of approximately
+0.993576. The gate floors 0.70 and 25 degrees allow a modest margin below
+the expected cut geometry; the historic 0.8 seam gate would reject these
+necessary local bisections and is not reused.
+
+All three exported views were inspected: the full mesh, negative-x seam,
+and inner boundary entry. Existing mesh builders, the parent builder,
+`T3toT6_fast`, and the SIF experiment were not modified. The geometry
+driver calls the approved parent builder and `T3toT6_fast`; it does not
+run the experimental builders or any SIF calculation.
+
+`test_literal_crack_cut` also passed: it locks the approved ring geometry
+and expected counts, then verifies rejection of 15 corruptions, including
+off-cut edits, nonpositive areas, overlapping children, crack bridges,
+welded T3/T6 face nodes, sliver elements, invalid midpoints and incomplete
+face-node lists.
