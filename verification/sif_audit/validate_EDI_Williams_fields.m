@@ -15,9 +15,9 @@ function Out = validate_EDI_Williams_fields(varargin)
 %   4) convergence with mesh refinement.
 %
 % IMPORTANT:
-%   The function does NOT modify or compensate the production EDI result.
-%   Both the raw recovery ratio and the diagnostic 0.5*raw ratio are
-%   reported so a possible factor-of-two normalization error is visible.
+%   The production EDI normalization has now been corrected by the factor
+%   1/2 established by the first synthetic run. This routine is therefore
+%   a regression/convergence check: recovered/input should tend to 1.
 %
 % Usage:
 %   O = validate_EDI_Williams_fields();
@@ -33,6 +33,8 @@ function Out = validate_EDI_Williams_fields(varargin)
 %   'rInner'     EDI q=1 radius, default 0.04
 %   'rOuter'     EDI q=0 radius, default 0.16
 %   'Verbose'    print table, default true
+%   'AssertFine'  assert fine-mesh recovery within tolerance, default true
+%   'FineTol'     fine-mesh relative tolerance, default 0.02
 
     ip = inputParser;
     addParameter(ip, 'E', 4e3, @(x)isnumeric(x) && isscalar(x) && x>0);
@@ -45,6 +47,8 @@ function Out = validate_EDI_Williams_fields(varargin)
     addParameter(ip, 'rInner', 0.04, @(x)isnumeric(x) && isscalar(x) && x>=0);
     addParameter(ip, 'rOuter', 0.16, @(x)isnumeric(x) && isscalar(x) && x>0);
     addParameter(ip, 'Verbose', true, @(x)islogical(x) || isnumeric(x));
+    addParameter(ip, 'AssertFine', true, @(x)islogical(x) || isnumeric(x));
+    addParameter(ip, 'FineTol', 0.02, @(x)isnumeric(x) && isscalar(x) && x>0);
     parse(ip, varargin{:});
     S = ip.Results;
 
@@ -115,30 +119,30 @@ function Out = validate_EDI_Williams_fields(varargin)
             U = exact_williams_displacement_vector( ...
                 mesh.coord, KIin, KIIin, mu, kappa);
 
-            [KIraw, KIIraw, Aux] = SIF_LEFM_interaction_EDI( ...
+            [KIrec, KIIrec, Aux] = SIF_LEFM_interaction_EDI( ...
                 mesh, U, V, mat, domain, ...
                 'UsePlaneStrain', ps==1, ...
                 'Verbose', false);
 
             if abs(KIin) > 0
-                ratioKI = KIraw/KIin;
-                ratioKIhalf = 0.5*KIraw/KIin;
+                ratioKI = KIrec/KIin;
+                relErrKI = abs(ratioKI - 1);
             else
                 ratioKI = NaN;
-                ratioKIhalf = NaN;
+                relErrKI = abs(KIrec);
             end
 
             if abs(KIIin) > 0
-                ratioKII = KIIraw/KIIin;
-                ratioKIIhalf = 0.5*KIIraw/KIIin;
+                ratioKII = KIIrec/KIIin;
+                relErrKII = abs(ratioKII - 1);
             else
                 ratioKII = NaN;
-                ratioKIIhalf = NaN;
+                relErrKII = abs(KIIrec);
             end
 
             rows = [rows; ...
-                im, ic, Nr, Nth, KIin, KIIin, KIraw, KIIraw, ...
-                ratioKI, ratioKII, ratioKIhalf, ratioKIIhalf, ...
+                im, ic, Nr, Nth, KIin, KIIin, KIrec, KIIrec, ...
+                ratioKI, ratioKII, relErrKI, relErrKII, ...
                 Aux.nElem_used, Aux.nGP_used]; %#ok<AGROW>
 
             details{im,ic} = Aux;
@@ -147,8 +151,8 @@ function Out = validate_EDI_Williams_fields(varargin)
 
     T = array2table(rows, 'VariableNames', { ...
         'meshLevel','caseID','Nr','Nth','KI_input','KII_input', ...
-        'KI_raw','KII_raw','KI_raw_over_input','KII_raw_over_input', ...
-        'half_KI_raw_over_input','half_KII_raw_over_input', ...
+        'KI_recovered','KII_recovered','KI_recovered_over_input','KII_recovered_over_input', ...
+        'KI_error_metric','KII_error_metric', ...
         'nElem_used','nGP_used'});
 
     % Add readable case names without relying on categorical ordering.
@@ -176,15 +180,48 @@ function Out = validate_EDI_Williams_fields(varargin)
 
         disp(T(:, { ...
             'meshLevel','caseName','Nr','Nth', ...
-            'KI_input','KII_input','KI_raw','KII_raw', ...
-            'KI_raw_over_input','KII_raw_over_input', ...
-            'half_KI_raw_over_input','half_KII_raw_over_input'}));
+            'KI_input','KII_input','KI_recovered','KII_recovered', ...
+            'KI_recovered_over_input','KII_recovered_over_input', ...
+            'KI_error_metric','KII_error_metric'}));
 
         fprintf(['\nInterpretation rule:\n', ...
-            '  correct raw normalization -> raw/input tends to 1;\n', ...
-            '  missing factor 1/2       -> raw/input tends to 2 while ', ...
-            '0.5*raw/input tends to 1.\n', ...
-            'For pure modes, the non-imposed mode should converge to zero.\n']);
+            '  imposed-mode recovered/input should tend to 1;\n', ...
+            '  non-imposed pure-mode component should tend to zero;\n', ...
+            '  pure mode II should recover with positive sign.\n']);
+    end
+    % Fine-mesh regression gate.
+    fine = T(T.meshLevel == max(T.meshLevel), :);
+
+    tol = S.FineTol;
+
+    pureI = fine(fine.caseName == "pure_I", :);
+    pureII = fine(fine.caseName == "pure_II", :);
+    mixed = fine(fine.caseName == "mixed_I_II", :);
+
+    checks = struct();
+    checks.pureI_ratio = pureI.KI_recovered_over_input;
+    checks.pureI_cross = abs(pureI.KII_recovered);
+    checks.pureII_ratio = pureII.KII_recovered_over_input;
+    checks.pureII_cross = abs(pureII.KI_recovered);
+    checks.mixed_KI_ratio = mixed.KI_recovered_over_input;
+    checks.mixed_KII_ratio = mixed.KII_recovered_over_input;
+
+    scale = max([1; abs(fine.KI_input); abs(fine.KII_input)]);
+
+    checks.pass = ...
+        abs(checks.pureI_ratio - 1) <= tol && ...
+        abs(checks.pureII_ratio - 1) <= tol && ...
+        checks.pureI_cross <= tol*scale && ...
+        checks.pureII_cross <= tol*scale && ...
+        abs(checks.mixed_KI_ratio - 1) <= tol && ...
+        abs(checks.mixed_KII_ratio - 1) <= tol;
+
+    Out.checks = checks;
+    Out.fineTolerance = tol;
+
+    if logical(S.AssertFine) && ~checks.pass
+        error('validate_EDI_Williams_fields:RegressionFailed', ...
+            'Fine-mesh Williams-field recovery failed the %.3g tolerance.', tol);
     end
 end
 
