@@ -465,3 +465,41 @@ field and the same outer/inner annulus sweeps. A substantial reduction and
 smoother refinement trend with `fe_nodal` would identify annulus-boundary
 quadrature aliasing as the main source of the residual exact-field
 oscillation.
+
+
+## Step 3E result: FE-consistent q removes annulus aliasing
+
+Step 3E was run locally on 2026-09-27 using the canonical S0 meshes.
+
+For the legacy clipped analytic radial weight, the maximum annulus-sweep
+range remains at percent level: about 4.25%, 2.19%, and 1.90% for the
+three refinement levels.
+
+For the FE-consistent nodal weight, the maximum ranges collapse to roughly:
+
+- L1 (8,64): 4.58e-4;
+- L2 (16,128): 6.25e-5;
+- L3 (32,256): 7.97e-7.
+
+On the finest mesh the recovered mixed field is effectively KI=1 and
+KII=0.35 across every tested inner and outer annulus, to the displayed
+precision. This is a reduction of the annulus sensitivity by more than four
+orders of magnitude relative to the clipped analytic-q implementation at
+the same refinement level.
+
+Interpretation: the percent-level oscillations seen in Steps 3C--3D were
+caused predominantly by cut-element/Gauss-point aliasing at the analytic
+circular q-transition boundaries. They are not an intrinsic limitation of
+the interaction-integral formulation and are not a mode-II instability.
+The FE-nodal q behaves as the numerically consistent EDI weight on the T6
+mesh.
+
+## Step 3F: physical-field check of the EDI weight
+
+Before changing the production/default EDI weight, a same-field physical
+FEM comparison has been added. The two weight functions are applied to the
+same solved two-leg crack field, so no mesh or displacement field changes
+between them. The driver reports outer- and inner-annulus ranges and the
+old-mirror/J versus EDI differences at r/lastLeg=0.5. If FE-nodal q also
+substantially reduces domain sensitivity there, it can be promoted to the
+canonical EDI weight for the later mesh-asymmetry audit.
