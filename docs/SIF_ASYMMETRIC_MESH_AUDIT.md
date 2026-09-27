@@ -97,3 +97,45 @@ The next gates are:
 
 Incremental crack growth is outside the scope of this audit until these
 gates are closed.
+
+
+## First same-field numerical result
+
+The first local MATLAB run of `main_step1_same_field_compare` produced:
+
+| Method | KI | KII |
+|---|---:|---:|
+| old mirror/J | 0.33973 | 0.0033961 |
+| interaction EDI | 0.68007 | 0.0073326 |
+
+with the same FEM field, old contour radius (8.0\times10^{-4}), and EDI
+annulus ([8.0\times10^{-5},8.0\times10^{-4}]).
+
+The mode-I ratio is approximately (0.68007/0.33973 \approx 2.0018). This
+is a strong diagnostic signature of a possible factor-of-two normalization
+issue in the EDI conversion, but it is not by itself sufficient to alter the
+production implementation. The mode-II value is small and correspondingly
+more sensitive; its ratio is not used as the normalization diagnostic.
+
+## Step 2: synthetic Williams-field normalization test
+
+The branch now includes:
+
+- `validate_EDI_Williams_fields.m`;
+- `main_step2_validate_edi_normalization.m`.
+
+This test constructs an independent polar annulus with duplicated crack-face
+nodes, prescribes exact leading-order Williams mode-I, mode-II, and mixed-mode
+displacements, and asks the unchanged EDI implementation to recover the
+imposed SIFs. It reports both raw/input and (0.5\,\mathrm{raw}/\mathrm{input})
+ratios across mesh refinements.
+
+Decision rule:
+
+- if raw/input tends to 1, the current EDI normalization is consistent;
+- if raw/input tends to 2 while (0.5\,\mathrm{raw}/\mathrm{input}) tends
+  to 1, the conversion requires an explicit factor (1/2);
+- pure-mode cross leakage and the sign of recovered mode II are checked at
+  the same time.
+
+No EDI source-code correction has been made before this gate is run.
