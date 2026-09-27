@@ -757,3 +757,36 @@ be attributed to loss of discrete mirror correspondence rather than to an
 intrinsic flaw of the continuum parity decomposition. The FE-nodal EDI now
 serves as the mesh-general comparison method, while exact KI/KII remain the
 ground truth in synthetic tests.
+
+
+## Step 4E: controlled asymmetry-to-modal-contamination curve
+
+Step 4D established the exact symmetric baseline. Step 4E now perturbs only
+the lower-half geometry of that same approved crack-cut mesh while freezing
+the upper half, both crack faces, all node IDs, and all T3/T6 connectivity.
+For each lower-half T3 corner with polar angle -pi<theta<0,
+
+theta_new = theta + alpha*dtheta*sin(theta).
+
+The radius is preserved exactly. The perturbation vanishes on both x-axes
+and reaches a maximum magnitude alpha*dtheta near the lower vertical axis.
+Default alpha values are 0, 0.05, 0.10, 0.20, 0.40, and 0.80 sector widths.
+This creates a one-parameter family in which topology and resolution count
+are unchanged; only discrete mirror correspondence is progressively lost.
+
+The driver `main_step4e_literal_mesh_asymmetry_curve` repeats the exact
+pure-I, pure-II, 5%-mixed, and 1%-mixed Williams tests. The old mirror/J
+method is swept over rI=0.02--0.14 and the FE-nodal EDI is checked on three
+annuli. A compact detective table reports: normalized geometric mirror
+mismatch; old P/Q detJ and barycentric mismatch; false KII generated from
+pure mode I; false KI generated from pure mode II; relative KII error for
+KII/KI=0.01; the same quantities from EDI; and minimum mesh quality.
+
+The intended causal test is therefore direct:
+
+discrete mirror mismatch -> P/Q interpolation mismatch -> modal contamination.
+
+Because the exact SIFs remain prescribed on every mesh, neither extraction
+method is treated as truth. The expected discriminator is that the old
+mirror/J false cross-mode terms grow with asymmetry while FE-nodal EDI
+remains nearly invariant.
