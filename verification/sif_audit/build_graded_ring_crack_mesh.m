@@ -159,8 +159,8 @@ info.nT6Elements=size(connect6,1);
 info.nDOF=2*size(coord6,1);
 info.qualityMin=min(Q);
 info.qualityMedian=median(Q);
-info.qualityP05=prctile(Q,5);
-info.qualityP95=prctile(Q,95);
+info.qualityP05=local_percentile(Q,5);
+info.qualityP95=local_percentile(Q,95);
 info.crackUpperIDs=crackUpper;
 info.crackLowerIDs=crackLower;
 info.crackFacesDistinct=all(crackUpper~=crackLower);
@@ -243,4 +243,12 @@ b=sqrt(sum((X(T(:,3),:)-X(T(:,2),:)).^2,2));
 c=sqrt(sum((X(T(:,1),:)-X(T(:,3),:)).^2,2));
 A=abs(tri_area_signed(T,X));
 Q=4*sqrt(3)*A./(a.^2+b.^2+c.^2);
+end
+
+function y=local_percentile(x,p)
+x=sort(x(:));
+if isempty(x), y=NaN; return; end
+z=1+(numel(x)-1)*p/100;
+i=floor(z); j=ceil(z);
+if i==j, y=x(i); else, y=x(i)+(z-i)*(x(j)-x(i)); end
 end
