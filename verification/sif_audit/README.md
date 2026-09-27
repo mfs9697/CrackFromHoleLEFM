@@ -14,11 +14,16 @@ Crack-Path geometry/material/mesh scale as a two-leg *elastic* crack
 control. The second leg is traction free here; this is intentionally not a
 CZM solve.
 
-Run:
+Run the first gate directly:
 
 ```matlab
 addpath(genpath(pwd));
+R = main_step1_same_field_compare();
+```
 
+or configure the control explicitly:
+
+```matlab
 C = cfg_crack_path_two_leg_control(2.0);
 R = run_crack_path_old_vs_edi(C);
 ```
