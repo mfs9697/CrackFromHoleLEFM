@@ -139,3 +139,49 @@ Decision rule:
   the same time.
 
 No EDI source-code correction has been made before this gate is run.
+
+
+## Step 2 result: normalization error identified and corrected
+
+The independent exact-field test was run locally on 2026-09-27.
+
+For the coarse polar annulus mesh (Nr=8, Nth=64), the pre-correction
+implementation returned approximately:
+
+- pure mode I: KI_recovered/KI_input = 1.9722;
+- pure mode II: KII_recovered/KII_input = 1.9722;
+- mixed mode: both modal recovery ratios = 1.9722.
+
+For the refined mesh (Nr=16, Nth=128), the ratios were:
+
+- pure mode I: 2.0088;
+- pure mode II: 2.0088;
+- mixed mode: 2.0088 for both modes.
+
+The non-imposed modal components converged toward zero, and pure mode II
+was recovered with the same sign as the imposed field.
+
+This establishes that the interaction integral itself was producing the
+standard interaction quantity
+
+\[
+I^{(1,2)} = \frac{2}{E'}\left(
+K_I^{(1)}K_I^{(2)} + K_{II}^{(1)}K_{II}^{(2)}
+\right),
+\]
+
+whereas the conversion in `SIF_LEFM_interaction_EDI.m` had omitted the
+factor (1/2).
+
+The conversion has therefore been corrected to
+
+\[
+K = \frac{E'}{2K^{aux}} I.
+\]
+
+This correction is based on the independent analytical Williams-field
+experiment, not on fitting the EDI result to the historical mirror/J value.
+
+The Williams-field driver has now been converted into a regression test:
+after the correction, recovered/input must approach one, pure-mode cross
+leakage must approach zero, and mode-II sign must remain positive.
