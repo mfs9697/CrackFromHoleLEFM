@@ -9,8 +9,8 @@ function U=exact_williams_displacement_audit(coord,KI,KII,E,nu,ps,varargin)
 
 if nargin<6 || isempty(ps), ps=1; end
 ip=inputParser;
-addParameter(ip,'UpperFaceIDs',[],@(x)isnumeric(x)&&isvector(x));
-addParameter(ip,'LowerFaceIDs',[],@(x)isnumeric(x)&&isvector(x));
+addParameter(ip,'UpperFaceIDs',[],@(x)isempty(x)||(isnumeric(x)&&isvector(x)));
+addParameter(ip,'LowerFaceIDs',[],@(x)isempty(x)||(isnumeric(x)&&isvector(x)));
 parse(ip,varargin{:});
 upperFace=unique(ip.Results.UpperFaceIDs(:));
 lowerFace=unique(ip.Results.LowerFaceIDs(:));
