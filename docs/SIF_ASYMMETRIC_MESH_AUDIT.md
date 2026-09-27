@@ -503,3 +503,34 @@ between them. The driver reports outer- and inner-annulus ranges and the
 old-mirror/J versus EDI differences at r/lastLeg=0.5. If FE-nodal q also
 substantially reduces domain sensitivity there, it can be promoted to the
 canonical EDI weight for the later mesh-asymmetry audit.
+
+
+## Step 3F result: FE-nodal q on the physical FEM field
+
+Step 3F was run locally on 2026-09-27. Both EDI weight functions were
+applied to the identical solved two-leg crack field.
+
+Compared with the clipped analytic radial weight, the FE-nodal weight
+substantially reduces domain sensitivity:
+
+- outer KI range: 2.1684e-3 -> 3.8928e-4 (factor about 5.6);
+- outer KII range: 4.2970e-4 -> 4.5627e-5 (factor about 9.4);
+- inner KI range: 8.9880e-4 -> 6.2595e-6 (factor about 144);
+- inner KII range: 8.5631e-4 -> 7.3387e-6 (factor about 117).
+
+At r/lastLeg=0.5, the old mirror/J versus EDI comparison changes from
+(analytic q) KI=0.33973 vs 0.34004 and KII=0.0033961 vs 0.0036663 to
+(FE-nodal q) KI=0.33973 vs 0.33977 and KII=0.0033961 vs 0.0034604.
+The relative vector difference decreases from 1.2019e-3 to 2.2939e-4,
+about a factor of 5.2. The componentwise KII discrepancy decreases from
+7.37% to 1.86%.
+
+On the FE-nodal EDI inner-radius sweep, KI stays near 0.33978 and KII near
+0.003461 over inner/outer ratios 0.05--0.30. Thus the strong KII variation
+previously seen in Step 3B was predominantly an artifact of the clipped
+analytic q integration, not of the physical crack-tip field itself.
+
+Conclusion: FE-nodal q is adopted as the canonical EDI weight for all
+subsequent asymmetry-audit experiments. `analytic_radial` is retained as a
+legacy/reproduction option until the audit is complete; the production
+default is not changed yet.
