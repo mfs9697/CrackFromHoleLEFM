@@ -285,3 +285,42 @@ If recovered/input ratios remain close to one with weak annulus dependence,
 the much stronger KII sensitivity seen in Step 3 can be attributed mainly
 to the finite-element approximation of the physical crack-tip field rather
 than to the EDI formulation itself.
+
+
+## Step 3C result
+
+The exact-field EDI annulus sweep was completed locally on 2026-09-27.
+
+For the outer-radius sweep at fixed r_inner/r_outer = 0.20, the recovered
+pure-mode ratios ranged approximately from 0.978 to 1.001. The total range
+was about 2.18% for mode I and 2.19% for mode II. The mixed-mode KI and KII
+ratios followed the same scalar trend.
+
+For the inner-radius sweep at fixed r_outer = 0.12, the recovered/input
+ratios ranged approximately from 0.977 to 0.996. The total range was about
+1.87% for both modes.
+
+Cross-mode leakage remained negligible throughout, at roughly 1e-7 to 1e-5.
+Pure mode I, pure mode II, and the mixed field all showed essentially the
+same annulus dependence.
+
+Interpretation:
+
+- the corrected EDI formulation does not show a special mode-II instability
+  on the exact Williams field;
+- the remaining annulus dependence in this exact-field test is almost
+  mode-independent and is consistent with interpolation/quadrature effects
+  on the fixed T6 mesh;
+- this approximately 2% exact-field annulus sensitivity is far smaller than
+  the roughly 20%+ spread of the small KII component seen in the numerical
+  FEM crack-tip field in Step 3B;
+- therefore the strong KII-only sensitivity in Step 3B is primarily a
+  property of the numerical FEM field and its interaction with the
+  extraction domain, not an intrinsic mode-II defect of the EDI
+  formulation.
+
+One caveat remains: the exact Williams displacement field is sampled at T6
+nodes and differentiated through the finite-element interpolation. A short
+mesh-refinement check should confirm that the approximately 2% annulus
+oscillation decreases with refinement before the deliberately asymmetric
+mesh experiment.
