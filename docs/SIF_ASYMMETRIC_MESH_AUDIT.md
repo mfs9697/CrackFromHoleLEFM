@@ -54,6 +54,21 @@ The helper `subdivide_last_leg.m`, which was used by existing geometry
 code but absent from CrackFromHoleLEFM, has also been restored from
 Crack-Path.
 
+Two repository-level issues found during extraction are intentionally kept
+outside the production path for now:
+
+- `kinking_LEFM_1leg.m` in CrackFromHoleLEFM calls
+  `geom_pencil_1leg.m`, but that geometry file is absent from the target
+  repository;
+- the existing `mesh_pencil_domain.m` computes its `Hmin` from an
+  already subdivided last segment and then divides by `ncoh` again,
+  effectively introducing an extra factor of `ncoh` in the local target
+  size. The verification builder therefore implements the Crack-Path
+  `h_last = L_last/ncoh` rule directly instead of using that routine.
+
+Neither production issue is changed in this PR because the first goal is to
+isolate the SIF comparison from unrelated refactoring.
+
 ## What this step does *not* establish
 
 This first control case is **not yet the historical published two-segment
