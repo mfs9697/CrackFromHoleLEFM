@@ -120,6 +120,8 @@ function Out = validate_EDI_Williams_fields(varargin)
 
     rows = [];
     details = cell(numel(NrList), size(Kcases,1));
+    displacements = cell(numel(NrList), size(Kcases,1));
+    meshes = cell(numel(NrList),1);
     meshAudit = cell(numel(NrList),1);
 
     for im = 1:numel(NrList)
@@ -129,6 +131,7 @@ function Out = validate_EDI_Williams_fields(varargin)
         mesh = build_polar_crack_annulus( ...
             S.rMeshInner, S.rMeshOuter, Nr, Nth, meshTopology);
 
+        meshes{im} = mesh;
         meshAudit{im} = mesh.audit;
 
         for ic = 1:size(Kcases,1)
@@ -137,6 +140,7 @@ function Out = validate_EDI_Williams_fields(varargin)
 
             U = exact_williams_displacement_vector( ...
                 mesh.coord, KIin, KIIin, mu, kappa);
+            displacements{im,ic} = U;
 
             [KIrec, KIIrec, Aux] = SIF_LEFM_interaction_EDI( ...
                 mesh, U, V, mat, domain, ...
@@ -183,6 +187,8 @@ function Out = validate_EDI_Williams_fields(varargin)
     Out = struct();
     Out.table = T;
     Out.details = details;
+    Out.meshes = meshes;
+    Out.displacements = displacements;
     Out.settings = S;
     Out.material = mat;
     Out.domain = domain;
