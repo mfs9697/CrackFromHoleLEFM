@@ -3,10 +3,11 @@ function Out=main_step4_graded_ring_asymmetry_experiment(varargin)
 % Controlled old-mirror/J versus FE-nodal EDI experiment on the graded
 % concentric-ring mesh requested for the audit.
 %
-% The baseline mesh is made of geometrically growing concentric rings with
-% alternating half-sector staggering. The radial growth ratio is chosen
-% close to the equilateral-triangle value and adjusted only enough to land
-% exactly at r1. Triangle size therefore grows smoothly outward.
+% The baseline mesh is made of geometrically growing concentric rings. Every
+% ring is uniformly subdivided; adjacent rings alternate between M and M+1
+% half-ring intervals to interlace nodes without half-size sectors at either
+% x-axis. The radial growth ratio is chosen from a near-equilateral shape
+% target and adjusted only enough to land exactly at r1.
 %
 % Cases:
 %   S0       exact mirror-reflected lower half
@@ -78,17 +79,22 @@ for im=1:nM
 
     meshRows=[meshRows; im,info.Nr,info.Ntheta, ...
         info.nT3Vertices,info.nT3Elements,info.nT6Nodes,info.nDOF, ...
-        info.qEquilateral,info.qActual,info.qualityMin, ...
-        info.qualityP05,info.qualityMedian,info.lowerAngularFactor]; %#ok<AGROW>
+        info.qTargetNearEquilateral,info.qActual,info.qualityMin, ...
+        info.qualityP05,info.qualityMedian,info.lowerAngularFactor, ...
+        info.upperRingSegmentRelSpreadMax,info.lowerRingSegmentRelSpreadMax, ...
+        info.nQualityBelow08]; %#ok<AGROW>
 
     fprintf('\n------------------------------------------------------------\n');
     fprintf('%s: %s\n',label,variant);
-    fprintf('Nr=%d, Ntheta=%d, q_eq=%.8f, q=%.8f\n', ...
-        info.Nr,info.Ntheta,info.qEquilateral,info.qActual);
+    fprintf('Nr=%d, Ntheta=%d, q_target=%.8f, q=%.8f\n', ...
+        info.Nr,info.Ntheta,info.qTargetNearEquilateral,info.qActual);
     fprintf('T3=%d, T6 nodes=%d, DOF=%d\n', ...
         info.nT3Elements,info.nT6Nodes,info.nDOF);
     fprintf('triangle quality min/p05/median = %.4f / %.4f / %.4f\n', ...
         info.qualityMin,info.qualityP05,info.qualityMedian);
+    fprintf('ring segment spread upper/lower = %.3e / %.3e\n', ...
+        info.upperRingSegmentRelSpreadMax,info.lowerRingSegmentRelSpreadMax);
+    fprintf('triangles with quality < 0.8 = %d\n',info.nQualityBelow08);
     fprintf('lower angular factor = %.5f\n',info.lowerAngularFactor);
 
     if logical(opt.PlotMeshes)
@@ -142,8 +148,9 @@ end
 
 Tmesh=array2table(meshRows,'VariableNames',{ ...
  'meshID','Nr','Ntheta','nT3_vertices','nT3_elements','nT6_nodes','nDOF', ...
- 'q_equilateral','q_actual','quality_min','quality_p05','quality_median', ...
- 'lower_angular_factor'});
+ 'q_target','q_actual','quality_min','quality_p05','quality_median', ...
+ 'lower_angular_factor','upper_ring_segment_spread', ...
+ 'lower_ring_segment_spread','n_quality_below_08'});
 meshName=strings(height(Tmesh),1);
 for i=1:height(Tmesh), meshName(i)=string(spec{Tmesh.meshID(i),1}); end
 Tmesh.meshName=meshName; Tmesh=movevars(Tmesh,'meshName','After','meshID');
