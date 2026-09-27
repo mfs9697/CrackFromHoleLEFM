@@ -575,3 +575,33 @@ known, both extractors are assessed against truth; neither is used as a
 reference for the other. Full meshes are plotted by default and mesh size,
 quality, grading ratio, extraction errors, and old-contour sensitivity are
 printed.
+
+
+## Step 4 mesh correction after visual inspection
+
+The first graded-ring implementation was rejected after inspection of the
+exported mesh. The staggered rings had been formed by inserting theta=0 and
+theta=pi endpoints into a half-sector-shifted angular sequence. Consequently
+the first and last angular segments on every staggered ring were only half
+the nominal size. This violated the intended uniform ring subdivision and
+created localized poor elements along both x-axes, including the negative-x
+crack seam. The earlier Step 4 numerical extraction results are therefore
+superseded and must not be used for conclusions about asymmetry.
+
+The corrected construction now divides every half-ring uniformly. Adjacent
+rings use M and M+1 equal angular intervals alternately, which interlaces the
+nodes while keeping theta=0 and theta=pi as exact nodes of every ring. Thus
+there are no forced half-size seam segments and the crack faces remain a
+straight, clean negative-x boundary.
+
+The radial growth target is now explicitly described as a near-equilateral
+shape target, not as an exact equilateral construction. For Ntheta=64 the
+default corrected mesh uses Nr=45 and q approximately 1.08543. Independent
+geometry reproduction predicts S0 triangle quality min about 0.823, fifth
+percentile about 0.865, median about 0.957, with no triangles below quality
+0.8 and crack-seam minimum quality about 0.865.
+
+Hard S0 validation checks were added: within-ring segment-length spread must
+be at roundoff level, crack-face nodes must lie on x2=0, and crack-seam
+triangle quality must be at least 0.8. Step 4 now prints these quantities
+before reporting any SIF results.
