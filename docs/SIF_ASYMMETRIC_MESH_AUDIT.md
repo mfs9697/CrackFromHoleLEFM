@@ -693,3 +693,30 @@ and expected counts, then verifies rejection of 15 corruptions, including
 off-cut edits, nonpositive areas, overlapping children, crack bridges,
 welded T3/T6 face nodes, sliver elements, invalid midpoints and incomplete
 face-node lists.
+
+
+## Step 4D: exact SIF validation on the approved literal crack-cut mesh
+
+The approved parent geometry is now frozen: 64 equal chord segments on
+every circular ring, alternating 0/half-sector phase, 46 radial intervals,
+and the validated local negative-x crack cut from Step 4C.
+
+Before prescribing the analytical field, the Williams displacement helper
+was made crack-face aware. This is essential because the upper and lower
+crack-face nodes have identical coordinates after the cut. Coordinates
+alone would map both to theta=+pi in atan2 on many MATLAB builds. The helper
+therefore accepts explicit upper/lower T6 face-node IDs and enforces
+theta=+pi on the upper face and theta=-pi on the lower face.
+
+`main_step4d_literal_mesh_sif_validation` performs the first accepted SIF
+calculation on this mesh. It prescribes four exact Williams fields:
+pure I (1,0), pure II (0,1), mixed 5% (1,0.05), and mixed 1% (1,0.01).
+The last case reflects the small-mode-II regime of the physical two-leg
+control problem.
+
+The historical mirror/J extractor is swept over circular radii 0.02--0.14.
+The canonical interaction EDI uses FE-nodal q and is checked on four
+annuli, with [0.02,0.12] as the reference domain. Both methods are compared
+directly with the imposed exact KI/KII; neither extractor is treated as
+truth. The driver reports pure-mode cross leakage, vector error, contour/
+domain ranges, and the old P/Q interpolation mismatch diagnostics.
