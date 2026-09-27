@@ -10,8 +10,11 @@ function Out = main_step3c_exact_field_edi_domain_sweep()
 %
 % Strategy:
 %   Reuse the exact Williams-field validator from Step 2. The production EDI
-%   routine is evaluated on a fixed fine polar T6 mesh with known prescribed
-%   SIFs while the EDI annulus is varied.
+%   routine is evaluated on the canonical S0 polar T6 mesh: the upper-half
+%   T3 mesh is constructed once and the complete coordinates/connectivity
+%   are reflected through x2=0 before T3->T6 conversion. Thus S0 has exact
+%   mirror symmetry in node locations, T3 topology, and T6 midside nodes.
+%   Known prescribed SIFs are used while only the EDI annulus is varied.
 %
 % Sweeps:
 %   A) outer-radius sweep with fixed r_inner/r_outer = 0.20
@@ -37,6 +40,8 @@ function Out = main_step3c_exact_field_edi_domain_sweep()
     Nth = 128;
     rMeshInner = 0.005;
     rMeshOuter = 0.20;
+    meshTopology = 'mirror_reflected';
+    symmetryAudit = [];
 
     % ------------------------------------------------------------
     % A. Outer-radius sweep, fixed inner/outer ratio
@@ -58,7 +63,12 @@ function Out = main_step3c_exact_field_edi_domain_sweep()
             'rInner', rin, ...
             'rOuter', rout, ...
             'Verbose', false, ...
-            'AssertFine', false);
+            'AssertFine', false, ...
+            'MeshTopology', meshTopology);
+
+        if isempty(symmetryAudit)
+            symmetryAudit = R.meshAudit{1};
+        end
 
         T = R.table;
 
@@ -101,7 +111,8 @@ function Out = main_step3c_exact_field_edi_domain_sweep()
             'rInner', rin, ...
             'rOuter', fixedOuter, ...
             'Verbose', false, ...
-            'AssertFine', false);
+            'AssertFine', false, ...
+            'MeshTopology', meshTopology);
 
         T = R.table;
 
@@ -150,8 +161,15 @@ function Out = main_step3c_exact_field_edi_domain_sweep()
         'Nth',Nth, ...
         'rMeshInner',rMeshInner, ...
         'rMeshOuter',rMeshOuter, ...
+        'meshTopology',meshTopology, ...
         'outerSweepInnerFactor',innerFactor, ...
         'innerSweepFixedOuter',fixedOuter);
+
+    fprintf('mesh topology: %s (canonical S0)\n',meshTopology);
+    if ~isempty(symmetryAudit)
+        fprintf('max mirror-coordinate error: %.3e\n',symmetryAudit.maxMirrorCoordError);
+        fprintf('upper/lower crack faces distinct: %d\n',symmetryAudit.crackFacesDistinct);
+    end
 
     fprintf('\n--- Step 3C-A: exact field, outer-radius sweep ---\n');
     fprintf('fixed r_inner/r_outer = %.2f\n\n', innerFactor);
