@@ -177,11 +177,33 @@ else
     info.lowerRingSegmentRelSpreadMax=info.upperRingSegmentRelSpreadMax;
 end
 info.nQualityBelow08=nnz(Q<0.8);
+crackSet=[crackUpper(:);crackLower(:)];
+isCrackElem=sum(ismember(connect3,crackSet),2)>=2;
+if any(isCrackElem)
+    info.qualityCrackMin=min(Q(isCrackElem));
+else
+    info.qualityCrackMin=NaN;
+end
+info.maxCrackFaceAbsY=max(abs(coord3(crackSet,2)));
 info.crackUpperIDs=crackUpper;
 info.crackLowerIDs=crackLower;
 info.crackFacesDistinct=all(crackUpper~=crackLower);
 
 if strcmp(variant,'mirror_reflected')
+    if info.upperRingSegmentRelSpreadMax > 1e-12 || ...
+       info.lowerRingSegmentRelSpreadMax > 1e-12
+        error('build_graded_ring_crack_mesh:NonuniformS0Ring', ...
+            'S0 ring subdivision is not uniform to roundoff.');
+    end
+    if info.maxCrackFaceAbsY > 1e-12*max(1,S.r1)
+        error('build_graded_ring_crack_mesh:CrackSeamOffAxis', ...
+            'S0 crack-face nodes are not on x2=0.');
+    end
+    if info.qualityCrackMin < 0.8
+        error('build_graded_ring_crack_mesh:PoorS0CrackSeam', ...
+            'S0 crack-seam triangle quality %.4g is below 0.8.',info.qualityCrackMin);
+    end
+
     nU=size(coordU,1);
     ids=(1:nU).';
     mapped=mirror(ids);
