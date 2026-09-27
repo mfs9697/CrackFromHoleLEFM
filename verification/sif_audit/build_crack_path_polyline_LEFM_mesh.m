@@ -147,10 +147,19 @@ function M = build_crack_path_polyline_LEFM_mesh(C)
     coord3_compact = coord3(used,:);
     connect3 = map(connect3);
 
-    idsU_compact = map(idsU);
-    idsD_compact = map(idsD);
-    idsU_compact = unique(idsU_compact(idsU_compact > 0), 'stable');
-    idsD_compact = unique(idsD_compact(idsD_compact > 0), 'stable');
+    mappedU = map(idsU);
+    mappedD = map(idsD);
+
+    keepU = mappedU > 0;
+    keepD = mappedD > 0;
+
+    [idsU_compact, iaU] = unique(mappedU(keepU), 'stable');
+    [idsD_compact, iaD] = unique(mappedD(keepD), 'stable');
+
+    sU_kept = sU(keepU);
+    sD_kept = sD(keepD);
+    sU_compact = sU_kept(iaU);
+    sD_compact = sD_kept(iaD);
 
     coord3 = coord3_compact;
 
@@ -188,13 +197,16 @@ function M = build_crack_path_polyline_LEFM_mesh(C)
     M.crack.Pmid = Psub;
     M.crack.upperNodesT3 = idsU_compact;
     M.crack.lowerNodesT3 = idsD_compact;
-    M.crack.upperS = sU;
-    M.crack.lowerS = sD;
+    M.crack.upperS = sU_compact;
+    M.crack.lowerS = sD_compact;
     M.crack.tip = P0(end,:);
 
     M.audit = struct();
     M.audit.source = 'adapted from mfs9697/Crack-Path:geom_pencil.m';
     M.audit.all_segments_are_physical_crack = true;
+    M.audit.n_triangles_removed_on_collapse = sum(~keep);
+    M.audit.min_abs_signed_area_T3 = min(abs(tri_areas_signed(connect3, coord3)));
+    M.audit.crack_face_counts = [numel(idsU_compact), numel(idsD_compact)];
 end
 
 
