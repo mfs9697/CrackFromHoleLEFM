@@ -26,6 +26,8 @@ function [KI, KII, Aux] = SIF_LEFM_interaction_EDI(mesh, U, V, mat, domain, vara
 %   'UsePlaneStrain' true/false. If omitted, uses mat.ps if present;
 %                    otherwise assumes plane strain.
 %   'Verbose'       true/false
+%   'WeightFunction' 'analytic_radial' (legacy audit behavior) or
+%                    'fe_nodal' (FE-consistent nodal q, default remains legacy)
 %
 % Outputs:
 %   KI, KII signed stress intensity factors
@@ -43,10 +45,17 @@ function [KI, KII, Aux] = SIF_LEFM_interaction_EDI(mesh, U, V, mat, domain, vara
     addParameter(ip, 'AuxK', 1.0, @(x)isnumeric(x) && isscalar(x) && x > 0);
     addParameter(ip, 'UsePlaneStrain', [], @(x)islogical(x) || isnumeric(x) || isempty(x));
     addParameter(ip, 'Verbose', false, @(x)islogical(x) || isnumeric(x));
+    addParameter(ip, 'WeightFunction', 'analytic_radial', ...
+        @(x)ischar(x) || (isstring(x) && isscalar(x)));
     parse(ip, varargin{:});
 
     Kaux = ip.Results.AuxK;
     verbose = logical(ip.Results.Verbose);
+    weightFunction = char(ip.Results.WeightFunction);
+    if ~(strcmpi(weightFunction,'analytic_radial') || strcmpi(weightFunction,'fe_nodal'))
+        error('SIF_LEFM_interaction_EDI:BadWeightFunction', ...
+            'WeightFunction must be analytic_radial or fe_nodal.');
+    end
 
     %% ------------------------------------------------------------
     % 1. Checks and unpacking
@@ -138,6 +147,22 @@ function [KI, KII, Aux] = SIF_LEFM_interaction_EDI(mesh, U, V, mat, domain, vara
     R_gl = [e1, e2];
     R_loc = R_gl.';
 
+    % FE-consistent scalar weight q, used only when requested. The nodal
+    % values are radial: q=1 for r<=r_inner, linearly decreasing to q=0 at
+    % r_outer, and q=0 outside. Its gradient is then obtained with the same
+    % T6 interpolation as the displacement field.
+    qNode = [];
+    if strcmpi(weightFunction,'fe_nodal')
+        Xloc_all = (R_loc * (coord - x_tip.').').';
+        r_all = hypot(Xloc_all(:,1),Xloc_all(:,2));
+
+        qNode = ones(size(coord,1),1);
+        qNode(r_all >= r_outer) = 0;
+
+        mid = (r_all > r_inner) & (r_all < r_outer);
+        qNode(mid) = (r_outer - r_all(mid))/(r_outer-r_inner);
+    end
+
     %% ------------------------------------------------------------
     % 3. Quadrature
     %% ------------------------------------------------------------
@@ -172,6 +197,11 @@ function [KI, KII, Aux] = SIF_LEFM_interaction_EDI(mesh, U, V, mat, domain, vara
         elemUsed = false;
 
         uel = [U(2*nodes - 1), U(2*nodes)];
+        if strcmpi(weightFunction,'fe_nodal')
+            qel = qNode(nodes);
+        else
+            qel = [];
+        end
 
         for igp = 1:nip2
 
@@ -193,13 +223,23 @@ function [KI, KII, Aux] = SIF_LEFM_interaction_EDI(mesh, U, V, mat, domain, vara
             x2 = xl(2);
             r = hypot(x1, x2);
 
-            if r <= r_inner || r >= r_outer
-                continue;
-            end
-
             % Exclude points extremely close to the crack tip.
             if r < 1e-12
                 continue;
+            end
+
+            % Weight-function gradient in local crack coordinates.
+            if strcmpi(weightFunction,'analytic_radial')
+                if r <= r_inner || r >= r_outer
+                    continue;
+                end
+                qgrad = local_qgrad_radial(xl,r_inner,r_outer);
+            else
+                qgrad_gl = dNdx*qel;
+                qgrad = R_loc*qgrad_gl;
+                if norm(qgrad) <= 1e-14
+                    continue;
+                end
             end
 
             nGP_used = nGP_used + 1;
@@ -225,10 +265,6 @@ function [KI, KII, Aux] = SIF_LEFM_interaction_EDI(mesh, U, V, mat, domain, vara
             sig1 = Dmat * eps1;
 
             du1_dx1 = GradU1(:,1);
-
-            % Weight function q and gradient q_,j in local coordinates.
-            % q = 1 at r_inner, q = 0 at r_outer.
-            qgrad = local_qgrad_radial(xl, r_inner, r_outer);
 
             % Auxiliary mode I, normalized by Kaux.
             auxI = local_aux_LEFM_fields(x1, x2, Kaux, 0.0, E, nu, mu, kappa, Dmat);
@@ -294,6 +330,7 @@ function [KI, KII, Aux] = SIF_LEFM_interaction_EDI(mesh, U, V, mat, domain, vara
     Aux.mu = mu;
     Aux.kappa = kappa;
     Aux.planeStrain = planeStrain;
+    Aux.weightFunction = weightFunction;
 
     Aux.r_inner = r_inner;
     Aux.r_outer = r_outer;
@@ -318,6 +355,7 @@ function [KI, KII, Aux] = SIF_LEFM_interaction_EDI(mesh, U, V, mat, domain, vara
     if verbose
         fprintf('\nSIF_LEFM_interaction_EDI summary:\n');
         fprintf('  r_inner, r_outer = %.6e, %.6e\n', r_inner, r_outer);
+        fprintf('  weight function    = %s\n', weightFunction);
         fprintf('  GP used / total   = %d / %d\n', nGP_used, nGP_total);
         fprintf('  elements used     = %d\n', nElem_used);
         fprintf('  I_modeI           = %.8e\n', I_modeI);
