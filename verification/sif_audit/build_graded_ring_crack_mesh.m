@@ -1,12 +1,15 @@
 function [mesh,info]=build_graded_ring_crack_mesh(varargin)
 %BUILD_GRADED_RING_CRACK_MESH
-% Graded concentric-ring crack-tip mesh with near-equilateral T3 triangles.
+% Graded concentric-ring crack-tip mesh with uniform subdivision of every
+% ring and near-equilateral T3 triangles.
 %
-% The upper half is built from concentric rings. Angular nodes are staggered
-% by half a sector on alternating rings. The radial ratio is chosen close to
-% the value that makes an outward triangle equilateral:
-%   q_eq = cos(dtheta/2) + sqrt(3)*sin(dtheta/2).
-% The actual q is adjusted slightly so the final ring lands exactly at r1.
+% IMPORTANT: every half-ring is divided into equal angular segments. To
+% interlace adjacent rings without creating half-size seam segments, the
+% number of half-ring intervals alternates M, M+1, M, M+1, ... . Thus both
+% x-axes are nodes of every ring and the negative-x crack seam remains clean.
+% The radial ratio is chosen from the equilateral-altitude estimate
+%   q_target = 1 + sqrt(3)*sin(dtheta/2),
+% then adjusted slightly so the final ring lands exactly at r1.
 %
 % Variants:
 %   mirror_reflected : exact reflected lower half (canonical symmetric case)
@@ -40,8 +43,11 @@ if mod(Ntheta,2)~=0, error('Ntheta must be even.'); end
 Nh=Ntheta/2;
 dth=pi/Nh;
 
-qeq=cos(dth/2)+sqrt(3)*sin(dth/2);
-Nr=max(2,round(log(S.r1/S.r0)/log(qeq)));
+% Target radial growth from the altitude of an equilateral triangle built
+% on one inner-ring chord. This is a shape target, not a claim that every
+% annular triangle can be exactly equilateral.
+qtarget=1 + sqrt(3)*sin(dth/2);
+Nr=max(2,round(log(S.r1/S.r0)/log(qtarget)));
 q=(S.r1/S.r0)^(1/Nr);
 rv=S.r0*q.^(0:Nr);
 rv(end)=S.r1;
@@ -148,8 +154,11 @@ info.variant=variant;
 info.r0=S.r0; info.r1=S.r1;
 info.Ntheta=Ntheta; info.NhalfUpper=Nh;
 info.Nr=Nr; info.radii=rv;
-info.qEquilateral=qeq; info.qActual=q;
-info.relativeQMismatch=(q-qeq)/qeq;
+info.qTargetNearEquilateral=qtarget; info.qActual=q;
+info.relativeQMismatch=(q-qtarget)/qtarget;
+% Backward-compatible alias for older audit scripts; do not interpret as
+% exact equilateral geometry.
+info.qEquilateral=qtarget;
 info.lowerAngularFactor=actualLowerFactor;
 info.lowerShiftFraction=lowerShiftFraction;
 info.nT3Vertices=size(coord3,1);
@@ -161,6 +170,13 @@ info.qualityMin=min(Q);
 info.qualityMedian=median(Q);
 info.qualityP05=local_percentile(Q,5);
 info.qualityP95=local_percentile(Q,95);
+info.upperRingSegmentRelSpreadMax=ring_segment_rel_spread(coord3,ringsU);
+if exist('ringsL','var')
+    info.lowerRingSegmentRelSpreadMax=ring_segment_rel_spread(coordL,ringsL);
+else
+    info.lowerRingSegmentRelSpreadMax=info.upperRingSegmentRelSpreadMax;
+end
+info.nQualityBelow08=nnz(Q<0.8);
 info.crackUpperIDs=crackUpper;
 info.crackLowerIDs=crackLower;
 info.crackFacesDistinct=all(crackUpper~=crackLower);
@@ -177,23 +193,22 @@ end
 end
 
 function [coord,rings,thetaR]=make_half(rv,Nh,sgn,shiftFraction)
-dth=pi/Nh;
+% Every ring is uniformly divided. Adjacent rings alternate between Nh and
+% Nh+1 half-ring intervals so their nodes interlace without forcing a
+% half-sector at theta=0 or theta=pi.
+
+dth0=pi/Nh;
 rings=cell(numel(rv),1);
 thetaR=cell(numel(rv),1);
 coord=zeros(0,2);
 
 for j=1:numel(rv)
-    stagger=mod(j-1,2)==1;
-    if stagger
-        th=[0, dth/2:dth:pi-dth/2, pi];
-    else
-        th=0:dth:pi;
-        th(end)=pi;
-    end
+    nseg=Nh + mod(j-1,2);
+    th=linspace(0,pi,nseg+1);
 
     if shiftFraction>0
-        % Smooth deterministic angular perturbation; boundaries stay fixed.
-        th=th + shiftFraction*dth*sin(th);
+        % Deliberate asymmetry variant only. Boundaries stay fixed.
+        th=th + shiftFraction*dth0*sin(th);
         th(1)=0; th(end)=pi;
     end
 
@@ -243,6 +258,22 @@ b=sqrt(sum((X(T(:,3),:)-X(T(:,2),:)).^2,2));
 c=sqrt(sum((X(T(:,1),:)-X(T(:,3),:)).^2,2));
 A=abs(tri_area_signed(T,X));
 Q=4*sqrt(3)*A./(a.^2+b.^2+c.^2);
+end
+
+
+function smax=ring_segment_rel_spread(X,rings)
+% Maximum within-ring chord-length spread, normalized by ring mean.
+smax=0;
+for j=1:numel(rings)
+    ids=rings{j};
+    P=X(ids,:);
+    L=sqrt(sum(diff(P,1,1).^2,2));
+    if isempty(L), continue; end
+    sm=mean(L);
+    if sm>0
+        smax=max(smax,(max(L)-min(L))/sm);
+    end
+end
 end
 
 function y=local_percentile(x,p)
