@@ -22,4 +22,7 @@ function Out = main_step2_validate_edi_normalization()
 
     fprintf('\nSTEP 2 regression completed.\n');
     fprintf('Fine-mesh Williams-field recovery must remain within the configured tolerance.\n');
+    if isfield(Out,'checks') && isfield(Out.checks,'pass') && Out.checks.pass
+        fprintf('STATUS: PASS (tolerance = %.3g)\n', Out.fineTolerance);
+    end
 end
