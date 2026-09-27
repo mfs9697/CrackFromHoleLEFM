@@ -35,6 +35,7 @@ function Out = validate_EDI_Williams_fields(varargin)
 %   'Verbose'    print table, default true
 %   'AssertFine'  assert fine-mesh recovery within tolerance, default true
 %   'FineTol'     fine-mesh relative tolerance, default 0.02
+%   'MeshTopology' 'mirror_reflected' (default) or 'legacy_same_diagonal'
 
     ip = inputParser;
     addParameter(ip, 'E', 4e3, @(x)isnumeric(x) && isscalar(x) && x>0);
@@ -49,11 +50,26 @@ function Out = validate_EDI_Williams_fields(varargin)
     addParameter(ip, 'Verbose', true, @(x)islogical(x) || isnumeric(x));
     addParameter(ip, 'AssertFine', true, @(x)islogical(x) || isnumeric(x));
     addParameter(ip, 'FineTol', 0.02, @(x)isnumeric(x) && isscalar(x) && x>0);
+    addParameter(ip, 'MeshTopology', 'mirror_reflected', ...
+        @(x)ischar(x) || (isstring(x) && isscalar(x)));
     parse(ip, varargin{:});
     S = ip.Results;
 
     NrList = round(S.NrList(:));
     NthList = round(S.NthList(:));
+    meshTopology = char(S.MeshTopology);
+
+    validTopology = strcmpi(meshTopology,'mirror_reflected') || ...
+                    strcmpi(meshTopology,'legacy_same_diagonal');
+    if ~validTopology
+        error('validate_EDI_Williams_fields:BadMeshTopology', ...
+            'MeshTopology must be mirror_reflected or legacy_same_diagonal.');
+    end
+
+    if strcmpi(meshTopology,'mirror_reflected') && any(mod(NthList,2)~=0)
+        error('validate_EDI_Williams_fields:OddNth', ...
+            'mirror_reflected topology requires every Nth value to be even.');
+    end
 
     if numel(NrList) ~= numel(NthList)
         error('validate_EDI_Williams_fields:MeshListSize', ...
@@ -104,13 +120,16 @@ function Out = validate_EDI_Williams_fields(varargin)
 
     rows = [];
     details = cell(numel(NrList), size(Kcases,1));
+    meshAudit = cell(numel(NrList),1);
 
     for im = 1:numel(NrList)
         Nr = NrList(im);
         Nth = NthList(im);
 
         mesh = build_polar_crack_annulus( ...
-            S.rMeshInner, S.rMeshOuter, Nr, Nth);
+            S.rMeshInner, S.rMeshOuter, Nr, Nth, meshTopology);
+
+        meshAudit{im} = mesh.audit;
 
         for ic = 1:size(Kcases,1)
             KIin = Kcases(ic,1);
@@ -169,6 +188,8 @@ function Out = validate_EDI_Williams_fields(varargin)
     Out.domain = domain;
     Out.Kcases = Kcases;
     Out.caseName = caseName;
+    Out.meshAudit = meshAudit;
+    Out.meshTopology = meshTopology;
 
     if logical(S.Verbose)
         fprintf('\n============================================================\n');
@@ -176,7 +197,13 @@ function Out = validate_EDI_Williams_fields(varargin)
         fprintf('============================================================\n');
         fprintf('plane state     : %s\n', ternary(ps==1,'plane strain','plane stress'));
         fprintf('EDI annulus     : [%.6g, %.6g]\n', S.rInner, S.rOuter);
-        fprintf('mesh annulus    : [%.6g, %.6g]\n\n', S.rMeshInner, S.rMeshOuter);
+        fprintf('mesh annulus    : [%.6g, %.6g]\n', S.rMeshInner, S.rMeshOuter);
+        fprintf('mesh topology   : %s\n', meshTopology);
+        if strcmpi(meshTopology,'mirror_reflected')
+            fprintf('mirror coord err: %.3e\n\n', meshAudit{end}.maxMirrorCoordError);
+        else
+            fprintf('\n');
+        end
 
         disp(T(:, { ...
             'meshLevel','caseName','Nr','Nth', ...
@@ -227,61 +254,202 @@ end
 
 
 % =========================================================================
-function mesh = build_polar_crack_annulus(r0, r1, Nr, Nth)
-% Structured T3 annulus with duplicated theta=-pi/+pi crack-face nodes.
+function mesh = build_polar_crack_annulus(r0, r1, Nr, Nth, topology)
+% Structured polar crack annulus.
+%
+% topology = 'mirror_reflected'
+%   Build only the upper half (0 <= theta <= pi), then reflect the complete
+%   T3 mesh across x2=0. Reflection maps both node coordinates and element
+%   connectivity. Triangle orientation is reversed after reflection so all
+%   elements remain CCW. The theta=0 radial line is shared, while the
+%   theta=+pi and theta=-pi crack faces use distinct node IDs.
+%
+% topology = 'legacy_same_diagonal'
+%   Historical synthetic builder: generate theta=-pi..pi directly and use
+%   the same logical A-C diagonal in every polar quadrilateral.
 
-    rv = linspace(r0, r1, Nr+1);
-    tv = linspace(-pi, pi, Nth+1);
+    if strcmpi(topology,'mirror_reflected')
+        mesh = build_mirror_reflected_annulus(r0,r1,Nr,Nth);
+    else
+        mesh = build_legacy_same_diagonal_annulus(r0,r1,Nr,Nth);
+    end
+end
 
+
+function mesh = build_mirror_reflected_annulus(r0,r1,Nr,Nth)
+
+    if mod(Nth,2)~=0
+        error('validate_EDI_Williams_fields:OddNthInternal', ...
+            'Mirror-reflected annulus requires even Nth.');
+    end
+
+    rv = linspace(r0,r1,Nr+1);
     nR = numel(rv);
-    nT = numel(tv);
+    Nh = Nth/2;
 
-    coord3 = zeros(nR*nT,2);
+    % Upper half only: theta = 0 ... pi.
+    tvU = linspace(0,pi,Nh+1);
+    idU = zeros(nR,Nh+1);
+    coord3 = zeros(nR*(Nh+1),2);
 
-    id = @(ir,it) (it-1)*nR + ir;
-
-    for it = 1:nT
-        th = tv(it);
+    id = 0;
+    for jt = 1:Nh+1
+        th = tvU(jt);
         for ir = 1:nR
-            r = rv(ir);
-            coord3(id(ir,it),:) = r*[cos(th), sin(th)];
+            id = id+1;
+            idU(ir,jt)=id;
+            coord3(id,:) = rv(ir)*[cos(th),sin(th)];
         end
     end
 
-    connect3 = zeros(2*Nr*Nth,3);
+    % Upper T3 cells use one consistent A-C diagonal.
+    Tup = zeros(2*Nr*Nh,3);
     e = 0;
-
-    for it = 1:Nth
+    for jt = 1:Nh
         for ir = 1:Nr
-            A = id(ir,   it);
-            B = id(ir+1, it);
-            C = id(ir+1, it+1);
-            D = id(ir,   it+1);
+            A = idU(ir,  jt);
+            B = idU(ir+1,jt);
+            C = idU(ir+1,jt+1);
+            D = idU(ir,  jt+1);
 
-            e = e+1;
-            connect3(e,:) = [A B C];
-
-            e = e+1;
-            connect3(e,:) = [A C D];
+            e=e+1; Tup(e,:)=[A B C];
+            e=e+1; Tup(e,:)=[A C D];
         end
     end
 
-    % Numerical safety: enforce CCW.
-    area = tri_area_signed(connect3, coord3);
-    cw = area < 0;
+    % Enforce CCW on the upper half before reflection.
+    areaU = tri_area_signed(Tup,coord3);
+    cw = areaU<0;
     if any(cw)
-        tmp = connect3(cw,2);
-        connect3(cw,2) = connect3(cw,3);
-        connect3(cw,3) = tmp;
+        tmp=Tup(cw,2);
+        Tup(cw,2)=Tup(cw,3);
+        Tup(cw,3)=tmp;
     end
 
-    [coord6, connect6] = T3toT6_fast(coord3, connect3);
+    % Mirror map. theta=0 nodes are shared. All theta>0 nodes, including
+    % theta=pi crack-face nodes, receive distinct reflected node IDs.
+    mirrorMap = zeros(size(coord3,1),1);
+    mirrorMap(idU(:,1)) = idU(:,1);
 
-    mesh = struct();
-    mesh.coord3 = coord3;
-    mesh.connect3 = connect3;
-    mesh.coord = coord6;
-    mesh.connect = connect6;
+    originalUpperCount = size(coord3,1);
+    next = originalUpperCount;
+
+    for jt = 2:Nh+1
+        for ir = 1:nR
+            iu = idU(ir,jt);
+            next = next+1;
+            coord3(next,:) = [coord3(iu,1), -coord3(iu,2)]; %#ok<AGROW>
+            mirrorMap(iu)=next;
+        end
+    end
+
+    % Reflect upper connectivity. A geometric reflection changes triangle
+    % orientation, so swap local vertices 2 and 3 to restore CCW.
+    Tlo = mirrorMap(Tup);
+    Tlo = Tlo(:,[1 3 2]);
+
+    connect3 = [Tup;Tlo];
+
+    % Safety checks.
+    area = tri_area_signed(connect3,coord3);
+    if any(area<=0)
+        error('validate_EDI_Williams_fields:MirrorMeshOrientation', ...
+            'Mirror-reflected mesh contains non-positive T3 area.');
+    end
+
+    % Coordinate reflection must be exact to roundoff for every upper node.
+    upperIDs = (1:originalUpperCount).';
+    mapped = mirrorMap(upperIDs);
+    reflected = [coord3(upperIDs,1), -coord3(upperIDs,2)];
+    mirrorErr = sqrt(sum((coord3(mapped,:)-reflected).^2,2));
+
+    [coord6,connect6]=T3toT6_fast(coord3,connect3);
+
+    mesh=struct();
+    mesh.coord3=coord3;
+    mesh.connect3=connect3;
+    mesh.coord=coord6;
+    mesh.connect=connect6;
+
+    mesh.audit=struct();
+    mesh.audit.topology='mirror_reflected';
+    mesh.audit.Nr=Nr;
+    mesh.audit.Nth=Nth;
+    mesh.audit.nUpperT3=size(Tup,1);
+    mesh.audit.nLowerT3=size(Tlo,1);
+    mesh.audit.nT3=size(connect3,1);
+    mesh.audit.nT3Vertices=size(coord3,1);
+    mesh.audit.nT6Nodes=size(coord6,1);
+    mesh.audit.maxMirrorCoordError=max(mirrorErr);
+    mesh.audit.upperVertexMirrorMap=mirrorMap;
+    mesh.audit.upperCrackFaceIDs=idU(:,end);
+    mesh.audit.lowerCrackFaceIDs=mirrorMap(idU(:,end));
+    mesh.audit.crackFacesDistinct=all(idU(:,end) ~= mirrorMap(idU(:,end)));
+
+    if ~mesh.audit.crackFacesDistinct
+        error('validate_EDI_Williams_fields:CrackFacesJoined', ...
+            'Upper/lower negative-x crack-face node IDs must be distinct.');
+    end
+end
+
+
+function mesh = build_legacy_same_diagonal_annulus(r0,r1,Nr,Nth)
+
+    rv=linspace(r0,r1,Nr+1);
+    tv=linspace(-pi,pi,Nth+1);
+
+    nR=numel(rv);
+    nT=numel(tv);
+
+    coord3=zeros(nR*nT,2);
+    id=@(ir,it) (it-1)*nR+ir;
+
+    for it=1:nT
+        th=tv(it);
+        for ir=1:nR
+            r=rv(ir);
+            coord3(id(ir,it),:)=r*[cos(th),sin(th)];
+        end
+    end
+
+    connect3=zeros(2*Nr*Nth,3);
+    e=0;
+
+    for it=1:Nth
+        for ir=1:Nr
+            A=id(ir,it);
+            B=id(ir+1,it);
+            C=id(ir+1,it+1);
+            D=id(ir,it+1);
+
+            e=e+1; connect3(e,:)=[A B C];
+            e=e+1; connect3(e,:)=[A C D];
+        end
+    end
+
+    area=tri_area_signed(connect3,coord3);
+    cw=area<0;
+    if any(cw)
+        tmp=connect3(cw,2);
+        connect3(cw,2)=connect3(cw,3);
+        connect3(cw,3)=tmp;
+    end
+
+    [coord6,connect6]=T3toT6_fast(coord3,connect3);
+
+    mesh=struct();
+    mesh.coord3=coord3;
+    mesh.connect3=connect3;
+    mesh.coord=coord6;
+    mesh.connect=connect6;
+    mesh.audit=struct( ...
+        'topology','legacy_same_diagonal', ...
+        'Nr',Nr,'Nth',Nth, ...
+        'nT3',size(connect3,1), ...
+        'nT3Vertices',size(coord3,1), ...
+        'nT6Nodes',size(coord6,1), ...
+        'maxMirrorCoordError',NaN, ...
+        'crackFacesDistinct',true);
 end
 
 
