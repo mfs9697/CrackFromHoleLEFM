@@ -243,3 +243,45 @@ sign changes, a P/Q element-size proxy from detJ, and barycentric-margin
 mismatch. This is intended to determine whether the residual small-mode
 difference is primarily contour/domain sensitivity or is already correlated
 with discrete P/Q asymmetry before deliberately asymmetric meshes are built.
+
+
+## Step 3 result
+
+The local same-field radius/domain sweep was completed on 2026-09-27.
+
+Across matched outer radii r/lastLeg = 0.2 to 0.6, the old KI stayed near
+0.3397 while the corrected EDI KI stayed within roughly 0.3384 to 0.3406.
+The full-vector old-versus-EDI difference remained below 0.4%.
+
+The small KII component was much more sensitive. The old-versus-EDI
+componentwise KII difference varied non-monotonically from about 0.8% to
+8.9%. The available P/Q detJ and barycentric mismatch indicators did not
+track that difference monotonically.
+
+At fixed EDI outer radius r_outer/lastLeg = 0.5, increasing
+r_inner/r_outer from 0.05 to 0.30 changed KII from about 0.00377 to 0.00452,
+while KI changed only mildly.
+
+Therefore the residual KII discrepancy is not yet evidence of a mirror-mesh
+error. Extraction-domain sensitivity of the small mode must first be
+separated from the numerical FEM-field approximation.
+
+## Step 3C: exact-field EDI domain sweep
+
+The branch now contains
+`verification/sif_audit/main_step3c_exact_field_edi_domain_sweep.m`.
+
+It reuses the exact Williams-field machinery from Step 2 on a fixed fine
+polar T6 mesh. Two EDI annulus sweeps are performed without solving a
+physical boundary-value problem:
+
+- outer-radius sweep: r_outer = 0.06, 0.08, 0.10, 0.12, 0.16 with
+  r_inner/r_outer = 0.20;
+- inner-radius sweep: r_inner/r_outer = 0.10, 0.20, 0.30, 0.40, 0.50 at
+  fixed r_outer = 0.12.
+
+Pure mode I, pure mode II, and mixed mode KI=1, KII=0.35 are evaluated.
+If recovered/input ratios remain close to one with weak annulus dependence,
+the much stronger KII sensitivity seen in Step 3 can be attributed mainly
+to the finite-element approximation of the physical crack-tip field rather
+than to the EDI formulation itself.
