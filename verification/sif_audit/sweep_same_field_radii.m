@@ -22,6 +22,8 @@ function Out = sweep_same_field_radii(C, sigma0, varargin)
 %   'innerFactorsSweep' default [0.05 0.1 0.2 0.3]
 %   'fixedOuterFraction'default 0.5
 %   'nthet'             default 100
+%   'EDIWeightFunction' default 'analytic_radial'
+%   'SolvedField'       optional precomputed solve_crack_path_polyline_field output
 %   'Verbose'           default true
 
     if nargin < 1 || isempty(C)
@@ -46,15 +48,23 @@ function Out = sweep_same_field_radii(C, sigma0, varargin)
         @(x)isnumeric(x) && isscalar(x) && x>0);
     addParameter(ip,'nthet',100, ...
         @(x)isnumeric(x) && isscalar(x) && x>=10);
+    addParameter(ip,'EDIWeightFunction','analytic_radial', ...
+        @(x)ischar(x) || (isstring(x) && isscalar(x)));
+    addParameter(ip,'SolvedField',[], ...
+        @(x)isempty(x) || isstruct(x));
     addParameter(ip,'Verbose',true, ...
         @(x)islogical(x) || isnumeric(x));
     parse(ip,varargin{:});
     S = ip.Results;
 
     % ------------------------------------------------------------
-    % ONE FEM solve
+    % ONE FEM solve, unless a precomputed field is supplied
     % ------------------------------------------------------------
-    Sol = solve_crack_path_polyline_field(C,sigma0);
+    if isempty(S.SolvedField)
+        Sol = solve_crack_path_polyline_field(C,sigma0);
+    else
+        Sol = S.SolvedField;
+    end
 
     matSIF = struct( ...
         'E',Sol.mat.E, ...
@@ -87,7 +97,8 @@ function Out = sweep_same_field_radii(C, sigma0, varargin)
         domain = struct('r_inner',rin,'r_outer',r);
         [KIedi,KIIedi,DE] = SIF_LEFM_interaction_EDI( ...
             Sol.mesh,Sol.U,V,matSIF,domain, ...
-            'UsePlaneStrain',Sol.mat.ps==1,'Verbose',false);
+            'UsePlaneStrain',Sol.mat.ps==1,'Verbose',false, ...
+            'WeightFunction',S.EDIWeightFunction);
 
         dKI = KIold-KIedi;
         dKII = KIIold-KIIedi;
@@ -141,7 +152,8 @@ function Out = sweep_same_field_radii(C, sigma0, varargin)
 
         [KIedi,KIIedi,DE] = SIF_LEFM_interaction_EDI( ...
             Sol.mesh,Sol.U,V,matSIF,domain, ...
-            'UsePlaneStrain',Sol.mat.ps==1,'Verbose',false);
+            'UsePlaneStrain',Sol.mat.ps==1,'Verbose',false, ...
+            'WeightFunction',S.EDIWeightFunction);
 
         B(i,:) = [ ...
             infac(i), rin, fixedOuter, ...
@@ -169,7 +181,8 @@ function Out = sweep_same_field_radii(C, sigma0, varargin)
         fprintf('SIF AUDIT STEP 3A: SAME-FIELD OUTER-RADIUS SWEEP\n');
         fprintf('============================================================\n');
         fprintf('last-leg length = %.8e\n',lastLeg);
-        fprintf('EDI inner/outer = %.4g in sweep A\n\n',S.innerFactor);
+        fprintf('EDI inner/outer = %.4g in sweep A\n',S.innerFactor);
+        fprintf('EDI weight      = %s\n\n',char(S.EDIWeightFunction));
         disp(Touter(:,{ ...
             'r_over_lastLeg','KI_old','KI_EDI','KII_old','KII_EDI', ...
             'abs_dKI_over_abs_KI_EDI','abs_dKII_over_abs_KII_EDI', ...
