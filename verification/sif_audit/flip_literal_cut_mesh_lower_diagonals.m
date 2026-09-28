@@ -89,29 +89,40 @@ if isempty(eligible)
         'No lower-half annular-cell diagonals were found.');
 end
 
-% Stable radial/angle ordering, then a deterministic low-discrepancy score.
+% Stable radial/angle ordering, then a deterministic low-discrepancy
+% ordering. IMPORTANT: two flipped diagonals may not share an owner triangle.
+% The first implementation allowed overlapping flips; a later flip could
+% overwrite one child of an earlier flip, creating a topological gap that
+% pointLocation detected as contour points "outside the mesh".
 mid=0.5*(X(eligible(:,4),:)+X(eligible(:,5),:));
 rm=hypot(mid(:,1),mid(:,2));
 th=mod(atan2(mid(:,2),mid(:,1))+2*pi,2*pi);
 [~,ord]=sortrows([rm,th],[1 2]);
-eligible=eligible(ord,:);
+candidate=eligible(ord,:);
 
-nEligible=size(eligible,1);
+nCandidate=size(candidate,1);
 phi=(sqrt(5)-1)/2;
-score=mod((1:nEligible)'*phi,1);
+score=mod((1:nCandidate)'*phi,1);
+[~,is]=sort(score);
+candidate=candidate(is,:);
 
-if fraction==0
-    take=false(nEligible,1);
-elseif fraction==1
-    take=true(nEligible,1);
-else
-    nTake=round(fraction*nEligible);
-    [~,is]=sort(score);
-    take=false(nEligible,1);
-    take(is(1:nTake))=true;
+% Build a deterministic maximal matching of flippable diagonals: each T3
+% triangle may participate in at most one flip. Fractions below are taken
+% from this disjoint pool, so every family member is conforming and nested.
+usedTri=false(size(T0,1),1);
+pool=zeros(0,size(candidate,2));
+for k=1:nCandidate
+    t1=candidate(k,2); t2=candidate(k,3);
+    if ~usedTri(t1) && ~usedTri(t2)
+        pool(end+1,:)=candidate(k,:); %#ok<AGROW>
+        usedTri([t1 t2])=true;
+    end
 end
 
-chosen=eligible(take,:);
+eligible=pool;
+nEligible=size(eligible,1);
+nTake=round(fraction*nEligible);
+chosen=eligible(1:nTake,:);
 
 for k=1:size(chosen,1)
     t1=chosen(k,2); t2=chosen(k,3);
@@ -126,6 +137,34 @@ A=signed_area(X,T);
 if any(A<=0)
     error('flip_literal_cut_mesh_lower_diagonals:InvertedElement', ...
         'A diagonal flip created a non-positive triangle.');
+end
+
+% Hard conforming-topology gate before T6 conversion.
+allE0=sort([T0(:,[1 2]);T0(:,[2 3]);T0(:,[3 1])],2);
+[edge0,~,g0]=unique(allE0,'rows');
+cnt0=accumarray(g0,1);
+bnd0=edge0(cnt0==1,:);
+
+allE=sort([T(:,[1 2]);T(:,[2 3]);T(:,[3 1])],2);
+[edge,~,g]=unique(allE,'rows');
+cnt=accumarray(g,1);
+if any(cnt>2)
+    error('flip_literal_cut_mesh_lower_diagonals:NonManifold', ...
+        'A post-flip edge belongs to more than two triangles.');
+end
+bnd=edge(cnt==1,:);
+if ~isequal(sortrows(bnd),sortrows(bnd0))
+    error('flip_literal_cut_mesh_lower_diagonals:BoundaryChanged', ...
+        'Connectivity-only flips changed the mesh boundary.');
+end
+if abs(sum(A)-sum(signed_area(X,T0))) > 1e-12*sum(signed_area(X,T0))
+    error('flip_literal_cut_mesh_lower_diagonals:AreaChanged', ...
+        'Connectivity-only flips changed the total mesh area.');
+end
+if size(X,1)-size(edge,1)+size(T,1) ~= ...
+        size(X,1)-size(edge0,1)+size(T0,1)
+    error('flip_literal_cut_mesh_lower_diagonals:EulerChanged', ...
+        'Connectivity-only flips changed the Euler characteristic.');
 end
 
 mesh=struct('coord3',X,'connect3',T);
@@ -168,6 +207,7 @@ end
 
 meta=struct();
 meta.requestedFraction=fraction;
+meta.nCandidateDiagonals=nCandidate;
 meta.nEligible=nEligible;
 meta.nFlipped=size(chosen,1);
 meta.actualFraction=meta.nFlipped/nEligible;
@@ -178,6 +218,10 @@ meta.qualityP05=local_percentile(Q,5);
 meta.qualityMedian=median(Q);
 meta.minAngleDeg=min(minAngle);
 meta.nChangedTriangles=numel(unique(reshape(chosen(:,2:3),[],1)));
+if meta.nChangedTriangles ~= 2*meta.nFlipped
+    error('flip_literal_cut_mesh_lower_diagonals:OverlappingFlips', ...
+        'Every selected diagonal must own two unique triangles.');
+end
 meta.nT3Vertices=size(X,1);
 meta.nT3Elements=size(T,1);
 meta.geometryChanged=false;
