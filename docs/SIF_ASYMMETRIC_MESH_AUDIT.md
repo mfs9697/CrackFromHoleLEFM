@@ -790,3 +790,51 @@ Because the exact SIFs remain prescribed on every mesh, neither extraction
 method is treated as truth. The expected discriminator is that the old
 mirror/J false cross-mode terms grow with asymmetry while FE-nodal EDI
 remains nearly invariant.
+
+
+## Step 4E result: smooth geometric asymmetry
+
+Step 4E was run locally on 2026-09-28. The lower-half angular perturbation
+increases the normalized median mirror mismatch from roundoff to 0.5656
+while preserving radii and connectivity. Mesh quality remains acceptable:
+the minimum quality decreases only from 0.7513 to 0.7208 and the minimum
+angle from 30.08 to 28.15 degrees.
+
+The old mirror/J interpolation diagnostics respond strongly to the imposed
+asymmetry. At rI=0.08, median detJ P/Q mismatch rises from roundoff to about
+0.0498, while the barycentric mismatch reaches about 0.0877. Pure-mode
+cross leakage also appears: false KII generated from pure mode I grows from
+roundoff to roughly 4.1e-4 by alpha=0.4, and false KI generated from pure
+mode II reaches roughly 2.0e-4. The increase is clear over small-to-moderate
+asymmetry, although it saturates and becomes mildly non-monotone at the
+largest perturbation.
+
+The FE-nodal EDI remains effectively invariant: false cross-mode terms stay
+at roughly 1e-9--4e-8 and the 1%-mixed KII relative error remains of order
+1e-6 or below. This confirms that the contamination is specific to the
+mirror-dependent extraction rather than a generic consequence of degrading
+the mesh geometry.
+
+An important nuance is that the 1%-mixed KII error of the old method does
+not grow monotonically with alpha; it remains below about 6.3e-4 in relative
+magnitude. Thus the pure-mode leakage metric is a more sensitive detector of
+broken parity than the scalar KII error of this particular mixed field. The
+result suggests that the old method is more robust to smooth coordinate
+perturbations than the initial hypothesis implied, despite measurable modal
+contamination.
+
+## Step 4F: connectivity-only asymmetry (A_conn)
+
+To isolate the effect most directly relevant to arbitrary unstructured FEM
+meshes, Step 4F keeps every T3 vertex coordinate exactly identical to S0 and
+changes only lower-half triangulation. Natural annular-cell diagonals are
+flipped in deterministic nested fractions 0, 0.10, 0.25, 0.50, and 1.00.
+The upper half and crack neighborhood are frozen. Therefore geometric mirror
+symmetry is exact, but mirrored interpolation stencils are progressively
+different.
+
+`main_step4f_literal_mesh_connectivity_asymmetry` repeats the exact pure-I,
+pure-II, 5%-mixed and 1%-mixed tests and reports old P/Q mismatch, false
+cross-mode SIFs, mixed-mode KII error, EDI response, contour/domain ranges,
+and mesh quality. This is the cleanest test of whether connectivity alone
+can break the historical mirror-mode separation.
