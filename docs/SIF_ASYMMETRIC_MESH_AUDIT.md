@@ -838,3 +838,28 @@ pure-II, 5%-mixed and 1%-mixed tests and reports old P/Q mismatch, false
 cross-mode SIFs, mixed-mode KII error, EDI response, contour/domain ranges,
 and mesh quality. This is the cleanest test of whether connectivity alone
 can break the historical mirror-mode separation.
+
+
+## Step 4F implementation correction after first run
+
+The first Step 4F run aborted at the 25% flip level because three old/J
+contour points were reported outside the mesh. The console diagnostics
+revealed the cause before any scientific interpretation was attempted. At
+10% there were 276 requested diagonal flips but only 543 distinct changed
+triangles, whereas 552=2*276 are required if every flipped diagonal owns a
+disjoint pair of triangles. At 25%, 690 flips changed only 1313 distinct
+triangles instead of 1380. Thus some selected diagonals shared an owner
+triangle. Sequentially applying such overlapping flips overwrote an earlier
+child connectivity and created local holes/nonconforming topology.
+
+The A_conn generator has been corrected by first constructing a deterministic
+maximal matching of candidate lower-half annular diagonals: each T3 triangle
+may participate in at most one flip. The requested fractions are now taken
+from this disjoint pool, so the family remains nested while every selected
+flip changes exactly two unique triangles.
+
+Additional hard gates now require positive element areas, edge incidence at
+most two, unchanged boundary-edge set, conserved total area, unchanged Euler
+characteristic, frozen T3 coordinates, and exactly two changed triangles per
+flipped diagonal. The aborted first Step 4F run is superseded and provides
+no accepted SIF result.
