@@ -876,3 +876,12 @@ Thus the useful topology metric is not the median detJ or median barycentric mis
 Across these five deterministic cases, the absolute false KII and the broken-pair fraction (1 - fraction_exact_mirror_T3) have a descriptive Pearson correlation of about 0.95. This is not treated as a universal law, but it strongly supports the mechanism: loss of mirrored parent-element correspondence is associated with increasing parity contamination in the historical mirror/J separation.
 
 Step 4G therefore closes the synthetic topology mechanism test: exact node-coordinate mirror symmetry alone is insufficient; the old decomposition also relies on sufficiently mirrored discrete interpolation stencils. FE-nodal interaction EDI does not require this correspondence.
+
+
+## Step 5: bridge to the physical two-leg FEM mesh
+
+After Step 4G established the synthetic topology mechanism, a physical-mesh bridge was added. `main_step5_physical_mesh_stencil_audit` solves the existing two-leg Crack-Path-style FEM control once and evaluates the historical mirror/J and canonical FE-nodal EDI extractions over several contour radii.
+
+For each radius the driver now reports the direct reflected-T3 parent-stencil diagnostics introduced in Step 4G, including median/p95/max mismatch and the fraction of exactly mirrored P/Q parent triangles. It also reports old-vs-EDI KI/KII differences and the combined vector difference on the same displacement field.
+
+This step is intentionally descriptive rather than causal because exact physical-field SIFs are not known. The causal evidence remains the exact synthetic Steps 4D--4G; Step 5 asks whether the same broken-stencil signature is present in the actual Crack-Path-style mesh where the earlier small-KII discrepancy was observed.
