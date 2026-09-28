@@ -885,3 +885,20 @@ After Step 4G established the synthetic topology mechanism, a physical-mesh brid
 For each radius the driver now reports the direct reflected-T3 parent-stencil diagnostics introduced in Step 4G, including median/p95/max mismatch and the fraction of exactly mirrored P/Q parent triangles. It also reports old-vs-EDI KI/KII differences and the combined vector difference on the same displacement field.
 
 This step is intentionally descriptive rather than causal because exact physical-field SIFs are not known. The causal evidence remains the exact synthetic Steps 4D--4G; Step 5 asks whether the same broken-stencil signature is present in the actual Crack-Path-style mesh where the earlier small-KII discrepancy was observed.
+
+
+## Step 5 result: physical two-leg mesh has no exact mirrored contour stencils
+
+Step 5 was run locally on 2026-09-28 on the existing two-leg physical FEM control. Across r/lastLeg = 0.2--0.6, the fraction of exactly mirrored P/Q parent T3 pairs is zero at every tested radius. The direct mirrored-T3 mismatch median is about 0.31--0.52, the 95th percentile about 0.75--0.79, and the maximum about 0.89--1.11. Thus the actual Crack-Path-style mesh strongly violates the discrete mirrored-stencil condition identified in Steps 4F--4G.
+
+On the same physical displacement field, old/J and FE-nodal EDI remain very close in KI, but KII differences are visibly contour-dependent. Relative to EDI KII, the old-minus-EDI KII discrepancy is approximately -3.41%, +1.93%, -0.92%, -1.40%, and +3.02% for r/lastLeg = 0.2, 0.3, 0.4, 0.5, and 0.6. For r/lastLeg >= 0.3, EDI KII is nearly constant (about 0.0034603--0.0034628; range about 0.072%), whereas old/J KII varies by about 4.4% over the same radii.
+
+The reported correlation between broken-pair fraction and KII discrepancy is NaN for a simple reason: the broken-pair fraction equals one at every tested radius, so it has zero variance. This does not weaken the bridge; it means the physical mesh is already fully outside the exact mirrored-stencil regime throughout the tested contour family.
+
+Because exact physical-field SIFs are unknown, Step 5 alone cannot assign the remaining KII difference to one extractor. It only shows that the physical mesh exhibits exactly the discrete condition under which the synthetic tests demonstrated old-method sensitivity.
+
+## Step 6: exact Williams field sampled on the physical two-leg mesh
+
+To remove the remaining ambiguity, Step 6 samples exact local Williams fields directly on the actual two-leg Crack-Path mesh. The extraction radii remain at or below 0.6 of the final crack-leg length, so the audit domain lies wholly inside the straight final leg and does not reach the earlier kink. Exact pure-I, pure-II, and 1%-mixed fields are prescribed in the local final-leg frame, with explicit upper/lower crack-face branch assignment.
+
+This makes KI/KII known exactly while retaining the real physical-mesh node layout and connectivity. The historical mirror/J and FE-nodal EDI methods can therefore be compared against truth on the very mesh that produced the Step-5 discrepancy. This is the final bridge needed before deciding how the production crack-growth workflow should handle SIF extraction on asymmetric meshes.
