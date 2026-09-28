@@ -667,6 +667,48 @@ end
 
 
 % ========================================================================
+% Mirrored parent-triangle stencil diagnostic
+% ========================================================================
+
+function m = triangle_set_mismatch(P,Q)
+    permList = [1 2 3;1 3 2;2 1 3;2 3 1;3 1 2;3 2 1];
+
+    eP = [norm(P(2,:)-P(1,:)), norm(P(3,:)-P(2,:)), norm(P(1,:)-P(3,:))];
+    eQ = [norm(Q(2,:)-Q(1,:)), norm(Q(3,:)-Q(2,:)), norm(Q(1,:)-Q(3,:))];
+    h = 0.5*(mean(eP)+mean(eQ));
+    if ~(isfinite(h) && h>0)
+        m = NaN;
+        return;
+    end
+
+    best = inf;
+    for j = 1:size(permList,1)
+        d = P - Q(permList(j,:),:);
+        rmsd = sqrt(mean(sum(d.^2,2)));
+        best = min(best,rmsd);
+    end
+    m = best/h;
+end
+
+
+function y = local_percentile(x,p)
+    x = sort(x(isfinite(x)));
+    if isempty(x)
+        y = NaN;
+        return;
+    end
+    z = 1 + (numel(x)-1)*p/100;
+    i = floor(z);
+    j = ceil(z);
+    if i == j
+        y = x(i);
+    else
+        y = x(i) + (z-i)*(x(j)-x(i));
+    end
+end
+
+
+% ========================================================================
 % Small helpers
 % ========================================================================
 
