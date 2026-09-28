@@ -498,6 +498,11 @@ function S = local_diagnostics(Dbg)
 
     S.frac_same_elem_PQ = mean(Dbg.sameElemPQ);
 
+    S.mirrorT3Mismatch_median = median(Dbg.mirrorT3Mismatch);
+    S.mirrorT3Mismatch_p95 = local_percentile(Dbg.mirrorT3Mismatch,95);
+    S.mirrorT3Mismatch_max = max(Dbg.mirrorT3Mismatch);
+    S.frac_exact_mirror_T3 = mean(Dbg.mirrorT3Mismatch < 1e-10);
+
     S.min_detJP = min(Dbg.detJP);
     S.min_detJQ = min(Dbg.detJQ);
     S.max_detJP = max(Dbg.detJP);
@@ -538,6 +543,9 @@ function print_debug_summary(Dbg)
     fprintf('  near-edge P/Q <1e-4= %d / %d\n', ...
         S.num_near_edge_P_1e4, S.num_near_edge_Q_1e4);
     fprintf('  frac same elem P,Q = %.4f\n', S.frac_same_elem_PQ);
+    fprintf('  mirror T3 mismatch median/p95/max = %.3e / %.3e / %.3e\n', ...
+        S.mirrorT3Mismatch_median,S.mirrorT3Mismatch_p95,S.mirrorT3Mismatch_max);
+    fprintf('  frac exact mirrored T3 pairs = %.4f\n',S.frac_exact_mirror_T3);
     fprintf('  J1 sign changes    = %d\n', S.J1_sign_changes);
     fprintf('  J2 sign changes    = %d\n', S.J2_sign_changes);
 end
