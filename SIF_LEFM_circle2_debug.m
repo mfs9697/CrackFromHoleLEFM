@@ -200,6 +200,17 @@ function [KI, KII, Dbg] = SIF_LEFM_circle2_debug(mesh, U, V, mat, rI, varargin)
 
     sameElemPQ = elemP == elemQ;
 
+    mirrorT3Mismatch = nan(nthet,1);
+    for k = 1:nthet
+        XP3 = coord3(connect3(elemP(k),:),:);
+        XQ3 = coord3(connect3(elemQ(k),:),:);
+        XP3_loc = (R_loc * (XP3.' - x_tip)).';
+        XQ3_loc = (R_loc * (XQ3.' - x_tip)).';
+        XQ3_ref = XQ3_loc;
+        XQ3_ref(:,2) = -XQ3_ref(:,2);
+        mirrorT3Mismatch(k) = triangle_set_mismatch(XP3_loc,XQ3_ref);
+    end
+
     %% ------------------------------------------------------------
     % 6. Loop over contour points
     %% ------------------------------------------------------------
@@ -402,6 +413,7 @@ function [KI, KII, Dbg] = SIF_LEFM_circle2_debug(mesh, U, V, mat, rI, varargin)
     Dbg.baryMinP = baryMinP;
     Dbg.baryMinQ = baryMinQ;
     Dbg.sameElemPQ = sameElemPQ;
+    Dbg.mirrorT3Mismatch = mirrorT3Mismatch;
 
     Dbg.detJP = detJP;
     Dbg.detJQ = detJQ;
