@@ -863,3 +863,16 @@ most two, unchanged boundary-edge set, conserved total area, unchanged Euler
 characteristic, frozen T3 coordinates, and exactly two changed triangles per
 flipped diagonal. The aborted first Step 4F run is superseded and provides
 no accepted SIF result.
+
+
+## Step 4G result: direct mirrored-stencil diagnostic
+
+Step 4G was run locally on 2026-09-28 using the same connectivity-only A_conn family. The new reflected-parent-triangle diagnostic identifies the topology loss much more directly than the earlier scalar detJ/barycentric medians.
+
+For flip fractions 0, 0.10, 0.25, 0.50, and 1.00, the fraction of contour P/Q samples having exactly mirrored T3 parent triangles is respectively 1.0000, 0.8750, 0.78333, 0.5625, and 0.21667. The corresponding absolute false KII produced from an exact pure-mode-I field is approximately 0, 1.2874e-4, 1.4871e-4, 4.0903e-4, and 4.6878e-4.
+
+Thus the useful topology metric is not the median detJ or median barycentric mismatch. Those medians remain near roundoff through the 50% case because more than half of the sampled P/Q pairs still occupy mirrored-equivalent local patches. The direct mismatch distribution reveals the altered pairs immediately: its 95th percentile jumps to about 0.50418 already at 10% flips, while the fraction of exactly mirrored T3 pairs decreases monotonically with connectivity asymmetry.
+
+Across these five deterministic cases, the absolute false KII and the broken-pair fraction (1 - fraction_exact_mirror_T3) have a descriptive Pearson correlation of about 0.95. This is not treated as a universal law, but it strongly supports the mechanism: loss of mirrored parent-element correspondence is associated with increasing parity contamination in the historical mirror/J separation.
+
+Step 4G therefore closes the synthetic topology mechanism test: exact node-coordinate mirror symmetry alone is insufficient; the old decomposition also relies on sufficiently mirrored discrete interpolation stencils. FE-nodal interaction EDI does not require this correspondence.
