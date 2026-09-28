@@ -229,8 +229,11 @@ function [upper,lower,status]=orient_face_labels_from_pencil( ...
 u=Ggeom.up_chain;
 d=Ggeom.dn_chain;
 
-su=mean((u(max(1,end-2):end,:)-P2)*e2.');
-sd=mean((d(max(1,end-2):end,:)-P2)*e2.');
+nu=size(u,1); nd=size(d,1);
+iu=max(1,nu-2):nu;
+id=max(1,nd-2):nd;
+su=mean((u(iu,:)-P2)*e2.');
+sd=mean((d(id,:)-P2)*e2.');
 
 if su>sd
     status='stored upper chain is +e2';
