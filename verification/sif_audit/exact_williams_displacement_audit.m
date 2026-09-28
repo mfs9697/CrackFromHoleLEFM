@@ -23,9 +23,11 @@ if ~isempty([upperFace;lowerFace])
             'Upper/lower crack-face IDs must be valid and disjoint.');
     end
     tol=128*eps(max(1,max(abs(coord(:)))));
-    if any(abs(coord(ids,2))>tol) || any(coord(ids,1)>=-tol)
+    rr=hypot(coord(ids,1),coord(ids,2));
+    badFace=abs(coord(ids,2))>tol | ((coord(ids,1)>=-tol) & (rr>tol));
+    if any(badFace)
         error('exact_williams_displacement_audit:BadFaceGeometry', ...
-            'Crack-face IDs must lie on x<0, y=0.');
+            'Crack-face IDs must lie on x<=0, y=0; the origin is allowed.');
     end
 end
 mu=E/(2*(1+nu));
