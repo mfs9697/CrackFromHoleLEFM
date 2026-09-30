@@ -1079,3 +1079,14 @@ Following Steps 12--14, the audited findings have now been translated into a gua
 `cfg_hole_initiation.m` now selects `boundary_extrapolated_t6` by default, with Nphi=1440, shift fractions [0.05,0.10,0.25], linear radial extrapolation, and five-point angular fitting. The principal production drivers have been wired through the centralized Stage-I workflow. No Stage-II SIF-selection logic was changed in this redesign step.
 
 Before relying on the redesigned Stage-I output downstream, `verification/sif_audit/main_step15_stage1_redesign_preflight.m` should be run. It exercises the actual production wrapper, evaluates the legacy sampler on the same FEM solution for reference, reports discrete and fitted initiation angles, boundary-limit stress/load, radial-fit diagnostics, and centered-hole symmetry relative to the exact candidate peaks at 0 and 180 deg.
+
+
+## Step 15 result: redesigned radial Stage-I chain passes; five-point angular locator is still too local
+
+Step 15 completed locally on 2026-09-30 on the current Npoly=240 production mesh. The redesigned production chain gives a boundary-limit stress maximum of 3.6166977, consistent with the Step-14 zero-offset estimate, and lambda_ini=82.9486. All three material-side query rings have in-domain fraction 1.0, and the maximum relative radial-fit RMSE in sigma_tt is only 1.84e-5. Thus the material-side topology-respecting T6 sampling plus eps->0 extrapolation passes its production preflight.
+
+The extrapolated boundary field is also highly symmetric: the local +/-phi stress defect near the right peak is 1.62e-4 and the left/right peak mismatch is only 3.13e-6. sigma_tt(0)=3.615716 and sigma_tt(pi)=3.615215. These diagnostics are far better than the historical cavity/scattered result, which still selects phi=-1 deg and gives the lower sampled maximum 3.598689 on the same FEM solution.
+
+However, the current five-point angular quadratic refinement does NOT pass the strict centered-hole direction gate. The discrete maximum is at -0.5 deg and the fitted vertex is -0.4880 deg, even though the underlying extrapolated field is nearly symmetric. The fitted peak exceeds sigma_tt(0) by only about 9.82e-4 in absolute stress, or roughly 2.7e-4 relative, so the local five-point fit is locking onto a tiny mesh-scale ripple on a very flat physical maximum. Its small RMSE (1.28e-6) only shows that a quadratic fits those five neighboring samples well; it does not prove that this very narrow neighborhood identifies the continuum peak.
+
+Conclusion: retain the redesigned radial boundary-stress estimator, but do not yet freeze the five-point angular peak locator. The angular regression window should be tied to the boundary mesh angular scale h_hole/R and made wide enough to average mesh-scale oscillations while shrinking consistently under refinement. A dedicated window-width sensitivity audit is the next gate.
