@@ -182,6 +182,8 @@ function [KI, KII, Aux] = SIF_LEFM_interaction_EDI(mesh, U, V, mat, domain, vara
     nElem_used = 0;
 
     rows = [];
+    auxMismatchI = zeros(0,1);
+    auxMismatchII = zeros(0,1);
 
     for e = 1:size(connect,1)
 
@@ -274,6 +276,8 @@ function [KI, KII, Aux] = SIF_LEFM_interaction_EDI(mesh, U, V, mat, domain, vara
 
             % Auxiliary mode II, normalized by Kaux.
             auxII = local_aux_LEFM_fields(x1, x2, 0.0, Kaux, E, nu, mu, kappa, Dmat, auxDerivativeScale);
+            auxMismatchI(end+1,1) = auxI.eps_mismatch; %#ok<AGROW>
+            auxMismatchII(end+1,1) = auxII.eps_mismatch; %#ok<AGROW>
 
             % Interaction integral densities.
             densI  = local_interaction_density(sig1, eps1, du1_dx1, auxI,  qgrad);
@@ -335,6 +339,10 @@ function [KI, KII, Aux] = SIF_LEFM_interaction_EDI(mesh, U, V, mat, domain, vara
     Aux.planeStrain = planeStrain;
     Aux.weightFunction = weightFunction;
     Aux.auxDerivativeScale = auxDerivativeScale;
+    Aux.auxEpsMismatchI_median = local_median_finite(auxMismatchI);
+    Aux.auxEpsMismatchI_max = local_max_finite(auxMismatchI);
+    Aux.auxEpsMismatchII_median = local_median_finite(auxMismatchII);
+    Aux.auxEpsMismatchII_max = local_max_finite(auxMismatchII);
 
     Aux.r_inner = r_inner;
     Aux.r_outer = r_outer;
