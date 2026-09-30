@@ -950,3 +950,18 @@ The synthetic/physical-control audit is now sufficiently mature to enter the act
 `main_step8_production_crack_path_preflight.m` builds the actual Stage-II hole+short-crack mesh at theta=0 by default, recovers the production crack-face node sets, assigns exact local Williams pure-I, pure-II and 1%-mixed displacement fields, and compares both SIF extractors directly with known truth. It also plots the full production mesh and a crack-tip zoom suitable for later thesis export.
 
 This preflight is the gate before the full production theta sweep. It checks that the FE-nodal EDI domain is adequately resolved on the actual hole-crack mesh and that the conclusions from Steps 4--7 transfer to this specific production discretization. Only after this gate is accepted should KII(theta) and the zero-KII direction be compared between the two extractors.
+
+
+## Step 8 result: exact-field preflight on the actual production hole-crack mesh
+
+Step 8 completed locally on 2026-09-30 for the production Stage-II mesh at theta=0 deg. Stage I located the initiation point at phi=359 deg on the discretized hole boundary. The appended crack length is a0=Llast=0.004. The collapsed crack has 7 T3 face nodes and 13 T6 face nodes per face, with exactly one shared node at the mathematical tip.
+
+The production mesh again has no exactly mirrored parent-element pairs on the historical contour: fraction_exact_mirror_T3=0, with reflected-T3 mismatch median 0.358, p95 0.726, and maximum 0.903.
+
+The local T3 tip-edge scale is coarse relative to the earlier audit mesh: h_tip,min=4.09e-4, h_tip,median=4.70e-4, h_tip,max=5.39e-4. With r_outer=0.002=0.5 Llast, the automatic EDI rule therefore selected r_inner=9.40e-4=2 h_tip,median, leaving a transition width about 1.06e-3.
+
+On exact pure Mode I, old/J returned KI=1.00273 and false KII=-3.353e-3, whereas FE-nodal EDI returned KI=1.00000096 and false KII=1.628e-4. On exact pure Mode II, old/J returned false KI=2.477e-3 and KII=0.998962, whereas EDI returned false KI=-1.899e-4 and KII=1.000026.
+
+For the exact 1%-mixed field (KI=1,KII=0.01), old/J returned KII=0.010874, a relative KII error of +8.741%, while FE-nodal EDI returned KII=0.010163, a relative error of +1.631%. The full-vector error is about 2.87e-3 for old/J and 1.63e-4 for EDI. Thus the production mesh reproduces the same qualitative conclusion as the preceding audit: the mirror-based extractor is much more strongly contaminated by the asymmetric interpolation layout, while EDI is substantially more accurate.
+
+The EDI result is not yet as close to exact as on the refined two-leg audit mesh. This is consistent with the much coarser production tip discretization and the relatively narrow q-transition annulus forced by the 0.5 Llast outer radius. Therefore the production theta sweep should not rely on a single EDI domain. Because post-processing is cheap compared with remeshing and solving, the next driver should evaluate several safe EDI outer radii on every identical FEM solution and compare the resulting zero-KII direction. This makes root stability, rather than one local KII percentage, the production acceptance criterion.
