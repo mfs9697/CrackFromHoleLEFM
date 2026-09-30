@@ -18,11 +18,29 @@ lowerFace=unique(ip.Results.LowerFaceIDs(:));
 n=size(coord,1);
 if ~isempty([upperFace;lowerFace])
     ids=[upperFace;lowerFace];
-    if any(ids<1|ids>n|ids~=fix(ids)) || numel(unique(ids))~=numel(ids)
+    if any(ids<1|ids>n|ids~=fix(ids))
         error('exact_williams_displacement_audit:BadFaceIDs', ...
-            'Upper/lower crack-face IDs must be valid and disjoint.');
+            'Upper/lower crack-face IDs must be valid node IDs.');
     end
+
     tol=128*eps(max(1,max(abs(coord(:)))));
+
+    % A conforming crack mesh may legitimately use one COMMON node at the
+    % mathematical crack tip. At r=0 the leading Williams displacement is
+    % exactly zero, so that shared tip node needs no +pi/-pi branch label.
+    shared=intersect(upperFace,lowerFace);
+    if ~isempty(shared)
+        rShared=hypot(coord(shared,1),coord(shared,2));
+        if any(rShared>tol)
+            error('exact_williams_displacement_audit:SharedNonTipFaceNode', ...
+                ['Upper/lower crack faces may share only the crack-tip ', ...
+                 'node at the local origin.']);
+        end
+        upperFace=setdiff(upperFace,shared,'stable');
+        lowerFace=setdiff(lowerFace,shared,'stable');
+        ids=[upperFace;lowerFace];
+    end
+
     rr=hypot(coord(ids,1),coord(ids,2));
     badFace=abs(coord(ids,2))>tol | ((coord(ids,1)>=-tol) & (rr>tol));
     if any(badFace)
