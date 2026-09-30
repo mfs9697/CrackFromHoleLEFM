@@ -372,6 +372,15 @@ function [KI, KII, Dbg] = SIF_LEFM_circle2_debug(mesh, U, V, mat, rI, varargin)
     Dbg.KI  = KI;
     Dbg.KII = KII;
 
+    % IMPORTANT: JII is a modal energy-release contribution and is
+    % quadratic in the physical Mode-II amplitude. Therefore sign(JII)
+    % is not, in general, the physical sign of KII. The legacy return
+    % value above is preserved for historical reproducibility, but its
+    % sign must not be used as a signed local-symmetry indicator.
+    Dbg.KII_magnitude = sqrt(abs(JII) * Eeff);
+    Dbg.KII_legacy_sign_from_JII = sign(JII);
+    Dbg.KII_sign_recoverable_from_JII = false;
+
     Dbg.JI  = JI;
     Dbg.JII = JII;
     Dbg.Eeff = Eeff;
