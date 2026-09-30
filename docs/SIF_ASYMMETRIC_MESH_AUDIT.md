@@ -917,3 +917,12 @@ The EDI degradation at the smallest radius is consistent with under-resolution o
 Scientific conclusion: the full chain is now demonstrated. Exact discrete mirror correspondence gives excellent old/J recovery (Step 4D); controlled loss of geometric or connectivity symmetry creates modal contamination (Steps 4E--4G); the actual physical Crack-Path mesh has no exact mirrored parent-element pairs (Step 5); and exact Williams fields sampled on that physical mesh reproduce the old-method sensitivity directly (Step 6). FE-nodal EDI does not require mirrored stencils and is substantially more accurate on the same asymmetric physical mesh.
 
 Before promoting EDI into the production crack-growth path, the remaining implementation-specific gate is auxiliary-field derivative sensitivity, because the present prototype still obtains auxiliary displacement gradients by centered finite differences.
+
+
+## Step 7: auxiliary-derivative sensitivity gate
+
+Step 6 establishes the physical-mesh extraction difference using exact truth. The remaining implementation-specific question for EDI is whether its accuracy depends materially on the centered finite-difference step used for auxiliary displacement gradients.
+
+`SIF_LEFM_interaction_EDI` now accepts `AuxDerivativeScale`, a positive multiplier on the existing step h=max(1e-7,1e-5*r). The default remains 1.0 for backward compatibility. The extractor also reports median and maximum mismatch between auxiliary strain computed from finite-difference displacement gradients and strain recovered from the analytical auxiliary stress through the constitutive matrix.
+
+`main_step7_edi_aux_derivative_sensitivity` uses the actual two-leg physical mesh and exact pure-I, pure-II, and 1%-mixed Williams fields. It fixes the EDI annulus at the well-resolved Step-6 choice [0.05,0.5] Llast, for which r_inner=2 htip at ncoh=40, and sweeps derivative-scale multipliers 0.01--30. A broad plateau in recovered KI/KII together with small strain-stress mismatch would show that the remaining EDI error is governed by FE interpolation/domain discretization rather than the numerical auxiliary derivative step.
