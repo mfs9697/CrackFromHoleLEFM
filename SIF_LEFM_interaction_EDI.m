@@ -47,11 +47,14 @@ function [KI, KII, Aux] = SIF_LEFM_interaction_EDI(mesh, U, V, mat, domain, vara
     addParameter(ip, 'Verbose', false, @(x)islogical(x) || isnumeric(x));
     addParameter(ip, 'WeightFunction', 'analytic_radial', ...
         @(x)ischar(x) || (isstring(x) && isscalar(x)));
+    addParameter(ip, 'AuxDerivativeScale', 1.0, ...
+        @(x)isnumeric(x) && isscalar(x) && isfinite(x) && x>0);
     parse(ip, varargin{:});
 
     Kaux = ip.Results.AuxK;
     verbose = logical(ip.Results.Verbose);
     weightFunction = char(ip.Results.WeightFunction);
+    auxDerivativeScale = ip.Results.AuxDerivativeScale;
     if ~(strcmpi(weightFunction,'analytic_radial') || strcmpi(weightFunction,'fe_nodal'))
         error('SIF_LEFM_interaction_EDI:BadWeightFunction', ...
             'WeightFunction must be analytic_radial or fe_nodal.');
