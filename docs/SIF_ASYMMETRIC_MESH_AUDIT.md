@@ -978,3 +978,14 @@ Inspection of the legacy conversion exposed a conceptual reason: after modal sep
 This does not invalidate the historical method as a magnitude extractor: on symmetric meshes it accurately recovers |KII| and its modal energy. It does mean that its returned sign must not be used as a signed local-symmetry root indicator. For the historical decomposed-J branch, the meaningful production diagnostic is the minimum of |KII| (or JII), whereas the interaction EDI provides a genuinely signed KII because the interaction term is linear in the target mode amplitude.
 
 Step 9 code has therefore been hardened without changing legacy returned values. The old/J sign crossings are now labeled legacy diagnostics only; the driver reports the theta minimizing |KII| for each historical contour. The EDI root stability remains the signed local-symmetry result of interest. `SIF_LEFM_circle2_debug` now also records explicitly that physical KII sign is not recoverable from JII alone.
+
+
+## Step 10 result: explicit positive/negative Mode-II sign audit
+
+Step 10 completed locally on 2026-09-30 and decisively separates sign loss from mesh-asymmetry contamination.
+
+On the exactly symmetric S0 mesh, exact pure Mode-II fields with KII=+1 and KII=-1 produce exactly the same historical modal result: KII_legacy=+0.99957 and JII=2.2731e-4 in both cases. Likewise, exact mixed fields (KI,KII)=(1,+0.01) and (1,-0.01) both produce KII_legacy=+0.0099957 and the same JII=2.2731e-8. Thus the historical decomposed-J procedure recovers the Mode-II magnitude very accurately on S0 but contains no information about the physical sign of KII. FE-nodal interaction EDI recovers +1/-1 and +0.01/-0.01 with errors below about 1e-6 and 1e-8, respectively.
+
+On the actual production mesh, exact pure KII=+1 and -1 again give identical old/J magnitude 0.99896 and identical JII=4.3243e-6, while EDI recovers +1 and -1 with signed error about 2.61e-5. For the mixed +/-1% cases, the asymmetric mesh additionally contaminates the historical magnitude: old/J gives +0.010874 for true +0.01 but +0.0076715 for true -0.01. EDI gives +0.010163 and -0.0098374. The EDI pair is nearly perfectly linear: their mean is about +1.63e-4, equal to the pure-Mode-I false-KII leakage on this mesh, while their half-difference is about 0.0100002, essentially the prescribed Mode-II amplitude.
+
+Step 10 therefore establishes two independent effects. First, modal JII is quadratic and cannot encode sign even on a perfect symmetric mesh. Second, asymmetric interpolation stencils contaminate the modal magnitude. Interaction EDI is signed because the interaction term is linear in the target modal amplitude and it also remains substantially less sensitive to the asymmetric interpolation layout.
