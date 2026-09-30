@@ -68,9 +68,20 @@ lo6=quadratic_face(mesh,lo3);
 mesh.crackUpperT6IDs=up6;
 mesh.crackLowerT6IDs=lo6;
 
+sharedFaceIDs=intersect(up6,lo6);
+if ~isempty(sharedFaceIDs)
+    dTip=sqrt(sum((mesh.coord(sharedFaceIDs,:)-tip).^2,2));
+    tolTip=max(1e-12,1e-9*Llast);
+    if any(dTip>tolTip)
+        error('step6:SharedNonTipFaceNode', ...
+            'Upper/lower final-leg face lists share a non-tip T6 node.');
+    end
+end
+
 fprintf('Final leg length = %.8g\n',Llast);
 fprintf('Final-leg T3 face corners upper/lower = %d / %d\n',numel(up3),numel(lo3));
 fprintf('Final-leg T6 face nodes upper/lower = %d / %d\n',numel(up6),numel(lo6));
+fprintf('Shared upper/lower T6 face nodes = %d (tip-only expected)\n',numel(sharedFaceIDs));
 fprintf('Face-label orientation check = %s\n',faceOrientation);
 
 % Local coordinates relative to the current crack tip and final-leg frame.
