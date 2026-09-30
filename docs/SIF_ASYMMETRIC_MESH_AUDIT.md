@@ -902,3 +902,18 @@ Because exact physical-field SIFs are unknown, Step 5 alone cannot assign the re
 To remove the remaining ambiguity, Step 6 samples exact local Williams fields directly on the actual two-leg Crack-Path mesh. The extraction radii remain at or below 0.6 of the final crack-leg length, so the audit domain lies wholly inside the straight final leg and does not reach the earlier kink. Exact pure-I, pure-II, and 1%-mixed fields are prescribed in the local final-leg frame, with explicit upper/lower crack-face branch assignment.
 
 This makes KI/KII known exactly while retaining the real physical-mesh node layout and connectivity. The historical mirror/J and FE-nodal EDI methods can therefore be compared against truth on the very mesh that produced the Step-5 discrepancy. This is the final bridge needed before deciding how the production crack-growth workflow should handle SIF extraction on asymmetric meshes.
+
+
+## Step 6 result: exact Williams field on the physical two-leg mesh
+
+Step 6 completed locally on 2026-09-30. The final physical crack leg has length 0.0016 and carries 41 T3 face corners and 81 T6 face nodes per face, with exactly one shared upper/lower T6 node at the mathematical tip. The stored face orientation agrees with the +e2/-e2 local-frame convention.
+
+The exact-field result closes the remaining attribution gap. On the actual Crack-Path mesh, the historical mirror/J method produces appreciable false cross-mode content even though the prescribed field is exactly pure. For pure mode I, false KII ranges from about 5.0e-4 to 1.38e-3 over r/Llast=0.2--0.6. For pure mode II, false KI ranges from about 5.2e-5 to 1.93e-3. The direct reflected-T3 exact-pair fraction is zero at every tested radius.
+
+For the exact 1%-mixed field, the old relative KII error is approximately -5.44%, +1.01%, -1.27%, -0.072%, and -1.60% for r/Llast=0.2, 0.3, 0.4, 0.5, and 0.6. FE-nodal EDI is more accurate at every radius: approximately +1.22%, -0.463%, -0.0342%, +0.00165%, and -0.00457%, respectively. At r/Llast=0.5, the old KII error is about 0.072% while EDI is about 0.00165%; at r/Llast=0.6 the old error is about 1.60% while EDI is about 0.0046%.
+
+The EDI degradation at the smallest radius is consistent with under-resolution of the inner q transition: with ncoh=40, htip=Llast/ncoh=4e-5, while the Step-6 inner radius is 0.1*r. Thus r/Llast=0.2 gives r_inner=3.2e-5 (< htip), whereas r/Llast=0.5 gives r_inner=8e-5 (=2 htip). The best-resolved domains are therefore the mid/outer cases rather than the smallest contour.
+
+Scientific conclusion: the full chain is now demonstrated. Exact discrete mirror correspondence gives excellent old/J recovery (Step 4D); controlled loss of geometric or connectivity symmetry creates modal contamination (Steps 4E--4G); the actual physical Crack-Path mesh has no exact mirrored parent-element pairs (Step 5); and exact Williams fields sampled on that physical mesh reproduce the old-method sensitivity directly (Step 6). FE-nodal EDI does not require mirrored stencils and is substantially more accurate on the same asymmetric physical mesh.
+
+Before promoting EDI into the production crack-growth path, the remaining implementation-specific gate is auxiliary-field derivative sensitivity, because the present prototype still obtains auxiliary displacement gradients by centered finite differences.
