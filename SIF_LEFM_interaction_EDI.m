@@ -678,6 +678,16 @@ end
 % Utility
 % =========================================================================
 
+function y = local_median_finite(x)
+    x = x(isfinite(x));
+    if isempty(x), y = NaN; else, y = median(x); end
+end
+
+function y = local_max_finite(x)
+    x = x(isfinite(x));
+    if isempty(x), y = NaN; else, y = max(x); end
+end
+
 function rad = local_element_radius(X)
 
     xc = mean(X(1:3,:), 1);
