@@ -989,3 +989,12 @@ On the exactly symmetric S0 mesh, exact pure Mode-II fields with KII=+1 and KII=
 On the actual production mesh, exact pure KII=+1 and -1 again give identical old/J magnitude 0.99896 and identical JII=4.3243e-6, while EDI recovers +1 and -1 with signed error about 2.61e-5. For the mixed +/-1% cases, the asymmetric mesh additionally contaminates the historical magnitude: old/J gives +0.010874 for true +0.01 but +0.0076715 for true -0.01. EDI gives +0.010163 and -0.0098374. The EDI pair is nearly perfectly linear: their mean is about +1.63e-4, equal to the pure-Mode-I false-KII leakage on this mesh, while their half-difference is about 0.0100002, essentially the prescribed Mode-II amplitude.
 
 Step 10 therefore establishes two independent effects. First, modal JII is quadratic and cannot encode sign even on a perfect symmetric mesh. Second, asymmetric interpolation stencils contaminate the modal magnitude. Interaction EDI is signed because the interaction term is linear in the target modal amplitude and it also remains substantially less sensitive to the asymmetric interpolation layout.
+
+
+## Step 11: symmetry-enforced production parity benchmark
+
+The centered-hole geometry and remote vertical tension are analytically symmetric, so the rightmost initiation point should be phi=0 deg and a normal crack at theta=0 should be a pure Mode-I benchmark. The current Stage-I numerical detector instead selects phi=359 deg, which mixes the SIF-extractor question with a separate initiation-point discretization bias.
+
+`main_step11_production_symmetry_parity.m` therefore preserves the production Stage-II mesh/solver but overrides only the initiation geometry to the exact rightmost symmetry point: x_star=center+[R,0], n_mat=[1,0], t_hat=[0,1]. It runs paired +/-theta production meshes and evaluates both methods at r/a0=0.50,0.65,0.80. The EDI acceptance checks are KII(0) approximately zero, KII(-theta) approximately -KII(+theta), KI(-theta) approximately KI(+theta), one signed zero crossing near theta=0, and root stability across domains. The historical branch is evaluated only through |KII| evenness because Step 10 proved that decomposed JII cannot supply the physical KII sign.
+
+This benchmark should be completed before refining the 0.379-deg EDI root from Step 9. If the symmetry-enforced benchmark returns a stable zero root, the Step-9 offset can be attributed primarily to the Stage-I 359-deg initiation bias plus ordinary mesh discretization rather than to the EDI extractor.
