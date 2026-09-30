@@ -1048,3 +1048,10 @@ The traction-free diagnostics provide an independent consistency check. Recovere
 At Npoly=480, recovered-T6 gives sigma_tt(0)=3.589569 and direct-U gives 3.588785, a relative difference of only 2.18e-4; the full-window Linf difference is 2.46e-4. Recovered-T6 has much smaller peak-over-phi0 bias (1.55e-5 versus 2.69e-4) and lower angular roughness (1.54e-4 versus 6.24e-4). This supports retaining recovered nodal stresses for the production initiation criterion, but only with material-side topology-respecting T6 interpolation. Direct-U should be retained as an audit/reference estimator rather than the default production field.
 
 Before changing production, one remaining sensitivity check is useful: vary the material-side offset fraction eps/h_hole (for example 0.05,0.10,0.25,0.50) on one or two refined meshes. This will verify that the chosen offset does not materially bias sigma_tt(0) or the inferred initiation position and will quantify the approach of sigma_nn and sigma_nt to zero as the query approaches the traction-free boundary.
+
+
+## Step 14: material-side query-offset sensitivity
+
+After Step 13 showed convergence of recovered-T6 and direct-from-U stresses, Step 14 varies the material-side sampling distance eps/h_hole over [0.05,0.10,0.25,0.50] on two representative coupled-refinement meshes, Npoly=240 and 480. Each mesh is solved only once; both estimators are then evaluated at identical material-side query rings.
+
+The experiment reports sigma_tt(0), the discrete right-window peak angle/value and peak-over-phi0 bias, +/-phi symmetry error, relative sigma_nn and sigma_nt residuals, recovered/direct differences, and within-mesh ranges over all offsets. The primary questions are whether sigma_tt(0) and the inferred initiation point are insensitive to the chosen offset, and whether the traction residuals decrease as eps approaches the exact-circle boundary. Because the FE hole boundary is polygonal, a nonzero residual floor at very small eps is possible until the geometry is further refined; this should be interpreted together with the Npoly dependence rather than as a failure of the stress estimator.
