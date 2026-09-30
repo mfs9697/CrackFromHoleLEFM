@@ -485,21 +485,22 @@ function aux = local_aux_LEFM_fields(x1, x2, KI, KII, E, nu, mu, kappa, Dmat, de
 
     Grad = [du_dx1, du_dx2];
 
-    eps = [ ...
+    eps_fd = [ ...
         Grad(1,1);
         Grad(2,2);
         Grad(1,2) + Grad(2,1)];
 
-    % For consistency, one could use eps = inv(Dmat)*sig.
-    % But using displacement derivatives makes du_dx1 and eps compatible.
-    % If needed, compare with:
-    % eps_from_sig = Dmat \ sig;
+    % Consistency diagnostic: compare finite-difference displacement strain
+    % with the analytical-stress strain. Do not call the strain vector "eps"
+    % here, because that shadows MATLAB's eps() function and previously made
+    % the denominator vector-valued.
+    mismatchDen = max(norm(eps_from_sig), eps(max(1,norm(eps_from_sig))));
 
     aux = struct();
     aux.sig = sig;
-    aux.eps = eps;
+    aux.eps = eps_fd;
     aux.eps_from_sig = eps_from_sig;
-    aux.eps_mismatch = norm(eps - eps_from_sig) / max(norm(eps_from_sig), eps);
+    aux.eps_mismatch = norm(eps_fd - eps_from_sig) / mismatchDen;
     aux.du_dx1 = du_dx1;
 end
 
