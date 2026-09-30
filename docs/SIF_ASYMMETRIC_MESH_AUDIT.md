@@ -939,3 +939,14 @@ At the default derivative scale 1, the auxiliary strain-vs-analytical-stress mis
 In the Step-7 domain, the floor in h=max(1e-7,1e-5*r) dominates, so the scale sweep effectively varies h from about 1e-9 to 3e-6, a factor of 3000. The resulting SIF plateau demonstrates that the remaining EDI error is governed by FE interpolation/domain discretization rather than the auxiliary finite-difference step.
 
 Operational conclusion: `AuxDerivativeScale=1` is validated for the present workflow. Closed-form auxiliary derivatives remain a possible cleanup/refinement, but they are not required before using FE-nodal EDI as the canonical SIF extractor on asymmetric meshes.
+
+
+## Step 8: production hole-crack preflight
+
+The synthetic/physical-control audit is now sufficiently mature to enter the actual hole-crack production workflow, but the first production step is deliberately an exact-field preflight rather than an immediate crack-angle sweep.
+
+`compute_SIF_for_stage2_compare.m` processes one existing Stage-II displacement field with both extractors without repeating the FEM solve. The historical branch uses the circular J / Ishikawa--Kitagawa--Okamura separation; the comparison branch uses FE-nodal interaction EDI with `AuxDerivativeScale=1`. The EDI outer radius defaults to the same `G2.tip.radiusJ` used by the historical contour. The inner radius is chosen as `max(0.1*r_outer, 2*h_tip)`, where `h_tip` is estimated from T3 edge lengths of elements incident on the crack-tip node. The adapter also returns the direct mirrored-parent-element diagnostics.
+
+`main_step8_production_crack_path_preflight.m` builds the actual Stage-II hole+short-crack mesh at theta=0 by default, recovers the production crack-face node sets, assigns exact local Williams pure-I, pure-II and 1%-mixed displacement fields, and compares both SIF extractors directly with known truth. It also plots the full production mesh and a crack-tip zoom suitable for later thesis export.
+
+This preflight is the gate before the full production theta sweep. It checks that the FE-nodal EDI domain is adequately resolved on the actual hole-crack mesh and that the conclusions from Steps 4--7 transfer to this specific production discretization. Only after this gate is accepted should KII(theta) and the zero-KII direction be compared between the two extractors.
