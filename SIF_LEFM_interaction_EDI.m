@@ -270,10 +270,10 @@ function [KI, KII, Aux] = SIF_LEFM_interaction_EDI(mesh, U, V, mat, domain, vara
             du1_dx1 = GradU1(:,1);
 
             % Auxiliary mode I, normalized by Kaux.
-            auxI = local_aux_LEFM_fields(x1, x2, Kaux, 0.0, E, nu, mu, kappa, Dmat);
+            auxI = local_aux_LEFM_fields(x1, x2, Kaux, 0.0, E, nu, mu, kappa, Dmat, auxDerivativeScale);
 
             % Auxiliary mode II, normalized by Kaux.
-            auxII = local_aux_LEFM_fields(x1, x2, 0.0, Kaux, E, nu, mu, kappa, Dmat);
+            auxII = local_aux_LEFM_fields(x1, x2, 0.0, Kaux, E, nu, mu, kappa, Dmat, auxDerivativeScale);
 
             % Interaction integral densities.
             densI  = local_interaction_density(sig1, eps1, du1_dx1, auxI,  qgrad);
@@ -334,6 +334,7 @@ function [KI, KII, Aux] = SIF_LEFM_interaction_EDI(mesh, U, V, mat, domain, vara
     Aux.kappa = kappa;
     Aux.planeStrain = planeStrain;
     Aux.weightFunction = weightFunction;
+    Aux.auxDerivativeScale = auxDerivativeScale;
 
     Aux.r_inner = r_inner;
     Aux.r_outer = r_outer;
@@ -438,7 +439,7 @@ end
 % Auxiliary LEFM fields by finite-difference derivatives of displacements
 % =========================================================================
 
-function aux = local_aux_LEFM_fields(x1, x2, KI, KII, E, nu, mu, kappa, Dmat)
+function aux = local_aux_LEFM_fields(x1, x2, KI, KII, E, nu, mu, kappa, Dmat, derivativeScale)
 % Return auxiliary stress, strain, and du/dx1 in local crack coordinates.
 %
 % This prototype evaluates stresses from standard near-tip formulas and
@@ -460,7 +461,7 @@ function aux = local_aux_LEFM_fields(x1, x2, KI, KII, E, nu, mu, kappa, Dmat)
     eps_from_sig = Dmat \ sig;
 
     % Numerical derivative of auxiliary displacement wrt local x1.
-    h = max(1e-7, 1e-5*r);
+    h = derivativeScale * max(1e-7, 1e-5*r);
 
     u0 = local_aux_displacement(x1, x2, KI, KII, mu, kappa); %#ok<NASGU>
     up = local_aux_displacement(x1 + h, x2, KI, KII, mu, kappa);
