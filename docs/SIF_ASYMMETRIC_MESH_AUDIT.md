@@ -998,3 +998,16 @@ The centered-hole geometry and remote vertical tension are analytically symmetri
 `main_step11_production_symmetry_parity.m` therefore preserves the production Stage-II mesh/solver but overrides only the initiation geometry to the exact rightmost symmetry point: x_star=center+[R,0], n_mat=[1,0], t_hat=[0,1]. It runs paired +/-theta production meshes and evaluates both methods at r/a0=0.50,0.65,0.80. The EDI acceptance checks are KII(0) approximately zero, KII(-theta) approximately -KII(+theta), KI(-theta) approximately KI(+theta), one signed zero crossing near theta=0, and root stability across domains. The historical branch is evaluated only through |KII| evenness because Step 10 proved that decomposed JII cannot supply the physical KII sign.
 
 This benchmark should be completed before refining the 0.379-deg EDI root from Step 9. If the symmetry-enforced benchmark returns a stable zero root, the Step-9 offset can be attributed primarily to the Stage-I 359-deg initiation bias plus ordinary mesh discretization rather than to the EDI extractor.
+
+
+## Step 11 result: symmetry-enforced production benchmark passes
+
+Step 11 completed locally on 2026-09-30. The numerically detected Stage-I maximum occurs at phi=359 deg, whereas the exact symmetry point is phi=0. The sampled effective tangential stress at phi=0 is 3.5588003469, while the numerical maximum is 3.5986892523, a relative bias of 1.1084%. This confirms that the one-degree initiation offset is not merely a tie-breaking artifact; the current Stage-I recovered-stress/interpolation procedure itself is slightly asymmetric.
+
+After imposing the exact rightmost initiation geometry (phi=0, n_mat=[1,0], t_hat=[0,1]) while keeping the production Stage-II meshing and solver unchanged, FE-nodal EDI satisfies the expected symmetry very well. At theta=0, KII is only about -3.10e-5, -2.80e-5, and -2.92e-5 for r/a0=0.50,0.65,0.80. The corresponding interpolated zero-KII roots are 0.009026, 0.008180, and 0.008510 deg, giving a domain spread of only about 8.46e-4 deg.
+
+The EDI odd-parity defect in KII is at most about 0.43--0.57% of the KII scale over theta=+/-3 deg, while the KI even-parity defect is only about 4.7e-5--1.0e-4 relative. Thus the production EDI extractor and Stage-II workflow preserve the expected centered-hole symmetry to high accuracy once the initiation geometry is fixed.
+
+The historical magnitude-only branch is much less symmetric: the maximum relative mismatch in |KII(-theta)| versus |KII(+theta)| is about 4.0%, 12.4%, and 5.0% for r/a0=0.80,0.65,0.50, respectively. This is consistent with the earlier conclusion that asymmetric mirrored interpolation contaminates the decomposed-J modal magnitude even when sign is no longer considered.
+
+Interpretation: the Step-9 EDI root near +0.379 deg was not a physical symmetry-breaking crack direction. It arose mainly because Stage I supplied a crack-start normal at phi=359 deg rather than the exact symmetric phi=0 point. With the initiation geometry corrected, the production Stage-II EDI root collapses to about +0.0085 deg, effectively zero at the present mesh resolution. The next remaining production issue is therefore Stage-I initiation-point accuracy/symmetry, not SIF extraction.
