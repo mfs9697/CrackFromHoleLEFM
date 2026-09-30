@@ -926,3 +926,16 @@ Step 6 establishes the physical-mesh extraction difference using exact truth. Th
 `SIF_LEFM_interaction_EDI` now accepts `AuxDerivativeScale`, a positive multiplier on the existing step h=max(1e-7,1e-5*r). The default remains 1.0 for backward compatibility. The extractor also reports median and maximum mismatch between auxiliary strain computed from finite-difference displacement gradients and strain recovered from the analytical auxiliary stress through the constitutive matrix.
 
 `main_step7_edi_aux_derivative_sensitivity` uses the actual two-leg physical mesh and exact pure-I, pure-II, and 1%-mixed Williams fields. It fixes the EDI annulus at the well-resolved Step-6 choice [0.05,0.5] Llast, for which r_inner=2 htip at ncoh=40, and sweeps derivative-scale multipliers 0.01--30. A broad plateau in recovered KI/KII together with small strain-stress mismatch would show that the remaining EDI error is governed by FE interpolation/domain discretization rather than the numerical auxiliary derivative step.
+
+
+## Step 7 result: EDI auxiliary derivative step is not controlling the SIFs
+
+Step 7 completed locally on 2026-09-30. On the actual two-leg physical mesh, with exact Williams fields and the well-resolved FE-nodal annulus [0.05,0.5] Llast, the recovered SIFs form an extremely broad plateau versus auxiliary finite-difference scale.
+
+For the exact 1%-mixed field, KI_EDI remains about 0.99996 and KII_EDI about 0.01000016 for derivative-scale multipliers from 0.01 through 10. The relative KII error is approximately 1.645e-5 (0.00165%) over this entire range. Even at scale 30 it changes only to about 1.714e-5. Pure-I and pure-II recovery are similarly invariant.
+
+At the default derivative scale 1, the auxiliary strain-vs-analytical-stress mismatch is very small: mode-I median about 6.3e-8 and maximum about 1.64e-4; mode-II median about 1.4e-8 and maximum about 9.63e-5. The pointwise maximum grows with very large derivative scales and becomes pathological at scale 30, while the medians remain small and the integrated SIFs remain nearly unchanged. This is consistent with a small number of centered finite-difference probes crossing the crack displacement branch cut near a face; scale 30 is therefore a stress test, not a recommended operating point.
+
+In the Step-7 domain, the floor in h=max(1e-7,1e-5*r) dominates, so the scale sweep effectively varies h from about 1e-9 to 3e-6, a factor of 3000. The resulting SIF plateau demonstrates that the remaining EDI error is governed by FE interpolation/domain discretization rather than the auxiliary finite-difference step.
+
+Operational conclusion: `AuxDerivativeScale=1` is validated for the present workflow. Closed-form auxiliary derivatives remain a possible cleanup/refinement, but they are not required before using FE-nodal EDI as the canonical SIF extractor on asymmetric meshes.
