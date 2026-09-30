@@ -88,20 +88,25 @@ for il=1:numel(Nlist)
         if F.accepted
             phiFit=local_wrap(F.phiStar);
             sigFit=F.sigStar;
-            dist0=abs(rad2deg(phiFit));
-            peakExcess=(sigFit-sig0)/max(abs(sigFit),eps);
+            [phiRef,localOffset]=local_nearest_centered_hole_peak(phiFit);
+            dist0=abs(rad2deg(localOffset));
+
+            [~,iRef]=min(abs(local_wrap(phi-phiRef)));
+            sigRef=sig(iRef);
+            peakExcess=(sigFit-sigRef)/max(abs(sigFit),eps);
         else
             phiFit=NaN;
             sigFit=NaN;
             dist0=NaN;
             peakExcess=NaN;
+            localOffset=NaN;
         end
 
         rows(end+1,:)=[ ... %#ok<AGROW>
             il,Np,meshAngle,f,hw,rad2deg(hw), ...
             numel(F.indices),double(F.accepted), ...
             rad2deg(local_wrap(phiDisc)),sigDisc, ...
-            rad2deg(phiFit),sigFit,dist0, ...
+            rad2deg(phiFit),sigFit,dist0,rad2deg(localOffset), ...
             peakExcess,F.rmse,F.rmse/max(abs(sigFit),eps), ...
             F.curvature,F.vertexOffsetDeg];
         
@@ -116,8 +121,9 @@ T=array2table(rows,'VariableNames',{ ...
     'level','Npoly','mesh_angle_rad','halfwidth_factor', ...
     'halfwidth_rad','halfwidth_deg','nfit','accepted', ...
     'phi_discrete_deg','sig_discrete', ...
-    'phi_fit_deg','sig_fit','distance_to_zero_deg', ...
-    'peak_excess_over_phi0_rel','fit_rmse','fit_rmse_rel', ...
+    'phi_fit_deg','sig_fit','distance_to_nearest_exact_peak_deg', ...
+    'local_peak_offset_deg','peak_excess_over_exact_peak_rel', ...
+    'fit_rmse','fit_rmse_rel', ...
     'curvature','vertex_offset_from_discrete_deg'});
 
 fprintf('\nANGULAR WINDOW AUDIT TABLE\n');
@@ -128,11 +134,11 @@ Srows=nan(numel(fac),7);
 for jf=1:numel(fac)
     Q=T(abs(T.halfwidth_factor-fac(jf))<1e-12,:);
     if height(Q)>=2
-        p240=Q.phi_fit_deg(1);
-        p480=Q.phi_fit_deg(end);
-        spread=max(Q.phi_fit_deg)-min(Q.phi_fit_deg);
-        d0=max(abs(Q.phi_fit_deg));
-        maxEx=max(abs(Q.peak_excess_over_phi0_rel));
+        p240=Q.local_peak_offset_deg(1);
+        p480=Q.local_peak_offset_deg(end);
+        spread=max(Q.local_peak_offset_deg)-min(Q.local_peak_offset_deg);
+        d0=max(abs(Q.local_peak_offset_deg));
+        maxEx=max(abs(Q.peak_excess_over_exact_peak_rel));
         maxRMSE=max(Q.fit_rmse_rel);
         minN=min(Q.nfit);
     else
@@ -142,8 +148,8 @@ for jf=1:numel(fac)
 end
 
 S=array2table(Srows,'VariableNames',{ ...
-    'halfwidth_factor','phi_fit_first_deg','phi_fit_last_deg', ...
-    'cross_mesh_spread_deg','max_abs_phi_fit_deg', ...
+    'halfwidth_factor','local_offset_first_deg','local_offset_last_deg', ...
+    'cross_mesh_spread_deg','max_abs_local_offset_deg', ...
     'max_peak_excess_rel','max_fit_rmse_rel'});
 
 fprintf('\nCROSS-MESH WINDOW SUMMARY\n');
@@ -163,7 +169,8 @@ Out.settings=O;
 
 fprintf('\nSTEP 16 completed.\n');
 fprintf(['Preferred window should drive the centered-hole fitted angle toward ', ...
-    '0 deg on both meshes, remain stable under refinement, and retain a ', ...
+    'the nearest exact symmetry-equivalent peak (0 or 180 deg), remain stable ', ...
+    'under refinement, and retain a ', ...
     'small regression residual without using a window so broad that real ', ...
     'asymmetry would be washed out.\n']);
 end
@@ -218,6 +225,21 @@ end
 F.accepted=true;
 F.phiStar=mod(phiCenter+dv,2*pi);
 F.sigStar=sf;
+end
+
+
+function [phiRef,offset]=local_nearest_centered_hole_peak(phi)
+% The centered-hole benchmark has two physically equivalent exact maxima:
+% phi = 0 and phi = pi. Return the nearest representative and signed offset.
+d0=local_wrap(phi);
+dpi=local_wrap(phi-pi);
+if abs(d0)<=abs(dpi)
+    phiRef=0;
+    offset=d0;
+else
+    phiRef=pi;
+    offset=dpi;
+end
 end
 
 
