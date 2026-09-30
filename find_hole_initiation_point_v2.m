@@ -122,10 +122,7 @@ F.vertex_offset=NaN;
 F.rmse=sqrt(mean((y-polyval(p,dphi)).^2));
 
 phiStar=phi0;
-sigStar=sig(idx0==idx);
-if isempty(sigStar)
-    sigStar=max(y);
-end
+sigStar=sig(idx0);
 
 if ~(isfinite(p(1))&&isfinite(p(2))&&isfinite(p(3)))
     F.reason='nonfinite_coefficients';
