@@ -168,21 +168,49 @@ Troot=array2table(rootRows,'VariableNames',{ ...
 Troot.method=labels;
 Troot=movevars(Troot,'method','After','methodID');
 
-fprintf('\nZERO-KII ROOT SUMMARY FROM DISCRETE SWEEP\n');
+fprintf('\nSIGN-CROSSING SUMMARY FROM DISCRETE SWEEP\n');
 disp(Troot);
+fprintf(['NOTE: the old/J sign crossings are legacy diagnostics only. ', ...
+    'JII is quadratic in the physical KII amplitude, so sign(JII) is not ', ...
+    'a physically valid KII sign. Only the EDI crossings are interpreted ', ...
+    'as signed local-symmetry roots.\n']);
 
 % Domain-root stability.
 oldRoots=Troot.root_theta_deg(Troot.methodID==1);
 ediRoots=Troot.root_theta_deg(Troot.methodID==2);
 
 RootStability=struct();
-RootStability.old_range_deg=local_finite_range(oldRoots);
+RootStability.old_legacy_crossing_range_deg=local_finite_range(oldRoots);
 RootStability.edi_range_deg=local_finite_range(ediRoots);
-RootStability.old_roots_deg=oldRoots;
+RootStability.old_legacy_crossings_deg=oldRoots;
 RootStability.edi_roots_deg=ediRoots;
 
-fprintf('Old/J root range across radii = %.6g deg\n',RootStability.old_range_deg);
-fprintf('EDI root range across domains = %.6g deg\n',RootStability.edi_range_deg);
+fprintf('Old/J legacy crossing range across radii = %.6g deg\n', ...
+    RootStability.old_legacy_crossing_range_deg);
+fprintf('EDI signed root range across domains = %.6g deg\n',RootStability.edi_range_deg);
+
+% For the historical decomposed-J method, the meaningful scalar diagnostic
+% is the minimum of |KII| (equivalently modal JII magnitude), not a sign root.
+OldMinimum=table('Size',[nR,4], ...
+    'VariableTypes',{'double','double','double','double'}, ...
+    'VariableNames',{'r_over_a0','theta_min_absKII_deg','min_absKII','n_valid'});
+for ir=1:nR
+    good=valid & isfinite(KIIold(:,ir));
+    OldMinimum.r_over_a0(ir)=rf(ir);
+    OldMinimum.n_valid(ir)=nnz(good);
+    if any(good)
+        xv=thetaDeg(good);
+        yv=abs(KIIold(good,ir));
+        [ym,jm]=min(yv);
+        OldMinimum.theta_min_absKII_deg(ir)=xv(jm);
+        OldMinimum.min_absKII(ir)=ym;
+    else
+        OldMinimum.theta_min_absKII_deg(ir)=NaN;
+        OldMinimum.min_absKII(ir)=NaN;
+    end
+end
+fprintf('\nOLD/J MAGNITUDE MINIMUM (appropriate decomposed-J diagnostic)\n');
+disp(OldMinimum);
 
 if logical(O.Plot)
     local_plot_baseline(thetaDeg,KIIold,KIIedi,rf);
@@ -209,6 +237,7 @@ Out.message=message;
 Out.table=T;
 Out.rootTable=Troot;
 Out.rootStability=RootStability;
+Out.oldMagnitudeMinimum=OldMinimum;
 Out.settings=O;
 
 fprintf('\nSTEP 9 completed.\n');
@@ -265,7 +294,11 @@ end
 
 function r=local_finite_range(x)
 x=x(isfinite(x));
-if isempty(x), r=NaN; else, r=max(x)-min(x); end
+if numel(x)<2
+    r=NaN;
+else
+    r=max(x)-min(x);
+end
 end
 
 
