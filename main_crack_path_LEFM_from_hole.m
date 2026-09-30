@@ -401,6 +401,7 @@ function Results = main_crack_path_LEFM_from_hole()
     Results.C = C;
 
     Results.Stage1 = struct();
+    Results.Stage1.method = R1.method;
     Results.Stage1.G  = G;
     Results.Stage1.S1 = S1;
     Results.Stage1.B  = B;
