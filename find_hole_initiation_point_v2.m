@@ -39,7 +39,9 @@ phiDisc=phi(idxDisc);
 phiStar=phiDisc;
 sigStar=sigDisc;
 fitAccepted=false;
-fitInfo=struct('accepted',false,'reason','disabled');
+fitInfo=struct('accepted',false,'reason','disabled', ...
+    'indices',[],'dphi',[],'values',[],'coefficients',nan(1,3), ...
+    'curvature',NaN,'vertex_offset',NaN,'rmse',NaN);
 
 if doFit
     [phiFit,sigFit,fitInfo]=periodic_quadratic_peak(phi,sigPos,idxDisc,nFit);
