@@ -59,8 +59,24 @@ end
 c=hole.center(:).';
 R=hole.r;
 
-phi=linspace(0,2*pi,nphi+1).';
-phi(end)=[];
+if isfield(C.stage1,'phi_range') && ~isempty(C.stage1.phi_range)
+    pr=C.stage1.phi_range(:).';
+    if numel(pr)~=2 || ~all(isfinite(pr)) || ~(pr(2)>pr(1))
+        error('sample_hole_boundary_stress_v2:BadPhiRange', ...
+            'C.stage1.phi_range must be [phi_min phi_max] with phi_max>phi_min.');
+    end
+    if nphi<2
+        error('sample_hole_boundary_stress_v2:BadNphi', ...
+            'At least two angular samples are required on a finite arc.');
+    end
+    phi=linspace(pr(1),pr(2),nphi).';
+    isPeriodic=logical(getf(C.stage1,'periodic',false));
+else
+    phi=linspace(0,2*pi,nphi+1).';
+    phi(end)=[];
+    pr=[0,2*pi];
+    isPeriodic=logical(getf(C.stage1,'periodic',true));
+end
 
 n_mat=[cos(phi),sin(phi)];
 t_hat=[-sin(phi),cos(phi)];
@@ -181,6 +197,8 @@ B.fit.sig_nn=fit_nn;
 B.fit.sig_nt=fit_nt;
 
 B.hole=hole;
+B.phi_range=pr;
+B.periodic=isPeriodic;
 B.method='boundary_extrapolated_recovered_T6';
 B.is_boundary_extrapolated=true;
 end
