@@ -1103,3 +1103,14 @@ The c=0.5 case is too narrow on Npoly=480 because it contains only three angular
 Two production-design consequences follow. First, the angular locator should be expressed by a mesh-scaled half-width rather than a fixed five-point neighborhood. Second, the initiation finder must distinguish 'where is the local peak?' from 'which of several physically equivalent global peaks should a single-crack simulation select?'. Mesh noise should not choose between degenerate sites. The corrected Step-16 driver now reports local offsets relative to the nearest exact candidate peak rather than naively comparing raw angles.
 
 Candidate production setting from the centered-hole audit: angular_fit_halfwidth_factor = 3.0. Before freezing it, verify on an intentionally asymmetric geometry that this window preserves a genuinely nonzero/unique peak rather than oversmoothing it.
+
+
+## Step 17: centered-hole right half-domain verification
+
+The centered-hole benchmark is now being reformulated as a right-half symmetry model rather than using the full domain with two physically equivalent initiation sites. The retained domain is x in [A/2,A], y in [-B,B]. The circular hole becomes a semicircular traction-free cutout on the vertical symmetry boundary. This removes left/right initiation degeneracy while retaining both y>0 and y<0 material, so later Stage-II upward/downward kinking is not imposed by the symmetry reduction.
+
+`cfg_centered_half_domain.m` defines the benchmark. `geom_centered_half_hole.m` builds the concave half-domain polygon with Npoly/2 straight segments on the right semicircle. `solve_hole_only.m` now supports `C.bc.anchor_mode='symmetry_half_x'`: ux=0 is imposed on all T6 nodes on x=x_sym, with one uy gauge constraint to remove rigid vertical translation. The standard remote y-tension loading and stress recovery are otherwise unchanged.
+
+`sample_hole_boundary_stress_v2.m` now also supports a finite nonperiodic circular arc through `C.stage1.phi_range`; full-circle behavior is unchanged when that field is absent. `find_hole_initiation_point_v2.m` supports an optional mesh-scaled angular half-width. The half-domain benchmark uses phi in [-pi/2,pi/2], 721 samples (0.25-deg spacing), and the Step-16 candidate half-width factor c=3.0. This setting is verification-specific and has not yet been frozen into the general asymmetric full-domain production configuration.
+
+`verification/sif_audit/main_step17_centered_half_domain_verification.m` compares the half-domain solution with the right semicircle of an independently meshed full-domain solution at Npoly=240 and 480. It reports sigma_tt(0), full-curve Linf/L2 differences, symmetry defects, fitted right-peak angles, initiation loads, traction-free residuals, and the symmetry-BC displacement residual. Overlay, difference, convergence, and half-domain geometry plots are produced.
