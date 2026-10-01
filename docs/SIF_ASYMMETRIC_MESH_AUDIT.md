@@ -1182,3 +1182,12 @@ Step 19B clustered mesh-scale duplicate detections into physically separated max
 The dominant-to-secondary stress gap is therefore about 1.33% on both meshes (1.3286% and 1.3363%), and the two physical peaks are separated by about 176.1 deg. The ratio sigma2/sigma1 is approximately 0.9867 at both refinements. Thus the primary site is not overwhelmingly stronger, but its preference is highly mesh-stable and comfortably larger than the numerical postprocessing errors measured in Steps 14--19. Under proportional loading and before crack-induced redistribution, the secondary site would reach the same tensile threshold at roughly 1.35% higher load.
 
 Conclusion: the asymmetric Stage-I benchmark is accepted for a single-crack first-initiation example. The production initiation point continues to use the global c=3 Stage-I fit from `find_hole_initiation_point_v2`; Step 19B is only a physical-peak hierarchy diagnostic. Because the secondary peak is close in strength, later multi-crack studies should not assume it remains inactive after the first crack grows; redistribution must be solved explicitly.
+
+
+## Step 20 prepared: asymmetric full-domain Stage-II signed-EDI probe
+
+With the independent Stage-I peak hierarchy accepted, the next step is deliberately modest: a signed-EDI direction probe on the Npoly=240 asymmetric full-domain benchmark before any refined root solve or Npoly=480 Stage-II sweep. `main_step20_asymmetric_stage2_probe.m` uses the redesigned Stage-I initiation point and local material frame, then remeshes and solves fresh Stage-II cracked geometries at theta=[-4,-2,-1,0,1,2,4] deg relative to the fitted Stage-I material normal.
+
+For each theta, the FE-nodal interaction EDI is evaluated at r_outer/a0=[0.50,0.65,0.80], with r_inner=max(0.1*r_outer,2*h_tip). The driver reports KI, signed KII, KII/KI, tip mesh scale, interpolated sign-change roots, global linear-fit roots, and EDI-domain root spread. No extra root-refinement mesh is generated in this step.
+
+The acceptance gate is that all three EDI domains exhibit the same KII(theta) sign trend and produce a consistent sign-change root inside the probe interval. If that condition is met, the next step will refine only the root neighborhood and then repeat the confirmed direction on Npoly=480.
