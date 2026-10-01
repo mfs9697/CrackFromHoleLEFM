@@ -1114,3 +1114,16 @@ The centered-hole benchmark is now being reformulated as a right-half symmetry m
 `sample_hole_boundary_stress_v2.m` now also supports a finite nonperiodic circular arc through `C.stage1.phi_range`; full-circle behavior is unchanged when that field is absent. `find_hole_initiation_point_v2.m` supports an optional mesh-scaled angular half-width. The half-domain benchmark uses phi in [-pi/2,pi/2], 721 samples (0.25-deg spacing), and the Step-16 candidate half-width factor c=3.0. This setting is verification-specific and has not yet been frozen into the general asymmetric full-domain production configuration.
 
 `verification/sif_audit/main_step17_centered_half_domain_verification.m` compares the half-domain solution with the right semicircle of an independently meshed full-domain solution at Npoly=240 and 480. It reports sigma_tt(0), full-curve Linf/L2 differences, symmetry defects, fitted right-peak angles, initiation loads, traction-free residuals, and the symmetry-BC displacement residual. Overlay, difference, convergence, and half-domain geometry plots are produced.
+
+
+## Step 17 result: centered right-half benchmark validated
+
+Step 17 completed locally on 2026-10-01 for Npoly=240 and 480. The symmetry boundary is enforced exactly at the algebraic level (max |ux| on x=x_sym equals zero). The half-domain and independently meshed full-domain right-semicircle boundary-limit stress fields converge rapidly toward one another: relative Linf difference decreases from 1.35e-3 at Npoly=240 to 1.50e-4 at Npoly=480, while relative L2 decreases from 5.36e-4 to 4.24e-5.
+
+The fitted half-domain initiation angle converges to the exact rightmost symmetry point: +0.0170 deg at Npoly=240 and -0.00428 deg at Npoly=480. The corresponding full-domain right-peak fits are +0.00604 deg and +0.00551 deg. On the fine mesh the peak stresses are 3.617550 (half) and 3.617529 (full), and the initiation load factors are 82.92905 and 82.92953, respectively. Thus the symmetry-reduced benchmark reproduces the full-domain right-hand solution while removing the left/right degeneracy.
+
+The half-domain traction-free residuals also decrease strongly under refinement: max|sigma_nn|/sigma_tt-scale from 9.56e-4 to 2.25e-4 and max|sigma_nt|/sigma_tt-scale from 2.83e-4 to 6.96e-5.
+
+One diagnostic-only bug was found in the first Step-17 print/table output: the full-domain sigma_tt(0) value was indexed with the full-circle sorted-grid index after the full solution had already been interpolated onto the half-domain grid, so the reported values -1.421 and -1.424 were actually values from the wrong half-domain array index. This did not affect the curve comparison, fitted peaks, peak stresses, or initiation loads. The driver has been corrected to use the half-domain phi=0 index for both aligned curves.
+
+Conclusion: the centered right-half model is accepted as the preferred symmetry benchmark for Stage I. It eliminates the artificial choice between two equivalent left/right initiation sites while retaining the complete upper/lower material domain needed for a later unbiased Stage-II KII=0 / theta=0 verification.
