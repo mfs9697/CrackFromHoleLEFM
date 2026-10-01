@@ -38,3 +38,38 @@ G2.initiation=Iexact;
 G2.meta=struct('domain_mode','centered_right_half');
 
 D=build_domain_centered_half_pencil(Pmid,C,C.mesh2.chw);
+
+if logical(O.PlotGeom)
+    figure('Name','Centered half-domain Stage II geometry','Color','w'); clf
+    hold on; axis equal; box on
+    P=D.outerPoly;
+    plot([P(:,1);P(1,1)],[P(:,2);P(1,2)],'k-','LineWidth',1.2);
+    plot(Pmid(:,1),Pmid(:,2),'r-','LineWidth',1.8);
+    plot(xtip(1),xtip(2),'kp','MarkerSize',10,'LineWidth',1.4);
+    xlabel('x'); ylabel('y');
+    title(sprintf('Centered half-domain Stage II, theta=%+.3f deg',rad2deg(theta)));
+end
+
+M=mesh_hole_pencil_domain(D, ...
+    'Hmin',C.mesh1.hmin, ...
+    'Hmax',C.mesh1.hmax, ...
+    'Hgrad',C.mesh1.hgrad, ...
+    'PlotGeom',logical(O.PlotGeom), ...
+    'PlotMesh',logical(O.PlotMesh));
+
+if ~isfield(M,'region') || ~isfield(M.region,'geomIDs') || isempty(M.region.geomIDs)
+    error('build_stage2_centered_half_cracked_mesh_for_theta:NoGeomIDs', ...
+        'Could not recover the two appendix-face geometry IDs.');
+end
+
+ids=M.region.geomIDs;
+Mc=collapse_pencil_faces_to_midline(M,D, ...
+    'EdgeIDs',ids.e_tip, ...
+    'TipVertexID',ids.v_tip);
+
+Mc.region.domain_mode='centered_right_half';
+
+if logical(O.PlotCollapsed)
+    plot_collapsed_pencil_mesh(Mc,'ShowOriginalFaces',true);
+end
+end
