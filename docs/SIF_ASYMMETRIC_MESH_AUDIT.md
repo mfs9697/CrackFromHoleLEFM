@@ -1138,3 +1138,18 @@ The Stage-II continuation of the centered right-half benchmark is now implemente
 `verification/sif_audit/main_step18_centered_half_stage2_symmetry.m` performs the signed interaction-EDI audit at Npoly=[240,480], theta=[-2,-1,-0.5,0,0.5,1,2] deg, and r_outer/a0=[0.50,0.65,0.80]. For every theta a fresh cracked mesh is solved once; all EDI radii are evaluated on that same displacement field. The driver reports KII(0)/KI, the odd-parity defect of KII(theta), the even-parity defect of KI(theta), a linear signed-root estimate, a sign-change/interpolated root, EDI-domain spread, tip mesh scale, and the exact ux=0 symmetry residual. The theta=0 collapsed mesh is plotted for the first refinement level.
 
 The acceptance gate is: KII(0)/KI -> 0 under refinement, KII(-theta) approximately -KII(+theta), KI(-theta) approximately KI(+theta), and the signed-EDI local-symmetry root theta* -> 0 with small dependence on the EDI outer radius. Absolute KI values should not be compared directly with the earlier full-domain single-right-crack benchmark because the symmetry-reduced Stage-II model represents the mirrored two-crack configuration.
+
+
+## Step 18 result: centered half-domain Stage-II symmetry benchmark passes
+
+Step 18 completed locally on 2026-10-01 for Npoly=240 and 480, theta=[-2,-1,-0.5,0,0.5,1,2] deg, and r_outer/a0=[0.50,0.65,0.80]. The signed FE-nodal interaction EDI shows the expected parity: negative trial angles give negative KII and positive trial angles give positive KII, while KI remains nearly even in theta.
+
+At theta=0, KII/KI is already between about -1.59e-5 and -6.78e-6 on Npoly=240 and between about -3.09e-6 and -1.28e-6 on Npoly=480, depending on EDI outer radius. Thus the worst zero-angle modal contamination decreases by a factor of about 5.1 under the 240->480 refinement. The KI even-parity defect improves by about an order of magnitude, from roughly 2.3--2.6e-4 to about 2.0e-5, while the KII odd-parity defect remains at only O(1e-5) and also decreases.
+
+The signed local-symmetry root is essentially zero. Linear fits give |theta*| <= 9.1e-5 deg on Npoly=240 and <=1.17e-4 deg on Npoly=480; the sign-change/interpolated roots are at most about 1.66e-3 deg and 3.23e-4 deg, respectively. The apparent lack of monotonic improvement in the tiny linear-fit root is below the numerical noise scale and is not physically meaningful; the bracket root and parity defects give the clearer convergence evidence.
+
+EDI-domain sensitivity is negligible: at theta=0 the relative KI spread over r_outer/a0=[0.50,0.65,0.80] is 1.58e-5 for Npoly=240 and 9.06e-6 for Npoly=480. The maximum |KII/KI| at theta=0 falls from 1.59e-5 to 3.09e-6. The symmetry boundary remains exact algebraically (max |ux|=0).
+
+The geometry-only sharp-pencil edge identifier fails for this concave outer-boundary representation, but the existing temporary-mesh fallback consistently identifies the correct upper/lower appendix edges (64/65 for Npoly=240 and 124/125 for Npoly=480). This is an efficiency/cleanliness issue rather than a correctness issue; the collapsed meshes and SIF symmetry results are stable.
+
+Conclusion: the centered right-half Stage-II benchmark is accepted. Together with Step 17, it closes the symmetric verification chain: Stage-I boundary-stress initiation converges to phi*=0, signed EDI gives KII(0)->0, KII is odd and KI even in theta, and the local-symmetry direction converges to theta*=0. The next scientific benchmark should therefore be a genuinely asymmetric full-domain hole configuration, where a nonzero unique initiation angle and nonzero Stage-II direction correction can be tested without symmetry degeneracy.
