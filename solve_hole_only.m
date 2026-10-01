@@ -139,6 +139,42 @@ function S1 = solve_hole_only(C, G, varargin)
             bc.corner_nodes.left_bottom  = iLB;
             bc.corner_nodes.right_bottom = iRB;
 
+        case 'symmetry_half_x'
+            % Right-half model of a configuration symmetric about x=x_sym.
+            % Enforce ux=0 on every T6 node lying on the retained vertical
+            % symmetry boundary.  One uy gauge constraint removes the
+            % otherwise free rigid translation in y.
+            if isfield(G,'meta') && isfield(G.meta,'x_sym') && ~isempty(G.meta.x_sym)
+                xSym = G.meta.x_sym;
+            elseif isfield(C,'domain') && isfield(C.domain,'symmetry_x')
+                xSym = C.domain.symmetry_x;
+            elseif isfield(C,'hole') && isfield(C.hole,'center')
+                xSym = C.hole.center(1);
+            else
+                error('solve_hole_only:MissingSymmetryLine', ...
+                    'symmetry_half_x requires G.meta.x_sym or C.domain.symmetry_x.');
+            end
+
+            span = max([1, max(mesh.coord(:,1))-min(mesh.coord(:,1)), ...
+                           max(mesh.coord(:,2))-min(mesh.coord(:,2))]);
+            tolSym = 1e-9*span;
+
+            symNodes = find(abs(mesh.coord(:,1)-xSym)<tolSym);
+            if numel(symNodes)<2
+                error('solve_hole_only:NoSymmetryNodes', ...
+                    'Could not identify the vertical symmetry boundary on the T6 mesh.');
+            end
+
+            Ause = getf(C,'A',max(mesh.coord(:,1)));
+            iGauge = nearest_node(mesh.coord,[Ause,0]);
+
+            fixvar = [2*symNodes-1; 2*iGauge];
+
+            bc.symmetry_x = xSym;
+            bc.symmetry_nodes = symNodes;
+            bc.gauge_node = iGauge;
+            bc.gauge_point = mesh.coord(iGauge,:);
+
         otherwise
             error('solve_hole_only:UnknownAnchorMode', ...
                 'Unsupported C.bc.anchor_mode = "%s".', bc.anchor_mode);
