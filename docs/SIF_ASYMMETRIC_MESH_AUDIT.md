@@ -1173,3 +1173,12 @@ The asymmetric initiation direction is clearly nonzero. For the mesh-scaled c=3 
 The initial Step-19 'dominant versus second local peak' output must not be interpreted as two competing physical initiation sites. Their fitted angles differ by only about 0.021 deg at Npoly=240 and 0.010 deg at Npoly=480, far below the mesh angular scale (1.5 and 0.75 deg) and far below the regression half-width. They are duplicate local-ripple detections that collapse onto the same broad physical maximum. Therefore the raw top-second stress gap of O(1e-5)--O(1e-6) is not a degeneracy measure.
 
 `main_step19b_asymmetric_peak_hierarchy.m` was added as a zero-cost postprocessor for an existing O19 result. It performs angular non-maximum suppression after quadratic refinement, clustering candidate maxima whose separation is less than c_cluster*h_hole/R (default c_cluster=3). This produces a ranking of physically separated maxima without repeating any FEM solve. The independent-peak hierarchy should be checked before launching the asymmetric Stage-II direction sweep.
+
+
+## Step 19B result: asymmetric Stage-I has a stable preferred physical peak
+
+Step 19B clustered mesh-scale duplicate detections into physically separated maxima without repeating any FEM solve. For Npoly=240, the dominant independent peak is near phi=-1.553 deg with sigma=3.71282, while the second independent peak is near phi=-177.636 deg with sigma=3.66350. For Npoly=480, the corresponding peaks are near -1.561 deg with sigma=3.71407 and -177.617 deg with sigma=3.66444.
+
+The dominant-to-secondary stress gap is therefore about 1.33% on both meshes (1.3286% and 1.3363%), and the two physical peaks are separated by about 176.1 deg. The ratio sigma2/sigma1 is approximately 0.9867 at both refinements. Thus the primary site is not overwhelmingly stronger, but its preference is highly mesh-stable and comfortably larger than the numerical postprocessing errors measured in Steps 14--19. Under proportional loading and before crack-induced redistribution, the secondary site would reach the same tensile threshold at roughly 1.35% higher load.
+
+Conclusion: the asymmetric Stage-I benchmark is accepted for a single-crack first-initiation example. The production initiation point continues to use the global c=3 Stage-I fit from `find_hole_initiation_point_v2`; Step 19B is only a physical-peak hierarchy diagnostic. Because the secondary peak is close in strength, later multi-crack studies should not assume it remains inactive after the first crack grows; redistribution must be solved explicitly.
