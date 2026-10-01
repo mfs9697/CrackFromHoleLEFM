@@ -44,7 +44,32 @@ fitInfo=struct('accepted',false,'reason','disabled', ...
     'curvature',NaN,'vertex_offset',NaN,'rmse',NaN);
 
 if doFit
-    [phiFit,sigFit,fitInfo]=periodic_quadratic_peak(phi,sigPos,idxDisc,nFit);
+    useScaledWindow=isfield(C.stage1,'angular_fit_halfwidth_factor') && ...
+        ~isempty(C.stage1.angular_fit_halfwidth_factor);
+
+    if useScaledWindow
+        factor=C.stage1.angular_fit_halfwidth_factor;
+        if ~(isscalar(factor)&&isfinite(factor)&&factor>0)
+            error('find_hole_initiation_point_v2:AngularHalfwidthFactor', ...
+                'C.stage1.angular_fit_halfwidth_factor must be a positive scalar.');
+        end
+        if ~isfield(B,'offset') || ~isfield(B.offset,'hhole') || ...
+                ~isfield(B,'hole') || ~isfield(B.hole,'r')
+            error('find_hole_initiation_point_v2:MissingMeshScale', ...
+                'Mesh-scaled angular fitting requires B.offset.hhole and B.hole.r.');
+        end
+        halfWidth=factor*B.offset.hhole/B.hole.r;
+        isPeriodic=logical(getf(B,'periodic',true));
+        [phiFit,sigFit,fitInfo]=window_quadratic_peak( ...
+            phi,sigPos,idxDisc,halfWidth,isPeriodic);
+        fitInfo.halfwidth_factor=factor;
+        fitInfo.halfwidth_rad=halfWidth;
+    else
+        [phiFit,sigFit,fitInfo]=periodic_quadratic_peak(phi,sigPos,idxDisc,nFit);
+        fitInfo.halfwidth_factor=NaN;
+        fitInfo.halfwidth_rad=NaN;
+    end
+
     if fitInfo.accepted && isfinite(sigFit) && sigFit>0
         phiStar=phiFit;
         sigStar=sigFit;
@@ -74,7 +99,11 @@ I=struct();
 I.idx_star=idxDisc;
 I.idx_discrete=idxDisc;
 I.phi_discrete=phiDisc;
-I.phi_star=mod(phiStar,2*pi);
+if logical(getf(B,'periodic',true))
+    I.phi_star=mod(phiStar,2*pi);
+else
+    I.phi_star=phiStar;
+end
 I.x_star=xStar;
 I.n_mat_star=nMat;
 I.n_hole_star=-nMat;
@@ -88,7 +117,12 @@ I.lambda_ini=lambdaIni;
 I.sig_applied_ini=lambdaIni*sig0;
 
 I.all_max_idx=allMaxIdx;
-I.selection_rule='boundary_extrapolation_plus_local_quadratic_peak';
+if isfield(C.stage1,'angular_fit_halfwidth_factor') && ...
+        ~isempty(C.stage1.angular_fit_halfwidth_factor)
+    I.selection_rule='boundary_extrapolation_plus_mesh_scaled_quadratic_peak';
+else
+    I.selection_rule='boundary_extrapolation_plus_local_quadratic_peak';
+end
 I.angular_fit=fitInfo;
 I.angular_fit.accepted=fitAccepted;
 I.boundary_stress_method=getf(B,'method','unknown');
@@ -151,6 +185,80 @@ if ~isfinite(sf) || sf<=0
 end
 
 phiStar=mod(phi0+dv,2*pi);
+sigStar=sf;
+F.accepted=true;
+F.reason='accepted';
+end
+
+
+function [phiStar,sigStar,F]=window_quadratic_peak(phi,sig,idx0,halfWidth,isPeriodic)
+phi0=phi(idx0);
+
+if isPeriodic
+    dphi=atan2(sin(phi-phi0),cos(phi-phi0));
+else
+    dphi=phi-phi0;
+end
+
+keep=abs(dphi)<=halfWidth+100*eps;
+idx=find(keep);
+x=dphi(keep);
+y=sig(keep);
+
+[x,ord]=sort(x);
+y=y(ord);
+idx=idx(ord);
+
+F=struct();
+F.accepted=false;
+F.reason='';
+F.indices=idx;
+F.dphi=x;
+F.values=y;
+F.coefficients=nan(1,3);
+F.curvature=NaN;
+F.vertex_offset=NaN;
+F.rmse=NaN;
+
+phiStar=phi0;
+sigStar=sig(idx0);
+
+if numel(x)<5
+    F.reason='too_few_points';
+    return;
+end
+
+p=polyfit(x,y,2);
+F.coefficients=p;
+F.curvature=p(1);
+F.rmse=sqrt(mean((y-polyval(p,x)).^2));
+
+if any(~isfinite(p))
+    F.reason='nonfinite_coefficients';
+    return;
+end
+if p(1)>=0
+    F.reason='nonnegative_curvature';
+    return;
+end
+
+dv=-p(2)/(2*p(1));
+F.vertex_offset=dv;
+if ~isfinite(dv) || abs(dv)>halfWidth
+    F.reason='vertex_outside_fit_window';
+    return;
+end
+
+sf=polyval(p,dv);
+if ~isfinite(sf)||sf<=0
+    F.reason='invalid_fitted_peak';
+    return;
+end
+
+phiStar=phi0+dv;
+if isPeriodic
+    phiStar=mod(phiStar,2*pi);
+end
 sigStar=sf;
 F.accepted=true;
 F.reason='accepted';
