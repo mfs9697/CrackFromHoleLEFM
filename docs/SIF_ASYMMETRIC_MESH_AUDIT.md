@@ -1153,3 +1153,12 @@ EDI-domain sensitivity is negligible: at theta=0 the relative KI spread over r_o
 The geometry-only sharp-pencil edge identifier fails for this concave outer-boundary representation, but the existing temporary-mesh fallback consistently identifies the correct upper/lower appendix edges (64/65 for Npoly=240 and 124/125 for Npoly=480). This is an efficiency/cleanliness issue rather than a correctness issue; the collapsed meshes and SIF symmetry results are stable.
 
 Conclusion: the centered right-half Stage-II benchmark is accepted. Together with Step 17, it closes the symmetric verification chain: Stage-I boundary-stress initiation converges to phi*=0, signed EDI gives KII(0)->0, KII is odd and KI even in theta, and the local-symmetry direction converges to theta*=0. The next scientific benchmark should therefore be a genuinely asymmetric full-domain hole configuration, where a nonzero unique initiation angle and nonzero Stage-II direction correction can be tested without symmetry degeneracy.
+
+
+## Step 19 prepared: asymmetric full-domain Stage-I benchmark
+
+After closing the centered symmetry chain in Steps 17--18, the next benchmark is a genuinely asymmetric full-domain circular hole. `cfg_asymmetric_full_domain.m` uses the existing A=0.30 m, B=0.10 m, R=0.03 m plate/hole dimensions but moves the hole center to [0.17,-0.02] m. Both x- and y-reflection symmetries are therefore broken. The minimum ligament is still 0.05 m, so this is not a near-contact geometry.
+
+`verification/sif_audit/main_step19_asymmetric_stage1_validation.m` tests Npoly=[240,480] and angular half-width factors c=[1,1.5,2,3] on the same redesigned boundary-limit stress field for each mesh. It reports the discrete and fitted global initiation angles, fitted stress and initiation load, fit residual, radial extrapolation residual, traction residuals, and cross-mesh angle/stress changes. It also ranks independent local tensile maxima on the full circular boundary, reporting the relative stress gap and angular separation between the dominant and secondary peaks.
+
+The purpose is to validate the Step-16 candidate c=3 away from symmetry. Acceptance requires a clearly preferred local maximum, a genuinely nonzero fitted initiation angle, stability under Npoly=240->480 refinement, and agreement of c=3 with narrower mesh-scaled windows. Only after this gate passes should the asymmetric Stage-II signed-EDI direction sweep be launched.
