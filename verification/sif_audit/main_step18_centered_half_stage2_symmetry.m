@@ -118,3 +118,217 @@ for il=1:nL
             KII(il,it,iRef)/KI(il,it,iRef),H.median);
     end
 end
+
+% -------------------------------------------------------------------------
+% Symmetry/root diagnostics for each mesh and EDI outer radius
+% -------------------------------------------------------------------------
+rows=nan(nL*nR,16);
+rr=0;
+
+for il=1:nL
+    for ir=1:nR
+        rr=rr+1;
+
+        ki=squeeze(KI(il,:,ir));
+        kii=squeeze(KII(il,:,ir));
+
+        [~,i0]=min(abs(thetaDeg));
+        KI0=ki(i0);
+        KII0=kii(i0);
+        ratio0=KII0/KI0;
+
+        p=polyfit(thetaRad,kii,1);
+        thetaRoot=-p(2)/p(1);
+
+        thetaBracketRoot=local_sign_change_root(thetaRad,kii);
+
+        oddDef=0;
+        evenDef=0;
+        for it=1:nT
+            th=thetaDeg(it);
+            if th<=0, continue; end
+            [dm,j]=min(abs(thetaDeg+th));
+            if dm>1e-12, continue; end
+            oddDef=max(oddDef,abs(kii(it)+kii(j)));
+            evenDef=max(evenDef,abs(ki(it)-ki(j)));
+        end
+        oddDef=oddDef/max(abs(KI0),eps);
+        evenDef=evenDef/max(abs(KI0),eps);
+
+        yfit=polyval(p,thetaRad);
+        fitRel=norm(kii-yfit)/max(norm(kii),eps);
+
+        rows(rr,:)=[ ...
+            Nlist(il),rRat(ir), ...
+            KI0,KII0,ratio0, ...
+            rad2deg(thetaRoot),rad2deg(thetaBracketRoot), ...
+            oddDef,evenDef,fitRel, ...
+            min(rin(il,:,ir)),max(rin(il,:,ir)), ...
+            min(htip(il,:)),max(htip(il,:)), ...
+            max(uxsym(il,:)), ...
+            rad2deg(Stage1{il}.I.phi_star)];
+    end
+end
+
+T=array2table(rows,'VariableNames',{ ...
+    'Npoly','r_outer_over_a0', ...
+    'KI_theta0','KII_theta0','KII_over_KI_theta0', ...
+    'theta_root_linear_deg','theta_root_bracket_deg', ...
+    'KII_odd_defect_rel','KI_even_defect_rel','linear_fit_rel_residual', ...
+    'r_inner_min','r_inner_max','h_tip_min','h_tip_max', ...
+    'max_ux_symmetry','stage1_phi_fit_deg'});
+
+fprintf('\nSTAGE-II SYMMETRY SUMMARY\n');
+disp(T);
+
+% Domain spread at theta=0 for each mesh.
+Drows=nan(nL,7);
+for il=1:nL
+    [~,i0]=min(abs(thetaDeg));
+    k0=squeeze(KI(il,i0,:));
+    q0=squeeze(KII(il,i0,:));
+    roots=T.theta_root_linear_deg(T.Npoly==Nlist(il));
+
+    Drows(il,:)=[ ...
+        Nlist(il), ...
+        max(k0)-min(k0), ...
+        (max(k0)-min(k0))/max(abs(k0)), ...
+        max(abs(q0)), ...
+        max(abs(q0./k0)), ...
+        max(roots)-min(roots), ...
+        max(abs(roots))];
+end
+
+Td=array2table(Drows,'VariableNames',{ ...
+    'Npoly','KI_domain_abs_spread','KI_domain_rel_spread', ...
+    'max_abs_KII_theta0','max_abs_KII_over_KI_theta0', ...
+    'theta_root_domain_spread_deg','max_abs_theta_root_deg'});
+
+fprintf('\nEDI DOMAIN-SPREAD SUMMARY\n');
+disp(Td);
+
+if logical(O.Plot)
+    local_plot_KII(thetaDeg,KII,KI,Nlist,rRat);
+    local_plot_theta0(T);
+    local_plot_root(T);
+end
+
+Out=struct();
+Out.settings=O;
+Out.NpolyList=Nlist;
+Out.thetaDeg=thetaDeg;
+Out.rOuterOverA0=rRat;
+Out.KI=KI;
+Out.KII=KII;
+Out.rInner=rin;
+Out.hTip=htip;
+Out.uxSymmetry=uxsym;
+Out.Stage1=Stage1;
+Out.Cases=Cases;
+Out.summary=T;
+Out.domainSummary=Td;
+
+fprintf('\nSTEP 18 completed.\n');
+fprintf(['Gate: KII(0)/KI should approach zero, KII should be odd and KI even ', ...
+    'in theta, and the signed-EDI root should converge to theta=0 with ', ...
+    'small EDI-domain spread.\n']);
+end
+
+
+function root=local_sign_change_root(theta,y)
+root=NaN;
+best=inf;
+for k=1:numel(theta)-1
+    if y(k)==0
+        cand=theta(k);
+    elseif y(k)*y(k+1)<0
+        cand=theta(k)-y(k)*(theta(k+1)-theta(k))/(y(k+1)-y(k));
+    else
+        continue;
+    end
+    if abs(cand)<best
+        best=abs(cand);
+        root=cand;
+    end
+end
+end
+
+
+function H=local_tip_mesh_scale(mesh,tip)
+X=mesh.coord3;
+T3=mesh.connect3;
+d=sqrt(sum((X-tip).^2,2));
+dmin=min(d);
+tol=max(1e-12,1e-8*max(1,max(abs(X(:)))));
+tipNodes=find(d<=dmin+tol);
+
+hit=any(ismember(T3,tipNodes),2);
+Te=T3(hit,:);
+L=[];
+for k=1:size(Te,1)
+    P=X(Te(k,:),:);
+    L=[L,norm(P(2,:)-P(1,:)),norm(P(3,:)-P(2,:)),norm(P(1,:)-P(3,:))]; %#ok<AGROW>
+end
+L=L(isfinite(L)&L>tol);
+
+H=struct();
+H.min=min(L);
+H.median=median(L);
+H.max=max(L);
+H.nTipElements=size(Te,1);
+H.tipNodeDistance=dmin;
+end
+
+
+function local_plot_KII(thetaDeg,KII,KI,Nlist,rRat)
+for il=1:numel(Nlist)
+    figure('Name',sprintf('Step 18: signed KII, Npoly=%d',Nlist(il)),'Color','w');
+    clf; hold on; box on; grid on
+    for ir=1:numel(rRat)
+        q=squeeze(KII(il,:,ir));
+        k=squeeze(KI(il,:,ir));
+        plot(thetaDeg,q./k,'-o','LineWidth',1.1, ...
+            'DisplayName',sprintf('r_o/a_0=%.2f',rRat(ir)));
+    end
+    xline(0,'k--','HandleVisibility','off');
+    yline(0,'k:','HandleVisibility','off');
+    xlabel('\theta [deg]');
+    ylabel('K_{II}/K_I');
+    title(sprintf('Centered half-domain signed EDI, Npoly=%d',Nlist(il)));
+    legend('Location','best');
+end
+end
+
+
+function local_plot_theta0(T)
+figure('Name','Step 18: KII at theta=0','Color','w');
+clf; hold on; box on; grid on
+N=unique(T.Npoly);
+for k=1:numel(N)
+    Q=T(T.Npoly==N(k),:);
+    plot(Q.r_outer_over_a0,abs(Q.KII_over_KI_theta0),'-o','LineWidth',1.1, ...
+        'DisplayName',sprintf('Npoly=%d',N(k)));
+end
+set(gca,'YScale','log');
+xlabel('r_{outer}/a_0');
+ylabel('|K_{II}(0)/K_I(0)|');
+title('Symmetry residual at normal extension');
+legend('Location','best');
+end
+
+
+function local_plot_root(T)
+figure('Name','Step 18: local-symmetry root','Color','w');
+clf; hold on; box on; grid on
+N=unique(T.Npoly);
+for k=1:numel(N)
+    Q=T(T.Npoly==N(k),:);
+    plot(Q.r_outer_over_a0,Q.theta_root_linear_deg,'-o','LineWidth',1.1, ...
+        'DisplayName',sprintf('Npoly=%d',N(k)));
+end
+yline(0,'k--','HandleVisibility','off');
+xlabel('r_{outer}/a_0');
+ylabel('\theta_* [deg]');
+title('Signed-EDI local-symmetry root');
+legend('Location','best');
+end
