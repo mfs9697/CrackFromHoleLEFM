@@ -3,11 +3,15 @@ function [G2, D, M, Mc] = build_stage2_cracked_mesh_for_theta(C, I, theta, varar
 % Build and collapse the appended-hole short-crack mesh for a given angle.
 %
 % theta is measured from the material-side normal to the hole boundary.
+%
+% Optional NArc (default 160): number of retained circular-hole arc points
+% in the temporary appended-hole polygon. Existing callers are unchanged.
 
     ip = inputParser;
     addParameter(ip, 'PlotGeom', false, @(x)islogical(x) || isnumeric(x));
     addParameter(ip, 'PlotMesh', false, @(x)islogical(x) || isnumeric(x));
     addParameter(ip, 'PlotCollapsed', false, @(x)islogical(x) || isnumeric(x));
+    addParameter(ip, 'NArc', 160, @(x)isnumeric(x) && isscalar(x) && isfinite(x) && x>=16 && x==round(x));
     parse(ip, varargin{:});
 
     plotGeom      = logical(ip.Results.PlotGeom);
@@ -21,7 +25,7 @@ function [G2, D, M, Mc] = build_stage2_cracked_mesh_for_theta(C, I, theta, varar
         C.A, C.B, C.holes, C.mesh2.chw, ...
         'corner_tol', 1e-10, ...
         'epsMode', 'arclength', ...
-        'nArc', 160, ...
+        'nArc', ip.Results.NArc, ...
         'orientation', 'cw');
 
     if plotGeom
