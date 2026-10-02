@@ -253,6 +253,19 @@ disp(R45c50.table);
 
 This runs **one 16-point exact-Gauss EDI integration on the same saved mesh and matched annulus**, then caches it. Do not extrapolate its numerical leakage to the fine asymmetric problem or treat Gauss exact-field recovery as an independent global FEM validation.
 
+## Measured Step 45c second domain: 0.50 exact Gauss-point pure-I replay
+
+The investigator completed the matched **exact Gauss-point** replay on the SAME saved coarse symmetric T6 mesh and the SAME `r_inner=0.0008675 m`, `r_outer/a0=0.50` annulus already used for actual FEM and exact-nodal Williams fields. The preexisting Step45c `AnalyticActualK=[1,0]` override supplies exact analytical fields directly at Gauss points while keeping FE-nodal q, 16-point quadrature and the same auxiliary-field convention.
+
+| r_outer/a0 | Actual-FEM signed KII/KI | Exact nodal signed KII/KI | Exact Gauss-point KI | Exact Gauss-point KII | Exact Gauss-point KII/KI |
+| ---: | ---: | ---: | ---: | ---: | ---: |
+| 0.50 | -1.563466231e-5 | approx. -4.81123e-5 | 0.999999035 | -1.735156369e-7 | approx. -1.735158e-7 |
+| 0.65 | -8.766949318e-6 | approx. -3.88687e-5 | 0.9999993666 | -1.147787666e-7 | approx. -1.147788e-7 |
+
+The exact-nodal/GP leakage magnitude contrast is approximately **277× at 0.50** and **339× at 0.65**. The prescribed exact Gauss-point EDI pure-I→II ratio remains below the proposed `1e-6` threshold at both measured domains, but the nodal-interpolated exact field remains `O(10^-5)`. Both annuli thus strongly implicate **ordinary T6 interpolation of an artificially sampled singular Williams field** as a large source of *exact-nodal* leakage. This is NOT a transferable numeric correction for the actual FEM solution or the much finer asymmetric physical problem, and the exact Gauss-point override shares analytical conventions with auxiliary fields.
+
+**Next incremental task:** stop additional exact-field radius sweeps for now. Inspect whether a more finely resolved symmetric control mesh can be generated **with the same physical geometry** before authorizing another FEM solve. The separately documented [Step 46 mesh-only preflight](STEP46.md) reuses the saved coarse checkpoint and generates a candidate refined mesh for topology/native COD sampling diagnostics without any FEM solve, stiffness assembly or EDI.
+
 ## Interpretation and stopping rules
 
 - Exact physical symmetry gives `KII=0`, so report **absolute** `abs(KII/KI)`, not percentage error relative to zero.
@@ -261,4 +274,4 @@ This runs **one 16-point exact-Gauss EDI integration on the same saved mesh and 
 - Upper/lower face radial-grid mismatch and asymmetric counts of tip-adjacent T3 elements may explain numerical residuals; neither proves the cause without additional tests.
 - Passing `1e-6` on this symmetric geometry does **not** prove the asymmetric geometry's `KII/KI ~ 1.08e-4` is accurate to 1%; geometry-specific errors and higher-order Williams terms remain possible.
 
-**Status:** the symmetric FEM solve, native COD attempt, three actual-FEM EDI domains (0.50, 0.65, 0.80), two exact-nodal pure-I EDI domains (0.50, 0.65), and one exact Gauss-point pure-I EDI domain (0.65) have been completed by the investigator. COD extrapolation remains unevaluable on this mesh. The marked interpolation effect on exact singular nodal displacements is documented but not yet attributable quantitatively to actual FEM error. Next step: exactly one matching exact Gauss-point EDI calculation at 0.50; no new FEM solve.
+**Status:** the investigator completed one coarse symmetric FEM control, its native COD diagnostic, all three actual-FEM 16-point EDI annuli, and paired exact-nodal / exact-Gauss pure-I tests at both 0.50 and 0.65 radii. The same-mesh prescribed-field tests reveal 277× and 339× smaller apparent Mode-II leakage at exact Gauss points than after T6 nodal interpolation. COD extrapolation remains unavailable on this coarse mesh. The next task is the **mesh-only Step 46 preflight**; no new FEM solution is authorized by this documentation.
