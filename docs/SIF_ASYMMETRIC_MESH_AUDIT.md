@@ -1508,3 +1508,43 @@ All six decreases greatly exceed the prespecified 10% gate. In the largest annul
 The driver/solver interface was also inspected after the successful dry run: solve_cracked_LEFM accepts a custom geometry struct with T3 coordinates in `p`, T3 connectivity in `t`, and two required corner IDs in `edgeSets.corners`, which the Step-33 driver constructs on original preserved vertices. The solver independently regenerates T6 midside nodes, assembles the updated T6 stiffness matrix, reapplies the same remote plate tractions and minimal corner constraints, and returns the same mesh/field shape required by signed EDI and native COD. This source inspection does not replace actual MATLAB execution of the new solve.
 
 NEXT GATE: run `O33=main_step33_nested_annulus_refinement(O25,O32,'DryRun',false);` (one new solved FE field) and compare its three 16-point FE-nodal EDI values and native crack-face COD extrapolations to the unchanged Step-32 factor-2 reference. Even successful EDI radius independence and EDI/COD agreement on this local refined mesh would require a further nested refinement level and fixed-geometry polygon/mouth-width checks before claiming a physically nonzero finite-length kink.
+
+
+## Step 33 solved result: first genuinely nested annular mesh produces convergent-looking EDI but COD offset persists
+
+The already approved dry-run mesh was then solved in MATLAB with the same fixed Stage-I mouth [0.1999888722,-0.020817033905] m, a0=8 mm straight local-normal crack, NArc=480, appendix mouth half-shift 0.1 mm, and global-Hmax factor-2 background. The physically nested local refinement increased total T6 nodes 30,449 -> 39,909 and T3 elements in the largest EDI annulus 844 -> 4,647. Actual annular longest-edge median decreased 38.3%-40.3% and p90 decreased 56.8%-67.4% across the three tested radii. **Crucially, the actual median tip-adjacent edge stayed exactly 0.000108049302 m in the printed numerical precision.**
+
+Same physical annuli r_inner=0.8 mm, r_outer/a0=[0.50,0.65,0.80]; FE-nodal weight and 16-point Dunavant quadrature:
+
+| Quantity | Original factor-2 mesh | First nested annulus mesh |
+|---|---:|---:|
+| Total T6 nodes | 30,449 | 39,909 |
+| Median measured tip edge, mm | 0.1080493 | 0.1080493 |
+| Reference EDI KI (r_outer/a0=0.65) | 0.437792124 | 0.437796431 |
+| Reference EDI KII (r_outer/a0=0.65) | +4.79564163e-5 | +4.70467872e-5 |
+| Reference EDI KII/KI | +1.09541524e-4 | +1.07462702e-4 |
+| EDI KII/KI domain spread across all three annuli | 4.80934e-7 | 3.70266e-8 |
+| Native COD KI, window [0.04,0.30], linear | 0.433164424 | 0.433193543 |
+| Native COD KII, same window | +3.81025481e-5 | +3.71276615e-5 |
+| Native COD KII/KI, same window | +8.7963244e-5 | +8.570687e-5 |
+
+The first genuine annular spatial refinement changes the EDI reference ratio by approximately -1.9% and the selected COD ratio by approximately -2.6%. EDI extraction-domain dependence is further reduced by approximately a factor of 13. The EDI and COD KII magnitudes both decrease by about 0.9--1.0e-6, leaving a nearly constant ~0.992e-5 magnitude discrepancy. EDI relative to the selected COD estimate differs by about 20% of EDI KII. This systematic cross-method difference cannot be erased by citing good EDI path independence: it may reflect unresolved COD near-tip extrapolation, another field-related bias, or residual FEM discretization, and remains an explicit uncertainty.
+
+The immediate crack-tip edge length did NOT change under this refinement, so the improvement in the EDI annuli can be interpreted separately from variations in the measured local singular-tip mesh. However the current FEM solution is still a conventional T6 mesh without quarter-point crack-tip functions, and the strict next requirement is a SECOND nested level that is genuinely finer in the SAME annuli with the tip edge STILL unchanged. Do not infer a physical finite kink angle from this single nested level, and do not treat the near-constant EDI/COD gap as a statistical error bar.
+
+## Step 34 prepared: independent second successive annular mesh level
+
+New \`verification/sif_audit/main_step34_second_nested_annulus_refinement.m\` accepts only existing \`O25\` and the COMPLETED \`O33\` output. It reuses O33's exact solved collapsed T3/T6 mesh, U, crack-face topology, material properties, same-three-radii EDI and native COD fit results as its baseline, with NO new global remeshing or reinterpretation of Step 32's factor-4 experiment. It calls the same tested conforming red/green topology-aware refiner with a smaller default target longest-T3-edge length of 0.21 mm, two passes, outer buffer 0.6 mm, and an inner buffer of ZERO. Thus it targets the EDI annulus while excluding the immediate crack-tip neighborhood by construction. It also compares old/new actual T3 tip-edge medians and ABORTS if any change is detected before a new solve. Original physical vertices and outer plate nodes are checked immobile, and topology/positive T3 area checks remain in force.
+
+The driver defaults to \`DryRun=true\`; first run:
+
+\`\`\`matlab
+O34mesh = main_step34_second_nested_annulus_refinement(O25,O33);
+disp(O34mesh.meshTable)
+O34mesh.refinementGatePassed
+O34mesh.tipScalePreserved
+\`\`\`
+
+The geometry-only run enforces a measured >=10% reduction in BOTH median and p90 of longest-T3-edge lengths across ALL three EDI annuli relative to O33. If the refinement gate or exact tip-scale invariant fails, do NOT run another FEM solve: adjust the targeted region/edge length using a new dry run. Once the test passes, one new FEM calculation is available via \`O34=main_step34_second_nested_annulus_refinement(O25,O33,'DryRun',false);\`. It records identical three-domain 16-point FE-nodal EDI outputs and matched native COD fit windows/degrees, now comparing to O33 directly (no unnecessary repetition of Step-32 background FEM solves). MATLAB execution of Step 34 remains pending.
+
+Success criteria before interpreting a tiny physical KII include reproducible EDI and COD trends across the TWO independent successive targeted annular levels, stable exact tip element scales, then independent polygon NArc and appendix-width sensitivity. A second nested mesh may confirm EDI stability but not automatically resolve the persistent 20% EDI/COD magnitude gap.
