@@ -110,6 +110,32 @@ The default inner radius matches the Step-18 geometric rule `max(0.1*r_outer, 2*
 
 If too few native nodes lie within a requested COD window, its fit is reported as missing; the driver **does not invent extra interpolated points or silently widen the window**. Inspect `O45.rawBands` and make a scientifically justified decision about additional resolution if necessary.
 
+## Measured results: Step 45 phase 1 and first 16-point EDI (investigator-supplied MATLAB log)
+
+The investigator explicitly authorized **one** centered zero-angle Stage-II FEM solve using `STEP45_ALLOW_NEW_SOLVE=true`; the code immediately checkpointed it locally at `verification/step45_symmetric_theta0_solved.mat`. The original geometry-ID identification fell back to the temporary background-mesh route and then succeeded; this is an identification fallback, **not** a failure of the FEM solve.
+
+- Symmetric control: `Npoly=240`, `a0=0.004 m`, **3,640 T6 nodes**, **1,721 T3 triangles**.
+- COD native crack-face samples: **12 upper / 12 lower**, identical radial abscissae (`gridMismatch=0`).
+- Original Step-39-style COD windows `[0.04,0.30]`, `[0.08,0.30]`, and `[0.12,0.30]` contain only **4, 3, and 2** native samples, respectively. All requested linear and quadratic fits correctly **skipped**. `CODgates.evaluated=false`; do not interpret `passed=false` here as an accuracy failure.
+- Characteristic tip-edge median `hTip=0.00043375122 m`, `hTip/a0=0.108438`, tip-adjacent T3 elements **2 above / 3 below** the crack line.
+- Raw pointwise COD ratios (one native sample per listed band): `+2.6801e-3` for `0.04–0.08`, `+3.102e-4` for `0.08–0.12`, `−1.6581e-6` for `0.12–0.20`, and `−5.3765e-5` for `0.20–0.30`. These **are not extrapolated crack-tip SIF ratios**.
+- First opt-in EDI on **the identical saved actual FEM field**: FE-nodal weight, 16-point quadrature, `r_outer/a0=0.65`, `r_inner=0.0008675 m` (= `2*hTip`, dominating `0.1*r_outer`). Recovered **`KI=3.613086139e-1`**, **`KII=-3.167574307e-6`**, **`KII/KI=-8.766949318e-6`**.
+- Magnitude of this symmetric-control residual corresponds to **8.1206%** of the **different refined asymmetric calculation's** ratio `1.0795940665e-4`. This is a **scale comparison only**, not a transferable error estimate: the symmetric control has a different crack length, material geometry, load distribution and vastly coarser mesh.
+- The EDI result **exceeds** the proposed `1e-6` control threshold by ~8.77× for this one domain. The COD gate is **not evaluated**; neither an EDI single-domain residual nor one-point COD bands identify the causal error source. The Step-44 exact-field replay showed only much smaller extractor-only EDI leakage on a different, finer mesh; it does not bound actual FEM errors here.
+
+**Next incremental experiment, no new FEM solve:** extend only the 16-point EDI outer-radius list on the **saved symmetric checkpoint** to `[0.50,0.65,0.80]`. The Step-45 per-domain progress cache should reuse the completed `0.65` domain automatically. On this mesh `2*hTip≈0.00086750244 m` exceeds `0.1*r_outer` at all three radii, so the three tests have the **same inner radius**; this isolates outer-radius dependence more cleanly. Interpret any domain stability as **consistency**, not proof of absence of a common discretization bias.
+
+```matlab
+O45 = main_step45_symmetric_field_leakage(P45, ...
+    'RunEDI',true, 'ROuterOverA0',[0.50 0.65 0.80], ...
+    'SavePrefix',fullfile(fileparts(P45.checkpointPath), ...
+                          'step45_symmetric_field_leakage'));
+disp(O45.EDI.table);
+disp(O45.EDI.domainRatioSpread);
+```
+
+Stop and review this table before choosing any mesh refinement. If the EDI residual changes materially with outer radius, investigate quadrature-domain sensitivity on the **same** control field. If it is stable but remains above the target, a controlled symmetric FEM mesh-quality experiment is justified, not an automatic claim that the asymmetric EDI suffers the same relative error.
+
 ## Interpretation and stopping rules
 
 - Exact physical symmetry gives `KII=0`, so report **absolute** `abs(KII/KI)`, not percentage error relative to zero.
@@ -118,4 +144,4 @@ If too few native nodes lie within a requested COD window, its fit is reported a
 - Upper/lower face radial-grid mismatch and asymmetric counts of tip-adjacent T3 elements may explain numerical residuals; neither proves the cause without additional tests.
 - Passing `1e-6` on this symmetric geometry does **not** prove the asymmetric geometry's `KII/KI ~ 1.08e-4` is accurate to 1%; geometry-specific errors and higher-order Williams terms remain possible.
 
-**Status:** code prepared; **not yet executed in MATLAB on an actual symmetric Step-18 FEM field**. Do not record the numerical leakage threshold as passed until the investigator provides both matching COD and 16-point EDI outputs.
+**Status:** one actual symmetric FEM solution, the COD-only phase, and one 16-point EDI domain (`r_outer/a0=0.65`) have been executed by the investigator. COD extrapolation is not yet evaluable; the EDI numerical symmetry target is not met at the tested radius. Await the two additional same-field EDI domains before allocating another solve.
