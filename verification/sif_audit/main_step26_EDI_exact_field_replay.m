@@ -72,8 +72,13 @@ T6=mesh.connect;
 triEdges=[1 2 4;2 3 5;3 1 6];
 for j=1:3
     edges=T6(:,triEdges(j,:));
-    markU=face(edges(:,1))==+1 & face(edges(:,2))==+1;
-    markL=face(edges(:,1))==-1 & face(edges(:,2))==-1;
+    % An edge terminating at the common physical tip also belongs to a
+    % face when its other endpoint has that face's classification.
+    v1=edges(:,1);v2=edges(:,2);
+    markU=(face(v1)==+1 & (face(v2)==+1 | v2==tipID)) | ...
+          (face(v2)==+1 & (face(v1)==+1 | v1==tipID));
+    markL=(face(v1)==-1 & (face(v2)==-1 | v2==tipID)) | ...
+          (face(v2)==-1 & (face(v1)==-1 | v1==tipID));
     midsU=unique(edges(markU,3));
     midsL=unique(edges(markL,3));
     if any(face(midsU)==-1)||any(face(midsL)==+1)
@@ -111,8 +116,9 @@ fprintf('  tip-edge median=%.8e; a0=%.8e; T6 nodes=%d\n', ...
 fprintf('  face T6 nodes assigned: upper=%d lower=%d; unclassified=%d\n', ...
     nnz(face==1),nnz(face==-1),numel(unclassified));
 
-UI=make_exact_displacements(xl,r,th,mat,1,0);
-UII=make_exact_displacements(xl,r,th,mat,0,1);
+Rgl=[axis(:),eperp(:)];
+UI=make_exact_displacements(xl,r,th,mat,1,0,Rgl);
+UII=make_exact_displacements(xl,r,th,mat,0,1,Rgl);
 
 if ~isfield(mat,'Dmat'),mat.Dmat=mat.D;end
 rat=O.ROuterOverA0(:).';
@@ -186,7 +192,9 @@ end
 fprintf('STEP 26 completed without any new FEM solve.\n');
 end
 
-function U=make_exact_displacements(xl,r,th,mat,KI,KII)
+function U=make_exact_displacements(xl,r,th,mat,KI,KII,Rgl)
+% These displacement expressions exactly match the definitions used by
+% SIF_LEFM_interaction_EDI.local_aux_displacement.
 mu=mat.E/(2*(1+mat.nu));
 if mat.ps==1
     kappa=3-4*mat.nu;
@@ -199,12 +207,8 @@ u1=fac.*(KI.*c.*(kappa-1+2*s.^2) ...
         +KII.*s.*(kappa+1+2*c.^2));
 u2=fac.*(KI.*s.*(kappa+1-2*c.^2) ...
         -KII.*c.*(kappa-1-2*s.^2));
-% Return global two-component interleaved U.
-% xl is in the crack frame and the crack axis was fixed before this call.
-% Caller rotates the local displacement by [axis; perpendicular].
-% Store rotation in a separate immutable input instead of inferring from xl.
-U=[u1,u2];  %#ok<NASGU>
-error('step26:MissingRotation','Internal rotation argument is required.');
+globalU=[u1,u2]*Rgl.';
+U=reshape(globalU.',[],1);
 end
 
 function must(S,f)
