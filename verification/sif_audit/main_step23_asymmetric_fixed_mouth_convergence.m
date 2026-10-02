@@ -216,8 +216,8 @@ S=array2table(summary,'VariableNames',{ ...
 fprintf('\nFULL GEOMETRY/MESH/EDI RESULTS\n');disp(T);
 fprintf('\nREFERENCE EDI DOMAIN SENSITIVITY (r_o/a0=%.2f)\n',rRat(irRef));
 disp(S);
-fprintf(['NOTE: polygon refinement regenerates the FEM mesh; ',
-    'the polygon series measures combined geometry/mesh changes. ',
+fprintf(['NOTE: polygon refinement regenerates the FEM mesh; ', ...
+    'the polygon series measures combined geometry/mesh changes. ', ...
     'The fixed-NArc coarse/fine comparison isolates nominal FE size.\n']);
 
 if logical(O.Plot)
