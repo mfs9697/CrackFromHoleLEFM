@@ -1489,3 +1489,22 @@ IMPORTANT operational safeguard: **DryRun=true is now the default**. The first c
 performs conforming nested mesh generation and all geometry/face/topology and spatial-size checks, but **zero new FEM solves**. Review `O33mesh.meshTable` and `O33mesh.refinementGatePassed` before moving forward. If passed, rerun
 `O33 = main_step33_nested_annulus_refinement(O25,O32,'DryRun',false);`
 to perform ONE fresh FEM solve on the explicitly targeted, geometrically nested mesh. It then recovers 16-point FE-nodal signed EDI on all three identical annuli, native COD at the same fitting windows and polynomial orders as the cached factor-2 O32 results, and paired numerical changes. If the gate fails, lower TargetEdge or increase MaxPasses rather than making another global-Hmax sweep. If new tip scale changes by >20%, warn that the experiment is locally nested but does not isolate annulus-only effects. Good path independence on one locally refined mesh does not by itself prove physical kink selection; subsequent successive true annulus-refinement and retained-hole polygon / temporary mouth-width checks remain necessary.
+
+
+## Step 33 dry run: nested targeted annulus mesh PASSES all size gates (MATLAB result)
+
+The first Step-33 local MATLAB geometry-only dry run completed successfully with the already solved Step-32 factor-2 original collapsed T3 mesh (14,819 triangles, 7,815 T3 vertices, 30,449 T6 nodes). It preserved the fine Stage-I mouth [0.19998887220,-0.020817033905] m, a0=8 mm, NArc=480, and the existing physical crack geometry. The targeted edge threshold was 0.38 mm with inner and outer buffers 0.8 and 0.6 mm. Two conforming refinement passes selected 585 and 896 triangles, split 940 and 1425 edges, and yielded 19,549 T3 triangles and 10,180 T3 vertices. The helper passed its existing T3 orientation, positive-area, total area preservation, original-vertex immutability, original far-field boundary no-splitting, topologically separate crack-face checks, and driver acceptance gate.
+
+Matched centroid-selected integration-annulus longest-T3-edge statistics:
+
+| r_outer/a0 | old/new nT3 | old/new median edge, mm | median decrease | old/new p90 edge, mm | p90 decrease |
+|---:|---:|---:|---:|---:|---:|
+| .50 | 530 / 2150 | .40323 / .24081 | 40.279% | .76354 / .32992 | 56.79% |
+| .65 | 688 / 3430 | .42509 / .25894 | 39.086% | .92881 / .32925 | 64.552% |
+| .80 | 844 / 4647 | .43610 / .26897 | 38.325% | 1.09856 / .35789 | 67.422% |
+
+All six decreases greatly exceed the prespecified 10% gate. In the largest annulus the maximum longest-T3-edge length also falls from 1.7495 to 0.49538 mm. This is the FIRST tested mesh in this audit that demonstrates actual substantial local spatial refinement at the extraction region without remeshing the background geometry. However, the current inner buffer extends to the crack tip, and conformity closure may also change the actual tip-edge scale: it is a local near-tip-region refinement, not proof that the singular-tip element scale stayed constant. The new numerical solution must record its measured tip scale.
+
+The driver/solver interface was also inspected after the successful dry run: solve_cracked_LEFM accepts a custom geometry struct with T3 coordinates in `p`, T3 connectivity in `t`, and two required corner IDs in `edgeSets.corners`, which the Step-33 driver constructs on original preserved vertices. The solver independently regenerates T6 midside nodes, assembles the updated T6 stiffness matrix, reapplies the same remote plate tractions and minimal corner constraints, and returns the same mesh/field shape required by signed EDI and native COD. This source inspection does not replace actual MATLAB execution of the new solve.
+
+NEXT GATE: run `O33=main_step33_nested_annulus_refinement(O25,O32,'DryRun',false);` (one new solved FE field) and compare its three 16-point FE-nodal EDI values and native crack-face COD extrapolations to the unchanged Step-32 factor-2 reference. Even successful EDI radius independence and EDI/COD agreement on this local refined mesh would require a further nested refinement level and fixed-geometry polygon/mouth-width checks before claiming a physically nonzero finite-length kink.
