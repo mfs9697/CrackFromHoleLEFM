@@ -112,8 +112,11 @@ newProtected=protected_triangles(P1,T1,tip,opt.ProtectRadius,rMax);
 shellIdentical=isequal(oldProtected,newProtected);
 newVertices=P1(size(P0,1)+1:end,:);
 rNew=hypot(newVertices(:,1)-tip(1),newVertices(:,2)-tip(2));
-maxNewRadius=max(rNew,[],'omitnan');
-if isempty(rNew),maxNewRadius=NaN;end
+if isempty(rNew)
+    maxNewRadius=NaN;
+else
+    maxNewRadius=max(rNew);
+end
 insideProtected=isempty(rNew)||all(rNew<opt.ProtectRadius);
 remoteBoundaryClear=isempty(newVertices)|| ...
     ~any(abs(newVertices(:,1))<1e-10 | ...
@@ -171,7 +174,7 @@ if opt.Plot
         'Color','w','NumberTitle','off','Position',[95 90 1200 570]);
     tl=tiledlayout(fig,1,2, ...
         'Padding','compact','TileSpacing','compact');
-    L=max(opt.CoreRadius*1.4,0.0015);
+    L=max(opt.ProtectRadius*1.12,opt.CoreRadius*1.5);
     ax=nexttile(tl);
     draw_mesh(ax,P0,T0,tip,cr0,O34.rInner, ...
         opt.CoreRadius,opt.ProtectRadius,L);
@@ -228,7 +231,12 @@ h=median(L);
 end
 
 function draw_mesh(ax,P,T,tip,cr,rInner,rCore,rProtect,L)
-patch(ax,'Faces',T,'Vertices',P,'FaceColor','none', ...
+% Cull elements outside the displayed neighborhood to keep interactive
+% rendering affordable on large background meshes.
+cen=(P(T(:,1),:)+P(T(:,2),:)+P(T(:,3),:))/3;
+near=abs(cen(:,1)-tip(1))<=1.3*L & ...
+    abs(cen(:,2)-tip(2))<=1.3*L;
+patch(ax,'Faces',T(near,:),'Vertices',P,'FaceColor','none', ...
     'EdgeColor',[.38 .48 .57],'LineWidth',.32);
 hold(ax,'on');
 plot(ax,cr.Pmid(:,1),cr.Pmid(:,2),'r-','LineWidth',2);
