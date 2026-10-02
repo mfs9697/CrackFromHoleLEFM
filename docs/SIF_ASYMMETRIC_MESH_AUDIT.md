@@ -1694,3 +1694,35 @@ O38 = main_step38_postprocess_tip_checkpoint(cp);
 ```
 
 These new drivers were source-checked for correct existing MATLAB field names and checkpoint/EDI compatibility, but the new Step-38 solve/checkpoint and its postprocessing have **not yet** been executed by the user's MATLAB installation. Preserve the finite-tip uncertainty until the new solved results have been inspected; even stable EDI and COD on this tip-refined mesh must be followed by retained-hole polygon and temporary mouth-shift geometry sensitivity if claiming an extremely small signed physical kink.
+
+## Step 38 actually solved: halving immediate tip size substantially reduces independent EDI/COD difference
+
+MATLAB successfully completed BOTH Step-38 phases without exhausting RAM. The solver used the approved Step-37 exact nested T3 mesh: 20,164 T3 vertices and 39,441 triangles, producing **79,769 T6 nodes** versus 75,591 on Step 34 (only ~5.5% T6-node growth). Actual tip-edge median was **5.4024650785e-5 m**, exactly half the previously measured Step-34 tip-edge median **1.0804930157e-4 m**. Far-field geometry, physical mouth and original node coordinates were retained, and Step-37 tests certified the T3 shell outside radius 2.2 mm through the largest 6.4-mm EDI circle as identical. The tip-refinement region extends to ~1.331 mm, so the innermost portion of every EDI annulus (inner circle at radius 0.8 mm) ALSO changes. This limits any causal attribution to the singular tip basis alone.
+
+### Step 38 numerical results (same 16-GP FE-nodal EDI definition)
+
+| Quantity | Step 34 | Step 38 tip refined |
+|---|---:|---:|
+| T6 nodes | 75,591 | 79,769 |
+| Measured tip-edge median, mm | 0.108049302 | 0.054024651 |
+| Reference EDI KI at r_outer/a0=0.65 | 0.437796779 | 0.43783617225 |
+| Reference EDI KII | +4.70819463e-5 | +4.7268533366e-5 |
+| Reference EDI KII/KI | +1.075429253e-4 | +1.0795940665e-4 |
+| EDI domain spread in signed KII/KI | 7.4833006292e-9 | 1.4544639482e-9 |
+| Native-face T6 nodes per side | 152 | 152 (reported by Step 38) |
+| COD KII/KI, linear [0.04,0.30] r/a0 | +8.659854e-5 | +9.5422e-5 |
+| EDI-vs-COD ratio gap (same linear fit) | 19.475% | 11.613% |
+| COD KII/KI, linear [0.08,0.30] r/a0 | +8.924817e-5 | +9.7816e-5 |
+| EDI-vs-COD ratio gap (same linear fit) | 17.012% | 9.3958% |
+
+The EDI reference ratio changes by **+0.387%** on halving the immediate tip scale, while its already tiny integration-domain spread falls ~5.15x again. The selected linear [0.04,0.30] native COD ratio increases ~10.2%, and its relative gap to EDI falls by ~40% (19.475 -> 11.613 percentage values). The independent [0.08,0.30] linear gap also drops (17.012 -> 9.3958). All six matched COD fit windows/orders show the same direction, with post-refinement discrepancies 9.396%--20.066% versus their corresponding Step-34 discrepancies 17.012%--30.576%. Distinct numerical stability of EDI and increased sensitivity of COD to immediate tip resolution support a substantive conventional-T6 near-tip-resolution contribution. This does NOT rule out persistent COD model/extrapolation biases, nor the common finite geometry's extremely small physically signed KII.
+
+### Step 38 checkpoint workflow actually verified
+
+Phase 1 successfully solved once and saved the complete-field checkpoint on the user's Windows machine under the local verification folder as `step38_tip_refined_solved.mat`. Phase 2 loaded that checkpoint after the MATLAB workspace was cleared, computed and saved EDI progress after each of the THREE original radii (0.50,0.65,0.80)a0, extracted 152 independent native T6 crack-face nodes on EACH side with abscissa mismatch ~1.11e-16 m, and saved a compact result file `step38_tip_refined_solved_results.mat` (plus tiny EDI progress file). These are user-local files; none should be represented as committed GitHub datasets without actual upload. Automatic resumption of an INTERRUPTED progress file has not itself been exercised, even though all 3 progress writes succeeded.
+
+### Interpretation, remaining gates and inexpensive next test
+
+This is the first controlled experiment to vary *measured immediate-tip resolution* substantially while keeping the broad outer EDI shell and physical crack geometry fixed. A persistent ~9%--20% EDI/COD discrepancy after tip halving means that cross-method consistency is improving but not yet achieved. Do not infer exact physical signed mode II, finite kink, or an error-free EDI value. Separate possibilities: more crack-tip resolution (ordinary T6 near-singular field remains non-quarter-point), finite-window higher-order COD extrapolation, numerical common-mode EDI effects near its inner circle, and retained-hole polygon/appendix-mouth-width artifacts.
+
+Before ANY new expensive solve, use the compact existing Step-38 result's OLD and NEW pointwise native COD curves to repeat physically matched cutoff-window and polynomial-order sensitivity across the two tip scales. `verification/sif_audit/main_step39_tip_cod_sensitivity.m` was committed for this purpose. It takes only the small O38 output, uses only actual native sample positions, and cannot generate new FEM or interaction integrals. Its default four-quadrant low/high cutoff grid replicates Step-36 logic with original Step-34 vs newly tip-refined Step-38 data; saves compact numeric results and a two-panel figure. MATLAB execution remains pending.
