@@ -1554,3 +1554,21 @@ Success criteria before interpreting a tiny physical KII include reproducible ED
 At user request, verification/sif_audit/plot_step34_mesh.m now plots the ACTUAL (not stylized) Step-33 reference collapsed T3 mesh and Step-34 nested T3 coordinates/connectivity directly, with identical axis limits and physical scales. The four panels show: (1) plate/hole/crack/EDI-domain geometric context; (2) first-nested Step-33 annular T3 mesh; (3) second-nested Step-34 annular T3 mesh; and (4) a tight Step-34 crack-tip close-up with the common EDI inner-radius and outer-domain circles. Upper and lower crack faces retain distinct topological node IDs although their curves visually overlap.
 
 The Step-34 driver now defaults to PlotMesh=true while keeping DryRun=true. Calling O34mesh=main_step34_second_nested_annulus_refinement(O25,O33); generates and displays this four-panel figure and saves step34_mesh_comparison.png (high-resolution 260-DPI raster), step34_mesh_comparison.fig (editable MATLAB figure) and step34_mesh_data.mat (exact pre/post T3 p/t/crack arrays and EDI radii) in MATLAB's current working directory. Saved filenames are also reported in O34mesh.meshFigureFiles. Optional 'SaveMeshPrefix','figures/step34_mesh' changes destination. If O34mesh was computed before the plotting support was pulled, direct plot_step34_mesh(O25,O33,O34mesh) plots and saves without remeshing or a FEM solve. Use 'PlotMesh',false to suppress automatic plotting. Plotting does not replace the numerical refinement or tip-edge invariance gates. Source inspected; MATLAB graphical/export execution pending.
+
+## Step 34 MATLAB dry run completed: second nested mesh passes all spatial and tip-scale checks
+
+The successive Step-34 targeted mesh refinement completed its geometry-only dry run on the *solved Step-33 mesh*, without another global remesh or FEM solve. Physical geometry, original vertex coordinates, distinct upper/lower crack-face topology, and the measured crack-tip edge scale were preserved. The latter was verified before solve at **1.0804930157e-4 m**, with reported relative change 0.000e+00.
+
+The driver began with 19,549 collapsed T3 triangles and 39,909 T6 nodes from Step 33, used a target maximum local T3 edge of 0.21 mm and an outer buffer of 0.6 mm, and completed two edge-conforming passes. Pass 1: 4,772 selected T3 triangles and 7,474 split edges, yielding 34,439 triangles/17,654 vertices. Pass 2: 890 selected triangles and 1,461 split edges, yielding **37,361 T3 triangles and 19,115 T3 vertices**.
+
+| EDI outer radius r_outer/a0 | Before/after annulus T3 count | Before/after median longest-edge (mm) | Median reduction | Before/after p90 longest-edge (mm) | p90 reduction | After maximum longest-edge (mm) |
+|---:|---:|---:|---:|---:|---:|---:|
+| 0.50 | 2,150 / 7,467 | 0.24081 / 0.13212 | 45.136% | 0.32992 / 0.18089 | 45.171% | 0.20911 |
+| 0.65 | 3,430 / 12,502 | 0.25894 / 0.13599 | 47.480% | 0.32925 / 0.17252 | 47.603% | 0.20911 |
+| 0.80 | 4,647 / 18,013 | 0.26897 / 0.13858 | 48.478% | 0.35789 / 0.18277 | 48.932% | 0.20984 |
+
+All three annuli exceed the prespecified 10% decrease in both statistics; the exact measured tip-size gate also passes. These are verified *mesh* outcomes; physical SIF convergence still requires solving the new FE system and comparing signed 16-point FE-nodal EDI against independent native-face COD.
+
+The Step-34 four-panel MATLAB visualization was created successfully and saved in the user's local repository verification directory as `step34_mesh_comparison.png`, `step34_mesh_comparison.fig`, and `step34_mesh_data.mat`. Those are **local user-generated files**, not GitHub-committed artifacts and not accessible for visual inspection in this session unless the user shares the PNG.
+
+**Next controlled computation:** `O34 = main_step34_second_nested_annulus_refinement(O25,O33,'DryRun',false,'PlotMesh',false);`. The `PlotMesh=false` option avoids regenerating the already-saved figure; the same deterministic nested mesh refinement and the one new FEM solve still execute. Review the actual solved tip-edge median again, all three fixed EDI domains, and COD windows before any physical interpretation of a nonzero kink angle.
