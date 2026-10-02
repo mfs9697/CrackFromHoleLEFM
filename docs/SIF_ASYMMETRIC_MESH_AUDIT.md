@@ -1230,3 +1230,29 @@ The next gate is whether the near-zero normal-crack KII persists on a finer mesh
 ### Step 22 geometry-control qualification
 
 The existing `build_stage2_cracked_mesh_for_theta.m` hardcodes `nArc=160` for the retained Stage-II hole arc. Thus Step 20 and the planned Step 22 length scan use the SAME fixed 160-point Stage-II hole polygon even as Npoly drives finer Stage-I geometry and smaller overall Stage-II FEM hmin. This improves FE resolution while keeping the Stage-II hole geometry fixed. Such a comparison is controlled for finite-length effects, but it does NOT constitute full geometric convergence of the Stage-II hole boundary. A subsequent isolated nArc sweep at fixed fine FEM resolution is needed before interpreting residual KII smaller than the potential polygon-geometry floor as a physical kink.
+
+
+## Step 22 result: finite-length residual requires a geometry-convergence audit
+
+The fine-mesh asymmetric Stage-I solution (Npoly=480) places the peak at phi*=-1.56061278 deg, compared with phi*=-1.57371281 deg on Npoly=240. The change is +0.01310003 deg. From Step 21, the coarse mouth-sensitivity estimate is dKII/dphi approximately 1.3072e-3 per degree at a0=0.004 m, implying a KII change of approximately 1.7124e-5 at that length from the angle shift alone. Therefore Step-20 versus Step-22 comparison at 4 mm is NOT a fixed-mouth convergence test.
+
+With the fine-mesh Stage-I point held constant and theta=0 for all lengths, the reference EDI annulus r_outer/a0=0.65 gives:
+
+| a0 (mm) | a0/R | KI | KII/KI |
+|---:|---:|---:|---:|
+| 2 | 0.0667 | 0.28853 | +6.7963e-5 |
+| 4 | 0.1333 | 0.36617 | +1.6721e-5 |
+| 6 | 0.2000 | 0.40943 | +3.5461e-5 |
+| 8 | 0.2667 | 0.43766 | +9.1118e-5 |
+
+The 2-mm value is less secure because r_inner/r_outer ranges from about 0.31 to 0.49, and the relative KII/KI domain spread is 3.90e-5. The 4-mm residual is tiny, and the near-identical 240/480 ratios do not establish convergence because the mouth moved between meshes. The 6-mm and especially 8-mm residuals are larger, with 8-mm KII/KI in [8.44e-5,9.11e-5] and domain spread 6.73e-6, but domain independence alone does not exclude a systematic boundary-polygon or mouth-geometry error.
+
+Two geometry details are deliberately NOT conflated with physical finite-length effects: (i) the full-domain Stage-II builder currently retains only nArc=160 points along the remaining hole boundary, independent of Npoly; (ii) the temporary appended-hole mouth half-shift stays fixed at 0.1 mm, so its ratio to a0 varies substantially over this length study. Either can matter when interpreting very small signed KII values. In particular, the 8-mm residual corresponds to a putative angular correction comparable with the existing initiation-angle uncertainty, but the dKII/dtheta slope must be recomputed at 8 mm before estimating any direction.
+
+## Step 23 prepared: same-mouth polygon and mesh convergence
+
+The Stage-II builder now accepts an optional 'NArc' name-value argument (default 160, so historical callers retain their geometry). The focused verification driver 'verification/sif_audit/main_step23_asymmetric_fixed_mouth_convergence.m' takes an existing O22, reuses its fine Stage-I mouth EXACTLY and reuses its already computed 160-point fine-mesh Stage-II solutions at a0=4 and 8 mm. It adds independent cracked FE solves with NArc=320 and 480 on the same nominal fine FE h and, for NArc=480, a separate coarse nominal FE h at the identical mouth. It evaluates the same three signed FE-nodal EDI domains on each new solution.
+
+The arc-resolution sweep necessarily remeshes the whole polygonal domain, so it measures combined geometric/remeshing variation. The second, fixed-NArc coarse/fine comparison isolates the nominal FE-size effect to the extent that enforced polygon edge discretization permits; the reported tip mesh scales should be used to check whether the local meshes truly differ. No new Stage-I fit is done in Step 23, preventing the 0.0131-deg mouth movement from contaminating this comparison.
+
+Interpretation gate: the 8-mm signed residual must remain stable under BOTH controls before we treat its growth with a0 as evidence of a finite-length effect. If it stabilizes, the next experiment is to recompute signed dKII/dtheta near theta=0 separately at each selected length and solve verified local-symmetry roots. If it does not stabilize, investigate the hole polygon, the fixed mouth-width parameter and local FE tip refinement first. MATLAB execution of Step 23 is pending.
