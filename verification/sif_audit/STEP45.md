@@ -232,6 +232,27 @@ disp(R45b50.table);
 
 The `main_step45_coarse_exact_pureI_replay` driver already accepts `O45.EDI.table` and supports an explicit radius; no additional code or new GitHub pull is required merely to run this next calculation. Its cache is keyed by the saved checkpoint and the exact integration annulus. Wait for this **0.50** result before considering a direct exact-Gauss test at 0.50 or further mesh refinement.
 
+## Measured additional Step 45b domain: 0.50 exact-nodal pure-I replay
+
+The investigator executed the existing Step 45b driver with the **saved same 3,640-node symmetric T6 mesh**, the unchanged **FE-nodal q / 16-point quadrature**, and `r_outer/a0=0.50` while matching the prior actual-FEM inner radius `r_inner=0.0008675 m`. The prescribed exact COD pure-I self-check again passed: `max |KI_COD-1|=2.220e-16`, `max |KII_COD|=0` at 12 native upper/lower crack-face points. No FEM solve or remeshing occurred.
+
+| r_outer/a0 | actual FEM KI | actual FEM KII | actual FEM signed ratio | exact-nodal KI | exact-nodal KII | exact-nodal signed ratio |
+| ---: | ---: | ---: | ---: | ---: | ---: | ---: |
+| 0.50 | 0.3613148899 | -5.649036290e-6 | -1.563466231e-5 | 0.9999069522 | -4.810786672e-5 | ≈-4.81123e-5 |
+| 0.65 | 0.3613086139 | -3.167574307e-6 | -8.766949318e-6 | 0.9999484522 | -3.886669749e-5 | ≈-3.88687e-5 |
+
+The exact-nodal leakage is ~3.08 times the actual FEM signed-ratio residual in magnitude at `r_outer/a0=0.50`. From 0.50 to 0.65 the absolute leakage decreases in both actual-FEM and exact-nodal fields, but similarity of direction **does not prove identical dominant error mechanisms** in a numerically computed FEM solution and an artificially prescribed nodal leading-order singular displacement field. The signed exact-nodal ratio changes by about `9.24e-6` between the domains, comparable in order to the actual-FEM ratio change of about `6.87e-6`. Only these **two measured domains** are available for the exact-nodal representation.
+
+**Next one-calculation control:** evaluate the exact *Gauss-point* prescribed field at `r_outer/a0=0.50`, reusing the just-returned `R45b50`. The existing Step 45c driver has an explicit radius argument, so no MATLAB code change or new FEM mesh/solve is required:
+
+```matlab
+R45c50 = main_step45c_exact_gauss_isolation( ...
+    R45b50,'ROuterOverA0',0.50);
+disp(R45c50.table);
+```
+
+This runs **one 16-point exact-Gauss EDI integration on the same saved mesh and matched annulus**, then caches it. Do not extrapolate its numerical leakage to the fine asymmetric problem or treat Gauss exact-field recovery as an independent global FEM validation.
+
 ## Interpretation and stopping rules
 
 - Exact physical symmetry gives `KII=0`, so report **absolute** `abs(KII/KI)`, not percentage error relative to zero.
@@ -240,4 +261,4 @@ The `main_step45_coarse_exact_pureI_replay` driver already accepts `O45.EDI.tabl
 - Upper/lower face radial-grid mismatch and asymmetric counts of tip-adjacent T3 elements may explain numerical residuals; neither proves the cause without additional tests.
 - Passing `1e-6` on this symmetric geometry does **not** prove the asymmetric geometry's `KII/KI ~ 1.08e-4` is accurate to 1%; geometry-specific errors and higher-order Williams terms remain possible.
 
-**Status:** the symmetric FEM solve, native COD attempt, all three actual-FEM EDI domains, one exact-nodal pure-I replay and one exact-Gauss pure-I replay have now been completed by the investigator. COD extrapolation remains unevaluable on the coarse mesh. The 339-fold exact-nodal/GP leakage contrast implicates singular-field T6 interpolation; it is not an accuracy estimate for the computed FEM field. The next approved small experiment is exactly one additional exact-nodal EDI integral at r_outer/a0=0.50 on the same saved mesh and inner radius.
+**Status:** the symmetric FEM solve, native COD attempt, three actual-FEM EDI domains (0.50, 0.65, 0.80), two exact-nodal pure-I EDI domains (0.50, 0.65), and one exact Gauss-point pure-I EDI domain (0.65) have been completed by the investigator. COD extrapolation remains unevaluable on this mesh. The marked interpolation effect on exact singular nodal displacements is documented but not yet attributable quantitatively to actual FEM error. Next step: exactly one matching exact Gauss-point EDI calculation at 0.50; no new FEM solve.
