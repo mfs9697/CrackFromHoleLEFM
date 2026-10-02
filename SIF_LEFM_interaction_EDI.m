@@ -30,6 +30,10 @@ function [KI, KII, Aux] = SIF_LEFM_interaction_EDI(mesh, U, V, mat, domain, vara
 %                    'fe_nodal' (FE-consistent nodal q, default remains legacy)
 %   'QuadratureRule'  7 (legacy), 12 (degree 6), or 16 (degree 8)
 %                    Dunavant points; default 7 for backward compatibility.
+%   'AnalyticActualK' [] (default): use FE displacement gradients;
+%                    [KI,KII] (diagnostic): override the actual field at
+%                    each Gauss point with an exact Williams field. Never
+%                    use this option to extract SIFs from FEM solutions.
 %
 % Outputs:
 %   KI, KII signed stress intensity factors
@@ -53,12 +57,16 @@ function [KI, KII, Aux] = SIF_LEFM_interaction_EDI(mesh, U, V, mat, domain, vara
         @(x)isnumeric(x) && isscalar(x) && isfinite(x) && x>0);
     addParameter(ip, 'QuadratureRule', 7, ...
         @(x)isnumeric(x) && isscalar(x) && ismember(x,[7 12 16]));
+    addParameter(ip, 'AnalyticActualK', [], ...
+        @(x)isempty(x) || (isnumeric(x) && isreal(x) && numel(x)==2 && all(isfinite(x(:)))));
     parse(ip, varargin{:});
 
     Kaux = ip.Results.AuxK;
     verbose = logical(ip.Results.Verbose);
     weightFunction = char(ip.Results.WeightFunction);
     auxDerivativeScale = ip.Results.AuxDerivativeScale;
+    analyticActualK = ip.Results.AnalyticActualK;
+    analyticActual = ~isempty(analyticActualK);
     if ~(strcmpi(weightFunction,'analytic_radial') || strcmpi(weightFunction,'fe_nodal'))
         error('SIF_LEFM_interaction_EDI:BadWeightFunction', ...
             'WeightFunction must be analytic_radial or fe_nodal.');
@@ -254,26 +262,30 @@ function [KI, KII, Aux] = SIF_LEFM_interaction_EDI(mesh, U, V, mat, domain, vara
             nGP_used = nGP_used + 1;
             elemUsed = true;
 
-            % Actual FEM gradient in global coordinates.
-            dux_dx = dNdx(1,:) * uel(:,1);
-            dux_dy = dNdx(2,:) * uel(:,1);
-            duy_dx = dNdx(1,:) * uel(:,2);
-            duy_dy = dNdx(2,:) * uel(:,2);
-
-            GradU_gl = [dux_dx, dux_dy;
-                        duy_dx, duy_dy];
-
-            % Rotate actual gradient to local crack-tip frame.
-            GradU1 = R_loc * GradU_gl * R_gl;
-
-            eps1 = [ ...
-                GradU1(1,1);
-                GradU1(2,2);
-                GradU1(1,2) + GradU1(2,1)];
-
-            sig1 = Dmat * eps1;
-
-            du1_dx1 = GradU1(:,1);
+            if analyticActual
+                % TEST ONLY: evaluate exact Williams actual fields directly
+                % at this Gauss point, bypassing T6 nodal interpolation.
+                % Keep the SAME FE-nodal q gradient and quadrature.
+                actual = local_aux_LEFM_fields(x1,x2, ...
+                    analyticActualK(1),analyticActualK(2), ...
+                    E,nu,mu,kappa,Dmat,auxDerivativeScale);
+                eps1 = actual.eps;
+                sig1 = actual.sig;
+                du1_dx1 = actual.du_dx1;
+            else
+                % Production: use the actual FEM T6 displacement gradient.
+                dux_dx = dNdx(1,:) * uel(:,1);
+                dux_dy = dNdx(2,:) * uel(:,1);
+                duy_dx = dNdx(1,:) * uel(:,2);
+                duy_dy = dNdx(2,:) * uel(:,2);
+                GradU_gl = [dux_dx, dux_dy;
+                            duy_dx, duy_dy];
+                GradU1 = R_loc * GradU_gl * R_gl;
+                eps1 = [GradU1(1,1); GradU1(2,2); ...
+                    GradU1(1,2) + GradU1(2,1)];
+                sig1 = Dmat * eps1;
+                du1_dx1 = GradU1(:,1);
+            end
 
             % Auxiliary mode I, normalized by Kaux.
             auxI = local_aux_LEFM_fields(x1, x2, Kaux, 0.0, E, nu, mu, kappa, Dmat, auxDerivativeScale);
@@ -342,6 +354,11 @@ function [KI, KII, Aux] = SIF_LEFM_interaction_EDI(mesh, U, V, mat, domain, vara
     Aux.kappa = kappa;
     Aux.planeStrain = planeStrain;
     Aux.weightFunction = weightFunction;
+    Aux.analyticActualK = analyticActualK;
+    Aux.actualFieldSource = 'FEM_T6';
+    if analyticActual
+        Aux.actualFieldSource = 'exact_Williams_Gauss_diagnostic';
+    end;
     Aux.quadratureRule = nip2;
     Aux.auxDerivativeScale = auxDerivativeScale;
     Aux.auxEpsMismatchI_median = local_median_finite(auxMismatchI);
