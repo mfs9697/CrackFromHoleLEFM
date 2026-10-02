@@ -1256,3 +1256,26 @@ The Stage-II builder now accepts an optional 'NArc' name-value argument (default
 The arc-resolution sweep necessarily remeshes the whole polygonal domain, so it measures combined geometric/remeshing variation. The second, fixed-NArc coarse/fine comparison isolates the nominal FE-size effect to the extent that enforced polygon edge discretization permits; the reported tip mesh scales should be used to check whether the local meshes truly differ. No new Stage-I fit is done in Step 23, preventing the 0.0131-deg mouth movement from contaminating this comparison.
 
 Interpretation gate: the 8-mm signed residual must remain stable under BOTH controls before we treat its growth with a0 as evidence of a finite-length effect. If it stabilizes, the next experiment is to recompute signed dKII/dtheta near theta=0 separately at each selected length and solve verified local-symmetry roots. If it does not stabilize, investigate the hole polygon, the fixed mouth-width parameter and local FE tip refinement first. MATLAB execution of Step 23 is pending.
+
+
+## Step 23 results (2026-10-02): finite-length Mode II is not yet numerically converged
+
+Step 23 used the same fine Stage-I initiation mouth at phi*=-1.5606127781 deg, position [0.19998887220,-0.020817033905] m, and studied a0=4 and 8 mm. The existing Step-22 results with NArc=160 and nominal fine FEM h=0.00039269908 m were reused; additional NArc=320/480 full-domain cracked solves were computed on the same nominal fine mesh, and NArc=480 was also computed with nominal coarse h=0.00078539816 m. Signed FE-nodal EDI was evaluated at r_outer/a0=[0.50,0.65,0.80].
+
+At the reference EDI radius r_outer/a0=0.65:
+| a0 | fine NArc=160 | fine NArc=320 | fine NArc=480 | coarse NArc=480 |
+|---:|---:|---:|---:|---:|
+| 4 mm | +1.6721e-5 | -6.7491e-6 | -1.8726e-5 | +3.8870e-5 |
+| 8 mm | +9.1118e-5 | +1.26555e-4 | +7.80814e-5 | -8.49684e-4 |
+
+Entries are signed KII/KI. At 4 mm, polygon changes reverse the sign of the tiny residual; thus no physical nonzero kink is resolved. At 8 mm, the fine-mesh residual is positive at all three polygon resolutions but NONMONOTONIC (range ~4.85e-5 at the reference EDI radius), and fixed-NArc coarse versus fine FE changes KII/KI by ~9.28e-4 including sign reversal. This is much larger than the putative finite-length signal. Although the fine NArc=480, 8-mm EDI-domain spread is only ~1.29e-6 (r_out/a0 range [0.50,0.80]), that establishes only integration-domain consistency on ONE displacement field; systematic mesh/geometry errors can be common to all radii.
+
+The matched NArc=480 tip-edge medians are 0.0004215 m coarse and 0.0002146 m fine for 8 mm, so the FE discretizations genuinely differ locally. However, Step 23 also changed global Hmax together with nominal Hmin; its coarse/fine comparison was not isolated tip refinement. K_I differs by about 0.3% while K_II changes much more; signed K_II is especially sensitive near zero.
+
+The command completed every FE solve and printed both result tables, but a MATLAB fprintf multiline text concatenation without continuation ellipses raised a vertcat error after the computations and BEFORE Out was assigned. Consequently no O23 exists in the workspace despite the completed computation. The fprintf source is fixed in commit c814391b; the error was cosmetic and did not affect the printed numerical data. Do not demand a full rerun solely for that formatting problem.
+
+## Step 24 prepared: focused fixed-polygon, fixed-global-mesh 8-mm convergence
+
+The dedicated script verification/sif_audit/main_step24_fixed_geometry_FE_refinement.m accepts O22 (not O23) and defaults to a0=8 mm, NArc=480, RefineFactors=[1,2]. It keeps the fine Step-22 Stage-I mouth/normal, a0, retained-hole polygon, temporary appendix mouth half-shift w=0.0001 m, global Hmax, and Hgrad unchanged, then changes only nominal Hmin/Hhole/Hcrack to half. Both solved meshes use signed FE-nodal EDI at the existing three radii, with measured actual tip-edge medians and EDI-domain spreads. The factor-1 run should independently reproduce the printed Step-23 fine NArc=480, 8-mm KII/KI ~+7.808e-5 at reference r_outer/a0=0.65. One further factor-2 solve tests whether the signal remains stable under controlled local refinement. If needed, rerun with RefineFactors=[1,2,4] to add finer refinement, or isolate the appendix mouth-width dependence after this gate.
+
+IMPORTANT: even if the 8-mm fixed-polygon FE ratios converge, the NArc nonmonotonicity remains unresolved; geometric and mouth-width sensitivity must be audited independently before interpreting a finite-length kink as physical.
