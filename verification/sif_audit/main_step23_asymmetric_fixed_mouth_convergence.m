@@ -218,7 +218,7 @@ fprintf('\nREFERENCE EDI DOMAIN SENSITIVITY (r_o/a0=%.2f)\n',rRat(irRef));
 disp(S);
 fprintf(['NOTE: polygon refinement regenerates the FEM mesh; ',
     'the polygon series measures combined geometry/mesh changes. ',
-    'The fixed-NArc coarse/fine comparison isolates nominal FE size.\\n']);
+    'The fixed-NArc coarse/fine comparison isolates nominal FE size.\n']);
 
 if logical(O.Plot)
     figure('Name','Step 23: fixed-mouth polygon convergence','Color','w');
@@ -250,10 +250,10 @@ Out.source=source;
 Out.table=T;
 Out.summary=S;
 Out.referenceDomainRatio=rRat(irRef);
-fprintf('\nSTEP 23 completed.\\n');
+fprintf('\nSTEP 23 completed.\n');
 fprintf(['Gate: do not interpret the finite-length residual as physical ', ...
     'unless it is stable under retained-hole polygon refinement AND ', ...
-    'under fixed-geometry FE refinement, both at the identical mouth.\\n']);
+    'under fixed-geometry FE refinement, both at the identical mouth.\n']);
 end
 
 function a=local_wrap(a)
