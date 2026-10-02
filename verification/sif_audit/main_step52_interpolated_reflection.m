@@ -79,7 +79,7 @@ paths={char(o.O45.checkpointPath), ...
        char(R48.refined.checkpointPath)};
 names={'Original Step45','Refined Step47'};
 regionNames={'COD tip disk','EDI annulus'};
-all=cell(4,1);
+rows=cell(4,1);
 k=0;
 savedPhysical=struct();
 fprintf('\n============================================================\n');
@@ -156,8 +156,11 @@ for imesh=1:2
             'Known pure-I nodal field did not pass native COD validation.');
     end
     mu=s.mat.E/(2*(1+s.mat.nu));
-    if s.mat.ps==1,kappa=3-4*s.mat.nu; ...
-    else,kappa=(3-s.mat.nu)/(1+s.mat.nu);end
+    if s.mat.ps==1
+        kappa=3-4*s.mat.nu;
+    else
+        kappa=(3-s.mat.nu)/(1+s.mat.nu);
+    end
     scale=mu/(kappa+1)*sqrt(2*pi./faceR);
     ref=faceR/s.a0>=.12 & faceR/s.a0<=.30;
     if nnz(ref)<2
@@ -189,7 +192,12 @@ for imesh=1:2
         else
             Q=[X(chosen,1),2*tip(2)-X(chosen,2)];
         end
-        [elem,B]=pointLocation(TR,Q);
+        if isempty(Q)
+            elem=zeros(0,1);
+            B=zeros(0,3);
+        else
+            [elem,B]=pointLocation(TR,Q);
+        end
         hit=isfinite(elem);
         nHit=nnz(hit);
         if nHit>=2
@@ -271,12 +279,12 @@ for imesh=1:2
                 'rmsNodalPureIGaugeOddUy_over_openY',NaN);
         end
         k=k+1;
-        all{k}=row;
+        rows{k}=row;
     end
     clear s Usyn
 end
 R52=struct();
-R52.summary=struct2table(vertcat(all{:}));
+R52.summary=struct2table(vertcat(rows{:}));
 R52.source=paths;
 R52.rInner=ri;R52.rOuter=ro;
 R52.minAbsYOffset_m=opt.MinAbsYOffset_m;
