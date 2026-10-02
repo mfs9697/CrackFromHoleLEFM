@@ -59,6 +59,7 @@ function [KI, KII, Aux] = SIF_LEFM_interaction_EDI(mesh, U, V, mat, domain, vara
         @(x)isnumeric(x) && isscalar(x) && ismember(x,[7 12 16]));
     addParameter(ip, 'AnalyticActualK', [], ...
         @(x)isempty(x) || (isnumeric(x) && isreal(x) && numel(x)==2 && all(isfinite(x(:)))));
+    addParameter(ip, 'StoreGPDiagnostics', true, @(x)islogical(x)&&isscalar(x));
     parse(ip, varargin{:});
 
     Kaux = ip.Results.AuxK;
@@ -67,6 +68,7 @@ function [KI, KII, Aux] = SIF_LEFM_interaction_EDI(mesh, U, V, mat, domain, vara
     auxDerivativeScale = ip.Results.AuxDerivativeScale;
     analyticActualK = ip.Results.AnalyticActualK;
     analyticActual = ~isempty(analyticActualK);
+    storeGP = ip.Results.StoreGPDiagnostics;
     if ~(strcmpi(weightFunction,'analytic_radial') || strcmpi(weightFunction,'fe_nodal'))
         error('SIF_LEFM_interaction_EDI:BadWeightFunction', ...
             'WeightFunction must be analytic_radial or fe_nodal.');
@@ -292,8 +294,10 @@ function [KI, KII, Aux] = SIF_LEFM_interaction_EDI(mesh, U, V, mat, domain, vara
 
             % Auxiliary mode II, normalized by Kaux.
             auxII = local_aux_LEFM_fields(x1, x2, 0.0, Kaux, E, nu, mu, kappa, Dmat, auxDerivativeScale);
-            auxMismatchI(end+1,1) = auxI.eps_mismatch; %#ok<AGROW>
-            auxMismatchII(end+1,1) = auxII.eps_mismatch; %#ok<AGROW>
+            if storeGP
+                auxMismatchI(end+1,1) = auxI.eps_mismatch; %#ok<AGROW>
+                auxMismatchII(end+1,1) = auxII.eps_mismatch; %#ok<AGROW>
+            end
 
             % Interaction integral densities.
             densI  = local_interaction_density(sig1, eps1, du1_dx1, auxI,  qgrad);
@@ -304,7 +308,9 @@ function [KI, KII, Aux] = SIF_LEFM_interaction_EDI(mesh, U, V, mat, domain, vara
             I_modeI  = I_modeI  + densI  * dA;
             I_modeII = I_modeII + densII * dA;
 
-            rows = [rows; e, igp, x1, x2, r, densI, densII, dA]; %#ok<AGROW>
+            if storeGP
+                rows = [rows; e, igp, x1, x2, r, densI, densII, dA]; %#ok<AGROW>
+            end
         end
 
         if elemUsed
@@ -360,6 +366,7 @@ function [KI, KII, Aux] = SIF_LEFM_interaction_EDI(mesh, U, V, mat, domain, vara
         Aux.actualFieldSource = 'exact_Williams_Gauss_diagnostic';
     end;
     Aux.quadratureRule = nip2;
+    Aux.storeGPDiagnostics = storeGP;
     Aux.auxDerivativeScale = auxDerivativeScale;
     Aux.auxEpsMismatchI_median = local_median_finite(auxMismatchI);
     Aux.auxEpsMismatchI_max = local_max_finite(auxMismatchI);
