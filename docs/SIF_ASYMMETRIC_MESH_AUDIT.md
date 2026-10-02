@@ -1655,3 +1655,42 @@ O37.passed
 ```
 
 Do **not** proceed to another large FEM solve until this geometry-only check passes and the actual node-growth and tip-size changes are inspected. The driver is committed and statically inspected but NOT MATLAB-tested. If the core refinement passes, the next implementation should use a low-memory solved-field checkpoint and compare EDI and COD on this tip-refined, unchanged-outer-shell mesh; it should not discard the expensive solved displacement field if postprocessing is interrupted.
+
+## Step 37 MATLAB dry run PASSED: immediate crack-tip resolution halved at 5.57% T3 growth
+
+User locally executed `O37=main_step37_tip_core_refinement_dryrun(O25,O34);` on the solved 75,591-node Step-34 field. All SIX geometrical acceptance gates passed, with zero new FEM solves.
+
+| Step-37 measured quantity | Step 34 baseline | Step 37 approved local tip mesh |
+|---|---:|---:|
+| Entire collapsed T3 triangles | 37,361 | 39,441 |
+| T3 vertices | 19,115 | 20,164 |
+| Median actual tip-edge size, m | 1.0804930e-4 | 5.4025e-5 |
+| Upper/lower crack-face T3 vertices | 68/68 | 77/77 |
+| T3 triangle-growth factor | 1 | 1.0557 |
+
+The same physical crack mouth remains [0.19998887220,-0.020817033905] m; the trial crack a0=8 mm and exact Stage-I geometry were preserved. The experiment's default tip disk radius was 1.2 mm, with target edge 0.08 mm and one refinement pass; 672 triangles were selected and 1,049 edges split. All additional mesh vertices remained within radial distance 1.331 mm of the tip, inside the strict protected-shell start radius of 2.2 mm. Triangle triples and original node IDs of the shell between 2.2 mm and the largest EDI outer radius of 6.4 mm are exactly unchanged. The far-field plate boundary was also untouched, original vertices preserved, both crack faces topologically distinct and independently refined, 50% measured tip-edge reduction, and just 5.57% overall T3 growth. The dry run saved a four-panel PNG to the user's local `verification/step37_tip_core_mesh.png` and reported overall acceptance `true`; this local image was not uploaded and cannot be visually inspected here.
+
+The subtle distinction in interpreting future EDI changes: the common EDI inner radius is 0.8 mm. Step-37 refined geometry extends to ~1.331 mm, so the **inner segment of every original 0.8-mm-to-r_outer annulus changes**, even though the outer protected shell begins at 2.2 mm with identical T3 triangles. Therefore, an EDI change after Step 37 may reflect differences in the FE solution around the tip AND numerical q/domain contributions inside the changed inner band. Do not describe the entire EDI annuli as frozen or attribute all residual differences unambiguously to near-tip singular basis error.
+
+## Step 38 prepared: once-only solve, immediate checkpoint, resumable low-memory EDI/COD postprocessing
+
+Two new narrow MATLAB entry points have been committed:
+
+- `verification/sif_audit/main_step38_solve_tip_checkpoint.m`: takes only O25, O34 and the **already approved** O37.p/t/crack, verifies that all six geometrical gates passed and that it is nested in the exact same Step-34 geometry, then performs **ONE** new standard T6 FEM solve using the original minimal corner anchoring and unchanged loading/geometry. Immediately discards K, F, stress, etc. and writes only solved T6 mesh, U, material, crack topology, actual tip scale and **compact** original Step-34 numeric COD/EDI reference data to `step38_tip_refined_solved.mat` (by default). It uses a complete temporary MAT file then moves it to the final filename; it refuses to overwrite an existing checkpoint unless explicitly permitted. This is a safeguard if the next postprocessing run is interrupted; it cannot prevent running out of memory during the direct sparse solve itself.
+
+- `verification/sif_audit/main_step38_postprocess_tip_checkpoint.m`: accepts just the completed MAT checkpoint path, does **NO** new FEM solve or global remeshing, evaluates the SAME three fixed 16-Gauss-point FE-nodal-q EDI domains with `StoreGPDiagnostics=false` to avoid allocation of large per-GP tables, and writes an extremely small per-radius EDI progress file after EACH completed radius. If interrupted during the third radius, a repeat call on the same checkpoint reuses completed first/second-radius calculations, rather than repeating the expensive solve or earlier EDI extraction. It then uses the exact same tested native-face T6 COD algorithm and six polynomial fits as Steps 33/34, comparing old/new ratios and EDI/COD discrepancies. Drops full mesh and U before generating outputs, and saves only small numeric comparison tables and native COD arrays to a separate `_results.mat` file. Optional `'Plot',true` exports a comparison of EDI radius trends and native crack-face profiles.
+
+Suggested memory-conscious sequence, ONLY AFTER backing up work the user wishes to retain:
+
+```matlab
+% Pull latest sif-asymmetric-mesh-audit branch.
+% Save or otherwise preserve any unrelated MATLAB workspace variables.
+% Optionally: clearvars -except O25 O34 O37
+C38 = main_step38_solve_tip_checkpoint(O25,O34,O37);
+% Verify C38.checkpointSaved is true, and keep the path.
+cp = C38.checkpointPath;
+clearvars -except cp
+O38 = main_step38_postprocess_tip_checkpoint(cp);
+```
+
+These new drivers were source-checked for correct existing MATLAB field names and checkpoint/EDI compatibility, but the new Step-38 solve/checkpoint and its postprocessing have **not yet** been executed by the user's MATLAB installation. Preserve the finite-tip uncertainty until the new solved results have been inspected; even stable EDI and COD on this tip-refined mesh must be followed by retained-hole polygon and temporary mouth-shift geometry sensitivity if claiming an extremely small signed physical kink.
