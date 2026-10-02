@@ -102,3 +102,45 @@ load(fullfile(fileparts(P47.checkpointPath), ...
 ```
 
 This performs **one exact-nodal, 16-point FE-nodal-q EDI** on the already saved refined mesh after verifying its exact COD jumps. It generates **no new mesh and performs no FEM solve**. Compare its **signed** pure-I→II leakage and KI error to the previously measured coarse exact-nodal result (`KII/KI ≈ -3.88687e-5` at 0.65) and the actual-field refined EDI residual `+2.24410e-5`. Neither the exact-nodal difference nor the actual-FEM residual is a validated additive physical correction. After seeing this result, decide whether to perform a similarly matched **single exact Gauss-point EDI** on the refined mesh (existing Step45c driver, another distinct cache prefix) or move directly to a symmetry-paired meshing strategy with separate explicit authorization for any additional FEM solve.
+
+
+## Measured Step 50: exact pure-I nodal replay on the selected refined mesh
+
+The investigator completed the single prescribed-field Step50 control on the **already solved** Step47 refined T6 mesh with no new mesh/FEM solve. It used precisely the saved Step48 annulus: `r_outer/a0=0.65`, `r_inner=0.00086750243077 m`, unchanged FE-nodal q and 16-point quadrature. The replay has its own `step50_refined_exact_pureI` cache, separate from the coarse-mesh Step45b results.
+
+The exact prescribed pure-I COD self-check on **72 native crack-face nodes** recovered unit `KI` with maximum error `2.220e-16` and maximum spurious `KII=7.125e-33`. Yet the interpolated nodal displacement field gave **`KI_EDI=1.000061439`**, **`KII_EDI=+3.379579752e-5`** and signed **`KII/KI≈+3.37937e-5`**.
+
+### Same-annulus signed comparison across fields and meshes
+
+| Source of actual field supplied to EDI | Original coarse mesh | Selected refined mesh |
+| --- | ---: | ---: |
+| Actual solved FEM signed `KII/KI` | -8.766949318e-6 | +2.244103310e-5 |
+| Prescribed exact pure-I **nodal** Williams field signed `KII/KI` | ≈-3.88687e-5 | ≈+3.37937e-5 |
+| Prescribed exact pure-I Williams field evaluated directly **at Gauss points** | ≈-1.147788e-7 | **NOT YET MEASURED** |
+
+**Finding:** the exact-nodal field is physically pure Mode I, so its nonzero extracted Mode II is numerical. It changes sign between exactly the same two meshes as the actual-FEM EDI result does. This is strong evidence of mesh-dependent **exact-nodal interpolation/EDI contamination** with the same directional change as the FEM signal, especially since both exact nodal fields passed analytical COD self-checks. However, **sign co-variation does not establish what fraction of the actual FEM residual was caused by this mechanism**. The exact nodal test isolates a *prescribed leading Williams field*, not the numerically computed equilibrium displacement (including mesh-dependent higher-order behavior). Its leakage is ≈4.43× the coarse actual FEM residual and ≈1.51× the refined actual FEM residual in magnitude. These are descriptive ratios, **not correction coefficients**. The refined native actual-FEM tangential crack-face jump remains negative over the main fit windows while its EDI ratio is positive: direct opening ratios and EDI-extracted crack-tip SIFs are different estimands.
+
+### Next single, matched no-solve test: exact Williams **Gauss-point** replay on the refined mesh
+
+The **existing** `main_step45c_exact_gauss_isolation` driver accepts the Step50 `R50` output and its one measured `r_outer/a0=0.65` domain. It evaluates the exact pure-I Williams actual field *directly at Gauss points* (diagnostic `AnalyticActualK=[1,0]`), while keeping the same refined T6 mesh, same physical absolute annulus, FE-nodal-q weighting, 16-point integration, elasticity, and auxiliary mode convention. This leaves only the nodal-versus-direct-Gauss representation changed within the prescribed-field test. It performs **ONE EDI integral**, no FEM solve or mesh generation. The historical coarse-mesh Step45c at the same annulus returned signed leakage ≈`-1.147788e-7`.
+
+Use a **different prefix** to protect all coarse and refined nodal replay caches. With `R50` in MATLAB's workspace:
+
+```matlab
+dataDir = fileparts(R50.checkpointPath);
+R51 = main_step45c_exact_gauss_isolation( ...
+    R50, ...
+    'ROuterOverA0',0.65, ...
+    'SavePrefix',fullfile(dataDir,'step51_refined_exact_gauss'));
+disp(R51.table);
+```
+
+If `R50` was cleared, restore its measured compact output first; do not repeat Step50:
+
+```matlab
+load(fullfile(fileparts(R48.refined.checkpointPath), ...
+    'step50_refined_exact_pureI_small_data.mat'),'Out');
+R50 = Out;
+```
+
+**Interpretation rule:** If refined exact-Gauss leakage is much smaller than refined exact-nodal leakage, the mesh-dependent exact-nodal interpolation mechanism is demonstrated on **both** symmetric meshes. If it remains comparable on the refined mesh, investigate refined FE-nodal q/quadrature or analytical/convention differences before inferring interpolation dominance. Neither result validates an error correction or uncertainty bound for the separate much finer asymmetric tiny Mode-II calculation.
