@@ -99,4 +99,17 @@ disp(R48.comparison);
 
 The script generates **no new mesh or FEM solution**, and leaves the original and refined displacement checkpoints intact. It deliberately repeats the inexpensive native COD diagnostic while invoking EDI only at 0.65. Send the full MATLAB output before deciding whether to evaluate further EDI domains or to introduce a reflection-paired mesh test. Although both fields share the same physical problem and exact integration annulus, retriangulation outside the crack-tip neighborhood is possible, so the difference is an observed **mesh/field sensitivity**, not a cleanly isolated crack-tip-only error or a correction transferable to the refined asymmetric case.
 
-**Current status:** one refined FEM solution is completed, all six COD fits are evaluable but discordant, and the matched refined-field EDI has **not yet been computed**.
+**Current status:** the investigator completed the selected refined FEM solution, all six native COD fits and one 16-point FE-nodal EDI integral matched to the original symmetric control's exact absolute annulus. Mode-II EDI changed sign and increased in magnitude with this refinement. The next proposed step is the separate **no-solve/no-EDI [Step 49 reflection-parity audit](STEP49.md)** of both saved FEM meshes and crack-face displacements.
+
+## Investigator's measured Step 48: identical absolute EDI annulus
+
+The investigator ran the prepared Step 48 script on the **already saved** refined FEM solution. The 16-point FE-nodal EDI had precisely the original symmetric control's **absolute** integration annulus, `r_inner=0.00086750243077 m` and `r_outer=0.0026 m` (`r_outer/a0=0.65`). No new FEM solve, mesh or further EDI domains were computed.
+
+| Matched physical control | T6 nodes | KI | KII | Signed KII/KI |
+| --- | ---: | ---: | ---: | ---: |
+| Original Step45 | 3640 | 0.3613086139 | -3.167574307e-6 | -8.766949318e-6 |
+| Refined Step47 | 5054 | 0.3618471493 | +8.120223857e-6 | +2.244103310e-5 |
+
+The reported **signed ratio change was `+3.1207982421e-5`**. Mode I changed by approximately 0.149%, whereas spurious Mode II reversed sign and increased in magnitude by approximately 2.56×. These two meshes **do not establish convergence** of the tiny Mode-II ratio. The difference is approximately 28.9% of the much finer *asymmetric* study's previously reported ratio `1.0795940665e-4`, but is strictly a **scale comparison, not an asymmetric-problem uncertainty bound**. Original and refined meshes share the physical configuration and integration annulus, but PDE remeshing altered connectivity outside the tip neighborhood as well.
+
+The Step48 calculation also reran the saved refined-field COD postprocessor, reproducing the same six discordant linear/quadratic COD fits; no additional COD convergence can be inferred. The remaining causal questions concern actual FEM reflection symmetry and same-mesh integration/interpolation effects. Start with the **zero-solve, zero-EDI Step49 geometric reflection and displacement-parity diagnostic** documented separately at [STEP49.md](STEP49.md), rather than another full FEM solve or broad EDI sweep.
