@@ -240,12 +240,27 @@ for side=1:2
     if side==1
         crackNew.upperNodes=nodes;
         crackNew.upperS=val/a0;
+        crackNew.upperTarget=Pnew(nodes,:);
         crackNew.nUpper=numel(nodes);
     else
         crackNew.lowerNodes=nodes;
         crackNew.lowerS=val/a0;
+        crackNew.lowerTarget=Pnew(nodes,:);
         crackNew.nLower=numel(nodes);
     end
+end
+shared=setdiff(intersect(crackNew.upperNodes,crackNew.lowerNodes), ...
+    crackNew.tipNode);
+if ~isempty(shared)
+    error('annulus_refine:SharedCrackFaces', ...
+        'Refinement merged %d upper/lower crack-face vertices.', ...
+        numel(shared));
+end
+crackNew.sameCount=(crackNew.nUpper==crackNew.nLower);
+crackNew.lowerMatchForUpper=zeros(crackNew.nUpper,1);
+for j=1:crackNew.nUpper
+    [~,crackNew.lowerMatchForUpper(j)]=min( ...
+        abs(crackNew.lowerS-crackNew.upperS(j)));
 end
 info=struct('passLog',passes(all(isfinite(passes),2),:), ...
     'initialVertices',size(P,1),'finalVertices',size(Pnew,1), ...
