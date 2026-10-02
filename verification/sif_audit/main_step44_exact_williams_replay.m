@@ -106,6 +106,18 @@ if isempty(upper)||isempty(lower) || ...
         any(ismember(upper,lower))
     error('step44:FaceIDs','Crack-face labels invalid.');
 end
+% Real nodal face geometry was already accepted by the SAME Step-38
+% on-face tolerance. For the ideal analytical branch cut, snap ONLY
+% negligible transverse roundoff in evaluation coordinates (not mesh).
+faceResidual=max(abs(xl(faceIDs,2)));
+faceTol=max(1e-12,1e-8*a0);
+if faceResidual>faceTol || any(xl(faceIDs,1)>=-faceTol)
+    error('step44:FaceGeometry', ...
+        'Synthetic evaluation requires actual classified crack-face nodes.');
+end
+xFace=xl(faceIDs,:);
+xFace(:,2)=0;
+fprintf('  max transverse face-coordinate roundoff=%.3e m\n',faceResidual);
 % No real-field SIF is assumed correct: tiny mixed-mode amplitudes
 % merely define a known synthetic signal near the regime of interest.
 rat=O38.rOuterOverA0(:);
@@ -125,7 +137,7 @@ for icase=1:3
     % COD depends ONLY on displacements at crack-face T6 nodes. Keep
     % interior displacement identically zero to avoid unnecessary
     % expensive whole-mesh exact-field generation for these COD tests.
-    ul=exact_williams_displacement_audit(xl(faceIDs,:), ...
+    ul=exact_williams_displacement_audit(xFace, ...
         testK(icase,1),testK(icase,2),mat.E,mat.nu,mat.ps, ...
         'UpperFaceIDs',find(faceSide(faceIDs)==1), ...
         'LowerFaceIDs',find(faceSide(faceIDs)==-1));
@@ -241,9 +253,13 @@ if opt.RunEDI
         end
         % Full-mesh exact field needed only for the EDI extraction.
         % This is EVALUATION of analytical fields, not an FEM solve.
-        uu=exact_williams_displacement_audit(xl,j==1,j==2, ...
+        xEval=xl;
+        xEval(faceIDs,2)=0; % same roundoff-only branch-cut evaluation
+        uu=exact_williams_displacement_audit(xEval,j==1,j==2, ...
             mat.E,mat.nu,mat.ps, ...
             'UpperFaceIDs',upper,'LowerFaceIDs',lower);
+        clear xEval
+        % Form global displacements before entering the existing EDI.
         uv=reshape(uu,2,[]).'*R.';
         clear uu
         synthetic=reshape(uv.',[],1);
