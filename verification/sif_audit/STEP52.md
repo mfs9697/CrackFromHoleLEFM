@@ -34,3 +34,33 @@ disp(R52.summary);
 The driver reads the existing `verification/step48_refined_matched_edi_comparison_small_data.mat` plus the saved original/refined FEM checkpoints referenced by that file. It uses the existing checked `native_COD_audit.m` and `exact_williams_displacement_audit.m`. It saves only compact summaries in `verification/step52_interpolated_reflection_small_data.mat`. **No new FEM solve, geometry creation, mesh generation or EDI integration** is performed.
 
 Send the complete MATLAB output, especially the affine and directly evaluated exact-field self-checks, mirror-query coverage and normalized *actual versus prescribed-field* parity values. Only after interpreting this genuinely same-physical-point test should we commit to the much larger development and separately approved FEM solution on an exactly reflection-paired mesh.
+
+
+## Measured Step 52: all reflected queries located; reduced mesh-node-sampled parity on refinement
+
+The investigator completed the Step52 two-checkpoint MATLAB run **without any new mesh, FEM solve, EDI or polynomial fit**. Both affine and directly analytical controls passed, and **100%** of reflected lower spatial queries were found inside the saved T6 meshes. This resolves Step49's inability to compare noncoincident opposite-side nodal positions, but each mesh was still sampled at **its own upper T6 node coordinates**.
+
+| Field / region / parity | Original Step45 | Refined Step47 |
+| --- | ---: | ---: |
+| Number of off-face upper query points, COD tip disk | 30 (30 located) | 176 (176 located) |
+| Number of off-face upper query points, matched EDI annulus | 70 (70 located) | 342 (342 located) |
+| Max affine reflected-point T6 parity residual [m] | ~1.4e-17 | ~1.4e-17 |
+| Direct analytic pure-I reflected-point parity residual | 0 | 0 |
+| Actual FEM COD disk: RMS even ux / native opening | 4.7428e-4 | 1.2113e-4 |
+| Actual FEM COD disk: RMS gauge-corrected odd uy / native opening | 5.4888e-4 | 1.4879e-4 |
+| Actual FEM EDI annulus: RMS even ux / native opening | 1.3587e-4 | 7.2582e-5 |
+| Actual FEM EDI annulus: RMS gauge-corrected odd uy / native opening | 1.0913e-4 | 6.2692e-5 |
+| Nodal exact pure-I COD disk: RMS even ux / pure-I opening | 6.5483e-4 | 1.1051e-4 |
+| Nodal exact pure-I COD disk: RMS gauge-corrected odd uy / pure-I opening | 5.8234e-4 | 1.3444e-4 |
+| Nodal exact pure-I EDI annulus: RMS even ux / pure-I opening | 7.5261e-5 | 4.4385e-5 |
+| Nodal exact pure-I EDI annulus: RMS gauge-corrected odd uy / pure-I opening | 6.8307e-5 | 5.347e-5 |
+
+The actual FEM displacement-parity residual decreases in both sampled regions as the mesh is refined, **under this particular mesh-dependent sampling and each field's own opening normalization**. The nodally prescribed pure-I synthetic field exhibits the same broad decrease in parity RMS. Thus Step52 makes it plausible that near-tip spatial interpolation and discrete field asymmetry are changing together with mesh refinement. However, **the actual EDI q changed in the opposite direction in magnitude** and reversed sign (Step48, `-8.76695e-6 → +2.24410e-5`). A smaller parity RMS is **not** a validated predictor of smaller EDI Mode-II contamination.
+
+**Important sampling limitation:** 30 vs 176 COD-disk locations and 70 vs 342 EDI-annulus locations are **different spatial point sets**. The prior Step52 reference opening denominator is also computed separately from each mesh's actual native face nodes. These results support a within-mesh physical-point parity test and an exploratory cross-mesh trend, **not** a formal at-identical-points convergence measurement or direct decomposition of actual FEM error.
+
+### Next smallest zero-solve control: two meshes at one shared physical sampling grid
+
+[Step 53](STEP53.md) replaces mesh-dependent upper-node locations with the **same predeclared polar-grid physical points on both meshes**. Every evaluation uses each saved mesh's own T6 interpolation at the exact same upper and reflected lower coordinates; parity RMS comparisons retain only spatial points successfully located **in both meshes**. It also uses the **same physical crack-face reference radii** on both solved fields and one shared FEM normal-opening normalization, while preserving separate pure-I analytical normalization. This reduces two important sampling confounders before we decide whether to construct and separately authorize a new *reflection-paired* FEM mesh.
+
+No further FEM solve, mesh generation, EDI integration, or wide radius sweep is proposed at this stage.
