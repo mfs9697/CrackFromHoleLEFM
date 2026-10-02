@@ -111,7 +111,7 @@ for i=1:2
         end
     end
     pairTol=max(1e-12,1e-8*s.a0);
-    [fw,native,rmsOpening]=local_face_parity( ...
+    [fw,rmsOpening]=local_face_parity( ...
         s.mesh,s.U,s.mat,s.crack,s.a0,pairTol);
     fan=local_tip_fan(s.mesh,s.crack,pairTol);
     off=cell(2,1);
@@ -176,8 +176,11 @@ for i=1:2
         row=row+1;
         v=results{i}.off{region};
         mirrorMesh{row}=labels{i};
-        if region==1,mirrorRegion{row}='Tip disk'; ...
-        else,mirrorRegion{row}='EDI annulus';end
+        if region==1
+            mirrorRegion{row}='Tip disk';
+        else
+            mirrorRegion{row}='EDI annulus';
+        end
         nUpper(row)=v.nUpper;
         nLower(row)=v.nLower;
         nMatched(row)=v.matched;
@@ -234,7 +237,7 @@ save(saveFile,'R49'); % compact tables ONLY, no FEM displacement checkpoint
 fprintf('  Compact Step49 diagnostic saved at %s\n',saveFile);
 end
 
-function [F,~,openRMS]=local_face_parity(mesh,U,mat,crack,a0,tol)
+function [F,openRMS]=local_face_parity(mesh,U,mat,crack,a0,tol)
 % Reuse exact audited native face labeling, then bypass PCHIP since in both
 % measured meshes the two native radial grids coincide to roundoff.
 [~,~,diag]=native_COD_audit(mesh,U,mat,crack,8,true);
