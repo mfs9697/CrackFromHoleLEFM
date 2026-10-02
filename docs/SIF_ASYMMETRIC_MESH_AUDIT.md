@@ -1620,3 +1620,38 @@ These findings demonstrate that native COD and EDI each have good mesh-to-mesh s
 Created `verification/sif_audit/main_step36_cod_tip_window_audit.m`. It consumes only already-stored O33 and O34 native COD radius/apparent KI,KII vectors and their 16-point reference EDI pairs, checks fixed crack geometry/tip scale, bins actual (unextrapolated) pointwise ratios over physically specified radial bands, and recalculates COD intercepts on the exact original native node positions for lower cutoffs [0.02,0.04,0.06,0.08,0.10,0.12], upper bounds [0.16,0.20,0.30] and degrees 1/2. Ill-conditioned fits and windows with fewer than 10 native points (or 4*(degree+1), whichever larger) are skipped. Reports minimum actual fitted r/htip, polynomial basis conditioning, descriptive KII residual RMSE, and normalized difference from EDI. RMSE is not treated as FEM uncertainty. The plots display raw pointwise native COD ratio vs r/a0 and cutoff-sensitivity of intercept ratios, independently for two mesh levels; they do not select a preferred extrapolation. Saves only compact tables and PNG/FIG, without copying large mesh arrays. `O36=main_step36_cod_tip_window_audit(O33,O34);` requires no new solve or integral.
 
 Next decision point: compare the raw near-tip response and cutoff-induced intercept drift across both solved nested meshes, ideally inspect the already-saved Step-35 PNG too. If COD remains cutoff-sensitive but EDI stable, further annular mesh refinement is not automatically useful: the subsequent controlled study would vary the *immediate tip* resolution with otherwise fixed physical crack mouth, hole polygon, far-field boundary and tested annular resolution. Alternatively a full-field Williams coefficient fit on existing displacement fields may add a third method, but must be separately synthetic-field validated and not treated as exact. Independent NArc/pencil-mouth-width geometry sensitivity also remains necessary before interpreting the tiny positive KII as a physical kink.
+
+## Step 36 completed: native COD has stable outer near-tip profiles but the EDI/COD extrapolation gap survives
+
+The user successfully ran `O36=main_step36_cod_tip_window_audit(O33,O34);`, reusing two existing nested FEM fields and performing NO new FEM or EDI integration. Both steps have the same measured tip-edge length 0.0001080493 m, crack length 0.008 m, retained hole polygon and crack geometry. Reference 16-point FE-nodal EDI signed ratios: Step 33 +1.074627016e-4; Step 34 +1.075429253e-4.
+
+Median RAW pointwise apparent COD ratios (rather than extrapolated intercepts) by native crack-face distance bands are very similar across both nested meshes:
+
+| Native r/a0 band | Step 33 median apparent KII/KI | Step 34 median apparent KII/KI | Step-34 n real nodes |
+|---:|---:|---:|---:|
+| (0,.04) | 8.6636e-5 | 8.7549e-5 | 4 |
+| [.04,.08) | 8.2944e-5 | 8.3164e-5 | 3 |
+| [.08,.12) | 8.6077e-5 | 8.7076e-5 | 5 |
+| [.12,.20) | 8.8221e-5 | 8.8134e-5 | 12 |
+| [.20,.30) | 8.6286e-5 | 8.6156e-5 | 14 |
+
+The closest four points of Step 34 have an enormous *within-band* range +6.991e-5 to +1.2835e-4, straddling the EDI reference; do not interpret their median as a true asymptotic plateau. Farther native samples follow a fairly reproducible nonconstant spatial profile around ~8.3e-5 to ~8.8e-5 instead of approaching a stable +1.0754e-4 EDI level. Both meshes show similar behavior, so the current annulus refinement is not improving the near-tip COD profile.
+
+**COD cutoff results (Step 34, linear fits ending at r/a0=.30):** Starting at r_min/a0=.02 (minimum actual fitted r/htip=1.5816) gives COD ratio +8.4757e-5, 21.187% below EDI. r_min=.04 (r/htip=3.5946) gives +8.6599e-5, 19.475% below; r_min=.08 (r/htip=6.2284) gives +8.9248e-5, 17.012% below; r_min=.10 gives +9.0395e-5, 15.946% below; and r_min=.12 (r/htip=9.1547) gives +9.1550e-5, 14.872% below. Similar monotone shifts appear at Step 33. Excluding close nodes makes a *linear extrapolation from more distant data* closer to EDI but not necessarily more physical, because higher-order regular terms matter away from the true singular limit. Quadratic fits are systematically lower and show increasing condition numbers (e.g. ~467--2187 over narrow windows for Step 34), despite often small descriptive residual RMSE. Low fit RMSE is not a crack-tip error estimate or a physical uncertainty interval.
+
+**Interpretation:** EDI extraction now appears numerically convergent for the fixed FEM crack geometry, measured annulus sizes and present EDI weights, but an approximately 15%-31% model-dependent COD/EDI ratio difference remains. Do NOT report an exact nonzero kink angle. Two possible explanations requiring separate experiments are finite conventional-T6 resolution in the *immediate tip displacement field* and nonleading mixed-mode Williams terms/finite-window COD extrapolation. Existing data alone do not distinguish them. No Step-35 or Step-36 PNG was supplied for visual inspection, so this assessment refers strictly to the numerical logs.
+
+## Step 37 prepared: cheap, separated immediate-tip mesh-resolution test
+
+Added `verification/sif_audit/main_step37_tip_core_refinement_dryrun.m`, accepting O25 and the already solved O34, with no FEM solve. It applies the successfully tested conforming topology-aware T3 refiner to a *small disk* around the crack tip (default radius 1.2 mm, target longest edge 0.08 mm, one splitting pass) instead of again refining the large integration annuli. The original Stage-I mouth, retained hole boundary, sharp crack polyline, all original T3 node IDs, and distinct upper/lower crack-face node sets remain fixed. Default protected shell starts at radius 2.2 mm and extends to the existing largest EDI outer radius 6.4 mm. A STRONG GATE checks that all T3 triangle triples and original vertex IDs whose centroids lie inside that shell are **exactly the same before and after**; it additionally checks that all new vertices stay inside the protected radius and that original remote plate boundaries remain unchanged. This tests core tip resolution separately from outer EDI shell triangulation. Note that a small inner portion of the EDI integration annulus from r_inner=0.8 mm up to the protected-shell radius may still change: record that fact in subsequent EDI interpretation.
+
+The remaining dry-run gates require an actual measured tip-edge median decrease of at least 20%, maximum overall T3 triangle growth of 30% (a conservative memory proxy, not an absolute RAM guarantee), and additional independently classified T3 crack-face vertices on both faces. The helper retains element orientation/positive area and total original region area. The default plot shows EXACT before/after tip meshes at the same magnification, the EDI inner radius, targeted core radius and protected-shell circle and saves PNG/FIG files in the MATLAB current folder. MATLAB example:
+
+```matlab
+O37 = main_step37_tip_core_refinement_dryrun(O25,O34);
+disp(O37.meshStats)
+disp(O37.gates)
+O37.passed
+```
+
+Do **not** proceed to another large FEM solve until this geometry-only check passes and the actual node-growth and tip-size changes are inspected. The driver is committed and statically inspected but NOT MATLAB-tested. If the core refinement passes, the next implementation should use a low-memory solved-field checkpoint and compare EDI and COD on this tip-refined, unchanged-outer-shell mesh; it should not discard the expensive solved displacement field if postprocessing is interrupted.
