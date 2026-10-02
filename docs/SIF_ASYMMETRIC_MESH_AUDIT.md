@@ -1428,3 +1428,30 @@ A targeted verification driver, `verification/sif_audit/main_step31_full_annulus
 Stiffness assembly memory fix: the existing `stif_assem.m` allocated 5% of the formally dense ndof-by-ndof matrix separately for all three sparse-triplet arrays, even though exactly 144 triplets per T6 element are assembled. On the existing ~17,317-node T6 mesh, the old heuristic could allocate ~60 million entries PER array (over 1 GB across triplet storage alone). It is now replaced by exact `144*nElements` triplet preallocation, leaving the assembled mathematical stiffness unchanged but removing a severe quadratic RAM bottleneck before full-annulus refinement. This change still requires MATLAB runtime confirmation on the new solve.
 
 If EDI and native COD remain discrepant despite demonstrably denser annulus elements, do not intensify polynomial fitting indefinitely. Investigate the collapsed sharp-pencil crack geometry, temporary mouth-width sensitivity, FE equilibrium/conditioning and independent FE solution convergence with fixed retained-hole geometry. All Step-31 MATLAB outcomes are pending.
+
+
+## Step 31 results: apparent path independence on second global-Hmax mesh, NOT spatial convergence
+
+Step 31 completed locally. Fixed physical geometry: Stage-I fine mouth phi*=-1.560612778 deg (some raw output displays the periodic equivalent +358.439387222 deg), actual mouth [0.19998887220,-0.020817033905] m, a0=8 mm, theta=0 relative to the hole outward normal, retained hole polygon NArc=480, appended mouth half-shift 0.1 mm, fixed nominal Hmin=0.1963495 mm, Hgrad=1.20, and EDI common inner radius 0.8 mm. Both reference and changed-global-Hmax results used 16-point, FE-nodal-q signed interaction EDI and matched native-face COD fits.
+
+| Metric | Original global Hmax=7.853982 mm | Halved global Hmax=3.926991 mm |
+|---|---:|---:|
+| T6 nodes | 17317 | 30449 |
+| Actual tip-edge median | 0.1068554 mm | 0.1080493 mm |
+| EDI K_I at r_outer/a0=0.65 | 0.437423840 | 0.437792124 |
+| EDI K_II at r_outer/a0=0.65 | +4.26585e-6 | +4.79564e-5 |
+| EDI K_II/K_I at r_outer/a0=0.65 | +9.75221e-6 | +1.09542e-4 |
+| EDI K_II/K_I spread for r_outer/a0=[.50,.65,.80] | 1.1970e-4 | 4.8093e-7 |
+| Largest r_outer/a0=.8 annulus T3 max-edge median | 0.408204 mm | 0.436104 mm |
+| Largest annulus T3 max-edge p90 | 0.988812 mm | 1.098558 mm |
+| Largest annulus T3 count | 772 | 844 |
+
+The second FEM mesh has nearly perfectly domain-independent EDI, with signed KII/KI=[+1.0937849e-4,+1.0954152e-4,+1.0906059e-4] across EDI annuli. Native COD on that same second mesh switches from negative to positive and agrees on sign and scale: at r/a0=[0.04,0.30], linear COD KI=0.433164424, KII=+3.81025481e-5 (ratio +8.79632e-5); quadratic COD KI=0.430796326, KII=+3.44685957e-5 (ratio +8.00114e-5). The reference EDI KII of +4.79564e-5 is still about 26%-39% above those specific COD Mode-II magnitudes. The COD KI is consistently about 1%-1.6% below EDI KI, as in the baseline. The SIGN disagreement between COD and EDI present on the first mesh is gone for the second mesh, which is encouraging.
+
+HOWEVER the second mesh's tip edge is essentially unchanged, and its measured annulus element max-edge median INCREASES from 0.3984 to 0.4251 mm at the reference annulus and from 0.4082 to 0.4361 mm at the largest annulus. Its largest-annulus p90 also INCREASES from 0.9888 to 1.0986 mm, despite 17,317 -> 30,449 total T6 nodes. The extra mesh nodes were apparently generated mainly outside our immediate tip/EDI domain. Thus changing Hmax gave a different overall unstructured mesh and altered the numerical residual, NOT genuine monotone annulus refinement. Domain independence on one mesh can result from discretization-error cancellation and is not by itself a convergence certificate. Do NOT report any positive finite-length kink angle as physical yet. The present physical-scale conclusion is only that the crack launched along the local normal has a very small Mode-II contribution.
+
+### Reuse-capable Step 31 extension
+
+The same driver now accepts optional 'Prior',O31 with 'HmaxFactors',[1 2 4]. It validates the previous result's crack mouth/path length, full-domain Hmax scales, SIF radii/inner radius and cache shape; it reuses O25/O27 at factor1 and the previously completed O31.Cases{2} and O31 EDI at factor2, and therefore performs ONLY ONE fresh FE mesh/solve at factor4 (Hmax=1.963495 mm). It recomputes actual annulus mesh-size statistics and native COD fits for ALL three cases from the cached/new fields; the factor1 COD baseline has numerical equivalence checks against Step30. A new 'MEASURED ANNULUS REFINEMENT CHECK' table reports max-edge median and p90 ratios to factor1 plus a clearly labeled check of whether ALL three annuli actually achieved at least 10% smaller sizes in both metrics. A lower global Hmax alone must not be represented as effective local EDI refinement. The raw positive angle reporting is wrapped to [-180,180] deg for clarity; it does not move the mouth. Before running any larger parameter sweeps, inspect this third mesh's actual annulus statistics and EDI-vs-COD sign/magnitude reproducibility.
+
+If global Hmax factor4 still fails to reduce real annulus sizes, STOP changing global Hmax: introduce a controlled spatial-local refinement strategy (e.g. a verification-only targeted annulus sizing method), keep the Stage-I mouth and temporary-hole boundary fixed, and test true local convergence before considering mouth-width or polygon effects. If factor4 does reduce annulus sizes, compare its three EDI domains, COD fits and both previous global meshes; even agreement on factor2/factor4 does not automatically prove convergence of tiny signed KII without controlled geometry discretization and tip-zone refinements.
