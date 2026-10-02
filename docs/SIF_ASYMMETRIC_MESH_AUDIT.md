@@ -1572,3 +1572,28 @@ All three annuli exceed the prespecified 10% decrease in both statistics; the ex
 The Step-34 four-panel MATLAB visualization was created successfully and saved in the user's local repository verification directory as `step34_mesh_comparison.png`, `step34_mesh_comparison.fig`, and `step34_mesh_data.mat`. Those are **local user-generated files**, not GitHub-committed artifacts and not accessible for visual inspection in this session unless the user shares the PNG.
 
 **Next controlled computation:** `O34 = main_step34_second_nested_annulus_refinement(O25,O33,'DryRun',false,'PlotMesh',false);`. The `PlotMesh=false` option avoids regenerating the already-saved figure; the same deterministic nested mesh refinement and the one new FEM solve still execute. Review the actual solved tip-edge median again, all three fixed EDI domains, and COD windows before any physical interpretation of a nonzero kink angle.
+
+## Step 34 solved result: successive TRUE annular refinement stabilizes EDI, COD gap remains
+
+Step 34 was successfully solved locally on the nested Step-33 T3 baseline, with the second local-refinement target longest edge 0.21 mm, no physical crack/outer-boundary changes, and the exact measured tip-edge median unchanged at 1.0804930157e-4 m. New mesh: 37,361 T3 elements, 75,591 T6 nodes, and 134 independently classified T6 nodes per crack face (versus 76 per face previously). All three centroid-selected EDI annuli received actual reductions of 45.1%--48.5% in longest-edge medians and 45.2%--48.9% in p90 relative to Step 33.
+
+| Measure | Step 33 (39,909 T6) | Step 34 (75,591 T6) |
+|---|---:|---:|
+| Median tip edge, mm | 0.108049302 | 0.108049302 |
+| Reference EDI KI, r_outer/a0=0.65 | 0.437796431 | 0.437796779 |
+| Reference EDI KII | +4.70467872e-5 | +4.70819463e-5 |
+| Reference EDI KII/KI | +1.07462702e-4 | +1.07542925e-4 |
+| EDI KII/KI domain spread | 3.7026565e-8 | 7.4833006e-9 |
+| COD KI, native linear fit r/a0=[0.04,0.30] | 0.433193543 | 0.433642551 |
+| COD KII, same fit | +3.71276615e-5 | +3.75528099e-5 |
+| COD KII/KI, same fit | +8.570687e-5 | +8.659854e-5 |
+
+Under this second successive actual annular refinement, the reference EDI signed ratio changes by only +0.0747%, and the EDI integration-domain spread decreases by roughly another factor 4.95. The native COD linear ratio for the matched [0.04,0.30] fitting window changes by about +1.04%; native COD quadratic ratio over that interval changes from +7.770326e-5 to +7.822346e-5. The narrower [0.08,0.30] linear native COD ratio is almost unchanged: +8.925044e-5 -> +8.924817e-5. Both independently computed estimators continue to yield positive, weak local Mode II on this fixed geometry.
+
+The outstanding issue is the *cross-method systematic difference*: on Step 34, reference EDI KII=+4.70819463e-5 versus native linear COD KII=+3.75528099e-5 over [0.04,0.30], a 20.2% difference relative to EDI KII. The corresponding COD versus EDI KII/KI discrepancy is ~19.5% relative to EDI ratio. The COD KI intercept is about 0.95% below EDI KI in this window. Native COD uses a conventional finite-window polynomial extrapolation of an ordinary T6 displacement field without a singular quarter-point tip basis. Although EDI now appears stable across two truly nested refinement levels, stable integration-domain output does not validate a tiny kink: COD model-order/window dependence, finite tip resolution, and polygon/appendix-mouth-width effects remain unisolated. Do not present a physical nonzero kink angle or a high-precision signed SIF from these results alone.
+
+## Step 35 prepared: nearly cost-free native COD profile comparison, NO FEM solve
+
+Added verification/sif_audit/main_step35_cod_profile_compare.m to compare stored actual native face apparent KI and KII against tip distance for Step-33 and Step-34 **existing solved** fields; overlays their reference EDI horizontal levels at r_outer/a0=0.65 and tabulates all six matched fit windows/orders with real native-node counts and EDI-vs-COD discrepancy. No new FEM solves, EDI Gauss loops, synthetic points used in regression, or new heavy mesh copies. The visualization can reveal whether near-tip COD estimates approach a stable plateau and at what radii they diverge systematically from EDI. It cannot, by itself, determine which extraction method has the smaller physical bias.
+
+MATLAB call: O35=main_step35_cod_profile_compare(O33,O34); saves a compact _small_data.mat file containing only numeric COD/EDI results, plus a PNG and editable FIG for the profile comparison. To avoid all figures: add 'Plot',false. Use the visual and window sensitivity findings before deciding whether to invest in new heavy FEM solves testing the fixed Stage-I mouth, NArc resolution or appendix mouth half-shift.
