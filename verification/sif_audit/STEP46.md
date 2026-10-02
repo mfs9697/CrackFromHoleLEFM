@@ -59,9 +59,9 @@ With `FaceFactor=0.5`, `TipFactor=0.5` and fixed prescribed hole/crack geometry:
 
 The tip median decreased by ~51%, and the upper/lower element *counts* are equal, but count symmetry **does not demonstrate nodal reflection pairing**. The 0.04–0.30 COD window has seven native points, **one short of the driver's prespecified eight-node linear-fit minimum** and below the twelve-node quadratic minimum. The Step 46 gate `readyForOneRefinedFEMProposal=true` only recognizes mesh improvement; it does not mean the original COD fitting goals are met.
 
-### Next incremental experiment: face-only adjustment, still NO FEM solve
+### Completed follow-up: quarter-size face request, NO FEM solve
 
-Do not solve on the seven-point candidate yet. Hold the proposed tip setting at `TipFactor=0.5` and request denser crack-face meshing with `FaceFactor=0.25`. This changes only the *requested mesh sizes*, not the physical geometry, baseline `Npoly=240`, crack length, or FEM displacement checkpoint. The mesher can retriangulate other regions, so inspect the **achieved** tip radius and face sample count rather than assuming they are fixed.
+For the next documented trial, we held the proposed tip setting at `TipFactor=0.5` and requested denser crack-face meshing with `FaceFactor=0.25`. This changes only the *requested mesh sizes*, not the physical geometry, baseline `Npoly=240`, crack length, or FEM displacement checkpoint. The mesher can retriangulate other regions, so inspect the **achieved** tip radius and face sample count rather than assuming they are fixed.
 
 The existing preflight driver already supports these parameters; no MATLAB code change is required. From the local repository root:
 
@@ -79,3 +79,44 @@ disp(O46face.gates);
 Save to this distinct filename to retain the original half/half preflight result. The main comparison is whether the refined mesh reaches **at least eight native COD points** in 0.04–0.30 without sacrificing the measured tip improvement or the exact upper/lower radial match. Twelve points would also allow the original quadratic fitting threshold. If the two proposed meshes both lack adequate sampling, decide whether to undertake a more deliberate local crack-face mesh strategy; do not infer that an additional FEM solve would establish COD convergence.
 
 A later one-solve refined control would require a separate explicit authorization and an implementation that preserves the chosen mesh and its provenance. The present pilot remains mesh-only.
+
+## Investigator's second preflight: quarter face / half tip
+
+The investigator executed the previous documented mesh-only follow-up with `FaceFactor=0.25` and `TipFactor=0.5`, still using the exact original centered-hole `Npoly=240` geometry, horizontal crack length `a0=0.004 m`, and the previously saved Step45 baseline checkpoint. Automatic pure-geometry pencil-ID identification again used the established temporary-mesh fallback, which recovered edge IDs [64 65] and tip vertex 65. The freshly generated baseline T3 node coordinates reproduced the saved baseline **exactly** (maximum sorted-coordinate discrepancy 0 m; both 1,721 T3 / 3,640 T6 nodes).
+
+| Measured property | Baseline | Half-face/half-tip trial | Quarter-face/half-tip trial |
+| --- | ---: | ---: | ---: |
+| T3 triangles | 1721 | 1837 | 1961 |
+| T6 nodes | 3640 | 3884 | 4152 |
+| Tip median edge [m] | 0.00043375 | 0.00021079 | 0.00021708 |
+| `hTip/a0` | 0.10844 | 0.052697 | 0.054271 |
+| Tip-adjacent T3 upper/lower | 2 / 3 | 3 / 3 | 3 / 3 |
+| Native crack-face nodes, upper/lower | 12 / 12 | 22 / 22 | 36 / 36 |
+| Upper/lower face abscissa mismatch [m] | 0 | 0 | 0 |
+| COD nodes, `0.04–0.30 a0` | 4 | 7 | 9 |
+| COD nodes, `0.08–0.30 a0` | 3 | 6 | 8 |
+| COD nodes, `0.12–0.30 a0` | 2 | 4 | 6 |
+
+**Interpretation:** the newest mesh maintains approximately **half the baseline tip-edge median**, retains a 3/3 tip-adjacent *count* and matched opposite-face native abscissae, and now qualifies for the original **linear COD extrapolation** in both the widest `0.04–0.30` and middle `0.08–0.30` windows. It does **not** meet the prespecified twelve-point minimum for any **quadratic** COD fit, or the eight-point linear minimum for the narrowest `0.12–0.30` window. Identical upper/lower **counts** do not establish exact reflection symmetry, and no FEM stress/displacement results have been calculated for these candidate meshes.
+
+The local MATLAB `SavePath` argument used `fullfile(pwd,'verification',...)`. Because the investigator's MATLAB current folder was already `verification`, the resulting compact file was harmlessly saved under a **nested** `verification/verification` folder. In subsequent runs use `fileparts(O46face.baselineCheckpointPath)` for the actual verified output folder, independent of MATLAB's current folder.
+
+### Final proposed mesh-only check before considering a solve
+
+Hold the **nominal tip refinement unchanged** at `TipFactor=0.5` and request `FaceFactor=0.125` to test whether the widest window gains at least **12 actual native points** (per the prespecified quadratic threshold), while preserving a small measured tip median, upper/lower abscissa match and at least 8 samples in the middle window. PDE meshing may change the tip fan and elements outside the refined region: inspect the achieved topology; do not assume that nominal `TipFactor=0.5` preserves it.
+
+The existing driver already supports these settings, so **no new MATLAB code or GitHub pull** is needed:
+
+```matlab
+dataDir = fileparts(O46face.baselineCheckpointPath);
+O46face125 = main_step46_symmetric_mesh_preflight( ...
+    'FaceFactor',0.125, ...
+    'TipFactor',0.5, ...
+    'SavePath',fullfile(dataDir, ...
+        'step46_mesh_preflight_face0125_tip05.mat'));
+disp(O46face125.meshTable);
+disp(O46face125.gates);
+```
+
+Run this **mesh-only** trial once and return its complete output. Its default reported gate `readyForOneRefinedFEMProposal` permits further planning but **does not** imply that quadratic COD fits qualify. If the achieved twelve-point target is met without degrading mesh quality, stop preflight experiments and plan one explicitly authorized refined FEM solve on this *exact verified geometry and mesh recipe*. Preserve the selected mesh provenance. Later EDI comparison must use the same **absolute** annulus as the old actual-FEM baseline; do not silently recompute `r_inner=2*hTip` on the new mesh.
+
