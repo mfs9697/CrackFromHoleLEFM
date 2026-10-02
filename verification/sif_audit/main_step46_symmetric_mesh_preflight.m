@@ -254,6 +254,15 @@ tipIds=find(distance<=min(distance)+tol);
 near=tri(any(ismember(tri,tipIds),2),:);
 if isempty(near),error('step46:NoTipElements','Missing tip triangles.');end
 p1=P(near(:,1),:);p2=P(near(:,2),:);p3=P(near(:,3),:);
+% A collapsed-pencil T3 should remain nondegenerate. Reject a mesh that
+% could appear more refined numerically but would be invalid for FEM.
+v12=P(tri(:,2),:)-P(tri(:,1),:);
+v13=P(tri(:,3),:)-P(tri(:,1),:);
+area=0.5*abs(v12(:,1).*v13(:,2)-v12(:,2).*v13(:,1));
+if ~all(isfinite(area)) || min(area)<1e-18
+    error('step46:DegenerateCollapsedMesh', ...
+        'Collapsed mesh contains degenerate or invalid T3 elements.');
+end
 L=[hypot(p1(:,1)-p2(:,1),p1(:,2)-p2(:,2)); ...
    hypot(p2(:,1)-p3(:,1),p2(:,2)-p3(:,2)); ...
    hypot(p3(:,1)-p1(:,1),p3(:,2)-p1(:,2))];
