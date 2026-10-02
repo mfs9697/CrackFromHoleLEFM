@@ -24,7 +24,30 @@ Also, Step 18 specified FE-nodal weight but left the quadrature at the extractor
 
 No Step 45 files change the production SIF selector, Step 44's test driver, or the existing numerical result files.
 
-## First run (no FEM solve)
+## GitHub Desktop + one-command MATLAB workflow (recommended)
+
+The Step-45 code is merged into the **`sif-asymmetric-mesh-audit`** branch, not the production `main` branch. In GitHub Desktop, select the audit branch and **Fetch origin → Pull origin**. The `main_step45_local.m` script locates the repository itself, so the current MATLAB folder does not matter as long as the script is on the MATLAB path.
+
+From a MATLAB session with the repository on its path:
+
+```matlab
+main_step45_local
+```
+
+The script first runs the cheap no-solve guard test. It then reuses an existing identified checkpoint under `verification/step45_symmetric_theta0_solved.mat`, or the previously solved `O18` variable if still in the MATLAB workspace. It runs **only native COD**, prints the tip-side triangle counts, crack-face grid mismatch, pointwise COD bands, original-window linear/quadratic extrapolations and a proposed leakage gate. Send this complete output to the investigator before starting EDI.
+
+If neither a saved checkpoint nor `O18` exists, it prints a message and **does not run a FEM solve**. If an older Step-18 MAT file is available locally, load its `O18` variable, then rerun the same script. If no solved results can be recovered and the investigator explicitly authorizes **one** new symmetric control solve, run:
+
+```matlab
+STEP45_ALLOW_NEW_SOLVE = true;
+main_step45_local
+```
+
+This creates and immediately saves **exactly one** Npoly=240 horizontal zero-angle Stage-II field and then produces COD results. No Stage-I solve or full Step-18 angle sweep is performed. The existing recognized checkpoint is always reused on subsequent runs. Keep the large `verification/step45_symmetric_theta0_solved.mat` local; only report numerical results or share a compact result file when needed.
+
+**Do not run EDI until we have inspected the COD result.** The EDI phase remains a separate, opt-in call shown below.
+
+## Alternative manual first run (no FEM solve)
 
 ```matlab
 addpath(genpath(pwd));
