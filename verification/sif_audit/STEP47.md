@@ -23,45 +23,80 @@ This is sufficient to **stop further Step 46 mesh-parameter trials**, not to dec
 
 ## Precisely one additional FEM solve (separate, explicit user action)
 
-The new \`main_step47_local.m\` script reuses the local selected compact Step46 preflight data file \`verification/step46_mesh_preflight_face0125_tip05.mat\` and the saved *original* symmetric field \`verification/step45_symmetric_theta0_solved.mat\`. The defaults **cannot run a new solve**. If a recognized Step47 checkpoint exists, the script reuses it; otherwise, it requires explicit \`'AllowSolve',true\`.
+The new `main_step47_local.m` script reuses the local selected compact Step46 preflight data file `verification/step46_mesh_preflight_face0125_tip05.mat` and the saved *original* symmetric field `verification/step45_symmetric_theta0_solved.mat`. The defaults **cannot run a new solve**. If a recognized Step47 checkpoint exists, the script reuses it; otherwise, it requires explicit `'AllowSolve',true`.
 
 Before solving, it:
-1. Checks that the *selected* preflight really used \`FaceFactor=0.125\`, \`TipFactor=0.5\`, the correct polygonal hole and straight-crack geometry, all three quadratic COD windows, and the recorded tip/face gates.
+1. Checks that the *selected* preflight really used `FaceFactor=0.125`, `TipFactor=0.5`, the correct polygonal hole and straight-crack geometry, all three quadratic COD windows, and the recorded tip/face gates.
 2. Reconstructs the original centered right-half **baseline geometry and mesh** and compares sorted original T3 coordinates with the saved Step45 baseline.
 3. Reuses the **same geometry-description struct** and reidentified exact sharp-pencil geometry IDs to generate the specified manual edge/vertex-refined candidate. Verifies the observed T3/T6 counts, both crack-face counts, pointwise native COD radial sampling, tip-edge median, tip-triangle counts and all three fitting-window populations against the saved preflight.
 4. Rejects degenerate collapsed triangles. The saved preflight contains a compact radial profile and metrics, not the entire T3 connectivity; this reconstruction cannot claim bitwise equality to all unrecorded preflight interior triangles.
-5. Calls \`solve_cracked_LEFM\` **exactly once**, only after explicit approval and all checks, using the unchanged centered-plate tension/constraint/material configuration. Verifies that the solver's T3 coordinates and connectivity match the accepted generated candidate.
-6. Immediately saves **only** \`mesh,U,mat,crack,a0,meta\` to a unique local MAT checkpoint \`verification/step47_refined_symmetric_theta0_solved.mat\`. It does not overwrite the original Step45 checkpoint and does not save stiffness/stress arrays.
+5. Calls `solve_cracked_LEFM` **exactly once**, only after explicit approval and all checks, using the unchanged centered-plate tension/constraint/material configuration. Verifies that the solver's T3 coordinates and connectivity match the accepted generated candidate.
+6. Immediately saves **only** `mesh,U,mat,crack,a0,meta` to a unique local MAT checkpoint `verification/step47_refined_symmetric_theta0_solved.mat`. It does not overwrite the original Step45 checkpoint and does not save stiffness/stress arrays.
 7. Runs the **same native COD postprocessor** used in Step45 and presents all preset linear/quadratic fit windows. **No EDI is run in this first refined-field step.** A rerun reuses the recognized checkpoint rather than solving again.
 
-If the selected preflight file was saved elsewhere, supply its actual path using \`'PreflightFile',someAbsolutePath\`. The default above matches the investigator's latest successfully reported preflight path.
+If the selected preflight file was saved elsewhere, supply its actual path using `'PreflightFile',someAbsolutePath`. The default above matches the investigator's latest successfully reported preflight path.
 
-After pulling \`sif-asymmetric-mesh-audit\` through GitHub Desktop, the default is a zero-solve safety check:
+After pulling `sif-asymmetric-mesh-audit` through GitHub Desktop, the default is a zero-solve safety check:
 
-\`\`\`matlab
+```matlab
 addpath(genpath(pwd));
 [P47,O47] = main_step47_local();
-\`\`\`
+```
 
 When the investigator **explicitly approves spending one refined FEM solve**, use:
 
-\`\`\`matlab
+```matlab
 [P47,O47] = main_step47_local('AllowSolve',true);
 disp(O47.fitTable);
 disp(O47.CODgates);
-\`\`\`
+```
 
 The second command may require MATLAB time for the actual single FEM solution. **Do not run it merely to inspect this report.** The code has been statically reviewed in GitHub, but numerical execution on the selected mesh has not yet been verified in MATLAB.
 
 ## How to compare results after that run
 
-First compare the **signed** COD \`KII/KI\` obtained with the same linear/quadratic degrees across all three windows. A fitted value below \`1e-6\` at one window is not enough; examine consistency and residuals. Do not choose the fit that happens to be closest to zero.
+First compare the **signed** COD `KII/KI` obtained with the same linear/quadratic degrees across all three windows. A fitted value below `1e-6` at one window is not enough; examine consistency and residuals. Do not choose the fit that happens to be closest to zero.
 
 Only after reviewing the COD results should we choose whether to perform a small 16-point FE-nodal EDI analysis. If we compare refined and original FEM fields, **keep the exact same absolute EDI integration radii**:
 
-- \`r_outer/a0 = [0.50 0.65 0.80]\`, as in Step45.
-- \`r_inner\` must match the original saved Step45 value \`0.0008675...\` m, NOT the smaller automatic \`2*hTip\` calculated from the newly refined mesh.
+- `r_outer/a0 = [0.50 0.65 0.80]`, as in Step45.
+- `r_inner` must match the original saved Step45 value `0.0008675...` m, NOT the smaller automatic `2*hTip` calculated from the newly refined mesh.
 
-The original Step45 EDI result at \`0.65\` was \`KII/KI=-8.766949318e-6\`; this is an **observed coarse-control residual**, not a transferable error estimate for the refined symmetric solution or asymmetric physical crack. Start with **one** matched EDI domain after COD interpretation, not all three by default. The Step45 postprocessor accepts the Step47 checkpoint's backward-compatible case marker and uses a separate \`step47_refined_symmetric_field_leakage\` cache prefix.
+The original Step45 EDI result at `0.65` was `KII/KI=-8.766949318e-6`; this is an **observed coarse-control residual**, not a transferable error estimate for the refined symmetric solution or asymmetric physical crack. Start with **one** matched EDI domain after COD interpretation, not all three by default. The Step45 postprocessor accepts the Step47 checkpoint's backward-compatible case marker and uses a separate `step47_refined_symmetric_field_leakage` cache prefix.
 
 **Stopping rule:** no further FEM solves or extensive EDI integration until these refined-COD and a deliberately chosen matched-EDI result are independently reviewed.
+
+
+## Investigator's measured Step 47: refined FEM solved, COD evaluated
+
+The investigator explicitly authorized and executed **exactly one** additional symmetric Stage-II FEM solution using the previously selected `FaceFactor=0.125`, `TipFactor=0.5` recipe. The script verified the achieved mesh before solving: **2,391 T3 triangles, 5,054 T6 nodes, hTip=0.000135346748 m (`hTip/a0=0.0338367`), 72 native nodes on each crack face with mismatch `2.77556e-17 m`, 3/3 tip-adjacent triangles, and 19/16/13 native samples in the three predefined COD windows**. The original centered-hole geometry and horizontal crack were unchanged. The refined solution was saved separately at `verification/step47_refined_symmetric_theta0_solved.mat`; no EDI was run.
+
+All **six** original linear/quadratic COD fits could now be evaluated, but their signed `KII/KI` intercepts differed considerably:
+
+| COD window, r/a0 | Native samples | Linear signed KII/KI | Quadratic signed KII/KI |
+| ---: | ---: | ---: | ---: |
+| 0.04–0.30 | 19 | -2.9487e-4 | -6.2706e-4 |
+| 0.08–0.30 | 16 | -3.7903e-5 | +1.9368e-4 |
+| 0.12–0.30 | 13 | -1.2246e-4 | -2.1741e-4 |
+
+The `CODgates` result is `evaluated=true, passed=false, maxAbsRatio=6.27056963e-4` versus the **proposed** `1e-6` verification target. Unlike the coarse Step45 COD test, this is an actually **evaluated failure**. The quadratic fit in the middle window even changes the sign. The smallest Mode-II residuals from the narrowest window are **not** proof of an accurate zero-SIF intercept; fitting the apparent SIFs with ordinary unweighted `polyfit` does not enforce reflection symmetry or produce an uncertainty estimate.
+
+Pointwise median native COD ratios by radial band are `-1.1755e-3` (0–0.04, only 2 samples), `-4.9558e-4` (0.04–0.08, 3 samples), `-7.0878e-5` (0.08–0.12, 3 samples), `-7.9394e-5` (0.12–0.20, 6 samples), `-5.0657e-5` (0.20–0.30, 7 samples). The near-tip bands and resulting extrapolations therefore remain sensitive to nonuniform numerical Mode-II signals despite sufficient sampling counts. The refined mesh's equal 3/3 tip-triangle *counts* do **not** establish exact mesh reflection symmetry.
+
+**Interpretation:** COD now detects a strongly window/degree-dependent apparent tangential opening in the actually solved symmetric FEM field. This does not validate any extrapolated value as a physical `KII` (the continuum control must have `KII=0`), nor does it quantify error in a different, finer asymmetric crack geometry. Potential contributors include non-reflection-paired mesh details, the actual FEM displacement field near a singularity, higher-order fields and polynomial-extrapolation sensitivity.
+
+## Next approved small diagnostic: one matched same-field EDI, zero FEM solves
+
+The new `main_step48_refined_matched_edi.m` driver loads the **already saved Step45 baseline EDI result** and the **already saved Step47 refined FEM checkpoint**. It obtains the exact original **absolute** inner radius for the `r_outer/a0=0.65` domain directly from the saved baseline result, rather than recomputing it from the smaller refined `hTip`. It verifies the selected geometry, mesh provenance, endpoint/checkpoint identity and admissible annulus, then invokes the unchanged **16-point FE-nodal EDI** for **only this one domain**. It prints a matched original/refined table and caches its results separately.
+
+After pulling `sif-asymmetric-mesh-audit` in GitHub Desktop, run from MATLAB:
+
+```matlab
+addpath(genpath(pwd));
+R48 = main_step48_refined_matched_edi();
+disp(R48.comparison);
+```
+
+The script generates **no new mesh or FEM solution**, and leaves the original and refined displacement checkpoints intact. It deliberately repeats the inexpensive native COD diagnostic while invoking EDI only at 0.65. Send the full MATLAB output before deciding whether to evaluate further EDI domains or to introduce a reflection-paired mesh test. Although both fields share the same physical problem and exact integration annulus, retriangulation outside the crack-tip neighborhood is possible, so the difference is an observed **mesh/field sensitivity**, not a cleanly isolated crack-tip-only error or a correction transferable to the refined asymmetric case.
+
+**Current status:** one refined FEM solution is completed, all six COD fits are evaluable but discordant, and the matched refined-field EDI has **not yet been computed**.
