@@ -116,11 +116,11 @@ The exact prescribed pure-I COD self-check on **72 native crack-face nodes** rec
 | --- | ---: | ---: |
 | Actual solved FEM signed `KII/KI` | -8.766949318e-6 | +2.244103310e-5 |
 | Prescribed exact pure-I **nodal** Williams field signed `KII/KI` | ≈-3.88687e-5 | ≈+3.37937e-5 |
-| Prescribed exact pure-I Williams field evaluated directly **at Gauss points** | ≈-1.147788e-7 | **NOT YET MEASURED** |
+| Prescribed exact pure-I Williams field evaluated directly **at Gauss points** | ≈-1.147788e-7 | **+6.9597e-10 (measured Step51)** |
 
 **Finding:** the exact-nodal field is physically pure Mode I, so its nonzero extracted Mode II is numerical. It changes sign between exactly the same two meshes as the actual-FEM EDI result does. This is strong evidence of mesh-dependent **exact-nodal interpolation/EDI contamination** with the same directional change as the FEM signal, especially since both exact nodal fields passed analytical COD self-checks. However, **sign co-variation does not establish what fraction of the actual FEM residual was caused by this mechanism**. The exact nodal test isolates a *prescribed leading Williams field*, not the numerically computed equilibrium displacement (including mesh-dependent higher-order behavior). Its leakage is ≈4.43× the coarse actual FEM residual and ≈1.51× the refined actual FEM residual in magnitude. These are descriptive ratios, **not correction coefficients**. The refined native actual-FEM tangential crack-face jump remains negative over the main fit windows while its EDI ratio is positive: direct opening ratios and EDI-extracted crack-tip SIFs are different estimands.
 
-### Next single, matched no-solve test: exact Williams **Gauss-point** replay on the refined mesh
+### Completed single matched no-solve test: exact Williams **Gauss-point** replay on the refined mesh
 
 The **existing** `main_step45c_exact_gauss_isolation` driver accepts the Step50 `R50` output and its one measured `r_outer/a0=0.65` domain. It evaluates the exact pure-I Williams actual field *directly at Gauss points* (diagnostic `AnalyticActualK=[1,0]`), while keeping the same refined T6 mesh, same physical absolute annulus, FE-nodal-q weighting, 16-point integration, elasticity, and auxiliary mode convention. This leaves only the nodal-versus-direct-Gauss representation changed within the prescribed-field test. It performs **ONE EDI integral**, no FEM solve or mesh generation. The historical coarse-mesh Step45c at the same annulus returned signed leakage ≈`-1.147788e-7`.
 
@@ -144,3 +144,16 @@ R50 = Out;
 ```
 
 **Interpretation rule:** If refined exact-Gauss leakage is much smaller than refined exact-nodal leakage, the mesh-dependent exact-nodal interpolation mechanism is demonstrated on **both** symmetric meshes. If it remains comparable on the refined mesh, investigate refined FE-nodal q/quadrature or analytical/convention differences before inferring interpolation dominance. Neither result validates an error correction or uncertainty bound for the separate much finer asymmetric tiny Mode-II calculation.
+
+
+## Investigator's measured Step 51: exact Gauss-point control on refined T6 mesh
+
+The investigator completed the prepared **no-solve** Step51 replay on the same saved 5,054-node selected refined symmetric T6 mesh, at the **exact** previously matched absolute annulus (`r_inner=0.00086750243077 m`, `r_outer/a0=0.65`), with the same FE-nodal q and 16-point integration.
+
+The analytical actual field was evaluated **directly at Gauss points**, bypassing T6 interpolation of prescribed nodal exact Williams displacements. It recovered **`KI=1` at displayed precision**, **`KII=+6.959687749e-10`** and therefore signed `KII/KI≈+6.9597e-10`, relative to the same-mesh prescribed **exact-nodal** result `KI=1.000061439`, `KII=+3.379579752e-5`, signed `KII/KI≈+3.37937e-5`.
+
+The exact-nodal → exact-Gauss reduction in apparent spurious Mode II is approximately **48,600×** on the refined mesh. On the original coarse mesh, the analogous measured reduction at the same annulus was **~339×** (`-3.88687e-5 → -1.147788e-7`). This establishes that **ordinary T6 interpolation of the prescribed singular leading Williams field** is sufficient to generate mesh-dependent, sign-changing artificial Mode II in the exact-nodal EDI replay, whereas direct analytical Gauss-point evaluation of that same field produces extremely small leakage on both meshes.
+
+**Important distinction:** the original and refined actual *computed FEM* EDI ratios (`-8.76695e-6` and `+2.24410e-5`) also change sign, but this co-variation is not a numerical decomposition of the computed-field error. Prescribed analytical leading Williams fields and actual solved elastic fields are different inputs, and the exact-Gauss diagnostic shares analytical conventions with the auxiliary fields; it is **not** an independent validation of physical SIF accuracy or a transferable correction to the asymmetrically cracked plate's very small `KII`.
+
+The matched prescribed-field EDI testing is complete for both symmetric meshes. Additional exact-field radius sweeps are not justified at present. Proceed instead to [Step 52: interpolated reflected-point parity](STEP52.md) on the two ALREADY SAVED actual FEM fields, with an affine-field interpolation self-check and synthetic exact pure Mode-I interpolation control. Do **not** build or solve a new FEM mesh yet.
