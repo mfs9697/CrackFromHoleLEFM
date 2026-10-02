@@ -81,7 +81,7 @@ O45 = main_step45_symmetric_field_leakage(P45, ...
 disp(O45.EDI.table);
 ```
 
-Note that the latter call changes the EDI radius list, so it uses a **different progress-cache key**; rename the previous `step45_symmetric_field_leakage_edi_progress.mat` before changing the list or start with all three if that is the planned experiment. This avoids unknowingly mixing completed radii across studies.
+The EDI progress cache is keyed by the saved checkpoint and each exact pair `(r_outer,r_inner)` together with the fixed 16-point FE-nodal method. Extending the radius list reuses previously computed matching domains; changing the checkpoint or numerical method is rejected. A changed inner radius for the same outer radius is tracked as a **separate** domain.
 
 The default inner radius matches the Step-18 geometric rule `max(0.1*r_outer, 2*hTip)` to ensure the domain is admissible. Quadrature is explicitly 16-point and `StoreGPDiagnostics=false`. Results are stored after **each** completed radius, allowing interruption and resumption with identical settings.
 
