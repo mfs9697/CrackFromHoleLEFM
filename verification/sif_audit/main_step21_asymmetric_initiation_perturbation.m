@@ -18,7 +18,7 @@ function Out=main_step21_asymmetric_initiation_perturbation(O20,varargin)
 %   O21=main_step21_asymmetric_initiation_perturbation(O20);
 
 ip=inputParser;
-addParameter(ip,'PhiOffsetsDeg',[-1,-0.5,0,0.5,1], ...
+addParameter(ip,'PhiOffsetsDeg',[-3,-1.5,0,1.5,3], ...
     @(v)isnumeric(v)&&isvector(v)&&all(isfinite(v)));
 addParameter(ip,'Plot',true,@(v)islogical(v)||isnumeric(v));
 parse(ip,varargin{:});
