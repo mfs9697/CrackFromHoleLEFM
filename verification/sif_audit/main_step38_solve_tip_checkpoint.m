@@ -68,7 +68,7 @@ end
 oldTip=O37.meshStats.old_tip_h(1);
 tipExpected=O37.meshStats.refined_tip_h(1);
 if abs(oldTip/O34.hTipNew-1)>1e-9 || ...
-        abs(tipExpected/oldTip-0.5)>0.2
+        (1-tipExpected/oldTip)<O37.settings.MinTipReduction
     error('step38:TipScaleMismatch', ...
         'Step-37 measured tip reduction is inconsistent with Step 34.');
 end
@@ -134,17 +134,16 @@ end
 [folder,~,~]=fileparts(checkpointPath);
 if ~isempty(folder)&&exist(folder,'dir')~=7,mkdir(folder);end
 % Protect an existing good checkpoint from partial writes/interruption.
-tempPath=[checkpointPath '.incomplete'];
+tempPath=[checkpointPath '.incomplete.mat'];
 if exist(tempPath,'file')==2
     delete(tempPath);
 end
 try
     save(tempPath,'mesh','U','mat','crack','baseline', ...
         'actualTip','a0','-v7.3');
-    if exist(checkpointPath,'file')==2
-        delete(checkpointPath); % only when Overwrite=true
-    end
-    [ok,msg]=movefile(tempPath,checkpointPath);
+    % Move the complete file into place. Avoid deleting an old checkpoint
+    % BEFORE a complete replacement is available.
+    [ok,msg]=movefile(tempPath,checkpointPath,'f');
     if ~ok
         error('step38:MoveCheckpoint','%s',msg);
     end
