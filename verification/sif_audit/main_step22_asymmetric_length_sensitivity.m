@@ -11,7 +11,7 @@ function Out=main_step22_asymmetric_length_sensitivity(O20,varargin)
 %   - one independent Npoly=480 Stage-I solve with c=3 peak fitting;
 %   - one NEW cracked FEM solve per short-crack length;
 %   - signed FE-nodal interaction EDI on three domains per solved mesh;
-%   - Npoly=240,a0=0.004 Step-20 result as reference only.
+%   - Npoly=240,a0=0.004 Step-20 result as reference only.\n% Stage-II's existing full-domain geometry builder uses nArc=160 for its\n% retained-hole polygon, independent of Stage-I Npoly. This experiment\n% therefore refines the FE mesh, not the Stage-II hole polygon. Keep the\n% polygon fixed across a0 to isolate the crack-length response.
 %
 % IMPORTANT: this is a length-sensitivity experiment at theta=0, not a
 % local-symmetry root search. For any resolved nonzero KII, a separate
@@ -72,7 +72,7 @@ Cases=cell(nA,1);
 fprintf('\n============================================================\n');
 fprintf('SIF AUDIT STEP 22: ASYMMETRIC LENGTH SENSITIVITY\n');
 fprintf('============================================================\n');
-fprintf('  Npoly=%d | h_hole/R=%.6f deg\n',C.hole.npoly,rad2deg(hArc/C.hole.r));
+fprintf('  Npoly=%d | h_hole/R=%.6f deg\n',C.hole.npoly,rad2deg(hArc/C.hole.r));\nfprintf('  NOTE: Stage-II retained-hole arc = 160 points at every a0 (fixed geometry).\n');
 fprintf('  Stage-I phi refined = %+.8f deg\n',rad2deg(phiFine));
 fprintf('  Step-20 coarse phi  = %+.8f deg\n',rad2deg(phiCoarse));
 fprintf('  angular shift       = %+.8f deg\n',dPhiDeg);
