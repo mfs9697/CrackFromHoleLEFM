@@ -1191,3 +1191,20 @@ With the independent Stage-I peak hierarchy accepted, the next step is deliberat
 For each theta, the FE-nodal interaction EDI is evaluated at r_outer/a0=[0.50,0.65,0.80], with r_inner=max(0.1*r_outer,2*h_tip). The driver reports KI, signed KII, KII/KI, tip mesh scale, interpolated sign-change roots, global linear-fit roots, and EDI-domain root spread. No extra root-refinement mesh is generated in this step.
 
 The acceptance gate is that all three EDI domains exhibit the same KII(theta) sign trend and produce a consistent sign-change root inside the probe interval. If that condition is met, the next step will refine only the root neighborhood and then repeat the confirmed direction on Npoly=480.
+
+
+## Step 20 result: signed response consistent, but the asymmetric direction correction is unresolved
+
+Step 20 completed locally on 2026-10-02 for the asymmetric full-domain hole center [0.17,-0.02] m and Npoly=240. Stage I gives phi*=-1.57371281 deg, x*=[0.19998868461,-0.020823890498] m, boundary stress 3.71277044 at unit load, and lambda_ini=80.80219463. Seven freshly meshed Stage-II angles theta=[-4,-2,-1,0,1,2,4] deg were evaluated by signed FE-nodal EDI at r_outer/a0=[0.50,0.65,0.80].
+
+The angular dependence is extremely clean: at theta=-4 deg KII is about -0.01394 and at theta=+4 deg about +0.01392 (KI about 0.365); near theta=0 the local slope dKII/dtheta is about 0.203 per rad, and the three EDI domains agree closely. However KII(theta=0)=[+5.20e-6,+5.82e-6,+1.93e-6] for the three domains, corresponding to KII/KI=[+1.42e-5,+1.59e-5,+5.29e-6]. These are comparable to the centered Step-18 numerical symmetry floor. They do not establish a physically nonzero angle correction.
+
+The sign-change/interpolated roots are [-0.0014628,-0.0016402,-0.0005450] deg, mean -0.0012160 deg and domain spread 0.0010952 deg. The global seven-point linear fits instead yield [+0.00610,+0.00671,+0.00685] deg, illustrating that numerical ripple/nonlinearity dominates a correction this small. Neither should be reported as a measured physical kink angle; the supported interpretation is theta* approximately zero within current numerical resolution even though the Stage-I initiation point phi* is displaced by about -1.57 deg.
+
+This finding is physically plausible: the location of maximum boundary hoop stress is naturally close to a locally pure opening orientation for a short radial appendix. It must not be claimed as an exact theoretical identity for finite a0 without further study. Changing the geometry merely to force a nonzero correction would skip an important model verification question.
+
+## Step 21 prepared: controlled off-peak mouth perturbation
+
+`verification/sif_audit/main_step21_asymmetric_initiation_perturbation.m` reuses an existing O20 Stage-I solution and deliberately moves the crack mouth in hole polar angle by delta_phi=[-1,-0.5,0,+0.5,+1] deg around the Stage-I fitted maximum. Each location gets a fresh, normal-oriented full-domain cracked FEM solve, followed by signed EDI evaluation on the same three domain sizes as Step 20. The original Stage-I solution is not recomputed. A theta-correction proxy -KII(0)/(dKII/dtheta) is obtained from the independent Step-20 +/-1 deg sweep and explicitly labeled diagnostic only; a true root at the shifted mouth would require a fresh theta sweep.
+
+Step 21 checks two hypotheses: (1) the near-zero baseline KII is reproducible under an independent rebuilt solve, and (2) deliberately off-peak positions produce a clear signed KII response above the Step-18/20 noise floor. If both hold, the nearly normal Stage-II direction at the true Stage-I peak is a supported physical/numerical result, rather than evidence that the EDI extractor is insensitive to the actual initiation geometry. Only then should a0- or geometry-sensitivity experiments be considered.
