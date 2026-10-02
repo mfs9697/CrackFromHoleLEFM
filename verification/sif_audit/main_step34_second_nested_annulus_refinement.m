@@ -21,9 +21,8 @@ function O34=main_step34_second_nested_annulus_refinement(O25,O33,varargin)
 % FE-nodal q and 16-point Dunavant quadrature, then compare independent
 % native-face COD fits on the same solved displacement field.
 %
-% This test changes local spatial mesh resolution. Because some inner
-% adjacent triangles may also split, the measured tip-scale change must
-% be inspected. A tiny nonzero signed KII is not physical until local
+% This test changes local annular spatial resolution. We explicitly
+% reject any change in the measured tip scale BEFORE a new FEM solve. A tiny nonzero signed KII is not physical until local
 % mesh, geometry polygon, and appendix width are independently stable.
 %
 % Usage:
@@ -238,10 +237,10 @@ hNew=tip_edge_stats(S.mesh,crack.Pmid(end,:));
 fprintf('  refined T6 nodes=%d; median tip edge=%.8e m ', ...
     size(S.mesh.coord,1),hNew);
 fprintf('(baseline %.8e m)\n',base.hTip);
-if abs(hNew/base.hTip-1)>.20
-    warning('step34:TipScaleChanged', ...
-        ['Tip-edge scale changed by >20%%. The study is nested local ', ...
-         'refinement but does not isolate annulus from tip effects.']);
+if abs(hNew/base.hTip-1)>1e-9
+    error('step34:TipScaleChanged', ...
+        ['Solved mesh tip-edge median differs from the invariant ', ...
+         'pre-solve T3 value; this is not annulus-only refinement.']);
 end
 
 mat=S.mat;
@@ -335,7 +334,7 @@ fprintf(['Interpretation: this test ACTUALLY subdivides elements around ', ...
     'stabilize. Near-zero sign is not yet certified.\n']);
 
 if logical(opt.Plot)
-    figure('Name','Step33 paired annulus refinement','Color','w');
+    figure('Name','Step34 successive nested annulus refinement','Color','w');
     hold on;box on;grid on;
     plot(rRat,qOld,'-o','LineWidth',1.2, ...
         'DisplayName','first nested local mesh');
