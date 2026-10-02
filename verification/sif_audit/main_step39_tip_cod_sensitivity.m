@@ -65,6 +65,7 @@ qEDI=[O38.baselineKII(jRef)/O38.baselineKI(jRef); ...
 r={O38.baselineNativeR(:),O38.nativeR(:)};
 K={O38.baselineNativeApparent,O38.nativeApparent};
 tipSize=[O38.baselineTip;O38.refinedTip];
+stepIds=[34;38];
 if any(tipSize<=0)||abs(tipSize(2)/tipSize(1)-0.5)>0.2
     warning('step39:TipChange', ...
         'The measured tip-size change differs from the 50%% audit design.');
@@ -100,7 +101,7 @@ for im=1:2
                 pII=polyfit(ab,Y(ids,2),d);
                 ki=pI(end);kii=pII(end);
                 n=n+1;
-                results(n,:)=[im+33,lo,hi,d,numel(ids), ...
+                results(n,:)=[stepIds(im),lo,hi,d,numel(ids), ...
                     min(r{im}(ids))/tipSize(im),ki,kii,kii/ki, ...
                     100*(qEDI(im)-kii/ki)/qEDI(im), ...
                     sqrt(mean((polyval(pII,ab)-Y(ids,2)).^2)),c];
@@ -124,7 +125,7 @@ for im=1:2
         ix=x>=bands(ib,1)&x<bands(ib,2);
         if nnz(ix)<2,continue;end
         k=k+1;
-        br(k,:)=[im+33,bands(ib,:),nnz(ix), ...
+        br(k,:)=[stepIds(im),bands(ib,:),nnz(ix), ...
             median(y(ix)),min(y(ix)),max(y(ix)), ...
             min(r{im}(ix))/tipSize(im)];
     end
@@ -169,12 +170,12 @@ if opt.Plot
 
     ax=nexttile(tl);hold(ax,'on');grid(ax,'on');
     for im=1:2
-        sel=select(select.step==im+33,:);
+        sel=select(select.step==stepIds(im),:);
         if isempty(sel),continue;end
         if im==1,sty='-o';else,sty='-s';end
         plot(ax,sel.lower_r_over_a0,sel.ratio_COD,sty, ...
             'LineWidth',1.2, ...
-            'DisplayName',sprintf('Step %d linear COD',im+33));
+            'DisplayName',sprintf('Step %d linear COD',stepIds(im)));
     end
     yline(ax,qEDI(1),':','DisplayName','Step 34 EDI');
     yline(ax,qEDI(2),'--','DisplayName','Step 38 EDI');
@@ -193,8 +194,8 @@ if opt.Save
     prefix=char(opt.SavePrefix);
     [folder,~,~]=fileparts(prefix);
     if ~isempty(folder)&&exist(folder,'dir')~=7,mkdir(folder);end
-    compact=rmfield(O39,{'figure'});
     O39.paths.mat=[prefix '_small_data.mat'];
+    compact=rmfield(O39,{'figure'});
     save(O39.paths.mat,'compact');
     if opt.Plot
         O39.paths.png=[prefix '.png'];
