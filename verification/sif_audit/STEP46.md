@@ -44,3 +44,38 @@ The existing local checkpoint is expected at `verification/step45_symmetric_thet
 Send the complete MATLAB log, particularly the **three mesh rows**, crack-face sampling, median `hTip/a0` and upper/lower tip-triangle counts. The printed `gates.readyForOneRefinedFEMProposal` is a *preflight criterion*, not authorization for the solve.
 
 Do not generate another FEM solution yet. After interpreting the mesh-only results, decide whether the proposed local changes meaningfully improve both the tip region and native COD sampling. A subsequent explicitly authorized one-solve Stage-II control would need to use the verified proposed mesh and match an EDI integration annulus to the baseline (e.g., reusing the **exact saved** original `r_inner`, not inadvertently recomputing `2hTip`).
+
+
+## Investigator's first mesh-only results: half face and half tip request
+
+The investigator executed the original zero-solve Step 46 pilot on the saved Step 45 symmetry-control checkpoint. Both the original and regenerated baseline meshes were **exactly identical in sorted T3 coordinates (maximum discrepancy 0 m)**, including 1,721 T3 and 3,640 T6 nodes. Sharp-pencil identification required the existing temporary-background-mesh fallback; it successfully recovered tip vertex 65 and edges 64, 65, the same geometry used for the refined request.
+
+With `FaceFactor=0.5`, `TipFactor=0.5` and fixed prescribed hole/crack geometry:
+
+| Mesh | T3 | T6 | median tip edge [m] | hTip/a0 | tip T3 above/below | native upper/lower face points | max face abscissa mismatch [m] | COD points in 0.04–0.30 / 0.08–0.30 / 0.12–0.30 |
+| --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
+| Saved and regenerated baseline | 1721 | 3640 | 0.00043375 | 0.10844 | 2 / 3 | 12 / 12 | 0 | 4 / 3 / 2 |
+| Proposed half/half mesh | 1837 | 3884 | 0.00021079 | 0.052697 | 3 / 3 | 22 / 22 | 0 | 7 / 6 / 4 |
+
+The tip median decreased by ~51%, and the upper/lower element *counts* are equal, but count symmetry **does not demonstrate nodal reflection pairing**. The 0.04–0.30 COD window has seven native points, **one short of the driver's prespecified eight-node linear-fit minimum** and below the twelve-node quadratic minimum. The Step 46 gate `readyForOneRefinedFEMProposal=true` only recognizes mesh improvement; it does not mean the original COD fitting goals are met.
+
+### Next incremental experiment: face-only adjustment, still NO FEM solve
+
+Do not solve on the seven-point candidate yet. Hold the proposed tip setting at `TipFactor=0.5` and request denser crack-face meshing with `FaceFactor=0.25`. This changes only the *requested mesh sizes*, not the physical geometry, baseline `Npoly=240`, crack length, or FEM displacement checkpoint. The mesher can retriangulate other regions, so inspect the **achieved** tip radius and face sample count rather than assuming they are fixed.
+
+The existing preflight driver already supports these parameters; no MATLAB code change is required. From the local repository root:
+
+```matlab
+addpath(genpath(pwd));
+O46face = main_step46_symmetric_mesh_preflight( ...
+    'FaceFactor',0.25, ...
+    'TipFactor',0.5, ...
+    'SavePath',fullfile(pwd,'verification', ...
+        'step46_mesh_preflight_face025_tip05.mat'));
+disp(O46face.meshTable);
+disp(O46face.gates);
+```
+
+Save to this distinct filename to retain the original half/half preflight result. The main comparison is whether the refined mesh reaches **at least eight native COD points** in 0.04–0.30 without sacrificing the measured tip improvement or the exact upper/lower radial match. Twelve points would also allow the original quadratic fitting threshold. If the two proposed meshes both lack adequate sampling, decide whether to undertake a more deliberate local crack-face mesh strategy; do not infer that an additional FEM solve would establish COD convergence.
+
+A later one-solve refined control would require a separate explicit authorization and an implementation that preserves the chosen mesh and its provenance. The present pilot remains mesh-only.
