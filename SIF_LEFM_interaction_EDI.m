@@ -28,6 +28,8 @@ function [KI, KII, Aux] = SIF_LEFM_interaction_EDI(mesh, U, V, mat, domain, vara
 %   'Verbose'       true/false
 %   'WeightFunction' 'analytic_radial' (legacy audit behavior) or
 %                    'fe_nodal' (FE-consistent nodal q, default remains legacy)
+%   'QuadratureRule'  7 (legacy), 12 (degree 6), or 16 (degree 8)
+%                    Dunavant points; default 7 for backward compatibility.
 %
 % Outputs:
 %   KI, KII signed stress intensity factors
@@ -49,6 +51,8 @@ function [KI, KII, Aux] = SIF_LEFM_interaction_EDI(mesh, U, V, mat, domain, vara
         @(x)ischar(x) || (isstring(x) && isscalar(x)));
     addParameter(ip, 'AuxDerivativeScale', 1.0, ...
         @(x)isnumeric(x) && isscalar(x) && isfinite(x) && x>0);
+    addParameter(ip, 'QuadratureRule', 7, ...
+        @(x)isnumeric(x) && isscalar(x) && ismember(x,[7 12 16]));
     parse(ip, varargin{:});
 
     Kaux = ip.Results.AuxK;
@@ -169,7 +173,7 @@ function [KI, KII, Aux] = SIF_LEFM_interaction_EDI(mesh, U, V, mat, domain, vara
     %% ------------------------------------------------------------
     % 3. Quadrature
     %% ------------------------------------------------------------
-    [nip2, xip2, w2] = local_integr_T6();
+    [nip2, xip2, w2] = local_integr_T6(ip.Results.QuadratureRule);
 
     %% ------------------------------------------------------------
     % 4. Loop over elements and Gauss points
@@ -338,6 +342,7 @@ function [KI, KII, Aux] = SIF_LEFM_interaction_EDI(mesh, U, V, mat, domain, vara
     Aux.kappa = kappa;
     Aux.planeStrain = planeStrain;
     Aux.weightFunction = weightFunction;
+    Aux.quadratureRule = nip2;
     Aux.auxDerivativeScale = auxDerivativeScale;
     Aux.auxEpsMismatchI_median = local_median_finite(auxMismatchI);
     Aux.auxEpsMismatchI_max = local_max_finite(auxMismatchI);
@@ -642,38 +647,78 @@ end
 % Quadrature for T6 triangle
 % =========================================================================
 
-function [nip, xip, w] = local_integr_T6()
-% Simple 7-point Dunavant rule on reference triangle.
-% Weights sum to 1 for the parent triangle area convention used with DetJ/2.
+function [nip, xip, w] = local_integr_T6(rule)
+% Dunavant rules for reference triangle; weights sum to 1 (not 1/2),
+% consistent with dA=w*DetJ/2 in this EDI implementation.
+%
+% 7 points: degree 5, original repo implementation (unchanged).
+% 12 points: degree 6.
+% 16 points: degree 8.
+% Each group of three has barycentric permutations of (a,a,b);
+% each group of six has all barycentric permutations of (a,b,c).
 
-    nip = 7;
+if nargin<1,rule=7;end
+switch rule
+    case 7
+        nip=7;
+        xip=zeros(2,nip);
+        w=zeros(1,nip);
+        xip(:,1)=[1/3;1/3];
+        w(1)=0.225;
+        a1=0.059715871789770;
+        b1=0.470142064105115;
+        xip(:,2:4)=[a1 b1 b1;b1 a1 b1];
+        w(2:4)=0.132394152788506;
+        a2=0.797426985353087;
+        b2=0.101286507323456;
+        xip(:,5:7)=[a2 b2 b2;b2 a2 b2];
+        w(5:7)=0.125939180544827;
 
-    xip = zeros(2,nip);
-    w = zeros(1,nip);
+    case 12
+        xip=zeros(2,12);w=zeros(1,12);
+        a=0.249286745170910;b=0.501426509658179;
+        xip(:,1:3)=[a a b;a b a];
+        w(1:3)=0.116786275726379;
+        a=0.063089014491502;b=0.873821971016996;
+        xip(:,4:6)=[a a b;a b a];
+        w(4:6)=0.050844906370207;
+        a=0.310352451033784;
+        b=0.636502499121399;
+        d=0.053145049844817;
+        xip(:,7:12)=[a a b b d d;b d a d a b];
+        w(7:12)=0.082851075618374;
+        nip=12;
 
-    % centroid
-    xip(:,1) = [1/3; 1/3];
-    w(1) = 0.225;
+    case 16
+        xip=zeros(2,16);w=zeros(1,16);
+        xip(:,1)=[1/3;1/3];
+        w(1)=0.144315607677787;
+        a=0.170569307751760;b=0.658861384496480;
+        xip(:,2:4)=[a a b;a b a];
+        w(2:4)=0.103217370534718;
+        a=0.050547228317031;b=0.898905543365938;
+        xip(:,5:7)=[a a b;a b a];
+        w(5:7)=0.032458497623198;
+        a=0.459292588292723;b=0.081414823414554;
+        xip(:,8:10)=[a a b;a b a];
+        w(8:10)=0.095091634267285;
+        a=0.263112829634638;
+        b=0.728492392955404;
+        d=0.008394777409958;
+        xip(:,11:16)=[a a b b d d;b d a d a b];
+        w(11:16)=0.027230314174435;
+        nip=16;
 
-    a1 = 0.059715871789770;
-    b1 = 0.470142064105115;
-    w1 = 0.132394152788506;
-
-    xip(:,2) = [a1; b1];
-    xip(:,3) = [b1; a1];
-    xip(:,4) = [b1; b1];
-    w(2:4) = w1;
-
-    a2 = 0.797426985353087;
-    b2 = 0.101286507323456;
-    w2 = 0.125939180544827;
-
-    xip(:,5) = [a2; b2];
-    xip(:,6) = [b2; a2];
-    xip(:,7) = [b2; b2];
-    w(5:7) = w2;
+    otherwise
+        error('SIF_LEFM_interaction_EDI:BadQuadratureRule', ...
+            'QuadratureRule must be 7, 12, or 16.');
 end
-
+if any(w<=0) || abs(sum(w)-1)>1e-12 || ...
+        any(xip(:)<0) || any(sum(xip,1)>1+1e-12)
+    error('SIF_LEFM_interaction_EDI:InvalidQuadrature', ...
+        'Dunavant quadrature rule %d has invalid weights/nodes.',rule);
+end
+end
 
 % =========================================================================
 % Utility
