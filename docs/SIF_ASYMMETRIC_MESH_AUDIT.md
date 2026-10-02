@@ -1597,3 +1597,26 @@ The outstanding issue is the *cross-method systematic difference*: on Step 34, r
 Added verification/sif_audit/main_step35_cod_profile_compare.m to compare stored actual native face apparent KI and KII against tip distance for Step-33 and Step-34 **existing solved** fields; overlays their reference EDI horizontal levels at r_outer/a0=0.65 and tabulates all six matched fit windows/orders with real native-node counts and EDI-vs-COD discrepancy. No new FEM solves, EDI Gauss loops, synthetic points used in regression, or new heavy mesh copies. The visualization can reveal whether near-tip COD estimates approach a stable plateau and at what radii they diverge systematically from EDI. It cannot, by itself, determine which extraction method has the smaller physical bias.
 
 MATLAB call: O35=main_step35_cod_profile_compare(O33,O34); saves a compact _small_data.mat file containing only numeric COD/EDI results, plus a PNG and editable FIG for the profile comparison. To avoid all figures: add 'Plot',false. Use the visual and window sensitivity findings before deciding whether to invest in new heavy FEM solves testing the fixed Stage-I mouth, NArc resolution or appendix mouth half-shift.
+
+## Step 35 completed: stable native COD fitting differences on already solved nested meshes
+
+Step 35 MATLAB completed using 75 stored native face COD sample positions from Step 33 and 133 from Step 34, with NO new FEM solves, no EDI evaluation, and no resampled regression points. It saved the local user-side `step35_cod_profiles_small_data.mat`, `step35_cod_profiles.png` and `step35_cod_profiles.fig`; these are not automatically accessible or verified by GitHub until explicitly uploaded.
+
+The stored reference EDI ratios remain Step 33 +1.07462702e-4 and Step 34 +1.07542925e-4. All six matched native COD fits stayed positive on both nested mesh levels, with the following Step-34 comparison. `Gap` here means 100*(EDI ratio - COD ratio)/EDI ratio:
+
+| Native COD r/a0 interval | Fit polynomial degree | Native sample count Step 33 / Step 34 | Step-34 COD KII/KI | Gap versus Step-34 EDI |
+|---|---:|---:|---:|---:|
+| [0.04,0.20] | 1 | 12 / 20 | +8.257450e-5 | 23.217% |
+| [0.04,0.20] | 2 | 12 / 20 | +7.466079e-5 | 30.576% |
+| [0.04,0.30] | 1 | 19 / 34 | +8.659854e-5 | 19.475% |
+| [0.04,0.30] | 2 | 19 / 34 | +7.822346e-5 | 27.263% |
+| [0.08,0.30] | 1 | 16 / 31 | +8.924817e-5 | 17.012% |
+| [0.08,0.30] | 2 | 16 / 31 | +8.155917e-5 | 24.161% |
+
+These findings demonstrate that native COD and EDI each have good mesh-to-mesh stability in their current numerical definitions, but COD has substantial and *systematic fit-window/model-order dependence*. Excluding some closest face nodes reduces the gap for the same polynomial degree when the upper bound is fixed at 0.30 a0. This is compatible with near-tip conventional-T6 numerical bias, but does NOT prove that explanation: changing the lower cutoff also changes the strength of higher-order Williams terms and the conditioning/extrapolation distance. COD is an extrapolation toward the singular point rather than a direct point measurement. Do not declare any fit a best estimate simply because it approaches EDI. The saved pointwise COD figure was not provided in chat, so no claims are made about its actual visual appearance or existence of a plateau.
+
+## Step 36 prepared: native COD lower-cutoff diagnostic with no additional FEM cost
+
+Created `verification/sif_audit/main_step36_cod_tip_window_audit.m`. It consumes only already-stored O33 and O34 native COD radius/apparent KI,KII vectors and their 16-point reference EDI pairs, checks fixed crack geometry/tip scale, bins actual (unextrapolated) pointwise ratios over physically specified radial bands, and recalculates COD intercepts on the exact original native node positions for lower cutoffs [0.02,0.04,0.06,0.08,0.10,0.12], upper bounds [0.16,0.20,0.30] and degrees 1/2. Ill-conditioned fits and windows with fewer than 10 native points (or 4*(degree+1), whichever larger) are skipped. Reports minimum actual fitted r/htip, polynomial basis conditioning, descriptive KII residual RMSE, and normalized difference from EDI. RMSE is not treated as FEM uncertainty. The plots display raw pointwise native COD ratio vs r/a0 and cutoff-sensitivity of intercept ratios, independently for two mesh levels; they do not select a preferred extrapolation. Saves only compact tables and PNG/FIG, without copying large mesh arrays. `O36=main_step36_cod_tip_window_audit(O33,O34);` requires no new solve or integral.
+
+Next decision point: compare the raw near-tip response and cutoff-induced intercept drift across both solved nested meshes, ideally inspect the already-saved Step-35 PNG too. If COD remains cutoff-sensitive but EDI stable, further annular mesh refinement is not automatically useful: the subsequent controlled study would vary the *immediate tip* resolution with otherwise fixed physical crack mouth, hole polygon, far-field boundary and tested annular resolution. Alternatively a full-field Williams coefficient fit on existing displacement fields may add a third method, but must be separately synthetic-field validated and not treated as exact. Independent NArc/pencil-mouth-width geometry sensitivity also remains necessary before interpreting the tiny positive KII as a physical kink.
