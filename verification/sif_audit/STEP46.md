@@ -120,3 +120,27 @@ disp(O46face125.gates);
 
 Run this **mesh-only** trial once and return its complete output. Its default reported gate `readyForOneRefinedFEMProposal` permits further planning but **does not** imply that quadratic COD fits qualify. If the achieved twelve-point target is met without degrading mesh quality, stop preflight experiments and plan one explicitly authorized refined FEM solve on this *exact verified geometry and mesh recipe*. Preserve the selected mesh provenance. Later EDI comparison must use the same **absolute** annulus as the old actual-FEM baseline; do not silently recompute `r_inner=2*hTip` on the new mesh.
 
+
+
+## Final preflight achieved: one-eighth face / half tip (SELECTED)
+
+The investigator ran the last **mesh-only** Step46 trial with \`FaceFactor=0.125\` and \`TipFactor=0.5\`, using the saved original Stage-II symmetric checkpoint. The geometric edge-ID recovery fallback returned tip vertex 65 and face edges 64, 65. The regenerated baseline once more reproduced the original 1,721-triangle / 3,640-T6-node mesh **exactly in sorted T3 coordinates (0 m difference)**. It did not run FEM or EDI.
+
+| Measured property | Saved original | Half face / half tip | Quarter face / half tip | **Selected one-eighth face / half tip** |
+| --- | ---: | ---: | ---: | ---: |
+| T3 elements | 1721 | 1837 | 1961 | **2391** |
+| T6 nodes | 3640 | 3884 | 4152 | **5054** |
+| Median tip edge [m] | 0.00043375 | 0.00021079 | 0.00021708 | **0.00013535** |
+| hTip/a0 | 0.10844 | 0.052697 | 0.054271 | **0.033837** |
+| Tip-adjacent T3 above/below | 2 / 3 | 3 / 3 | 3 / 3 | **3 / 3** |
+| Native upper/lower crack-face nodes | 12 / 12 | 22 / 22 | 36 / 36 | **72 / 72** |
+| Upper/lower face abscissa mismatch [m] | 0 | 0 | 0 | **2.77556e-17** |
+| Native COD samples in 0.04–0.30 a0 | 4 | 7 | 9 | **19** |
+| Native COD samples in 0.08–0.30 a0 | 3 | 6 | 8 | **16** |
+| Native COD samples in 0.12–0.30 a0 | 2 | 4 | 6 | **13** |
+
+All preflight gates returned true, including the gate for twelve native COD samples in the widest window. More strongly, **each** of the three independently predeclared fitting windows now qualifies for **both** linear (>=8) and quadratic (>=12) COD extrapolation. The characteristic tip-edge median is approximately 31% of the original value; the upper/lower face radial mismatch is consistent with coordinate roundoff. Equal upper/lower tip-triangle *counts* do not imply a reflection-paired T3 mesh.
+
+The selected compact preflight was saved successfully at \`verification/step46_mesh_preflight_face0125_tip05.mat\` (not the previously encountered nested \`verification/verification\` directory). No more mesh-size trial runs are necessary before examining a refined FEM response.
+
+**Next planned phase:** [Step 47](STEP47.md) prepares a **single explicitly authorized** refined Stage-II symmetric FEM solution using this selected mesh recipe, verifies its achieved geometric/radial characteristics against the saved preflight and writes a separate refined checkpoint, then runs COD **only**. No new FEM solve has been executed by the assistant or claimed as completed.
