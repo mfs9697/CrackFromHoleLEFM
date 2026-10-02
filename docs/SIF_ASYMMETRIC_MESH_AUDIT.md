@@ -1279,3 +1279,25 @@ The command completed every FE solve and printed both result tables, but a MATLA
 The dedicated script verification/sif_audit/main_step24_fixed_geometry_FE_refinement.m accepts O22 (not O23) and defaults to a0=8 mm, NArc=480, RefineFactors=[1,2]. It keeps the fine Step-22 Stage-I mouth/normal, a0, retained-hole polygon, temporary appendix mouth half-shift w=0.0001 m, global Hmax, and Hgrad unchanged, then changes only nominal Hmin/Hhole/Hcrack to half. Both solved meshes use signed FE-nodal EDI at the existing three radii, with measured actual tip-edge medians and EDI-domain spreads. The factor-1 run should independently reproduce the printed Step-23 fine NArc=480, 8-mm KII/KI ~+7.808e-5 at reference r_outer/a0=0.65. One further factor-2 solve tests whether the signal remains stable under controlled local refinement. If needed, rerun with RefineFactors=[1,2,4] to add finer refinement, or isolate the appendix mouth-width dependence after this gate.
 
 IMPORTANT: even if the 8-mm fixed-polygon FE ratios converge, the NArc nonmonotonicity remains unresolved; geometric and mouth-width sensitivity must be audited independently before interpreting a finite-length kink as physical.
+
+
+## Step 24 result: refining only the local FE scale causes severe EDI-radius sensitivity
+
+Step 24 completed locally with a0=0.008 m, the same fine Stage-I mouth at phi*=-1.560612778 deg, the same retained-hole polygon NArc=480, the same appendix mouth half-shift 0.0001 m, and the same global Hmax=0.007853982 m. Only nominal Hmin/hhole/hcrack changed by a factor of two. Measured median tip-adjacent T3 edge lengths decreased from 2.14597e-4 m to 1.06855e-4 m; the global T6 node count changed from 16491 to 17317 (only ~5% growth). Thus this test substantially refines only the immediate tip region, while much of the EDI annulus may remain at the former mesh scale.
+
+For r_outer/a0=[0.50,0.65,0.80], the unrefined and refined KII/KI values were:
+| r_outer/a0 | htip=0.2146 mm | htip=0.1069 mm |
+|---:|---:|---:|
+| 0.50 | +7.83745e-5 | -8.42691e-7 |
+| 0.65 | +7.80814e-5 | +1.12955e-5 |
+| 0.80 | +7.70819e-5 | +1.26501e-4 |
+
+The EDI-domain KII/KI spread INCREASED from 1.2926e-6 to 1.2734e-4 (~98.5-fold). The refined K_I values also become radius-sensitive: [0.4373923,0.4374202,0.4374963], about 2.4e-4 relative across radii, whereas the coarser local mesh gave K_I approximately 0.43761 at all three radii. Thus the fine-mesh near-zero signed Mode II is not path-independent, and no physical 8-mm crack kink may be inferred from it.
+
+A possible explanation is that the local Hmin change refined only the immediate tip, while the outer EDI annuli encountered an insufficiently refined or differently remeshed displacement field. A second possibility is sensitivity to FE-interpolated radial q and the varying r_inner rule. Neither explanation has been established; one should NOT ascribe the discrepancy exclusively to the extractor before testing its weighting implementation on the SAME solved field. The FE-nodal versus analytic-radial comparison is diagnostic (the analytic discontinuous gradient may itself have quadrature error), not an automatic ranking of implementations.
+
+## Step 25 prepared: same-field q-gradient and radial-domain audit
+
+The next minimal experiment is verification/sif_audit/main_step25_EDI_weight_audit.m. It independently solves ONE full-domain Stage-II mesh at the exact Step-24 fine local factor=2, a0=8 mm, NArc=480 and fixed global Hmax. It then runs the *same* displacement solution through the EDI routine with both FE-nodal q and analytical radial q-gradient, each under (A) the adaptive inner radius max(0.1 r_outer,2h_tip) and (B) a common physical inner radius 0.0008 m for all three EDI outer radii. For each setting it reports K_I, signed K_II, their ratio, Gauss-point/element participation and auxiliary-field strain consistency, and summarizes the domain spreads. It stores the solved mesh, displacements and material for later postprocessing without further FEM solves.
+
+Step-25 interpretation: if q-method differences explain the large outer-radius spread, audit the q construction, shape gradients and discontinuous radial integration. If both q variants agree but retain the anomaly, prioritize actual FE displacement/equilibrium and spatial annulus-resolution checks. If a common r_inner resolves the instability, the adaptive annulus was a confounder. Run the code in MATLAB before drawing any such causal conclusion.
