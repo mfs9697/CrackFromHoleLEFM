@@ -1337,3 +1337,26 @@ The signed SIF_LEFM_interaction_EDI.m now accepts optional 'QuadratureRule' 7 (u
 The new verification/sif_audit/main_step27_EDI_quadrature_replay.m accepts the existing O25 and O26: no new geometry, mesh, solve, face reconstruction, or Stage-I optimization is needed. The default [7,16] quadrature comparison uses the exact Mode-I and Mode-II sampled fields from Step 26 and the same actual O25 displacement field. It additionally creates a manufactured EXACT AFFINE T-stress field with local stress [1,0,0], which is traction-free on ideal crack faces and representable exactly by T6 shape functions. The affine unit stress is an analytic diagnostic, NOT a measured T-stress from the actual boundary-value problem. For all three fixed-r_inner=0.0008 m EDI outer domains, the driver reports exact modal recovery matrices, actual KI/KII, artificial mode-I leakage, and spurious SIFs under the affine T-stress field.
 
 The historical 7-point exact and actual results can be reused from O26 where settings match; the T-stress field and all 16-point evaluations are new postprocessing computations on O25.mesh/O25.U. If 16-point integration significantly improves both manufactured-field recovery and the real-field integration-radius consistency, quadrature was an important cause. If synthetic Williams leakage improves without improving real-field domain spread, the real computed displacement field, nonsingular terms, or the FE-nodal q discretization remains suspect. If neither improves, investigate nodal interpolation of singular fields, q-gradients and full-annulus spatial FE resolution rather than spending additional runs solely on integration points.
+
+
+## Step 27 result: smooth-field quadrature improves, Williams leakage barely changes
+
+The existing Step-25 8-mm, NArc=480, locally factor-2 refined T6 mesh (17,317 nodes) was replayed using historical seven-point and degree-8 sixteen-point Dunavant EDI quadrature. The same FE-nodal q and fixed physical r_inner=0.0008 m were retained. No new FEM solve was performed.
+
+| Metric | 7 points | 16 points |
+|---|---:|---:|
+| Maximum unit-Williams 2x2 recovery matrix error ||M-I||F | 6.6813e-4 | 6.6932e-4 |
+| Maximum |unit Mode-I leakage into KII/KI| | 2.7632e-4 | 2.6657e-4 |
+| Exact Mode-I leakage domain spread | 2.5429e-4 | 2.4924e-4 |
+| Actual FEM KII/KI domain spread | 1.2772e-4 | 1.1970e-4 |
+| Max spurious KII per unit manufactured affine T stress | 6.3688e-7 | 9.5543e-9 |
+
+At reference r_outer/a0=0.65, the actual ratio changes from +1.37993e-5 to +9.75221e-6, but the marked radius dependence persists. For the manufactured nonsingular T stress, stronger quadrature reduces the spurious KII by about a factor of 67, confirming that the new integration order has a real numerical effect. However, the singular Williams recovery error and artificial modal leakage remain comparable: the principal near-zero Mode-II problem cannot be resolved merely by increasing Gauss-point order on the present mesh.
+
+Interpretation limit: the nodally sampled exact Williams fields are interpolated by T6 elements. Their computed gradients are not the exact analytical gradients. Therefore nearly quadrature-insensitive artificial modal leakage could originate in nodal interpolation of the singular fields; it could also originate in the FE-nodal q construction or other EDI errors. The test has NOT yet isolated the cause, and no numerical value from these experiments establishes a finite physical kink angle.
+
+## Step 28 prepared: exact Williams gradients at the same Gauss points
+
+SIF_LEFM_interaction_EDI.m now has an opt-in verification-only 'AnalyticActualK'=[KI,KII] argument, default empty. With empty input, all production FE displacement-gradient extraction behaves exactly as before. When enabled, the 'actual' field in the EDI density is evaluated directly from the exact Williams stress/strain and derivative formulas at each Gauss point, while retaining the SAME T6 mesh coordinates, FE-nodal q-gradient, Gauss quadrature, crack-tip frame, and EDI annulus. This bypasses only T6 nodal interpolation of the manufactured singular field and must NEVER be used to postprocess an actual numerical FEM field.
+
+The verification driver 'verification/sif_audit/main_step28_EDI_interpolation_audit.m' accepts O25, O26 and O27. It reuses O27's existing nodally sampled exact-field recovery matrices and actual-field results at the historical 7- and 16-point rules, and performs 12 new extraction-only operations (two unit Williams modes, three radii, two quadrature orders) with exact gradients at Gauss points. It reports both recovery matrices, errors from identity and artificial Mode-I leakage. No new FE mesh or solve is performed. If exact-Gauss-point recovery improves strongly compared with nodally sampled Williams recovery, the test isolates substantial T6 interpolation error in the MANUFACTURED singular field. If exact-Gauss-point recovery still shows significant leakage, investigate q interpolation/integration or EDI formulation. Either result by itself does NOT establish the cause of error in the actual FEM solution, which can include mesh and equilibrium errors.
