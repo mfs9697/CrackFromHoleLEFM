@@ -24,7 +24,9 @@ function O33=main_step33_nested_annulus_refinement(O25,O32,varargin)
 % mesh, geometry polygon, and appendix width are independently stable.
 %
 % Usage:
-%   O33=main_step33_nested_annulus_refinement(O25,O32);
+%   O33mesh=main_step33_nested_annulus_refinement(O25,O32); % dry run
+%   O33=main_step33_nested_annulus_refinement(O25,O32, ...
+%       'DryRun',false); % ONE new FEM solve, after reviewing dry run
 %   O33=main_step33_nested_annulus_refinement(O25,O32, ...
 %       'TargetEdge',3.5e-4,'MaxPasses',3);
 
@@ -50,6 +52,7 @@ addParameter(p,'FitDegrees',[1 2], ...
 addParameter(p,'MinFitPoints',8, ...
     @(x)isnumeric(x)&&isscalar(x)&&isfinite(x)&&x>=6&&x==round(x));
 addParameter(p,'Plot',false,@(x)islogical(x)||isnumeric(x));
+addParameter(p,'DryRun',true,@(x)islogical(x)||isnumeric(x));
 parse(p,varargin{:});
 opt=p.Results;
 
@@ -176,6 +179,24 @@ if ~passed
             'TargetEdge or more MaxPasses.\n']);
         return
     end
+end
+
+% The first execution should be a geometry-only dry run, which tests
+% the entire nested T3 refinement, oriented/area-preserving templates,
+% crack-face topology, unchanged outer boundaries, and measured annular
+% size reductions BEFORE any expensive FEM calculation.
+if logical(opt.DryRun)
+    O33=struct('settings',opt,'meshAudit',meshAudit, ...
+        'meshTable',MeshTable,'refinementGatePassed',passed, ...
+        'stoppedBeforeSolve',true, ...
+        'nOldT3',size(base.mesh.connect3,1), ...
+        'nNewT3',size(T,1), ...
+        'nOldVertices',size(base.mesh.coord3,1), ...
+        'nNewVertices',size(P,1), ...
+        'crack',crack,'p',P,'t',T);
+    fprintf(['  DRY RUN COMPLETED: no FE solve. After reviewing ', ...
+        'these mesh/face diagnostics, rerun with DryRun=false.\n']);
+    return
 end
 
 % All old corner node IDs remain exactly unchanged because new T3 nodes
