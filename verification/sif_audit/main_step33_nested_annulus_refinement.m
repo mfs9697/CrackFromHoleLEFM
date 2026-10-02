@@ -119,6 +119,17 @@ if any(any(abs(P(1:size(base.mesh.coord3,1),:) - ...
         base.mesh.coord3)>1e-14))
     error('step33:VertexMoved','Original mesh vertex positions changed.');
 end
+% The refinement support is near the crack, nowhere near the outer
+% plate boundaries: preserve exactly the previously applied far-field
+% traction discretization and all old boundary geometry.
+newP=P(size(base.mesh.coord3,1)+1:end,:);
+boundTol=1e-11*max(1,max(abs(base.mesh.coord3(:))));
+if any(abs(newP(:,1))<boundTol | abs(newP(:,1)-O25.config.A)<boundTol | ...
+       abs(newP(:,2)-O25.config.B)<boundTol | ...
+       abs(newP(:,2)+O25.config.B)<boundTol)
+    error('step33:RemoteBoundaryTouched', ...
+        'Local refinement unexpectedly split a loaded/outer plate edge.');
+end
 if norm(crack.Pmid-base.crack.Pmid,'fro')>1e-12 || ...
         crack.tipNode~=base.crack.tipNode
     error('step33:CrackMoved','Crack geometric path or tip ID changed.');
@@ -158,8 +169,12 @@ if ~passed
         ['Measured nested annulus refinement fell below the gate. ', ...
          'Try a smaller TargetEdge or another MaxPasses.']);
     if logical(opt.RequireImprovement)
-        error('step33:StopBeforeSolve', ...
-            'Local spatial refinement gate failed; FEM solve omitted.');
+        O33=struct('settings',opt,'meshAudit',meshAudit, ...
+            'meshTable',MeshTable,'refinementGatePassed',false, ...
+            'stoppedBeforeSolve',true);
+        fprintf(['  Stop: no FEM solve. Rerun with a smaller ', ...
+            'TargetEdge or more MaxPasses.\n']);
+        return
     end
 end
 
@@ -332,8 +347,7 @@ isAnnulus=r>=ri & r<=ro;
 h12=hypot(p1(:,1)-p2(:,1),p1(:,2)-p2(:,2));
 h23=hypot(p2(:,1)-p3(:,1),p2(:,2)-p3(:,2));
 h31=hypot(p3(:,1)-p1(:,1),p3(:,2)-p1(:,2));
-h=sort(max([h12 h23 h31],[],2));
-% Recompute sorted edge lengths within the selected annulus ONLY.
+% Sort only longest-edge lengths in the selected EDI annulus.
 localH=max([h12 h23 h31],[],2);
 localH=sort(localH(isAnnulus));
 n=numel(localH);
