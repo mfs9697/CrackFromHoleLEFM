@@ -27,6 +27,10 @@ function O34=main_step34_second_nested_annulus_refinement(O25,O33,varargin)
 %
 % Usage:
 %   O34mesh=main_step34_second_nested_annulus_refinement(O25,O33);
+% Automatically displays 4-panel actual before/after T3 mesh and saves
+% step34_mesh_comparison.png/.fig and step34_mesh_data.mat in current folder.
+% To customize: 'SaveMeshPrefix','figures/step34_mesh'.
+% For numerical-only runs: 'PlotMesh',false.
 %   O34=main_step34_second_nested_annulus_refinement( ...
 %       O25,O33,'DryRun',false); % only after reviewing dry run
 
@@ -51,6 +55,9 @@ addParameter(p,'MinFitPoints',8, ...
     @(x)isnumeric(x)&&isscalar(x)&&isfinite(x)&&x>=6&&x==round(x));
 addParameter(p,'Plot',false,@(x)islogical(x)||isnumeric(x));
 addParameter(p,'DryRun',true,@(x)islogical(x)||isnumeric(x));
+addParameter(p,'PlotMesh',true,@(x)islogical(x)||isnumeric(x));
+addParameter(p,'SaveMeshPrefix',fullfile(pwd,'step34_mesh'), ...
+    @(x)ischar(x)||(isstring(x)&&isscalar(x)));
 parse(p,varargin{:});
 opt=p.Results;
 
@@ -211,6 +218,10 @@ if logical(opt.DryRun)
         'hTipBaseline',base.hTip,'hTipRefinedPreSolve',preTip, ...
         'tipScalePreserved',tipChange<=1e-9, ...
         'crack',crack,'p',P,'t',T);
+    if logical(opt.PlotMesh)
+        O34.meshFigureFiles=plot_step34_mesh(O25,O33,O34, ...
+            'SavePrefix',opt.SaveMeshPrefix);
+    end
     fprintf(['  DRY RUN COMPLETED: no FE solve. After reviewing ', ...
         'these mesh/face diagnostics, rerun with DryRun=false.\n']);
     return
@@ -372,6 +383,11 @@ O34.nativeR=r;
 O34.nativeApparent=apparent;
 O34.EDIStudy=EDIStudy;
 O34.CODTable=CODTable;
+if logical(opt.PlotMesh)
+    O34.meshFigureFiles=plot_step34_mesh(O25,O33, ...
+        struct('p',P,'t',T,'crack',crack,'settings',opt), ...
+        'SavePrefix',opt.SaveMeshPrefix);
+end
 fprintf('STEP 34 completed: one new FE solve on second nested local refinement.\n');
 end
 
