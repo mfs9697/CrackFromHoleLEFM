@@ -244,6 +244,8 @@ G.edgeSets.crackTip=crack.tipNode;
 G.meta=struct('A',C.A,'B',C.B);
 
 S=solve_cracked_LEFM(C,G,'lambda',1.0);
+% Discard sparse K, force vectors and nodal stress recovery before EDI.
+S=struct('mesh',S.mesh,'U',S.U,'mat',S.mat);
 hNew=tip_edge_stats(S.mesh,crack.Pmid(end,:));
 fprintf('  refined T6 nodes=%d; median tip edge=%.8e m ', ...
     size(S.mesh.coord,1),hNew);
