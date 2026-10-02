@@ -136,6 +136,41 @@ disp(O45.EDI.domainRatioSpread);
 
 Stop and review this table before choosing any mesh refinement. If the EDI residual changes materially with outer radius, investigate quadrature-domain sensitivity on the **same** control field. If it is stable but remains above the target, a controlled symmetric FEM mesh-quality experiment is justified, not an automatic claim that the asymmetric EDI suffers the same relative error.
 
+## Measured Step 45 three-domain EDI (investigator MATLAB, 2026-10-02)
+
+On the **same** saved actual centered-symmetry control (Npoly=240, 3,640 T6 nodes, a0=0.004 m; no additional FEM solution), the investigator evaluated the original FE-nodal **16-point EDI** at three outer radii. The inner radius was fixed at `0.0008675 m` across all domains, set by `2*hTip` (not by `0.1*r_outer`).
+
+| r_outer/a0 | actual KI | actual KII | signed KII/KI | `abs(ratio)/1.0795940665e-4` |
+| ---: | ---: | ---: | ---: | ---: |
+| 0.50 | 0.3613148899 | -5.649036290e-6 | -1.563466231e-5 | 0.14482 |
+| 0.65 | 0.3613086139 | -3.167574307e-6 | -8.766949318e-6 | 0.081206 |
+| 0.80 | 0.3613093612 | -2.372589674e-6 | -6.566643239e-6 | 0.060825 |
+
+The 0.65 case **was reused from the progress cache**; only two additional EDI integrations ran. The signed **ratio spread was `9.068019071e-6`**, over nine times the proposed `1e-6` symmetry tolerance. Across these domains, `KI` varies by only ~0.00174% (range divided by ~0.36131). Meanwhile the spurious `KII` changes substantially and retains a negative sign.
+
+**Interpretation:** On this particular coarse control mesh, Mode II is **not domain independent** at the scale required for the tiny asymmetric signal. The decreasing magnitude with increasing outer radius does **not** justify extrapolation to `KII=0`, nor does it prove which component of the numerical calculation is responsible. COD is still **not evaluable** with the original fitting windows (at most four native points). Neither the sign of this spurious symmetric-control residual nor its percentage of the different asymmetric signal is physically transferable.
+
+**Next inexpensive discriminating experiment, Step 45b:** Replay a prescribed **exact pure Mode-I** leading Williams displacement field on **the same coarse Step-45 T6 mesh** and perform **only one** 16-point FE-nodal EDI calculation initially at `r_outer/a0=0.65`, with the **exact same** recorded `r_inner=0.0008675 m`. Verify the exact COD jump on this mesh first. Compare this exact-field EDI pure-I→II leakage directly against the actual-FEM signed residual at the matched annulus. This test introduces **no new FEM solution**, but exact-field replay is not an independent global equilibrium test; generator and EDI auxiliary fields share analytical conventions. If exact-field leakage is negligible relative to actual-FEM leakage, the *computed FEM field* is implicated; if comparable, investigate same-mesh EDI interpolation/quadrature before another solve.
+
+Pull the updated `sif-asymmetric-mesh-audit` branch using GitHub Desktop and run from the repository root with the previously returned `O45` still in MATLAB:
+
+```matlab
+addpath(genpath(pwd));
+R45b = main_step45_coarse_exact_pureI_replay(O45);
+disp(R45b.table);
+```
+
+If `O45` is not in the workspace, load it from the **existing compact file** (this does not rerun COD or EDI):
+
+```matlab
+load(fullfile('verification', ...
+    'step45_symmetric_field_leakage_small_data.mat'),'O45');
+R45b = main_step45_coarse_exact_pureI_replay(O45);
+disp(R45b.table);
+```
+
+The new driver uses the solved checkpoint path stored in `O45`, verifies the exact COD field against its known coefficients, executes the **single** matched exact EDI, and caches its result. If the result warrants exploring domain dependence, call the same driver with `'ROuterOverA0',[0.50 0.65 0.80]`: the 0.65 case will be reused, provided the checkpoint and integration options have not changed. Wait for the 0.65 result before running further domains.
+
 ## Interpretation and stopping rules
 
 - Exact physical symmetry gives `KII=0`, so report **absolute** `abs(KII/KI)`, not percentage error relative to zero.
@@ -144,4 +179,4 @@ Stop and review this table before choosing any mesh refinement. If the EDI resid
 - Upper/lower face radial-grid mismatch and asymmetric counts of tip-adjacent T3 elements may explain numerical residuals; neither proves the cause without additional tests.
 - Passing `1e-6` on this symmetric geometry does **not** prove the asymmetric geometry's `KII/KI ~ 1.08e-4` is accurate to 1%; geometry-specific errors and higher-order Williams terms remain possible.
 
-**Status:** one actual symmetric FEM solution, the COD-only phase, and one 16-point EDI domain (`r_outer/a0=0.65`) have been executed by the investigator. COD extrapolation is not yet evaluable; the EDI numerical symmetry target is not met at the tested radius. Await the two additional same-field EDI domains before allocating another solve.
+**Status:** the symmetric FEM solve, COD-only phase and all three matched 16-point EDI domains have now been executed by the investigator. The EDI numerical symmetry target is not met, and Mode II displays considerable domain dependence while Mode I remains stable. COD extrapolation remains unevaluable on this coarse mesh. Step 45b's **same-mesh exact pure-I EDI replay** is prepared but not yet run in MATLAB; wait for that diagnostic before another FEM solve.
