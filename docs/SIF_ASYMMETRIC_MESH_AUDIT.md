@@ -1709,7 +1709,7 @@ MATLAB successfully completed BOTH Step-38 phases without exhausting RAM. The so
 | Reference EDI KII | +4.70819463e-5 | +4.7268533366e-5 |
 | Reference EDI KII/KI | +1.075429253e-4 | +1.0795940665e-4 |
 | EDI domain spread in signed KII/KI | 7.4833006292e-9 | 1.4544639482e-9 |
-| Native-face T6 nodes per side | 152 | 152 (reported by Step 38) |
+| Native-face T6 nodes per side | 134 | 152 |
 | COD KII/KI, linear [0.04,0.30] r/a0 | +8.659854e-5 | +9.5422e-5 |
 | EDI-vs-COD ratio gap (same linear fit) | 19.475% | 11.613% |
 | COD KII/KI, linear [0.08,0.30] r/a0 | +8.924817e-5 | +9.7816e-5 |
@@ -1725,4 +1725,4 @@ Phase 1 successfully solved once and saved the complete-field checkpoint on the 
 
 This is the first controlled experiment to vary *measured immediate-tip resolution* substantially while keeping the broad outer EDI shell and physical crack geometry fixed. A persistent ~9%--20% EDI/COD discrepancy after tip halving means that cross-method consistency is improving but not yet achieved. Do not infer exact physical signed mode II, finite kink, or an error-free EDI value. Separate possibilities: more crack-tip resolution (ordinary T6 near-singular field remains non-quarter-point), finite-window higher-order COD extrapolation, numerical common-mode EDI effects near its inner circle, and retained-hole polygon/appendix-mouth-width artifacts.
 
-Before ANY new expensive solve, use the compact existing Step-38 result's OLD and NEW pointwise native COD curves to repeat physically matched cutoff-window and polynomial-order sensitivity across the two tip scales. `verification/sif_audit/main_step39_tip_cod_sensitivity.m` was committed for this purpose. It takes only the small O38 output, uses only actual native sample positions, and cannot generate new FEM or interaction integrals. Its default four-quadrant low/high cutoff grid replicates Step-36 logic with original Step-34 vs newly tip-refined Step-38 data; saves compact numeric results and a two-panel figure. MATLAB execution remains pending.
+Before ANY new expensive solve, use the compact existing Step-38 result's OLD and NEW pointwise native COD curves to repeat physically matched cutoff-window and polynomial-order sensitivity across the two tip scales. `verification/sif_audit/main_step39_tip_cod_sensitivity.m` was committed for this purpose. It takes only the small O38 output, uses only actual native sample positions, and cannot generate new FEM or interaction integrals. Its default lower/upper cutoff grid replicates Step-36 logic with original Step-34 vs newly tip-refined Step-38 data; saves compact numeric results and a two-panel figure. MATLAB execution remains pending.
