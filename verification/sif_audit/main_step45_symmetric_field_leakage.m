@@ -211,17 +211,19 @@ for i=1:numel(rRat)
     end
 end
 progressFile=[prefix '_edi_progress.mat'];
-progress=struct('key',key,'rat',rRat,'inner',ri,'rule',16, ...
-    'method','fe_nodal','KI',nan(size(rRat)), ...
-    'KII',nan(size(rRat)),'done',false(size(rRat)));
+% Cache is keyed by (checkpoint, exact r_outer, exact r_inner, rule,
+% weight function), NOT the whole requested radius list. Thus a later
+% extension from [0.65] to [0.50 0.65 0.80] reuses the finished 0.65
+% calculation rather than needlessly repeating expensive integration.
+progress=struct('key',key,'rat',[],'inner',[], ...
+    'rule',16,'method','fe_nodal','KI',[],'KII',[],'done',[]);
 if exist(progressFile,'file')==2
     pre=load(progressFile,'progress');
     prev=pre.progress;
-    if ~strcmp(prev.key,key) || ~isequal(prev.rat,rRat) || ...
-            ~isequal(prev.inner,ri) || prev.rule~=16 || ...
+    if ~strcmp(prev.key,key) || prev.rule~=16 || ...
             ~strcmp(prev.method,'fe_nodal')
         error('step45:StaleEDIProgress', ...
-            'Saved EDI progress uses different field or quadrature settings.');
+            'Saved EDI progress belongs to a different field or method.');
     end
     if any(~isfinite(prev.KI(prev.done))) || ...
             any(~isfinite(prev.KII(prev.done)))
@@ -230,9 +232,24 @@ if exist(progressFile,'file')==2
     end
     progress=prev;
 end
+index=zeros(size(rRat));
+for i=1:numel(rRat)
+    same=find(abs(progress.rat-rRat(i))<1e-12 & ...
+        abs(progress.inner-ri(i))<1e-12,1);
+    if isempty(same)
+        progress.rat(end+1)=rRat(i);
+        progress.inner(end+1)=ri(i);
+        progress.KI(end+1)=NaN;
+        progress.KII(end+1)=NaN;
+        progress.done(end+1)=false;
+        same=numel(progress.rat);
+    end
+    index(i)=same;
+end
 fprintf('\n16-POINT SYMMETRIC FEM EDI (SAVED FIELD)\n');
 for i=1:numel(rRat)
-    if progress.done(i)
+    j=index(i);
+    if progress.done(j)
         fprintf('  EDI r_outer/a0 %.2f reused from cache.\n',rRat(i));
         continue
     end
@@ -246,9 +263,9 @@ for i=1:numel(rRat)
         error('step45:InvalidEDI', ...
             'The actual symmetric FEM EDI returned invalid KI or KII.');
     end
-    progress.KI(i)=ki;
-    progress.KII(i)=kii;
-    progress.done(i)=true;
+    progress.KI(j)=ki;
+    progress.KII(j)=kii;
+    progress.done(j)=true;
     tmp=[progressFile '.incomplete.mat'];
     save(tmp,'progress');
     [ok,msg]=movefile(tmp,progressFile,'f');
@@ -257,9 +274,11 @@ for i=1:numel(rRat)
         'KII/KI=%+.9e (cached)\n'], ...
         rRat(i),ki,kii,kii/ki);
 end
-qEDI=progress.KII./progress.KI;
-resultsTable=table(rRat(:),ri(:),progress.KI(:), ...
-    progress.KII(:),qEDI(:), ...
+selectedKI=progress.KI(index);
+selectedKII=progress.KII(index);
+qEDI=selectedKII./selectedKI;
+resultsTable=table(rRat(:),ri(:),selectedKI(:), ...
+    selectedKII(:),qEDI(:), ...
     abs(qEDI(:))/opt.TinyRatioReference, ...
     'VariableNames',{'r_outer_over_a0','r_inner', ...
     'KI','KII','ratio','abs_leakage_as_fraction_of_tiny_signal'});
