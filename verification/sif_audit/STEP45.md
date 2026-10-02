@@ -171,6 +171,38 @@ disp(R45b.table);
 
 The new driver uses the solved checkpoint path stored in `O45`, verifies the exact COD field against its known coefficients, executes the **single** matched exact EDI, and caches its result. If the result warrants exploring domain dependence, call the same driver with `'ROuterOverA0',[0.50 0.65 0.80]`: the 0.65 case will be reused, provided the checkpoint and integration options have not changed. Wait for the 0.65 result before running further domains.
 
+## Measured Step 45b: exact pure-I nodal replay on the identical coarse T6 mesh
+
+The investigator ran the Step-45b **prescribed exact pure Mode I** displacement replay on the **same** 3,640-node coarse symmetric T6 mesh and the **identical** FE-nodal 16-point EDI annulus previously used for the actual-FEM field, `r_inner=0.0008675 m`, `r_outer/a0=0.65`.
+
+- Exact nodal crack-face COD self-check: 12 native points; `max |KI_COD-1|=2.220e-16`; `max |KII_COD|=0`.
+- Actual FEM field EDI, same annulus: `KI=0.3613086139`, `KII=-3.167574307e-6`, `KII/KI=-8.766949318e-6`.
+- Exact prescribed unit pure-I **NODAL** displacement field interpolated by ordinary T6 gradients inside the EDI: `KI=0.9999484522`, `KII=-3.886669749e-5`, `KII/KI≈-3.8868701e-5`.
+- The exact-field numerical EDI leakage ratio on this **coarse** mesh is ~4.43 times larger in magnitude than the actual-FEM symmetric residual ratio. The apparent reduction of the actual-FEM residual relative to the exact-nodal test might reflect cancellation among numerical effects. It is **not** evidence that the actual FEM solution is more accurate or that one can subtract the exact-field bias to correct the actual or asymmetric physical SIF.
+- Step 44's much finer mesh gave markedly smaller exact-field EDI leakage. Those exact-field results **must not be pooled across meshes** as one fixed extractor error.
+
+**The new Step 45c diagnostic isolates T6 interpolation of singular exact displacements on this same mesh.** The existing `SIF_LEFM_interaction_EDI` routine offers a dedicated `AnalyticActualK` option: instead of recovering the actual-field strain and stresses from T6-interpolated **nodal exact Williams displacements**, evaluate the **identical exact Williams field directly at each Gauss point**, while preserving the mesh, FE-nodal q, same physical annulus, same 16-point rule and identical auxiliary field convention. The field is prescribed; no FEM equilibrium solve or new mesh occurs. The default runs **only r_outer/a0=0.65** and reuses the prior actual-FEM/nodal-exact EDI values rather than computing them again.
+
+After pulling the audit branch in GitHub Desktop, with `R45b` still in MATLAB:
+
+```matlab
+addpath(genpath(pwd));
+R45c = main_step45c_exact_gauss_isolation(R45b);
+disp(R45c.table);
+```
+
+If `R45b` is no longer in memory:
+
+```matlab
+load(fullfile('verification', ...
+    'step45_coarse_exact_pureI_small_data.mat'),'Out');
+R45b = Out;
+R45c = main_step45c_exact_gauss_isolation(R45b);
+disp(R45c.table);
+```
+
+**Decision rule:** If exact Gauss-point leakage decreases substantially relative to exact nodal leakage, singular-field **T6 interpolation** is implicated. If it remains comparable, investigate FE-nodal q geometry and quadrature/interaction density on this coarse mesh. This exact-Gauss test shares analytical conventions with the auxiliary field, so even a very small leakage is **not** an independent physical-field validation.
+
 ## Interpretation and stopping rules
 
 - Exact physical symmetry gives `KII=0`, so report **absolute** `abs(KII/KI)`, not percentage error relative to zero.
@@ -179,4 +211,4 @@ The new driver uses the solved checkpoint path stored in `O45`, verifies the exa
 - Upper/lower face radial-grid mismatch and asymmetric counts of tip-adjacent T3 elements may explain numerical residuals; neither proves the cause without additional tests.
 - Passing `1e-6` on this symmetric geometry does **not** prove the asymmetric geometry's `KII/KI ~ 1.08e-4` is accurate to 1%; geometry-specific errors and higher-order Williams terms remain possible.
 
-**Status:** the symmetric FEM solve, COD-only phase and all three matched 16-point EDI domains have now been executed by the investigator. The EDI numerical symmetry target is not met, and Mode II displays considerable domain dependence while Mode I remains stable. COD extrapolation remains unevaluable on this coarse mesh. Step 45b's **same-mesh exact pure-I EDI replay** is prepared but not yet run in MATLAB; wait for that diagnostic before another FEM solve.
+**Status:** the symmetric FEM solve, COD-only phase, three-domain actual-FEM EDI, and one same-mesh exact nodal pure-I EDI replay have been run by the investigator. The exact nodal field produces even larger spurious EDI Mode II on this coarse mesh than the actual FEM field. COD extrapolation remains unevaluable on this mesh. Step 45c's exact Gauss-point recovery diagnostic is prepared but not yet run; hold off on another FEM solve pending the result.
