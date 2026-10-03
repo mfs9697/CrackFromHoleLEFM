@@ -26,8 +26,11 @@ w2   = quad.w2;
 nelvert = 6; eldf = 2*nelvert;
 ndof = 2*size(coord,1);
 
-% heuristic for triplet preallocation (10% of dense; adjust if needed)
-m0 = max(1, round(0.05*ndof^2));
+% Every T6 element contributes exactly (2*6)^2=144 stiffness
+% triplets before sparse duplicate summation. Preallocate by the actual
+% element count, NOT by a fixed fraction of ndof^2: the latter can demand
+% gigabytes for mesh-refinement audits without changing the matrix.
+m0 = max(1, eldf^2 * size(connect,1));
 rw = zeros(m0,1); cl = rw; st = rw; k = 0;
 
 % ---- element loop ----

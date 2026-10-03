@@ -64,7 +64,21 @@ C.mesh2.tip_radius  = 0.0020;
 C.mesh2.tip_ncircle = 80;
 
 %% ================== STAGE I: BOUNDARY STRESS SAMPLING ==================
-C.stage1.nphi     = 1440;
+% Redesigned production method (audit Steps 12--14):
+%   recovered nodal stresses -> topology-respecting T6 interpolation
+%   at several material-side offsets -> linear eps->0 extrapolation
+%   -> local periodic quadratic refinement of the angular maximum.
+%
+% Set method='legacy_scattered' only for historical reproduction.
+C.stage1.method             = 'boundary_extrapolated_t6';
+C.stage1.nphi               = 1440;
+C.stage1.shift_fractions     = [0.05 0.10 0.25];
+C.stage1.radial_fit_order    = 1;
+C.stage1.angular_fit_enable  = true;
+C.stage1.angular_fit_points  = 5;
+C.stage1.max_tie_rel_tol     = 1e-8;
+
+% Legacy-only controls retained for reproducibility.
 C.stage1.avg_mode = 'none';
 C.stage1.avg_rho  = 0.0;
 

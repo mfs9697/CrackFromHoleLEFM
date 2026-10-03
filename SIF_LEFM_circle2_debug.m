@@ -200,6 +200,17 @@ function [KI, KII, Dbg] = SIF_LEFM_circle2_debug(mesh, U, V, mat, rI, varargin)
 
     sameElemPQ = elemP == elemQ;
 
+    mirrorT3Mismatch = nan(nthet,1);
+    for k = 1:nthet
+        XP3 = coord3(connect3(elemP(k),:),:);
+        XQ3 = coord3(connect3(elemQ(k),:),:);
+        XP3_loc = (R_loc * (XP3.' - x_tip)).';
+        XQ3_loc = (R_loc * (XQ3.' - x_tip)).';
+        XQ3_ref = XQ3_loc;
+        XQ3_ref(:,2) = -XQ3_ref(:,2);
+        mirrorT3Mismatch(k) = triangle_set_mismatch(XP3_loc,XQ3_ref);
+    end
+
     %% ------------------------------------------------------------
     % 6. Loop over contour points
     %% ------------------------------------------------------------
@@ -361,6 +372,15 @@ function [KI, KII, Dbg] = SIF_LEFM_circle2_debug(mesh, U, V, mat, rI, varargin)
     Dbg.KI  = KI;
     Dbg.KII = KII;
 
+    % IMPORTANT: JII is a modal energy-release contribution and is
+    % quadratic in the physical Mode-II amplitude. Therefore sign(JII)
+    % is not, in general, the physical sign of KII. The legacy return
+    % value above is preserved for historical reproducibility, but its
+    % sign must not be used as a signed local-symmetry indicator.
+    Dbg.KII_magnitude = sqrt(abs(JII) * Eeff);
+    Dbg.KII_legacy_sign_from_JII = sign(JII);
+    Dbg.KII_sign_recoverable_from_JII = false;
+
     Dbg.JI  = JI;
     Dbg.JII = JII;
     Dbg.Eeff = Eeff;
@@ -402,6 +422,7 @@ function [KI, KII, Dbg] = SIF_LEFM_circle2_debug(mesh, U, V, mat, rI, varargin)
     Dbg.baryMinP = baryMinP;
     Dbg.baryMinQ = baryMinQ;
     Dbg.sameElemPQ = sameElemPQ;
+    Dbg.mirrorT3Mismatch = mirrorT3Mismatch;
 
     Dbg.detJP = detJP;
     Dbg.detJQ = detJQ;
@@ -486,6 +507,11 @@ function S = local_diagnostics(Dbg)
 
     S.frac_same_elem_PQ = mean(Dbg.sameElemPQ);
 
+    S.mirrorT3Mismatch_median = median(Dbg.mirrorT3Mismatch);
+    S.mirrorT3Mismatch_p95 = local_percentile(Dbg.mirrorT3Mismatch,95);
+    S.mirrorT3Mismatch_max = max(Dbg.mirrorT3Mismatch);
+    S.frac_exact_mirror_T3 = mean(Dbg.mirrorT3Mismatch < 1e-10);
+
     S.min_detJP = min(Dbg.detJP);
     S.min_detJQ = min(Dbg.detJQ);
     S.max_detJP = max(Dbg.detJP);
@@ -526,6 +552,9 @@ function print_debug_summary(Dbg)
     fprintf('  near-edge P/Q <1e-4= %d / %d\n', ...
         S.num_near_edge_P_1e4, S.num_near_edge_Q_1e4);
     fprintf('  frac same elem P,Q = %.4f\n', S.frac_same_elem_PQ);
+    fprintf('  mirror T3 mismatch median/p95/max = %.3e / %.3e / %.3e\n', ...
+        S.mirrorT3Mismatch_median,S.mirrorT3Mismatch_p95,S.mirrorT3Mismatch_max);
+    fprintf('  frac exact mirrored T3 pairs = %.4f\n',S.frac_exact_mirror_T3);
     fprintf('  J1 sign changes    = %d\n', S.J1_sign_changes);
     fprintf('  J2 sign changes    = %d\n', S.J2_sign_changes);
 end
@@ -643,6 +672,48 @@ function plot_debug_elements(Dbg)
     ylabel('same element P/Q');
     ylim([-0.1, 1.1]);
     title('Whether mirrored P and Q points lie in the same T3 element');
+end
+
+
+% ========================================================================
+% Mirrored parent-triangle stencil diagnostic
+% ========================================================================
+
+function m = triangle_set_mismatch(P,Q)
+    permList = [1 2 3;1 3 2;2 1 3;2 3 1;3 1 2;3 2 1];
+
+    eP = [norm(P(2,:)-P(1,:)), norm(P(3,:)-P(2,:)), norm(P(1,:)-P(3,:))];
+    eQ = [norm(Q(2,:)-Q(1,:)), norm(Q(3,:)-Q(2,:)), norm(Q(1,:)-Q(3,:))];
+    h = 0.5*(mean(eP)+mean(eQ));
+    if ~(isfinite(h) && h>0)
+        m = NaN;
+        return;
+    end
+
+    best = inf;
+    for j = 1:size(permList,1)
+        d = P - Q(permList(j,:),:);
+        rmsd = sqrt(mean(sum(d.^2,2)));
+        best = min(best,rmsd);
+    end
+    m = best/h;
+end
+
+
+function y = local_percentile(x,p)
+    x = sort(x(isfinite(x)));
+    if isempty(x)
+        y = NaN;
+        return;
+    end
+    z = 1 + (numel(x)-1)*p/100;
+    i = floor(z);
+    j = ceil(z);
+    if i == j
+        y = x(i);
+    else
+        y = x(i) + (z-i)*(x(j)-x(i));
+    end
 end
 
 
