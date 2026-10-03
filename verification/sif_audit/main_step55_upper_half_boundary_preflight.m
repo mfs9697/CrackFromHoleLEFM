@@ -161,7 +161,7 @@ reconstructedEdges=[upperEdges;lowerEdges];
 if size(reconstructedEdges,1)~=size(originalEdges,1)
     error('step55:EdgeCountNotReconstructible', ...
         ['Reflecting non-cut upper edges does not reconstruct ', ...
-         'the original complete polygon's split boundary edge count.']);
+         'the original polygon boundary after splitting the right edge.']);
 end
 % One-to-one UNDIRECTED segment matching, not merely vertex set matching.
 used=false(size(reconstructedEdges,1),1);
