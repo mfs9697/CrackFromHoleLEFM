@@ -50,3 +50,31 @@ disp(R53.summary);
 The code only reads existing local checkpoints plus `verification/step48_refined_matched_edi_comparison_small_data.mat`. It creates one compact diagnostic `verification/step53_common_grid_parity_small_data.mat`, containing summary statistics and the fixed small common query-point grids. The two saved full FEM checkpoints remain unchanged.
 
 **Stop after this one run** and inspect query coverage, the affine and analytical self-checks, raw physical displacement errors, and shared-denominator actual/synthetic parity statistics. Depending on these results, consider whether designing a fully reflection-paired mesh is worth an additional separately authorized FEM solution. Do not treat the static source audit as a substitute for MATLAB execution.
+
+
+## Investigator's measured Step 53: identical-point, common-normalization parity
+
+The investigator completed the script on **both previously solved symmetric control checkpoints**. All planned upper/lower mirror queries were found on both meshes: **42/42 COD-region pairs** and **49/49 original-EDI-annulus pairs**. This time, unlike Step52, each reported coarse/refined pair is evaluated at **identical predetermined physical coordinates**, and the two actual FEM fields use **the same reference opening**. The affine T6 interpolation self-check passed with maximum parity errors ~2.14–2.82e-17 m, and direct analytical exact pure-I parity errors were zero.
+
+The normal crack openings on the predetermined common physical reference radii were `1.341309942e-7 m` (original) and `1.371813053e-7 m` (refined); the **single shared** normal-opening denominator was `1.356561497e-7 m`. The shared exact pure-I synthetic opening denominator was `3.886608669e-7 m`.
+
+| Common physical region and parity measure | Original Step45 | Refined Step47 |
+| --- | ---: | ---: |
+| COD disk: actual RMS even ux / shared actual opening | 3.8058e-4 | 9.8011e-5 |
+| COD disk: actual RMS gauge-corrected odd uy / shared actual opening | 4.7716e-4 | 2.0162e-4 |
+| Matched EDI annulus: actual RMS even ux / shared actual opening | 1.6691e-4 | 9.5775e-5 |
+| Matched EDI annulus: actual RMS gauge-corrected odd uy / shared actual opening | 1.2908e-4 | 1.1304e-4 |
+| COD disk: nodal exact pure-I RMS even ux / exact opening | 3.1129e-4 | 9.833e-5 |
+| COD disk: nodal exact pure-I RMS gauge-corrected odd uy / exact opening | 3.933e-4 | 1.9506e-4 |
+| Matched EDI annulus: nodal exact pure-I RMS even ux / exact opening | 1.1564e-4 | 8.0147e-5 |
+| Matched EDI annulus: nodal exact pure-I RMS gauge-corrected odd uy / exact opening | 1.2846e-4 | 1.1539e-4 |
+
+At the **same spatial locations and with shared normalization**, the actual FEM parity residuals decline between the saved meshes: approximately 74%/58% for even/odd COD-region components, and 43%/12% for even/odd EDI-annulus components. These are the actual displacement RMS changes under this experiment, **not** changes in physical SIF or EDI recovery. The prescribed exact-nodal pure-I interpolation parity similarly declines under this test, reinforcing the hypothesis that spatial representation contributes to the observed numerical asymmetries.
+
+**Crucial contrast:** the original/refined actual FEM 16-point EDI ratio at the exact matched annulus changed from `-8.766949318e-6` to `+2.244103310e-5` (larger absolute value despite smaller parity RMS). Meanwhile prescribed exact pure-I **nodal** EDI changed `-3.88687e-5 → +3.37937e-5`, whereas **direct Gauss analytical** EDI yielded approximately `-1.147788e-7` and `+6.95969e-10`. Thus decreasing spatial displacement-parity RMS **does not imply** converged EDI Mode II or quantitatively explain the actual-FEM sign reversal.
+
+### Next boundary-only gate before designing a fully mirror-paired mesh
+
+The two solved meshes are not reflection-paired off the crack faces (Step49). Before building a new mesh, verify that the **prescribed polygonal geometry** reconstructed using the exact Step45/47 Npoly=240, a0=0.004 m configuration is itself reflection-symmetric at its **complete vertex and boundary-edge sets**. If it is not, constructing a perfectly mirrored volume mesh could silently change the benchmark rather than merely improve its discretization.
+
+The separate [Step 54 geometry symmetry preflight](STEP54.md) checks that prerequisite **without running any mesh generator, FEM solve or EDI**. No additional FEM solve has been authorized.
