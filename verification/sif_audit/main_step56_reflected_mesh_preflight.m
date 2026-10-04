@@ -322,8 +322,9 @@ t6Edges=sort([connect(:,[1 2]); ...
 t6Mids=[connect(:,4);connect(:,5);connect(:,6)];
 seamMidShared=true;
 for j=1:numel(seam)-1
-    targetEdge=sort(seam(j:j+1)).';
-    entries=all(t6Edges==targetEdge,2);
+    targetEdge=sort(seam(j:j+1));
+    targetEdge=targetEdge(:).';
+    entries=all(bsxfun(@eq,t6Edges,targetEdge),2);
     seamMidShared=seamMidShared && ...
         nnz(entries)==2 && numel(unique(t6Mids(entries)))==1;
 end
@@ -332,10 +333,12 @@ sortedFace=upperFace(sortFace);
 lowerSorted=lowerMap(sortedFace);
 faceMidDistinct=true;
 for j=1:numel(sortedFace)-1
-    edgeUp=sort(sortedFace(j:j+1)).';
-    edgeLow=sort(lowerSorted(j:j+1)).';
-    iU=all(t6Edges==edgeUp,2);
-    iL=all(t6Edges==edgeLow,2);
+    edgeUp=sort(sortedFace(j:j+1));
+    edgeLow=sort(lowerSorted(j:j+1));
+    edgeUp=edgeUp(:).';
+    edgeLow=edgeLow(:).';
+    iU=all(bsxfun(@eq,t6Edges,edgeUp),2);
+    iL=all(bsxfun(@eq,t6Edges,edgeLow),2);
     faceMidDistinct=faceMidDistinct && ...
         nnz(iU)==1 && nnz(iL)==1 && ...
         t6Mids(iU)~=t6Mids(iL);
