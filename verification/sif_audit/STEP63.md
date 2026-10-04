@@ -8,14 +8,26 @@ The investigator has explicitly authorized exactly one solve on the selected Ste
 
 Step63 deliberately does **not** run a physical interaction EDI. It checkpoints the solved field first and then evaluates native crack-face COD only. Physical EDI is reserved for a separate later step after the displacement/COD field is reviewed.
 
-## Exact mesh source
+## Exact mesh source and recovery
 
-The driver requires the local Step62B outputs:
+The preferred local Step62B outputs are:
 
 - `verification/step62b_calibrated_mesh_selected_candidate_T3.mat`
 - `verification/step62b_mesh_calibration_small_data.mat`
 
-It requires the selected candidate to be C03 with:
+These files are generated artifacts and can disappear when switching branches/clones. Step63 therefore has a deterministic recovery path.
+
+If the selected C03 candidate is missing, Step63 regenerates it from the committed archived Step62 baseline:
+
+- `verification/step62_structured_graded_mesh_candidate_T3.mat`;
+- fixed C03 parameters (L=8) mm, far slope (0.10), boundary-metric growth (0.25), neighbor target (1.8);
+- unchanged Step62 structured core.
+
+The recovery performs **no physical FEM solve**. It reruns only mesh construction and the already accepted prescribed-field controls, and requires reproduction of the recorded C03 counts, grading result, minimum angles and synthetic pass before proceeding.
+
+If the compact Step62B calibration MAT is also missing, Step63 reconstructs only the minimal calibration provenance from the exact qualified C03 candidate and saves it locally.
+
+It then requires the selected candidate to be C03 with:
 
 - transition length 8 mm;
 - far-field slope 0.10;
@@ -28,7 +40,7 @@ It requires the selected candidate to be C03 with:
 - prescribed-field qualification pass;
 - scientific-ready flag from Step62B.
 
-The candidate and calibration files are SHA-256 hashed. The hashes are stored in the solved checkpoint and are checked before reusing any existing Step63 result.
+The final candidate and compact calibration provenance files—whether pre-existing or deterministically recovered—are SHA-256 hashed. The hashes are stored in the solved checkpoint and checked before any existing Step63 result is reused.
 
 ## Physical setup
 
@@ -82,9 +94,11 @@ These COD fits are diagnostic. Previous audit steps showed that intercept sensit
 
 ## Safety / scope
 
-Static review of the Step63 driver confirms:
+Static review of the updated Step63 driver confirms:
 
 - exactly one `solve_cracked_LEFM` call site;
+- one mesh-only `main_step62_structured_graded_mesh` recovery call site;
+- deterministic C03 recovery must reproduce 32,980 T3 / 66,854 T6, max ratio 1.79678451 within tolerance, minimum angles, and prescribed-field pass;
 - zero `generateMesh` calls;
 - zero `SIF_LEFM_interaction_EDI` calls;
 - exact-mesh checks after the solver;
