@@ -38,7 +38,7 @@ For each worst pair it records element IDs, shared edge node IDs, longest-edge s
 
 build_step62_graded_exterior.m now accepts an optional design.exteriorCalibration structure. If absent, the historical Step62 defaults are preserved: transition length 8 mm; far-field slope 0.15; boundary-metric growth 0.30; six smoothing steps; 100 refinement passes; 25-degree minimum angle; longest-edge factor 1.65; neighbor-ratio target 2.5.
 
-main_step62_structured_graded_mesh.m also receives ExteriorCalibration and WriteArtifacts. WriteArtifacts=false allows candidate screening in memory without producing a large collection of MAT/PNG files.
+main_step62_structured_graded_mesh.m also receives `SourceCandidateFile`, `ExteriorCalibration`, `WriteArtifacts`, and `Verbose`. `SourceCandidateFile` permits checkpoint-independent rebuilding from the archived Step62 candidate; `WriteArtifacts=false` permits in-memory screening without producing a large collection of MAT/PNG files.
 
 ## Predeclared calibration grid
 
