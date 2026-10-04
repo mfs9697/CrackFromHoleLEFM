@@ -229,7 +229,7 @@ After final review of this closure PR, integrate the still-open stack **bottom-u
 9. PR #42 -- Step67A SGS-PCG qualification
 10. PR #43 -- Step68 Level-1 physical convergence
 11. PR #44 -- Step69 \(1/\sqrt2\) convergence point
-12. the Step70 synthesis/closure PR
+12. PR #45 -- Step70 synthesis/closure
 
 PR #41 should remain in history even though its ICT experiment failed: that negative result motivated the parameter-free SGS route and documents that no post-hoc preconditioner tuning was used.
 
