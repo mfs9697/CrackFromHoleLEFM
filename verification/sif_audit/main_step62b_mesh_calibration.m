@@ -76,7 +76,7 @@ fprintf('  Objective: reduce adjacent-size jump without using physical KI/KII.\n
 % -------------------------------------------------------------------------
 % A. Locate the baseline 2.311... adjacent-size jump exactly.
 % -------------------------------------------------------------------------
-baselineWorst=neighbor_pair_table(base.p,base.t, ...
+baselineWorst=neighbor_pair_table(base.p,base.t,base.crack, ...
     base.pairedElementIDs,base.exteriorElementIDs,20);
 fprintf('\nBASELINE WORST ADJACENT-SIZE PAIRS\n');
 disp(baselineWorst(1:min(10,height(baselineWorst)),:));
@@ -296,11 +296,13 @@ end
 function T=neighbor_pair_table_from_file(path,nKeep)
 d=load(path,'candidate');
 if ~isfield(d,'candidate'),error('step62b:BadSelectedMAT','No candidate.');end
-T=neighbor_pair_table(d.candidate.p,d.candidate.t, ...
+T=neighbor_pair_table(d.candidate.p,d.candidate.t,d.candidate.crack, ...
     d.candidate.pairedElementIDs,d.candidate.exteriorElementIDs,nKeep);
 end
 
-function out=neighbor_pair_table(P,T,patchIDs,exteriorIDs,nKeep)
+function out=neighbor_pair_table(P,T,cr,patchIDs,exteriorIDs,nKeep)
+tip=cr.Pmid(end,:);a0=norm(diff(cr.Pmid));e1=diff(cr.Pmid)/a0;
+R=[e1(:),[-e1(2);e1(1)]];Z=(P-tip)*R;
 n=size(T,1);
 a=P(T(:,1),:);b=P(T(:,2),:);c=P(T(:,3),:);
 L=max([vecnorm(b-c,2,2),vecnorm(a-c,2,2),vecnorm(a-b,2,2)],[],2);
@@ -315,11 +317,11 @@ for k=1:numel(groups)
     tri=which(g==groups(k));
     [lo,ii]=min(L(tri));[hi,jj]=max(L(tri));
     tSmall=tri(ii);tLarge=tri(jj);edge=U(groups(k),:);
-    cs=mean(P(T(tSmall,:),:),1);
-    cl=mean(P(T(tLarge,:),:),1);
+    cs=mean(Z(T(tSmall,:),:),1);
+    cl=mean(Z(T(tLarge,:),:),1);
     rows(k,:)=[hi/lo,tSmall,tLarge,edge(1),edge(2), ...
         1e3*lo,1e3*hi,1e3*norm(cs),1e3*norm(cl), ...
-        1e3*norm(mean(P(edge,:),1))];
+        1e3*norm(mean(Z(edge,:),1))];
     region1(k)=region_name(tSmall,patchIDs,exteriorIDs);
     region2(k)=region_name(tLarge,patchIDs,exteriorIDs);
 end
