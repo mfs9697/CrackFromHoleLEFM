@@ -15,6 +15,7 @@ addParameter(ip,'Visible','off',@(x)ischar(x)||isstring(x));
 addParameter(ip,'RunSynthetic',true,@(x)islogical(x)&&isscalar(x));
 addParameter(ip,'ExteriorCalibration',struct(),@(x)isstruct(x)&&isscalar(x));
 addParameter(ip,'WriteArtifacts',true,@(x)islogical(x)&&isscalar(x));
+addParameter(ip,'ReturnCandidate',false,@(x)islogical(x)&&isscalar(x));
 addParameter(ip,'Verbose',true,@(x)islogical(x)&&isscalar(x));
 addParameter(ip,'Level',0,@(x)isnumeric(x)&&isscalar(x)&& ...
     x==fix(x)&&x>=0&&x<=4);
@@ -322,6 +323,7 @@ candidate=struct('p',Pc,'t',Tc,'crack',crNew,'mat',mat, ...
     'exteriorDesign',exteriorMeta,'provenance',provenance,'gates',gates);
 candidateFile=[prefix '_candidate_T3.mat'];
 candidate.scientificallyReadyForFEMProposal=false;
+if opt.ReturnCandidate,O62.candidate=candidate;end
 if opt.WriteArtifacts
     save(candidateFile,'candidate','-v7'); O62.files.candidateMAT=candidateFile;
 end
@@ -329,6 +331,7 @@ if opt.RunSynthetic
     O62.synthetic=synthetic_controls(candidateMesh,crNew,mat,ri,ro);
     candidate.scientificallyReadyForFEMProposal=O62.synthetic.passed;
     candidate.synthetic=O62.synthetic;
+    if opt.ReturnCandidate,O62.candidate=candidate;end
     if opt.WriteArtifacts,save(candidateFile,'candidate','-v7');end
 end
 O62.readyForOneAsymmetricFEMProposal=gates.structuralPass&&O62.synthetic.passed;
