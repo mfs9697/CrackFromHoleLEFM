@@ -74,6 +74,7 @@ assert(abs(ro-.65*a0)<1e-12,'step62:SourceOuterRadius','Wrong primary EDI radius
 assert(norm(cr.Pmid(1,:)-[.199988872196,-.0208170339049])<2e-12&& ...
     norm(cr.Pmid(end,:)-[.207985904782,-.0210349096129])<2e-12, ...
     'step62:SourceCrack','Wrong saved crack endpoints.');
+sourceMat=mat;
 tip=cr.Pmid(end,:);e1=diff(cr.Pmid)/a0;
 R=[e1(:),[-e1(2);e1(1)]];X=(P-tip)*R;
 if opt.Verbose
@@ -188,7 +189,7 @@ gates.physicalGeometryUnchanged=boundary_same(P,T,Pc,Tc,cr,crNew) && ...
     isequal(cr.Pmid,crNew.Pmid);
 gates.physicalBoundaryNodesUnchanged= ...
     isequal(Pc(oldToNew(physicalIDs),:),P(physicalIDs,:));
-gates.materialUnchanged=isequal(mat,src_material(mat));
+gates.materialUnchanged=isequal(mat,sourceMat);
 gates.deterministicWholeMesh=deterministic;
 [pair3,pair6]=pair_errors(candidateMesh,pairedIDs,mirrorMap,nUpper, ...
     patchRows,tip,R);
@@ -220,7 +221,8 @@ for k=1:4,sampleN(k)=nnz(nativeR/a0>=windows(k,1)& ...
 gates.nativeSamplingAdequate=all(sampleN>=12);
 newTip=tip_edges(Pc,Tc,crNew.tipNode);
 oldTip=tip_edges(P,T,cr.tipNode);
-tipEdgeTable=table({'Step38';'Candidate'},[numel(oldTip);numel(newTip)], ...
+sourceLabel=char(string(sourceMode));
+tipEdgeTable=table({sourceLabel;'Candidate'},[numel(oldTip);numel(newTip)], ...
     [min(oldTip);min(newTip)]*1e3,[median(oldTip);median(newTip)]*1e3, ...
     [prctile(oldTip,90);prctile(newTip,90)]*1e3, ...
     [max(oldTip);max(newTip)]*1e3,'VariableNames', ...
@@ -335,9 +337,6 @@ if opt.Verbose
 end
 end
 
-function m=src_material(m)
-% Identity helper keeps the material gate explicit in both source modes.
-end
 function p=conditional_checkpoint(mode,cp)
 if strcmp(mode,'step38_checkpoint'),p=cp;else,p='';end
 end
