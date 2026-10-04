@@ -138,8 +138,8 @@ The family generator first reproduced the accepted Level-0 C03 baseline:
 
 Level 1 was generated with scale 0.5:
 
-- T3 triangles: 122,690;
-- T6 nodes: 246,700;
+- T3 triangles: 122,691;
+- T6 nodes: 246,701;
 - paired radius: 6 mm;
 - target tip median: 0.027012 mm;
 - actual tip median: 0.027012 mm;
