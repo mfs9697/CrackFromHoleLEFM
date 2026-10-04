@@ -1,4 +1,4 @@
-function [Z,T,mirror,nUpper,rings,axisIDs,design]=build_step62_structured_patch(rp,hTip,level)
+function [Z,T,mirror,nUpper,rings,axisIDs,design]=build_step62_structured_patch(rp,hTip,level,scaleOverride)
 %BUILD_STEP62_STRUCTURED_PATCH Explicit deterministic polar T3 topology.
 % No Delaunay, random points, smoothing, or historical refinement pattern.
 % Three 60-degree upper sectors define six equilateral tip triangles.
@@ -6,10 +6,17 @@ function [Z,T,mirror,nUpper,rings,axisIDs,design]=build_step62_structured_patch(
 % by an ordered zipper with a shortest-diagonal rule and fixed tie breaks.
 % One upper connectivity is reflected; the intact positive axis is shared.
 if nargin<3,level=0;end
+if nargin<4,scaleOverride=[];end
 validateattributes(rp,{'double'},{'scalar','positive','finite'});
 validateattributes(hTip,{'double'},{'scalar','positive','finite'});
 validateattributes(level,{'double'},{'scalar','integer','nonnegative','<=',4});
-scale=2^(-level);rFirst=scale*hTip;
+if isempty(scaleOverride)
+    scale=2^(-level);scaleSource='level';
+else
+    validateattributes(scaleOverride,{'double'},{'scalar','positive','finite','<=',1});
+    scale=scaleOverride;scaleSource='explicit';
+end
+rFirst=scale*hTip;
 assert(rp>4*rFirst,'step62:PatchSize','Insufficient room for graded rings.');
 slope=.028; radialFactor=sqrt(3)/2;
 % h(r)=scale*(hTip+slope*r), increasing everywhere, including beyond ro.
@@ -69,12 +76,13 @@ mirror=(1:nUpper)';mirror(nonShared)=nUpper+(1:numel(nonShared))';
 Z=[U;U(nonShared,1),-U(nonShared,2)];
 T=[Tu;mirror(Tu(:,[1 3 2]))];
 design=struct('family','explicit three-sector radial zipper', ...
-    'level',level,'scale',scale,'hTipTarget_m',rFirst,'hBase_m',hTip, ...
+    'level',level,'scale',scale,'scaleSource',scaleSource, ...
+    'hTipTarget_m',rFirst,'hBase_m',hTip, ...
     'slope',slope,'radialFactor',radialFactor,'metricStep',ds, ...
     'upperRingIDs',{ringIDs},'upperNodeRing',nodeRing,'upperNodeAngle',nodeAngle, ...
     'upperBandElementRange',bandRange,'angularIntervalsUpper',nTheta, ...
     'tipTriangles',6,'tipIncidentTopologicalEdges',7, ...
-    'hLaw','h(r)=2^(-level)*(hTip+0.028*r)', ...
+    'hLaw','h(r)=scale*(hTip+0.028*r)', ...
     'connectivityRule','three sector strips; shortest new bridge; fixed parity ties', ...
     'usesDelaunayInPairedRegion',false,'usesRandomness',false, ...
     'usesSmoothingInPairedRegion',false,'allBandWidthsIncreasing',true);
