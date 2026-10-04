@@ -50,6 +50,7 @@ if ~isempty(sourceCandidateFile)
     end
     sourceMode='archived_step62_candidate';
     sourcePath=sourceCandidateFile;sourceSHA=sha256(sourceCandidateFile);
+    checkpointPath='';
     expectedSupport=src.primarySupportElementIDs(:);
     if isfield(src,'literalPrimarySupportElementIDs')
         expectedLiteralSupport=src.literalPrimarySupportElementIDs(:);
@@ -63,6 +64,7 @@ else
     a0=d.a0;hTip=d.actualTip;ri=d.baseline.rInner;ro=.65*a0;
     sourceMesh=d.mesh;sourceOuterRatios=d.baseline.rOuterOverA0;
     sourceMode='step38_checkpoint';sourcePath=cp;sourceSHA=sha256(cp);
+    checkpointPath=cp;
     expectedSupport=[];
     expectedLiteralSupport=[];
     assert(size(P,1)==20164&&size(T,1)==39441&& ...
@@ -268,7 +270,7 @@ else
     files=struct();
 end
 provenance=struct('sourceMode',sourceMode,'sourcePath',sourcePath, ...
-    'sourceSHA256',sourceSHA,'checkpointPath',conditional_checkpoint(sourceMode,cp), ...
+    'sourceSHA256',sourceSHA,'checkpointPath',checkpointPath, ...
     'branch',current_branch(root),'sourceCommit',git_head(root), ...
     'driverSHA256',sha256(mfilename('fullpath')), ...
     'physicalUWasLoaded',false,'sourceCrack',cr.Pmid, ...
