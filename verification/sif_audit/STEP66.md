@@ -147,3 +147,78 @@ run:
     disp(R66.Decision);
 
 Return the complete console output. The key quantities are the Level-1 triplet memory, K-pattern storage, symbolic factor storage, high planning envelope, current available memory, and the recommended next qualification.
+
+
+## Completed local Step66 result — 2026-10-04
+
+Step66 completed successfully with zero physical solves, zero stiffness-value assembly, and zero linear solves.
+
+### Exact mesh sizes
+
+Level 0:
+- T3 elements: 32,980;
+- T6 nodes: 66,854;
+- displacement DOFs: 133,708.
+
+Level 1:
+- T3 elements: 122,691;
+- T6 nodes: 246,701;
+- displacement DOFs: 493,402.
+
+Thus the Level-1 DOF count is 3.6901 times Level 0.
+
+### Assembly and sparsity
+
+Level 0:
+- assembly triplet entries: 4,749,120;
+- triplet-array storage: 0.10615 GiB;
+- structural K nnz estimate: 3,048,464;
+- sparse K-pattern storage estimate: 0.046422 GiB.
+
+Level 1:
+- assembly triplet entries: 17,667,504;
+- triplet-array storage: 0.39490 GiB;
+- structural K nnz estimate: 11,308,676;
+- sparse K-pattern storage estimate: 0.17219 GiB.
+
+The Level-1 assembly-peak planning proxy is only 0.96199 GiB, so stiffness assembly/storage itself is not the main memory concern.
+
+### Symbolic direct-factor fill
+
+After node-level symamd ordering and symbfact:
+
+Level 0:
+- scalar lower-factor nnz estimate: 11,514,000;
+- lower fill ratio: 7.2366;
+- SPD factor storage estimate: 0.17257 GiB;
+- conservative SPD planning envelope: 0.9490 GiB.
+
+Level 1:
+- scalar lower-factor nnz estimate: 56,489,000;
+- lower fill ratio: 9.5727;
+- SPD factor storage estimate: 0.84543 GiB;
+- conservative SPD planning envelope: 4.3437 GiB.
+
+The symbolic factor-memory ratio Level1/Level0 is 4.8991, larger than the DOF ratio 3.6901, showing superlinear fill growth.
+
+### Machine memory
+
+At the time of the preflight MATLAB reported:
+- available physical memory: 6.1918 GiB;
+- total physical memory: 15.372 GiB.
+
+The conservative Level-1 SPD planning envelope is therefore approximately 70.15% of the currently available physical memory.
+
+### Decision
+
+Step66 classified the current configuration as:
+
+`HIGH_DIRECT_FACTORIZATION_RISK`
+
+and recommended:
+
+`QUALIFY_ITERATIVE_SOLVER_ON_LEVEL0`
+
+The reason is not sparse-K storage or triplet assembly. The principal risk is numerical factorization, compounded by the current row-only Dirichlet clamping in `stif_assem.m`, which destroys stored symmetry and means the production `K\F` path is not guaranteed to use sparse Cholesky.
+
+No Level-1 physical solve is authorized by this result.
