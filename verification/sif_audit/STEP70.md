@@ -61,4 +61,4 @@ A new physical refinement is justified only if a separate future objective requi
 
 Do not merge directly to main.
 
-Review Step70 first, then integrate the stacked audit PRs bottom-up into sif-asymmetric-mesh-audit. After integration, perform a final static/documentation regression review on that target branch before considering any separate production PR.
+After Step70 review, retarget the cumulative PR #45 to sif-asymmetric-mesh-audit and merge it there. The cumulative head preserves the intermediate audit commits. After integration, perform a final static/documentation regression review on that target branch before considering any separate production PR.
