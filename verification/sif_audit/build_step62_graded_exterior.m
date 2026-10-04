@@ -108,8 +108,10 @@ for it=1:cal.refinementMaxPasses
         longest>cal.refinementLongestFactor*heff;
     [ratio,badNeighbor]=neighbor_ratio(T,longest,cal.neighborRatioTarget);bad=bad|badNeighbor;
     refinementRows(end+1,:)=[it,size(T,1),nnz(bad),min(minAngle),ratio]; %#ok<AGROW>
-    fprintf('Exterior refinement %d: %d cells, %d flagged, angle %.6g, ratio %.6g\n', ...
-        it,size(T,1),nnz(bad),min(minAngle),ratio);
+    if cal.verbose
+        fprintf('Exterior refinement %d: %d cells, %d flagged, angle %.6g, ratio %.6g\n', ...
+            it,size(T,1),nnz(bad),min(minAngle),ratio);
+    end
     if ~any(bad),break,end
     ca=Q(C(:,1),:);cb=Q(C(:,2),:);cm=.5*(ca+cb);
     cR2=.25*sum((ca-cb).^2,2);
@@ -191,7 +193,8 @@ function cal=exterior_calibration(design)
 cal=struct('transitionLength_m',.008,'farSlope',.15, ...
     'boundaryMetricGrowth',.30,'smoothingSteps',6, ...
     'refinementMaxPasses',100,'refinementMinAngle_deg',25, ...
-    'refinementLongestFactor',1.65,'neighborRatioTarget',2.5);
+    'refinementLongestFactor',1.65,'neighborRatioTarget',2.5, ...
+    'verbose',true);
 if isfield(design,'exteriorCalibration')&&~isempty(design.exteriorCalibration)
     u=design.exteriorCalibration; names=fieldnames(u);
     for k=1:numel(names)
