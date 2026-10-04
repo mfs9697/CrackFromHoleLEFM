@@ -91,3 +91,25 @@ If and only if Step63R prints `STEP63R PASS`, the already-authorized Step64 EDI 
     R64 = main_step64_matched_physical_edi();
 
 Do not switch branches between recovery and Step64.
+
+
+## Completed local recovery result — 2026-10-04
+
+The authorized replacement solve completed successfully on the regenerated exact C03 mesh.
+
+The reconstructed candidate reproduced the recorded Step62B qualification:
+- 32,980 T3 triangles;
+- 66,854 T6 nodes;
+- maximum adjacent-size ratio 1.79678451;
+- paired-patch minimum angle 40.654 deg;
+- exterior minimum angle 25.072 deg;
+- all structural gates passed;
+- prescribed pure-I, pure-II and KI=1, KII=1e-4 controls passed.
+
+The replacement physical solve was checkpointed successfully. The recovered native-COD field reproduced the first successful Step63 console fingerprint extremely closely. Across the eight fitted ratios, the largest absolute difference from the rounded first-run values was below 4.8e-9; across the five raw-band medians it was below 3.8e-9. All recovery gates passed.
+
+Recovered checkpoint SHA-256:
+
+`e1ce7f0d4c305920115aba313996feffce3d54c6361903a2fa650c9890302018`
+
+Therefore Step63R established that the first Step63 physical COD result is reproducible on deterministic reconstruction of the qualified C03 problem. This recovery does not add an independent mesh level.
