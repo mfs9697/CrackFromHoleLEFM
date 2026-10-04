@@ -553,7 +553,7 @@ neighbors=setdiff(unique(tt(:)),tip);
 L=vecnorm(P(neighbors,:)-P(tip,:),2,2);
 end
 function tableOut=quality_comparison(old,mask,new,patch,exterior)
-names={'Step38 affected';'Candidate paired';'Candidate exterior';'Candidate affected'};
+names={'Source affected';'Candidate paired';'Candidate exterior';'Candidate affected'};
 q={old,new,new,new};ii={find(mask),patch,exterior,[patch;exterior]};rows=zeros(4,6);
 for k=1:4
     v=q{k};i=ii{k};rows(k,:)=[numel(i),min(v.minAngle(i)), ...
@@ -661,8 +661,8 @@ for j=1:4
     if j>2,xlim(ax,[-9 7]);ylim(ax,[-7 7]);end
     pbaspect(ax,[diff(xlim(ax)),diff(ylim(ax)),1]);
     xlabel(ax,'local x_1 (mm)');ylabel(ax,'local x_2 (mm)');
-    if mod(j,2)==1,title(ax,sprintf('Saved Step38: %d triangles',size(T,1))); ...
-    else,title(ax,sprintf('Step62: full graded remesh, %d triangles',size(S,1)));end
+    if mod(j,2)==1,title(ax,sprintf('Source baseline: %d triangles',size(T,1))); ...
+    else,title(ax,sprintf('Candidate L%d: full graded remesh, %d triangles',design.level,size(S,1)));end
 end
 ax=subplot(3,2,5,'Parent',f);hold(ax,'on');
 patch(ax,'Faces',S,'Vertices',Y*1e3,'FaceColor','none','EdgeColor',[.2 .35 .5],'LineWidth',.6);
@@ -681,9 +681,9 @@ scatter(ax,s(extIDs),nq.longest(extIDs)*1e3,3,[.55 .2 .65],'.');
 plot(ax,design.ringTable.radius_mm,design.ringTable.targetH_mm,'k-','LineWidth',1.5);
 plot(ax,exterior.ringTable.radius_m*1e3,exterior.ringTable.targetH_m*1e3,'k-','LineWidth',1.5);
 xlim(ax,[0 40]);ylim(ax,[0 4]);grid(ax,'on');
-title(ax,'Gray Step38; blue patch; purple exterior; black target h');
+title(ax,'Gray source; blue paired patch; purple exterior; black target h');
 xlabel(ax,'centroid radius (mm)');ylabel(ax,'edge length / target spacing (mm)');
-sgtitle(f,'Step62 structured graded family; exact physical boundary; no physical FEM', ...
+sgtitle(f,sprintf('Structured graded family L%d; exact physical boundary; no physical FEM',design.level), ...
     'FontSize',10);
 files=struct('overviewPNG',[prefix '_overview.png'],'tipPNG',[prefix '_tip.png']);
 drawnow;exportgraphics(f,files.overviewPNG,'Resolution',300);close(f);
@@ -700,7 +700,7 @@ for j=1:2
     axis(ax,'equal');xlim(ax,[-.22 .22]);ylim(ax,[-.22 .22]);grid(ax,'on');
     pbaspect(ax,[1 1 1]);
     xlabel(ax,'local x_1 (mm)');ylabel(ax,'local x_2 (mm)');
-    if j==1,title(ax,'Step38 original fan');else,title(ax,'Step62 explicit six-triangle fan');end
+    if j==1,title(ax,'Source tip fan');else,title(ax,sprintf('Candidate L%d six-triangle fan',design.level));end
 end
 drawnow;exportgraphics(f,files.tipPNG,'Resolution',220);close(f);
 end
@@ -722,7 +722,8 @@ function assert_audit_branch(root)
 branch=current_branch(root);
 ok=strcmp(branch,'sif-asymmetric-mesh-audit')||startsWith(branch,'audit/step62')|| ...
     strcmp(branch,'audit/step63-calibrated-physical-solve')|| ...
-    strcmp(branch,'audit/step63r-recover-lost-physical-field');
+    strcmp(branch,'audit/step63r-recover-lost-physical-field')|| ...
+    strcmp(branch,'audit/step65-level1-mesh-qualification');
 assert(ok,'step62:Branch', ...
     'Step62 mesh-only construction is not authorized on the current branch.');
 end
