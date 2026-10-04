@@ -19,13 +19,19 @@ addParameter(ip,'ReturnCandidate',false,@(x)islogical(x)&&isscalar(x));
 addParameter(ip,'Verbose',true,@(x)islogical(x)&&isscalar(x));
 addParameter(ip,'Level',0,@(x)isnumeric(x)&&isscalar(x)&& ...
     x==fix(x)&&x>=0&&x<=4);
+addParameter(ip,'Scale',NaN,@(x)isnumeric(x)&&isscalar(x)&& ...
+    (isnan(x)||(isfinite(x)&&x>0&&x<=1)));
 addParameter(ip,'DebugFile','',@(x)ischar(x)||isstring(x));
 parse(ip,varargin{:}); opt=ip.Results;
 addpath(genpath(root));
 assert_audit_branch(root);
 cp=char(opt.CheckpointFile); sourceCandidateFile=char(opt.SourceCandidateFile);
 prefix=char(opt.SavePrefix);
-if opt.Level>0,prefix=sprintf('%s_L%d',prefix,opt.Level);end
+if isfinite(opt.Scale)
+    prefix=sprintf('%s_S%07d',prefix,round(1e6*opt.Scale));
+elseif opt.Level>0
+    prefix=sprintf('%s_L%d',prefix,opt.Level);
+end
 
 % Two source modes are supported. Historical mode selectively loads the
 % Step38 checkpoint without U. Recovery mode uses the exact archived Step62
@@ -116,13 +122,13 @@ extentTable=table(rp,maxSupport,rp-maxSupport,physicalClearance, ...
     'VariableNames',{'pairedRadius_m','oldSupportMaxRadius_m', ...
     'supportClearance_m','nearestPhysicalBoundary_m'});
 [Zpatch,Tpatch,mirrorMap,nUpper,ringRadii,axisUp,design]= ...
-    build_step62_structured_patch(rp,hTip,opt.Level);
+    build_step62_structured_patch(rp,hTip,opt.Level,scale_arg(opt.Scale));
 design.exteriorCalibration=opt.ExteriorCalibration;
 [Zexterior,Texterior,exteriorMeta,physicalIDs]= ...
     build_step62_graded_exterior(X,T,cr,Zpatch,Tpatch,rp,design);
 outerIDs=exteriorMeta.originalPhysicalIDs;outerXY=X(physicalIDs,:);
 % Repeat the entire construction to verify exact deterministic output.
-[Zagain,Tagain]=build_step62_structured_patch(rp,hTip,opt.Level);
+[Zagain,Tagain]=build_step62_structured_patch(rp,hTip,opt.Level,scale_arg(opt.Scale));
 [Eagain,Fagain]=build_step62_graded_exterior(X,T,cr,Zagain,Tagain,rp,design);
 deterministic=isequal(Zpatch,Zagain)&&isequal(Tpatch,Tagain)&& ...
     isequal(Zexterior,Eagain)&&isequal(Texterior,Fagain);
@@ -721,6 +727,10 @@ if isfield(O62,'synthetic')&&isfield(O62.synthetic,'table')
     writetable(O62.synthetic.table,[prefix '_syntheticTable.csv']);
 end
 end
+function out=scale_arg(x)
+if isnan(x),out=[];else,out=x;end
+end
+
 function assert_audit_branch(root)
 branch=current_branch(root);
 ok=strcmp(branch,'sif-asymmetric-mesh-audit')||startsWith(branch,'audit/step62')|| ...
@@ -730,7 +740,8 @@ ok=strcmp(branch,'sif-asymmetric-mesh-audit')||startsWith(branch,'audit/step62')
     strcmp(branch,'audit/step66-solver-memory-preflight')|| ...
     strcmp(branch,'audit/step67-level0-iterative-solver-qualification')|| ...
     strcmp(branch,'audit/step67a-level0-sgs-solver-qualification')|| ...
-    strcmp(branch,'audit/step68-level1-sgs-physical-convergence');
+    strcmp(branch,'audit/step68-level1-sgs-physical-convergence')|| ...
+    strcmp(branch,'audit/step69-sqrt2-scale-convergence');
 assert(ok,'step62:Branch', ...
     'Step62 mesh-only construction is not authorized on the current branch.');
 end
