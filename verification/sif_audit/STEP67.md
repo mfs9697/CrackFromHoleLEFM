@@ -170,3 +170,28 @@ run:
     disp(R67.gates);
 
 Return the complete console output.
+
+
+## First local attempt — preconditioner breakdown before PCG
+
+The first authorized local attempt reached symmetric Level-0 stiffness assembly successfully:
+
+- Level 0: 32,980 T3, 66,854 T6, 133,708 total DOFs, 133,705 free DOFs;
+- unclamped stiffness symmetry error: 1.662e-16.
+
+The predeclared ICT incomplete-Cholesky setup
+
+`droptol=1e-3, diagcomp=1e-3, michol=on`
+
+then terminated with:
+
+`Encountered nonpositive pivot.`
+
+The failure occurred inside `ichol` before `pcg` was called. Therefore:
+
+- zero iterative physical solves were performed;
+- no physical displacement field was produced;
+- no COD or EDI was evaluated;
+- the one-solve authorization was not consumed.
+
+This is treated as a failed preconditioner qualification, not as evidence that the symmetric free-DOF stiffness itself is indefinite. No post-failure tuning of ICT parameters is performed in Step67.
