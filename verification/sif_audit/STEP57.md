@@ -82,3 +82,25 @@ The authorization is deliberately narrow:
 
 Any later matched-domain EDI calculation requires a separate decision after reviewing this one solved control.
 
+
+
+## First authorized attempt: pre-solve validator bug, no FEM solve occurred
+
+On the first investigator-authorized Step57 invocation, the driver reproduced the saved Step56 native crack-face geometry (`72/72`, zero radial mismatch) and then stopped **before the solver call** with:
+
+`Coincident upper/lower crack-face T3 nodes are not distinct as required.`
+
+This was traced to a validator implementation error, not to the Step56 mesh. The validator applied `unique()` independently to upper and lower crack-face node IDs and then compared coordinates row-by-row. Because the reflected lower face intentionally uses **different node numbers**, sorting each ID set numerically destroys the physical upper/lower correspondence. Step56 had already established the intended topology.
+
+The corrected validator now:
+
+- requires no repeated IDs within either face list;
+- requires equal upper/lower face-node counts;
+- requires that the two ID sets share **exactly one node, the common crack tip**;
+- projects each face's physical coordinates onto the saved crack tangent;
+- sorts by that physical crack coordinate, not by node number;
+- requires upper/lower collapsed coordinates and crack parameters to agree to tolerance.
+
+No geometry, mesh recipe, candidate file, solver call, loading, boundary condition, or postprocessing rule changed.
+
+**The authorized solve has therefore not yet occurred and the one-solve authorization remains available.** Rerun the same guarded command after pulling this fix. EDI remains prohibited in this step.
