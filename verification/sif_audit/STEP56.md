@@ -51,3 +51,36 @@ disp(O56.gates);
 Return the complete output, particularly the identified upper-only PDE edge/vertex labels, the achieved min triangle area and angle, complete T3/T6 mirror errors, interface topology gates, actual tip-edge median and **all three native COD window counts**. MATLAB numerical execution is not yet verified; stop at the first error and report it rather than guessing new geometry IDs.
 
 **Research interpretation:** even a fully mirrored mesh with a valid collapsed slit is a *new mesh* of the same physical problem, not evidence that existing FEM/EID Mode-II residuals are calibrated or that the separate much-finer asymmetric tiny-Mode-II signal is verified. If the mesh-only gates pass, the next decision is an explicit, separate authorization for **at most one** newly solved symmetric control on this exact candidate.
+
+
+## Investigator's completed Step56 result: exact reflected candidate passes all gates
+
+The investigator executed the mesh-only reflected assembly after the T6 edge-vector compatibility fix in PR #25. The run completed successfully without a stiffness assembly, FEM solution, EDI, or physical COD field.
+
+| Measured Step56 quantity | Actual result |
+| --- | ---: |
+| Verified Step55 upper polygon vertices | 65 |
+| Generated upper T3 nodes | 727 |
+| Assembled reflected T3 nodes | 1425 |
+| Assembled T3 triangles | 2578 |
+| Assembled T6 nodes | 5427 |
+| Shared intact-ligament T3 nodes | 29 |
+| Upper physical crack-face T3 nodes | 37 |
+| Native upper/lower T6 crack-face samples | 72 / 72 |
+| Upper/lower native radial mismatch | 0 m |
+| Tip-adjacent T3 triangles above/below | 3 / 3 |
+| Median tip-edge length | 0.00014363 m |
+| Median tip-edge / a0 | 0.035908 |
+| Minimum collapsed T3 area | 4.1958e-9 m² |
+| Minimum collapsed T3 angle | 20.095° |
+| Pre-collapse complete mirror error | 0 m |
+| Post-collapse complete mirror error | 0 m |
+| Native samples in 0.04–0.30 a0 | 19 |
+| Native samples in 0.08–0.30 a0 | 16 |
+| Native samples in 0.12–0.30 a0 | 13 |
+
+Every declared structural/sampling gate returned **true**: original upper boundary vertices retained; complete upper/lower T3 and T6 reflection; shared intact ligament; distinct crack faces; shared T6 seam midsides; distinct crack-face T6 midsides; positive collapsed T3 areas; symmetric 3/3 tip fan; exact native crack-face coordinate pairing; all three predeclared linear and quadratic COD-window sampling gates; refinement relative to original Step45; `meshReadyForReview`; and `readyForOneReflectedFEMProposal`.
+
+The exact local candidate was saved as `verification/step56_reflected_mesh_only_candidate_T3.mat`. **This is the candidate to reuse; do not regenerate it before a future solve.** Its T6 count (5427) differs from Step47 (5054), and its achieved median tip edge (0.00014363 m) is slightly larger than Step47's 0.00013535 m, even though both use the same nominal face/tip refinement factors. Thus a future comparison is a controlled **reflection-topology experiment on a new mesh**, not a pure monotone-refinement experiment.
+
+Passing Step56 does not authorize a new FEM calculation. The separately staged [Step57 driver](STEP57.md) is default-off and will refuse to solve unless the investigator explicitly authorizes exactly one new symmetric control solve.
