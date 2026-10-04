@@ -6,6 +6,8 @@ Step62 established a strong structured-mesh baseline, but its realized maximum a
 
 Step62B performs a deliberately small **mesh-only calibration** of the exterior grading. It does **not** tune against the physical asymmetric KII and performs **no physical FEM solve**.
 
+The untracked Step38 solved checkpoint is no longer available locally. Step62B therefore uses the **committed exact Step62 candidate** as its immutable source geometry. This is sufficient for exterior mesh calibration because the candidate already stores the qualified physical boundary, crack topology, material, structured core, EDI radii, support IDs, source provenance, and prescribed-field qualification. No physical displacement field is needed.
+
 The Step62 structured core is held fixed: paired radius 6 mm; explicit three-sector ring topology; six tip triangles / seven incident tip edges; exact T3/T6 reflection pairing; crack topology; radial core law; and physical geometry.
 
 Only the exterior transition law is calibrated.
@@ -24,9 +26,11 @@ Selection is lexicographic:
 
 The value 1.8 is a prospective engineering mesh-quality target, **not** an uncertainty estimate.
 
-## Baseline diagnostic
+## Archived-source recovery and baseline diagnostic
 
-The driver first opens the exact archived Step62 candidate verification/step62_structured_graded_mesh_candidate_T3.mat and locates the actual adjacent element pairs responsible for the largest size ratio.
+The driver first opens the exact committed Step62 candidate `verification/step62_structured_graded_mesh_candidate_T3.mat`. Before regenerating any mesh it requires the archived candidate to report structural qualification, prescribed-field qualification, scientific readiness for an FEM *proposal*, and the seven-edge tip topology. The missing Step38 checkpoint is not required.
+
+It then locates the actual adjacent element pairs responsible for the largest size ratio.
 
 For each worst pair it records element IDs, shared edge node IDs, longest-edge sizes, ratio, crack-tip-local centroid radii, shared-edge midpoint radius, and whether each element is in the paired core or exterior.
 
@@ -71,7 +75,7 @@ If no candidate satisfies the predeclared grading gate, the driver stops without
 
 ## Safety
 
-Step62B contains no call to solve_cracked_LEFM. The Step62 builder still loads no physical displacement vector U. The only SIF extraction permitted is prescribed-field EDI after structural qualification.
+Step62B contains no call to `solve_cracked_LEFM`. In archived-candidate source mode the Step62 builder loads no Step38 checkpoint at all and no physical displacement vector U. The only SIF extraction permitted is prescribed-field EDI after structural qualification.
 
 No physical asymmetric FEM solve is authorized by this step.
 
