@@ -239,8 +239,10 @@ end
 
 function assert_step64_branch(root)
 [status,b]=system(sprintf('git -C "%s" branch --show-current',root));
-assert(status==0&&strcmp(strtrim(b),'audit/step64-matched-physical-edi'), ...
-    'step64:Branch','Run Step64 only on audit/step64-matched-physical-edi.');
+ok=status==0&&(strcmp(strtrim(b),'audit/step64-matched-physical-edi')|| ...
+    strcmp(strtrim(b),'audit/step63r-recover-lost-physical-field'));
+assert(ok, ...
+    'step64:Branch','Run Step64 only on Step64 or Step63R recovery branch.');
 end
 
 function need(s,f)
