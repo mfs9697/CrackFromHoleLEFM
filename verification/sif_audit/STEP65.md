@@ -118,3 +118,79 @@ run:
     end
 
 Return the complete console output and visually inspect the generated Level-1 overview/tip figures before any physical Level-1 solve is considered.
+
+
+## Completed local Step65 result — 2026-10-04
+
+The Level-1 C03 mesh-family member passed every predeclared qualification gate with zero physical FEM solves.
+
+### Level-0 reproduction
+
+The family generator first reproduced the accepted Level-0 C03 baseline:
+
+- T3 triangles: 32,980;
+- T6 nodes: 66,854;
+- paired radius: 6 mm;
+- target/actual tip median: 0.054025 mm;
+- maximum adjacent-size ratio: 1.7968.
+
+### Level-1 geometry and resolution
+
+Level 1 was generated with scale 0.5:
+
+- T3 triangles: 122,690;
+- T6 nodes: 246,700;
+- paired radius: 6 mm;
+- target tip median: 0.027012 mm;
+- actual tip median: 0.027012 mm;
+- paired-patch minimum angle: 40.815 deg;
+- exterior minimum angle: 25.340 deg;
+- maximum adjacent-size ratio: 1.7994;
+- primary q-support elements: 40,146;
+- literal q-support elements: 44,130.
+
+Thus the structured tip scale was halved exactly while the same 6-mm paired region and physical geometry were preserved.
+
+### Native crack-face sampling
+
+The native points increased approximately by a factor of two:
+
+- [0.04,0.20] a0: 38 -> 74;
+- [0.04,0.30] a0: 55 -> 108;
+- [0.08,0.30] a0: 44 -> 86;
+- [0.12,0.30] a0: 34 -> 67.
+
+### Structural gates
+
+All Step65 family gates passed:
+
+- Level-0 baseline reproduced;
+- Level-1 structural pass;
+- physical geometry/boundary/material unchanged;
+- complete T3/T6 reflection pairing;
+- q-support entirely inside paired region;
+- exterior excluded from q-support;
+- six-triangle/seven-edge tip fan;
+- target and measured tip scales halved;
+- same 6-mm paired radius;
+- maximum adjacent-size ratio <=1.8;
+- minimum angle >=20 deg;
+- native sampling not reduced;
+- synthetic qualification performed and passed;
+- zero physical FEM solves.
+
+### Prescribed-field qualification
+
+Level-1 prescribed controls:
+
+- pure I: recovered KI=1.00000000325, KII=1.5167e-14;
+- pure II: recovered KI=7.7047e-16, KII=1.0000000024;
+- mixed KI=1, KII=1e-4: recovered KII=1.00000000255e-4.
+
+The relative tiny-KII recovery error is approximately 2.55e-9, substantially smaller than on Level 0.
+
+### Interpretation
+
+Step65 establishes a clean, deterministic Level-1 member of the same structured C03 mesh family. It preserves the physical problem and extraction support while halving the local structured scale. This creates the first meaningful direct mesh-family convergence test for the tiny physical Mode-II signal.
+
+The Level-1 candidate is qualified for a future one-solve physical proposal, but no physical Level-1 FEM solve has yet been authorized or performed.
