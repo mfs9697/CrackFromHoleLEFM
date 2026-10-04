@@ -208,29 +208,17 @@ K_{II}/K_I\approx1.066\times10^{-4}.
 
 The SIF forensic audit should now be treated as closed, subject only to repository integration and preservation of the audit trail.
 
-## Repository integration plan
+## Repository integration record
 
-The audit was developed as a stacked sequence. Do not merge directly to main.
+The audit was developed as a stacked sequence, but final integration is performed through the cumulative closure PR.
 
-Target remains:
+Target:
 
 **sif-asymmetric-mesh-audit**
 
-After final review of this closure PR, integrate the still-open stack **bottom-up** so that each child PR collapses onto the updated target without losing its audit provenance:
+PR #45 is retargeted from its stacked parent to \`sif-asymmetric-mesh-audit\`. Because that target is an ancestor of the Step70 head, the cumulative PR contains the complete Step62--Step70 audit history without rewriting or dropping the intermediate commits.
 
-1. PR #34 -- Step62 focused integration
-2. PR #35 -- Step62B mesh calibration
-3. PR #36 -- Step63 calibrated physical solve
-4. PR #37 -- Step64 matched physical EDI
-5. PR #38 -- Step63R lost-checkpoint recovery
-6. PR #39 -- Step65 Level-1 mesh qualification
-7. PR #40 -- Step66 memory preflight
-8. PR #41 -- Step67 failed ICT qualification
-9. PR #42 -- Step67A SGS-PCG qualification
-10. PR #43 -- Step68 Level-1 physical convergence
-11. PR #44 -- Step69 \(1/\sqrt2\) convergence point
-12. PR #45 -- Step70 synthesis/closure
+The earlier stacked PRs #34--#44 remain useful provenance for the individual audit stages, including PR #41's failed ICT experiment. That negative result documents why the parameter-free SGS route was adopted without post-hoc preconditioner tuning.
 
-PR #41 should remain in history even though its ICT experiment failed: that negative result motivated the parameter-free SGS route and documents that no post-hoc preconditioner tuning was used.
+After PR #45 is merged, perform one final static/documentation regression review on \`sif-asymmetric-mesh-audit\`. Only then decide separately whether any audited production changes should be proposed toward \`main\`.
 
-After the stack is integrated into sif-asymmetric-mesh-audit, perform one documentation/static regression review on that target branch. Only then decide separately whether any audited production changes should be proposed toward main.
