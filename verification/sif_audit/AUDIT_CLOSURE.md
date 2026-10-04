@@ -1,6 +1,6 @@
 # SIF audit synthesis and closure
 
-**Status:** closed scientifically on the audit branch, pending review and integration of the stacked audit PRs.
+**Status:** scientifically closed; repository integration is recorded below.
 
 **Scope:** validation of the very small positive Mode-II component in the asymmetric cracked-hole LEFM problem, with special attention to mesh-induced parity leakage, extraction bias, linear-solver effects, and mesh convergence.
 
