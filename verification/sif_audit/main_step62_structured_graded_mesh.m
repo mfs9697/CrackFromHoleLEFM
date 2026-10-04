@@ -12,6 +12,8 @@ addParameter(ip,'SavePrefix',fullfile(root,'verification', ...
     'step62_structured_graded_mesh'),@(x)ischar(x)||isstring(x));
 addParameter(ip,'Visible','off',@(x)ischar(x)||isstring(x));
 addParameter(ip,'RunSynthetic',true,@(x)islogical(x)&&isscalar(x));
+addParameter(ip,'ExteriorCalibration',struct(),@(x)isstruct(x)&&isscalar(x));
+addParameter(ip,'WriteArtifacts',true,@(x)islogical(x)&&isscalar(x));
 addParameter(ip,'Level',0,@(x)isnumeric(x)&&isscalar(x)&& ...
     x==fix(x)&&x>=0&&x<=4);
 addParameter(ip,'DebugFile','',@(x)ischar(x)||isstring(x));
@@ -58,6 +60,7 @@ extentTable=table(rp,maxSupport,rp-maxSupport,physicalClearance, ...
     'supportClearance_m','nearestPhysicalBoundary_m'});
 [Zpatch,Tpatch,mirrorMap,nUpper,ringRadii,axisUp,design]= ...
     build_step62_structured_patch(rp,hTip,opt.Level);
+design.exteriorCalibration=opt.ExteriorCalibration;
 [Zexterior,Texterior,exteriorMeta,physicalIDs]= ...
     build_step62_graded_exterior(X,T,cr,Zpatch,Tpatch,rp,design);
 outerIDs=exteriorMeta.originalPhysicalIDs;outerXY=X(physicalIDs,:);
@@ -178,7 +181,11 @@ gates.monotoneExteriorLaw=all(diff(exteriorMeta.ringTable.targetH_m)>=0)&& ...
 % Engineering gates, not physical error bars.
 affected=[patchRows;exteriorRows];
 gates.minimumAngle20deg=min(newQuality.minAngle(affected))>=20;
-gates.noAbruptGrading=max_neighbor_size_ratio(Tc,newQuality.longest,affected)<=2.5;
+neighborTarget=2.5;
+if isfield(opt.ExteriorCalibration,'neighborRatioTarget')
+    neighborTarget=opt.ExteriorCalibration.neighborRatioTarget;
+end
+gates.noAbruptGrading=max_neighbor_size_ratio(Tc,newQuality.longest,affected)<=neighborTarget;
 gates.structuralPass=all(structfun(@(x)logical(x),gates));
 summary=table(size(P,1),size(T,1),size(s.mesh.coord,1), ...
     size(Pc,1),size(Tc,1),size(P6,1),nnz(removed),nnz(outside), ...
@@ -196,11 +203,15 @@ radialTable=radial_comparison(X,T,Xc,Tc,oldQuality,newQuality,rp);
 samplingTable=table(windows(:,1),windows(:,2),sampleN, ...
     'VariableNames',{'lower_r_over_a0','upper_r_over_a0','nativePoints'});
 disp(summary);disp(qualityTable);disp(samplingTable);disp(gates);
-files=plot_candidate(prefix,opt.Visible,X,T,Xc,Tc,removed,patchRows, ...
-    exteriorRows,oldSupport,newSupport,outerXY,exteriorMeta.innerPolygon,rp,ri,ro, ...
-    cr,crNew,oldQuality,newQuality,design,exteriorMeta);
+if opt.WriteArtifacts
+    files=plot_candidate(prefix,opt.Visible,X,T,Xc,Tc,removed,patchRows, ...
+        exteriorRows,oldSupport,newSupport,outerXY,exteriorMeta.innerPolygon,rp,ri,ro, ...
+        cr,crNew,oldQuality,newQuality,design,exteriorMeta);
+else
+    files=struct();
+end
 provenance=struct('checkpointPath',cp,'checkpointSHA256',sha256(cp), ...
-    'branch','audit/step62-structured-graded-mesh','sourceCommit',git_head(root), ...
+    'branch',current_branch(root),'sourceCommit',git_head(root), ...
     'driverSHA256',sha256(mfilename('fullpath')), ...
     'physicalUWasLoaded',false,'sourceCrack',cr.Pmid, ...
     'sourceMaterial',mat,'baselineOuterRatios',s.baseline.rOuterOverA0, ...
@@ -211,7 +222,8 @@ provenance=struct('checkpointPath',cp,'checkpointSHA256',sha256(cp), ...
         'build_step62_structured_patch.m')), ...
     'exteriorBuilderSHA256',sha256(fullfile(fileparts(mfilename('fullpath')), ...
         'build_step62_graded_exterior.m')), ...
-    'matlabVersion',version,'supportDefinition','Step60 plus literal EDI audit');
+    'matlabVersion',version,'supportDefinition','Step60 plus literal EDI audit', ...
+    'exteriorCalibration',opt.ExteriorCalibration);
 O62=struct('feasible',true,'summary',summary,'extentTable',extentTable, ...
     'qualityTable',qualityTable,'radialTable',radialTable, ...
     'samplingTable',samplingTable,'gates',gates,'files',files, ...
@@ -232,7 +244,7 @@ O62=struct('feasible',true,'summary',summary,'extentTable',extentTable, ...
     'noPhysicalU',true,'noFEM',true,'noStiffness',true);
 % Save diagnostic reports even on rejection; only structurally accepted
 % candidates receive the candidate MAT file.
-save_report(prefix,O62);
+if opt.WriteArtifacts,save_report(prefix,O62);end
 if ~gates.structuralPass
     fprintf('STOP: structural/design gate failed. No synthetic EDI, no FEM.\n');
     return
@@ -250,15 +262,17 @@ candidate=struct('p',Pc,'t',Tc,'crack',crNew,'mat',mat, ...
     'exteriorDesign',exteriorMeta,'provenance',provenance,'gates',gates);
 candidateFile=[prefix '_candidate_T3.mat'];
 candidate.scientificallyReadyForFEMProposal=false;
-save(candidateFile,'candidate','-v7'); O62.files.candidateMAT=candidateFile;
+if opt.WriteArtifacts
+    save(candidateFile,'candidate','-v7'); O62.files.candidateMAT=candidateFile;
+end
 if opt.RunSynthetic
     O62.synthetic=synthetic_controls(candidateMesh,crNew,mat,ri,ro);
     candidate.scientificallyReadyForFEMProposal=O62.synthetic.passed;
     candidate.synthetic=O62.synthetic;
-    save(candidateFile,'candidate','-v7');
+    if opt.WriteArtifacts,save(candidateFile,'candidate','-v7');end
 end
 O62.readyForOneAsymmetricFEMProposal=gates.structuralPass&&O62.synthetic.passed;
-save_report(prefix,O62);
+if opt.WriteArtifacts,save_report(prefix,O62);end
 fprintf('Step62 finished: proposal ready=%d; zero FEM solves.\n', ...
     O62.readyForOneAsymmetricFEMProposal);
 end
@@ -640,9 +654,15 @@ if isfield(O62,'synthetic')&&isfield(O62.synthetic,'table')
 end
 end
 function assert_audit_branch(root)
+branch=current_branch(root);
+ok=strcmp(branch,'sif-asymmetric-mesh-audit')||startsWith(branch,'audit/step62');
+assert(ok,'step62:Branch', ...
+    'Step62 must run on sif-asymmetric-mesh-audit or an audit/step62* branch.');
+end
+function branch=current_branch(root)
 [status,branch]=system(sprintf('git -C "%s" branch --show-current',root));
-assert(status==0&&strcmp(strtrim(branch),'audit/step62-structured-graded-mesh'), ...
-    'step62:Branch','Step62 must run on audit/step62-structured-graded-mesh.');
+assert(status==0,'step62:GitBranch','Cannot resolve current Git branch.');
+branch=strtrim(branch);
 end
 function s=git_head(root)
 [status,s]=system(sprintf('git -C "%s" rev-parse HEAD',root));
