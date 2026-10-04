@@ -14,6 +14,7 @@ addParameter(ip,'Visible','off',@(x)ischar(x)||isstring(x));
 addParameter(ip,'RunSynthetic',true,@(x)islogical(x)&&isscalar(x));
 addParameter(ip,'ExteriorCalibration',struct(),@(x)isstruct(x)&&isscalar(x));
 addParameter(ip,'WriteArtifacts',true,@(x)islogical(x)&&isscalar(x));
+addParameter(ip,'Verbose',true,@(x)islogical(x)&&isscalar(x));
 addParameter(ip,'Level',0,@(x)isnumeric(x)&&isscalar(x)&& ...
     x==fix(x)&&x>=0&&x<=4);
 addParameter(ip,'DebugFile','',@(x)ischar(x)||isstring(x));
@@ -35,7 +36,7 @@ assert(norm(cr.Pmid(1,:)-[.199988872196,-.0208170339049])<2e-12&& ...
     'step62:SourceCrack','Wrong saved crack endpoints.');
 tip=cr.Pmid(end,:); e1=diff(cr.Pmid)/a0;
 R=[e1(:),[-e1(2);e1(1)]]; X=(P-tip)*R;
-fprintf('STEP62: saved asymmetric mesh, no physical U loaded.\n');
+if opt.Verbose,fprintf('STEP62: saved asymmetric mesh, no physical U loaded.\n');end
 % Step60 convention and literal production participation are both audited.
 oldSupport=q_support(s.mesh,cr,ri,ro,true);
 oldLiteralSupport=q_support(s.mesh,cr,ri,ro,false);
@@ -202,7 +203,9 @@ qualityTable=quality_comparison(oldQuality,removed,newQuality,patchRows,exterior
 radialTable=radial_comparison(X,T,Xc,Tc,oldQuality,newQuality,rp);
 samplingTable=table(windows(:,1),windows(:,2),sampleN, ...
     'VariableNames',{'lower_r_over_a0','upper_r_over_a0','nativePoints'});
-disp(summary);disp(qualityTable);disp(samplingTable);disp(gates);
+if opt.Verbose
+    disp(summary);disp(qualityTable);disp(samplingTable);disp(gates);
+end
 if opt.WriteArtifacts
     files=plot_candidate(prefix,opt.Visible,X,T,Xc,Tc,removed,patchRows, ...
         exteriorRows,oldSupport,newSupport,outerXY,exteriorMeta.innerPolygon,rp,ri,ro, ...
@@ -246,7 +249,7 @@ O62=struct('feasible',true,'summary',summary,'extentTable',extentTable, ...
 % candidates receive the candidate MAT file.
 if opt.WriteArtifacts,save_report(prefix,O62);end
 if ~gates.structuralPass
-    fprintf('STOP: structural/design gate failed. No synthetic EDI, no FEM.\n');
+    if opt.Verbose,fprintf('STOP: structural/design gate failed. No synthetic EDI, no FEM.\n');end
     return
 end
 candidate=struct('p',Pc,'t',Tc,'crack',crNew,'mat',mat, ...
@@ -273,8 +276,10 @@ if opt.RunSynthetic
 end
 O62.readyForOneAsymmetricFEMProposal=gates.structuralPass&&O62.synthetic.passed;
 if opt.WriteArtifacts,save_report(prefix,O62);end
-fprintf('Step62 finished: proposal ready=%d; zero FEM solves.\n', ...
-    O62.readyForOneAsymmetricFEMProposal);
+if opt.Verbose
+    fprintf('Step62 finished: proposal ready=%d; zero FEM solves.\n', ...
+        O62.readyForOneAsymmetricFEMProposal);
+end
 end
 
 function [free,all]=edge_inventory(T)
