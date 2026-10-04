@@ -311,8 +311,8 @@ O60=struct( ...
     'noFEM',true,'noMeshGeneration',true,'noEDI',true);
 
 smallFile=[prefix '_small_data.mat'];
-save(smallFile,'O60');
 O60.files.smallData=smallFile;
+save(smallFile,'O60');
 
 fprintf('\nSTEP 60 OUTPUT FILES\n');
 fprintf('  Overview PNG: %s\n',files.overviewPNG);
@@ -364,8 +364,11 @@ used=false(size(connect,1),1);
 for e=1:size(connect,1)
     nodes=connect(e,:);
     qel=qNode(nodes);
-    % A constant nodal q gives identically zero FE gradient.
-    if max(qel)-min(qel)<=10*eps(max(1,max(abs(qel))))
+    % Only an EXACTLY constant nodal q can be skipped without changing
+    % the production EDI participation test. Do not use an approximate
+    % range tolerance here: tiny nodal differences can be amplified by
+    % spatial differentiation on small elements.
+    if all(qel==qel(1))
         continue
     end
     X=coord(nodes,:);
