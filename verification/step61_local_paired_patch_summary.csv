@@ -1,0 +1,2 @@
+oldT3Nodes,oldT3,oldT6Nodes,newT3Nodes,newT3,newT6Nodes,replacedOldT3,retainedOldT3,pairedRadius_mm,cavityMinVertexRadius_mm,cavityMaxRadius_mm,oldTipMedian_mm,newTipMedian_mm,oldPrimarySupport,newPrimarySupport,patchMinAngle_deg,collarMinAngle_deg,pairErrorT3_m,pairErrorT6_m
+20164,39441,79769,19943,38987,78873,19811,19630,5.6,6.25020130486,6.44177109519215,0.0534276766059198,0.054024650785388,14215,13204,25.9941087327115,24.0517644731282,2.76505566077489e-17,5.09648833742505e-17

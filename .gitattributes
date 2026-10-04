@@ -1,2 +1,11 @@
 # Auto detect text files and perform LF normalization
 * text=auto
+
+# Preserve exact bytes for the dated audit collection and its SHA-256 provenance.
+.gitattributes -text
+docs/AUDIT_RESULTS_2026-10-04.md -text
+docs/AUDIT_RESULTS_2026-10-04_manifest.csv -text whitespace=blank-at-eol,blank-at-eof,space-before-tab,cr-at-eol
+docs/SIF_asymmetry_scientific_review_2026-10-04.md -text
+verification/sif_audit/STEP61.md -text
+verification/sif_audit/main_step61_local_paired_patch.m -text
+verification/step61_local_paired_patch_*.csv -text whitespace=blank-at-eol,blank-at-eof,space-before-tab,cr-at-eol
