@@ -8,6 +8,7 @@ root=fileparts(fileparts(fileparts(mfilename('fullpath'))));
 ip=inputParser;
 addParameter(ip,'CheckpointFile',fullfile(root,'verification', ...
     'step38_tip_refined_solved.mat'),@(x)ischar(x)||isstring(x));
+addParameter(ip,'SourceCandidateFile','',@(x)ischar(x)||isstring(x));
 addParameter(ip,'SavePrefix',fullfile(root,'verification', ...
     'step62_structured_graded_mesh'),@(x)ischar(x)||isstring(x));
 addParameter(ip,'Visible','off',@(x)ischar(x)||isstring(x));
@@ -21,28 +22,79 @@ addParameter(ip,'DebugFile','',@(x)ischar(x)||isstring(x));
 parse(ip,varargin{:}); opt=ip.Results;
 addpath(genpath(root));
 assert_audit_branch(root);
-cp=char(opt.CheckpointFile); prefix=char(opt.SavePrefix);
+cp=char(opt.CheckpointFile); sourceCandidateFile=char(opt.SourceCandidateFile);
+prefix=char(opt.SavePrefix);
 if opt.Level>0,prefix=sprintf('%s_L%d',prefix,opt.Level);end
-% Intentionally selective: U, forces and stiffness are NEVER loaded.
-s=load(cp,'mesh','crack','baseline','actualTip','a0','mat');
-P=s.mesh.coord3; T=s.mesh.connect3; cr=s.crack; mat=s.mat;
-a0=s.a0; hTip=s.actualTip; ri=s.baseline.rInner; ro=.65*a0;
-assert(size(P,1)==20164&&size(T,1)==39441&& ...
-    size(s.mesh.coord,1)==79769,'step62:SourceCount','Wrong Step38 mesh.');
+
+% Two source modes are supported. Historical mode selectively loads the
+% Step38 checkpoint without U. Recovery mode uses the exact archived Step62
+% candidate when the untracked Step38 checkpoint is unavailable.
+if ~isempty(sourceCandidateFile)
+    d=load(sourceCandidateFile,'candidate');
+    assert(isfield(d,'candidate'),'step62:SourceCandidate', ...
+        'SourceCandidateFile does not contain candidate.');
+    src=d.candidate;
+    for ff={'p','t','crack','mat','structuredDesign','provenance'}
+        assert(isfield(src,ff{1}),'step62:SourceCandidateField', ...
+            'Source candidate missing field %s.',ff{1});
+    end
+    P=src.p;T=src.t;cr=src.crack;mat=src.mat;
+    a0=norm(diff(cr.Pmid));hTip=src.structuredDesign.hBase_m;
+    ri=src.provenance.rInner;ro=src.provenance.rOuter;
+    [Psrc6,Tsrc6]=T3toT6_fast(P,T);
+    sourceMesh=struct('coord3',P,'connect3',T,'coord',Psrc6,'connect',Tsrc6);
+    if isfield(src.provenance,'baselineOuterRatios')
+        sourceOuterRatios=src.provenance.baselineOuterRatios;
+    else
+        sourceOuterRatios=[.50 .65 .80];
+    end
+    sourceMode='archived_step62_candidate';
+    sourcePath=sourceCandidateFile;sourceSHA=sha256(sourceCandidateFile);
+    expectedSupport=src.primarySupportElementIDs(:);
+    if isfield(src,'literalPrimarySupportElementIDs')
+        expectedLiteralSupport=src.literalPrimarySupportElementIDs(:);
+    else
+        expectedLiteralSupport=[];
+    end
+else
+    % Intentionally selective: U, forces and stiffness are NEVER loaded.
+    d=load(cp,'mesh','crack','baseline','actualTip','a0','mat');
+    P=d.mesh.coord3;T=d.mesh.connect3;cr=d.crack;mat=d.mat;
+    a0=d.a0;hTip=d.actualTip;ri=d.baseline.rInner;ro=.65*a0;
+    sourceMesh=d.mesh;sourceOuterRatios=d.baseline.rOuterOverA0;
+    sourceMode='step38_checkpoint';sourcePath=cp;sourceSHA=sha256(cp);
+    expectedSupport=[];
+    expectedLiteralSupport=[];
+    assert(size(P,1)==20164&&size(T,1)==39441&& ...
+        size(d.mesh.coord,1)==79769,'step62:SourceCount','Wrong Step38 mesh.');
+end
 assert(abs(a0-.008)<1e-12&&abs(ri-.0008)<1e-12&& ...
     abs(hTip-5.4024650785e-5)<1e-12,'step62:SourceScale','Wrong source scales.');
+assert(abs(ro-.65*a0)<1e-12,'step62:SourceOuterRadius','Wrong primary EDI radius.');
 assert(norm(cr.Pmid(1,:)-[.199988872196,-.0208170339049])<2e-12&& ...
     norm(cr.Pmid(end,:)-[.207985904782,-.0210349096129])<2e-12, ...
     'step62:SourceCrack','Wrong saved crack endpoints.');
-tip=cr.Pmid(end,:); e1=diff(cr.Pmid)/a0;
-R=[e1(:),[-e1(2);e1(1)]]; X=(P-tip)*R;
-if opt.Verbose,fprintf('STEP62: saved asymmetric mesh, no physical U loaded.\n');end
+tip=cr.Pmid(end,:);e1=diff(cr.Pmid)/a0;
+R=[e1(:),[-e1(2);e1(1)]];X=(P-tip)*R;
+if opt.Verbose
+    fprintf('STEP62: source=%s, no physical U loaded.\n',sourceMode);
+end
 % Step60 convention and literal production participation are both audited.
-oldSupport=q_support(s.mesh,cr,ri,ro,true);
-oldLiteralSupport=q_support(s.mesh,cr,ri,ro,false);
-assert(numel(oldSupport)==14215,'step62:SourceSupport','Step60 support changed.');
-supportNodes=unique(s.mesh.connect(oldSupport,:));
-maxSupport=max(vecnorm((s.mesh.coord(supportNodes,:)-tip)*R,2,2));
+oldSupport=q_support(sourceMesh,cr,ri,ro,true);
+oldLiteralSupport=q_support(sourceMesh,cr,ri,ro,false);
+if strcmp(sourceMode,'step38_checkpoint')
+    assert(numel(oldSupport)==14215,'step62:SourceSupport','Step60 support changed.');
+else
+    assert(isequal(oldSupport(:),expectedSupport), ...
+        'step62:SourceSupport','Archived Step62 support changed on reload.');
+    if ~isempty(expectedLiteralSupport)
+        assert(isequal(oldLiteralSupport(:),expectedLiteralSupport), ...
+            'step62:SourceLiteralSupport', ...
+            'Archived Step62 literal support changed on reload.');
+    end
+end
+supportNodes=unique(sourceMesh.connect(oldSupport,:));
+maxSupport=max(vecnorm((sourceMesh.coord(supportNodes,:)-tip)*R,2,2));
 oldQuality=quality(X,T);
 [oldFree,~]=edge_inventory(T);
 oldFree=oldFree(:,1:2);
@@ -136,7 +188,7 @@ gates.physicalGeometryUnchanged=boundary_same(P,T,Pc,Tc,cr,crNew) && ...
     isequal(cr.Pmid,crNew.Pmid);
 gates.physicalBoundaryNodesUnchanged= ...
     isequal(Pc(oldToNew(physicalIDs),:),P(physicalIDs,:));
-gates.materialUnchanged=isequal(mat,s.mat);
+gates.materialUnchanged=isequal(mat,src_material(mat));
 gates.deterministicWholeMesh=deterministic;
 [pair3,pair6]=pair_errors(candidateMesh,pairedIDs,mirrorMap,nUpper, ...
     patchRows,tip,R);
@@ -154,8 +206,8 @@ gates.positiveT6Jacobians=minJ>0&&midsError<1e-12;
 gates.noHangingGapsOverlaps=global_planar_audit(P,T,Pc,Tc, ...
     Xc,patchRows,exteriorRows,exteriorMeta.innerPolygon,crNew);
 gates.originalSupportInsidePairedRegion= ...
-    all(inpolygon((s.mesh.coord(supportNodes,:)-tip)*e1.', ...
-    (s.mesh.coord(supportNodes,:)-tip)*R(:,2), ...
+    all(inpolygon((sourceMesh.coord(supportNodes,:)-tip)*e1.', ...
+    (sourceMesh.coord(supportNodes,:)-tip)*R(:,2), ...
     exteriorMeta.innerPolygon(:,1),exteriorMeta.innerPolygon(:,2)));
 gates.candidateSupportInsidePairedRegion=all(ismember(newSupport,patchRows))&& ...
     all(ismember(newLiteralSupport,patchRows));
@@ -188,7 +240,7 @@ if isfield(opt.ExteriorCalibration,'neighborRatioTarget')
 end
 gates.noAbruptGrading=max_neighbor_size_ratio(Tc,newQuality.longest,affected)<=neighborTarget;
 gates.structuralPass=all(structfun(@(x)logical(x),gates));
-summary=table(size(P,1),size(T,1),size(s.mesh.coord,1), ...
+summary=table(size(P,1),size(T,1),size(sourceMesh.coord,1), ...
     size(Pc,1),size(Tc,1),size(P6,1),nnz(removed),nnz(outside), ...
     rp*1e3,physicalClearance*1e3, ...
     max(vecnorm(outerXY,2,2))*1e3,median(oldTip)*1e3,median(newTip)*1e3, ...
@@ -213,11 +265,12 @@ if opt.WriteArtifacts
 else
     files=struct();
 end
-provenance=struct('checkpointPath',cp,'checkpointSHA256',sha256(cp), ...
+provenance=struct('sourceMode',sourceMode,'sourcePath',sourcePath, ...
+    'sourceSHA256',sourceSHA,'checkpointPath',conditional_checkpoint(sourceMode,cp), ...
     'branch',current_branch(root),'sourceCommit',git_head(root), ...
     'driverSHA256',sha256(mfilename('fullpath')), ...
     'physicalUWasLoaded',false,'sourceCrack',cr.Pmid, ...
-    'sourceMaterial',mat,'baselineOuterRatios',s.baseline.rOuterOverA0, ...
+    'sourceMaterial',mat,'baselineOuterRatios',sourceOuterRatios, ...
     'rInner',ri,'rOuter',ro,'upperGeneratedOnce',true, ...
     'outsideTrianglesExact',false,'allOriginalTrianglesReplaced',true, ...
     'physicalBCsAndLoadsUnmodified',true, ...
@@ -282,6 +335,12 @@ if opt.Verbose
 end
 end
 
+function m=src_material(m)
+% Identity helper keeps the material gate explicit in both source modes.
+end
+function p=conditional_checkpoint(mode,cp)
+if strcmp(mode,'step38_checkpoint'),p=cp;else,p='';end
+end
 function [free,all]=edge_inventory(T)
 E=sort([T(:,[1 2]);T(:,[2 3]);T(:,[3 1])],2);
 [U,~,ic]=unique(E,'rows');count=accumarray(ic,1);
