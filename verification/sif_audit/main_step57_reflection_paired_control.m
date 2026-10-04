@@ -151,13 +151,44 @@ if nAbove~=T.tipTrianglesAbove || ...
 end
 % Explicit topology at y=0: one shared intact-ligament node set ahead of
 % tip; two distinct crack-face T3 node IDs behind tip, sharing tip only.
-up=unique(candidate.crack.upperNodes(:));
-lo=unique(candidate.crack.lowerNodes(:));
+% IMPORTANT: reflected lower-face node IDs are intentionally different and
+% need not be numerically ordered like upper-face IDs. Pair by physical
+% crack coordinate, never by node number.
+upRaw=candidate.crack.upperNodes(:);
+loRaw=candidate.crack.lowerNodes(:);
+if numel(unique(upRaw))~=numel(upRaw) || ...
+        numel(unique(loRaw))~=numel(loRaw)
+    error('step57:DuplicateCrackFaceIDs', ...
+        'One crack-face node list contains duplicate node IDs.');
+end
+up=unique(upRaw,'stable');
+lo=unique(loRaw,'stable');
 tipID=candidate.crack.tipNode;
-if ~isequal(intersect(up,lo),tipID) || ...
-        max(hypot(P(up,1)-P(lo,1),P(up,2)-P(lo,2)))>tol
+shared=intersect(up,lo);
+if numel(shared)~=1 || shared~=tipID || numel(up)~=numel(lo)
     error('step57:CrackTopologyChanged', ...
-        'Coincident upper/lower crack-face T3 nodes are not distinct as required.');
+        'Upper/lower crack faces must have equal counts and share only the tip node.');
+end
+crackVec=candidate.crack.Pmid(end,:)-candidate.crack.Pmid(1,:);
+crackLen=norm(crackVec);
+if crackLen<=0
+    error('step57:InvalidCrackGeometry','Saved crack has zero length.');
+end
+tangent=crackVec/crackLen;
+su=(P(up,:)-candidate.crack.Pmid(1,:))*tangent.';
+sl=(P(lo,:)-candidate.crack.Pmid(1,:))*tangent.';
+[su,iu]=sort(su);
+[sl,il]=sort(sl);
+up=up(iu);
+lo=lo(il);
+coordMismatch=max(hypot(P(up,1)-P(lo,1), ...
+                        P(up,2)-P(lo,2)));
+paramMismatch=max(abs(su-sl));
+if coordMismatch>tol || paramMismatch>tol || ...
+        min(su)<-tol || max(su)>crackLen+tol
+    error('step57:CrackFaceCoordinateMismatch', ...
+        ['Distinct upper/lower crack-face IDs do not represent the same ', ...
+         'collapsed physical crack coordinates.']);
 end
 axisNodes=find(abs(P(:,2)-tip(2))<=tol & ...
                P(:,1)>=tip(1)-tol);
