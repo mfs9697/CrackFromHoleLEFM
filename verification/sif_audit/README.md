@@ -1,5 +1,28 @@
 # SIF audit harness
 
+
+## Current audit status — closed
+
+The asymmetric tiny-Mode-II forensic audit is scientifically closed on the
+audit branch. The accepted result for the audited problem is
+
+[
+K_{II}/K_I approx 1.066	imes10^{-4}.
+]
+
+The final evidence includes exact reflection-paired symmetry controls,
+prescribed Williams-field extraction controls, Level-0 COD/EDI
+cross-extraction, a Level-0-qualified SGS-PCG solver, and a three-scale
+structured C03 convergence family at (s=1, 1/sqrt2, 1/2).
+
+See **[AUDIT_CLOSURE.md](AUDIT_CLOSURE.md)** for the complete evidence chain,
+numerical recommendation, limitations, production guidance, and merge plan.
+
+The material below documents the historical verification harness and earlier
+gates. Statements there describing EDI as a prototype or the audit as
+unfinished should be read in their original chronological context.
+
+
 This folder is the verification layer for comparing the historical
 mirror-based circular J/mode-separation extractor with the interaction
 equivalent-domain integral (EDI) extractor.
