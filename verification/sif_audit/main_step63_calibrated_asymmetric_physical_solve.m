@@ -189,6 +189,17 @@ if ~isfield(mat0,'E')||~isfield(mat0,'nu')||~isfield(mat0,'ps')
     error('step63:Material','Candidate material is incomplete.');
 end
 
+% Cross-check the non-geometric physics against the canonical project
+% configuration. We deliberately do NOT use its current hole geometry.
+Cref=cfg_hole_initiation();
+if abs(Cref.E-mat0.E)>1e-12*max(1,abs(mat0.E)) || ...
+        abs(Cref.nu-mat0.nu)>1e-14 || Cref.ps~=mat0.ps || ...
+        ~strcmp(Cref.load.type,'remote_tension_y') || ...
+        abs(Cref.load.sig0-1.0)>1e-14 || ...
+        ~strcmp(Cref.bc.anchor_mode,'minimal')
+    error('step63:PhysicalConfig', ...
+        'Canonical material/loading/anchoring differs from audited physics.');
+end
 C=struct();
 C.A=A;
 C.B=B;
@@ -196,8 +207,8 @@ C.E=mat0.E;
 C.nu=mat0.nu;
 C.ps=mat0.ps;
 C.a0=a0;
-C.load=struct('type','remote_tension_y','sig0',1.0);
-C.bc=struct('anchor_mode','minimal');
+C.load=Cref.load;
+C.bc=Cref.bc;
 C.solver=struct('linear_solver','backslash','verbose',0);
 
 [~,iLB]=min(sum((P-[0,-B]).^2,2));
