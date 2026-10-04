@@ -49,9 +49,10 @@ if exist(sourceFile,'file')~=2
     error('step66:MissingSource', ...
         'Missing committed archived Step62 candidate: %s',sourceFile);
 end
-if exist('symamd','file')~=2 || exist('symbfact','file')~=2
+if ~matlab_callable('symamd') || ~matlab_callable('symbfact')
     error('step66:MissingSymbolicTools', ...
-        'Step66 requires MATLAB symamd and symbfact.');
+        ['Step66 requires callable MATLAB symamd and symbfact. ', ...
+         'Availability accepts M-files, MEX/P-code, and built-ins.']);
 end
 
 cal=c03_calibration();
@@ -342,6 +343,10 @@ cal=struct( ...
     'refinementLongestFactor',1.65, ...
     'neighborRatioTarget',1.8, ...
     'verbose',false);
+end
+
+function tf=matlab_callable(name)
+tf=exist(name,'file')~=0 || exist(name,'builtin')~=0;
 end
 
 function assert_step66_branch(root)
