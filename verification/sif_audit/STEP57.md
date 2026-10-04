@@ -69,4 +69,16 @@ Neither outcome alone validates the tiny asymmetric physical Mode-II signal. The
 
 ## Current authorization state
 
-**No Step57 FEM solve has been authorized yet.** The driver may be reviewed and merged now, but do not run it with `AllowSolve=true` until the investigator explicitly approves exactly one new symmetric control solve.
+**AUTHORIZED by the investigator on 2026-10-04:** exactly **one** new symmetric Step57 FEM control solve on the already saved Step56 reflection-paired candidate is approved.
+
+The authorization is deliberately narrow:
+
+- use the exact saved `verification/step56_reflected_mesh_only_candidate_T3.mat` candidate; **no remeshing or regeneration**;
+- run the single guarded solver call through `main_step57_reflection_paired_control('AllowSolve',true)`;
+- checkpoint the solved field only after the driver verifies the solver used the exact accepted T3/T6 candidate;
+- run the driver's predeclared **native COD-only** postprocessing;
+- **do not run EDI** in Step57;
+- stop after printing the COD fit table and COD gates for interpretation.
+
+Any later matched-domain EDI calculation requires a separate decision after reviewing this one solved control.
+
