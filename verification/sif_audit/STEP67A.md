@@ -99,3 +99,86 @@ after explicit authorization run:
     disp(R67a.gates);
 
 Return the complete console output.
+
+
+## Completed local Step67A result — 2026-10-04
+
+Step67A completed successfully with one explicitly authorized Level-0 physical SGS-PCG solve.
+
+### Linear-algebra result
+
+Problem size:
+- T3 elements: 32,980;
+- T6 nodes: 66,854;
+- total DOFs: 133,708;
+- free DOFs: 133,705.
+
+Symmetric free-DOF formulation:
+- unclamped stiffness symmetry error: 1.6620e-16;
+- SGS preconditioner storage estimate: 0.0494 GiB;
+- SGS construction time: 0.0698 s;
+- nnz(M1)=1,590,857;
+- nnz(M2)=1,590,857.
+
+PCG:
+- tolerance: 1e-10;
+- maximum iterations: 5000;
+- converged flag: 0;
+- iterations: 1961;
+- reported relative residual: 9.7490e-11;
+- true free-system relative residual: 9.7491e-11;
+- constrained-displacement infinity norm: 0;
+- solve time: 25.3746 s.
+
+The iterative physical field was checkpointed before COD/EDI postprocessing.
+
+### COD comparison against the direct Level-0 reference
+
+All eight COD-ratio fits reproduced the direct Step63R fingerprint extremely closely.
+
+The relative differences ranged from approximately 9.42e-05% to 1.48e-04%.
+
+The largest absolute ratio difference was approximately 1.57e-10.
+
+All COD qualification gates passed.
+
+### EDI comparison against the direct Level-0 reference
+
+Using the single fixed 0.8-5.2 mm interaction domain:
+
+- KI direct reference: 0.43785;
+- KI iterative result: 0.43785;
+- displayed relative gap: -0.0010305%.
+
+- KII direct reference: 4.6547e-05;
+- KII iterative result: 4.6547e-05;
+- displayed relative gap: +0.00077941%.
+
+- KII/KI direct reference: 1.0631e-04;
+- KII/KI iterative result: 1.0631e-04;
+- displayed relative gap: +1.926e-05%.
+
+These direct-reference values were recorded previously at limited displayed precision, so the tiny displayed KI/KII gaps include reference-rounding uncertainty. The ratio agreement is effectively exact on the present reporting scale.
+
+### Qualification gates
+
+All Step67A gates passed:
+
+- PCG converged;
+- reported and true residual gates passed;
+- exact homogeneous constraints;
+- native sampling unchanged;
+- all COD ratios matched within 0.05%;
+- KI, KII, and KII/KI EDI matched within 0.05%;
+- no direct backslash was used;
+- no Level-1 physical solve was performed.
+
+The old Step63 direct displacement checkpoint was not available locally, so the optional full-vector displacement comparison could not be performed. This did not affect the required physical-reference gates.
+
+### Interpretation
+
+Step67A establishes that the memory-safer free-DOF SPD + SGS-PCG formulation reproduces the established Level-0 direct physical solution to far tighter accuracy than the predeclared 0.05% tolerance.
+
+The SGS preconditioner is compact and parameter-free, avoiding the incomplete-Cholesky breakdown observed in Step67.
+
+Therefore the SGS-PCG formulation is qualified for a future Level-1 physical convergence solve, subject to separate explicit authorization.
