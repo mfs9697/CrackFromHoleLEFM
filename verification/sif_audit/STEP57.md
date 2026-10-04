@@ -104,3 +104,36 @@ The corrected validator now:
 No geometry, mesh recipe, candidate file, solver call, loading, boundary condition, or postprocessing rule changed.
 
 **The authorized solve has therefore not yet occurred and the one-solve authorization remains available.** Rerun the same guarded command after pulling this fix. EDI remains prohibited in this step.
+
+
+## Investigator's completed Step57 solve: reflection-paired FEM COD leakage collapses to roundoff
+
+The investigator completed the **single authorized** Step57 symmetric FEM solve on the exact saved Step56 candidate. The driver verified and reused the saved reflected mesh **without remeshing**: `T3=2578`, `T6=5427`, native crack-face samples `72/72`, zero radial mismatch, COD windows `19/16/13`, symmetric `3/3` tip fan and median tip edge `0.000143632036 m`. The unique checkpoint was saved as `verification/step57_reflection_paired_symmetric_theta0_solved.mat`.
+
+The genuine solved-field native crack-face ratios were all at floating-point-noise scale. Representative median raw `KII/KI`-like opening ratios were:
+
+| r/a0 band | median raw tangential/normal opening ratio |
+| --- | ---: |
+| 0–0.04 | -9.3293e-14 |
+| 0.04–0.08 | -1.1513e-13 |
+| 0.08–0.12 | -1.0056e-13 |
+| 0.12–0.20 | -8.5134e-14 |
+| 0.20–0.30 | -7.9903e-14 |
+
+All six predeclared COD fits were qualified. Their signed fitted ratios ranged from about `-9.38e-14` to `-1.84e-13`; the maximum finite fitted magnitude was **`1.83854063e-13`**, far below the existing `1e-6` numerical target. Relative to the Step47 maximum fitted COD leakage `6.27056963e-4`, this is approximately a **3.41e9-fold reduction**.
+
+At the same time the Mode-I COD intercepts remained very close to the prior Step47 values. For the three linear fits, Step57 returned `KI=0.35212, 0.35499, 0.35618`, differing from the corresponding Step47 linear values by only about **0.068%, 0.020%, and 0.006%**, respectively. Thus the disappearance of the tangential opening is not accompanied by a comparable change in the dominant Mode-I response.
+
+**Interpretation:** this is strong evidence that lack of reflection-paired finite-element topology was the dominant source of the previously observed **native-COD Mode-II leakage** in the symmetric benchmark. Because the Step57 mesh is not identical to Step47 (different connectivity and slightly different achieved tip scale), this is not a formal one-variable convergence proof, but the contrast is several orders of magnitude larger than those secondary mesh differences. The physical continuum expectation `KII=0` is recovered by the reflected solved field to numerical roundoff in the crack-face opening diagnostic.
+
+This result does **not** yet determine whether the existing 16-point FE-nodal-q EDI extractor will also cancel to roundoff on the reflection-paired solved field. Earlier exact-field tests showed that EDI has its own interpolation sensitivity. A later EDI should therefore be treated as a **separate matched-annulus extractor control**, not as a correction factor or asymmetric-case uncertainty bound.
+
+The final MATLAB line `disp(O57.rawTable)` produced an error **after all Step57 work and saves had completed** because the postprocessor's actual field name is `O57.rawBands`. No solve or data was lost. The correct display is:
+
+```matlab
+disp(O57.rawBands);
+disp(O57.fitTable);
+disp(O57.CODgates);
+```
+
+No EDI was performed in Step57.
