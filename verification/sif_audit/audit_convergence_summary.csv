@@ -1,5 +1,5 @@
-scale,target_tip_mm,T3,T6_nodes,pcg_iterations,pcg_true_relres,solve_seconds,K_I_EDI,K_II_EDI,q_EDI,reference_precision
-1.000000000000,0.0540246508,32980,66854,1961,9.7491e-11,25.3746,0.43785,4.6547e-05,1.0631e-04,EDI endpoint stored from displayed audit fingerprint
-0.707106781187,0.0382011969,62570,126112,2626,9.7535e-11,58.2396,0.43786,4.6613e-05,1.0646e-04,midpoint displayed Step69 result
-0.500000000000,0.0270123254,122691,246701,3658,9.9450e-11,160.8521,0.43786,4.6643e-05,1.0652e-04,EDI endpoint stored from displayed audit fingerprint
-richardson,,,,,,,,,1.0657e-04,approximate p=2.4137 using recorded rounded endpoint fingerprints
+row_type,scale,target_tip_mm,T3,T6_nodes,pcg_iterations,pcg_true_relres,solve_seconds,K_I_EDI_displayed,K_II_EDI_displayed,q_EDI_displayed,p_observed_approx,q_richardson_approx,precision_note
+mesh,1.000000000000,0.0540246508,32980,66854,1961,9.7491e-11,25.3746,0.43785,4.6547e-05,1.0631e-04,,,EDI endpoint stored from displayed audit fingerprint
+mesh,0.707106781187,0.0382011969,62570,126112,2626,9.7535e-11,58.2396,0.43786,4.6613e-05,1.0646e-04,,,midpoint displayed Step69 result
+mesh,0.500000000000,0.0270123254,122691,246701,3658,9.9450e-11,160.8521,0.43786,4.6643e-05,1.0652e-04,,,EDI endpoint stored from displayed audit fingerprint
+three_scale_summary,,,,,,,,,,,2.4137,1.0657e-04,Approximate values reported by Step69; endpoint display values above are rounded and must not be used to recompute p
