@@ -721,9 +721,10 @@ end
 function assert_audit_branch(root)
 branch=current_branch(root);
 ok=strcmp(branch,'sif-asymmetric-mesh-audit')||startsWith(branch,'audit/step62')|| ...
-    strcmp(branch,'audit/step63-calibrated-physical-solve');
+    strcmp(branch,'audit/step63-calibrated-physical-solve')|| ...
+    strcmp(branch,'audit/step63r-recover-lost-physical-field');
 assert(ok,'step62:Branch', ...
-    'Step62 must run on sif-asymmetric-mesh-audit or an audit/step62* branch.');
+    'Step62 mesh-only construction is not authorized on the current branch.');
 end
 function branch=current_branch(root)
 [status,branch]=system(sprintf('git -C "%s" branch --show-current',root));
