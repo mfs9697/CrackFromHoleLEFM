@@ -34,10 +34,11 @@ assert(all(C(:,1)~=C(:,2)),'step62:ZeroConstraint','Zero constraint.');
 sourceTri=triangulation(Told,X);
 maxR=max(vecnorm(X(physicalIDs,:),2,2));
 scale=design.scale;hRp=scale*(design.hBase_m+design.slope*rp);
+cal=exterior_calibration(design);
 % Ring widths start consistently with the structured patch, then increase.
 radial=rp;seedRows=[];ringRows=[];
 while radial<maxR
-    hh=exterior_h(radial,rp,hRp,scale,design.slope);
+    hh=exterior_h(radial,rp,hRp,scale,design.slope,cal);
     dr=design.radialFactor*hh;
     radial=radial+dr;
     n=max(6,6*ceil(2*pi*radial/hh/6));
@@ -62,7 +63,7 @@ for j=1:size(physicalEdges,1)
     third=setdiff(Told(hit,:),edge);toward=X(third,:)-mid;
     v=b-a;normal=[-v(2),v(1)]/norm(v);
     if dot(normal,toward)<0,normal=-normal;end
-    hh=exterior_h(norm(mid),rp,hRp,scale,design.slope);
+    hh=exterior_h(norm(mid),rp,hRp,scale,design.slope,cal);
     z=mid+design.radialFactor*min(scale*norm(v),hh)*normal;
     if ~isnan(pointLocation(sourceTri,z))&&norm(z)>rp+1e-12&& ...
             ~(z(1)<0&&z(1)>=-a0&&abs(z(2))<.1*min(norm(v),hh))
@@ -72,7 +73,7 @@ end
 % Keep ring seeds apart from immutable-geometry boundary-layer seeds.
 keep=true(size(seedRows,1),1);
 for j=1:size(seedRows,1)
-    hh=exterior_h(norm(seedRows(j,:)),rp,hRp,scale,design.slope);
+    hh=exterior_h(norm(seedRows(j,:)),rp,hRp,scale,design.slope,cal);
     keep(j)=isempty(layer)||min(vecnorm(layer-seedRows(j,:),2,2))>.45*hh;
 end
 Q=[Q;layer;seedRows(keep,:)];
@@ -83,7 +84,7 @@ fixed=unique(C(:));
 [Q,T,excluded]=exterior_cells(Q,C,sourceTri,inner);
 % Deterministic bounded smoothing, with fixed geometry and C1 size-law
 % seeds preserved as a reference. Restore triangulation after each move.
-for it=1:6
+for it=1:cal.smoothingSteps
     ED=unique(sort([T(:,[1 2]);T(:,[2 3]);T(:,[3 1])],2),'rows');
     A=sparse([ED(:,1);ED(:,2)],[ED(:,2);ED(:,1)],1,size(Q,1),size(Q,1));
     avg=(A*Q)./max(sum(A,2),1);trial=Q;move=setdiff(unique(T(:)),fixed);
@@ -98,13 +99,14 @@ end
 % Structured inner edges are protected. Candidate centers are spaced before
 % batch insertion, preventing coincident-center refinement cascades.
 refinementRows=[];nSplits=0;nPhysicalSplits=0;
-for it=1:100
+for it=1:cal.refinementMaxPasses
     [minAngle,longest,L]=triangle_quality(Q,T);
     cent=(Q(T(:,1),:)+Q(T(:,2),:)+Q(T(:,3),:))/3;
-    hr=exterior_h(vecnorm(cent,2,2),rp,hRp,scale,design.slope);
-    heff=min(hr,scale*boundary_metric(cent,X,physicalEdges));
-    bad=minAngle<25-1e-8 | longest>1.65*heff;
-    [ratio,badNeighbor]=neighbor_ratio(T,longest);bad=bad|badNeighbor;
+    hr=exterior_h(vecnorm(cent,2,2),rp,hRp,scale,design.slope,cal);
+    heff=min(hr,scale*boundary_metric(cent,X,physicalEdges,cal.boundaryMetricGrowth));
+    bad=minAngle<cal.refinementMinAngle_deg-1e-8 | ...
+        longest>cal.refinementLongestFactor*heff;
+    [ratio,badNeighbor]=neighbor_ratio(T,longest,cal.neighborRatioTarget);bad=bad|badNeighbor;
     refinementRows(end+1,:)=[it,size(T,1),nnz(bad),min(minAngle),ratio]; %#ok<AGROW>
     fprintf('Exterior refinement %d: %d cells, %d flagged, angle %.6g, ratio %.6g\n', ...
         it,size(T,1),nnz(bad),min(minAngle),ratio);
@@ -166,24 +168,48 @@ Z=[Q;Q(cut,:)];nodeSide=ones(size(Z,1),1);nodeSide(lower(cut))=-1;
 info=struct('innerPolygon',inner,'nodeSide',nodeSide, ...
     'originalPhysicalIDs',oldIDs,'excludedZeroInteriorHullSlivers',excluded, ...
     'allExteriorInteriorTrianglesReplaced',true,'usesRandomness',false, ...
-    'hMax_m',scale*.005,'hRp_m',hRp,'farSlope',.15, ...
-    'slopeTransitionLength_m',.008,'boundaryLayerSeeds',size(layer,1), ...
-    'ringSeedCount',nnz(keep),'smoothingSteps',6, ...
-    'boundaryMetricGrowth',.30,'qualityRefinementMaxPasses',100, ...
+    'hMax_m',scale*.005,'hRp_m',hRp,'farSlope',cal.farSlope, ...
+    'slopeTransitionLength_m',cal.transitionLength_m, ...
+    'boundaryLayerSeeds',size(layer,1), ...
+    'ringSeedCount',nnz(keep),'smoothingSteps',cal.smoothingSteps, ...
+    'boundaryMetricGrowth',cal.boundaryMetricGrowth, ...
+    'qualityRefinementMaxPasses',cal.refinementMaxPasses, ...
     'exteriorConstraintSubdivisions',nSplits, ...
     'physicalBoundarySubdivisions',nPhysicalSplits, ...
     'originalPhysicalSegments',size(physicalEdges,1), ...
-    'refinementMinimumAngle_deg',25);
+    'refinementMinimumAngle_deg',cal.refinementMinAngle_deg, ...
+    'refinementLongestFactor',cal.refinementLongestFactor, ...
+    'neighborRatioTarget',cal.neighborRatioTarget, ...
+    'calibration',cal);
 info.refinementTable=array2table(refinementRows,'VariableNames', ...
     {'pass','exteriorCells','flaggedCells','minimumAngle_deg','maximumNeighborRatio'});
 info.ringTable=array2table(ringRows,'VariableNames', ...
     {'radius_m','targetH_m','bandWidth_m','angularIntervals','keptSeeds'});
 end
 
-function h=exterior_h(r,rp,hRp,scale,nearSlope)
-t=max(0,r-rp);L=.008;cap=scale*.005-hRp;
+function cal=exterior_calibration(design)
+cal=struct('transitionLength_m',.008,'farSlope',.15, ...
+    'boundaryMetricGrowth',.30,'smoothingSteps',6, ...
+    'refinementMaxPasses',100,'refinementMinAngle_deg',25, ...
+    'refinementLongestFactor',1.65,'neighborRatioTarget',2.5);
+if isfield(design,'exteriorCalibration')&&~isempty(design.exteriorCalibration)
+    u=design.exteriorCalibration; names=fieldnames(u);
+    for k=1:numel(names)
+        assert(isfield(cal,names{k}),'step62:UnknownExteriorCalibration', ...
+            'Unknown exterior calibration field %s.',names{k});
+        cal.(names{k})=u.(names{k});
+    end
+end
+assert(cal.transitionLength_m>0&&cal.farSlope>0&& ...
+    cal.boundaryMetricGrowth>=0&&cal.smoothingSteps>=0&& ...
+    cal.refinementMaxPasses>=1&&cal.refinementMinAngle_deg>0&& ...
+    cal.refinementLongestFactor>1&&cal.neighborRatioTarget>1);
+end
+
+function h=exterior_h(r,rp,hRp,scale,nearSlope,cal)
+t=max(0,r-rp);L=cal.transitionLength_m;cap=scale*.005-hRp;
 z=t/L;logcosh=z+log1p(exp(-2*z))-log(2);
-increment=scale*(nearSlope*t+(.15-nearSlope)*L*logcosh);
+increment=scale*(nearSlope*t+(cal.farSlope-nearSlope)*L*logcosh);
 h=hRp+cap*tanh(increment/cap);
 end
 function [angle,longest,L]=triangle_quality(P,T)
@@ -196,7 +222,7 @@ for k=1:3,j=mod(k,3)+1;l=mod(k+1,3)+1;
 end
 longest=max(L,[],2);
 end
-function h=boundary_metric(Z,P,E)
+function h=boundary_metric(Z,P,E,growth)
 a=P(E(:,1),:);b=P(E(:,2),:);v=b-a;ell=sum(v.^2,2);
 h=zeros(size(Z,1),1);
 for first=1:500:size(Z,1)
@@ -204,16 +230,16 @@ for first=1:500:size(Z,1)
     sx=Z(rows,1)-a(:,1).';sy=Z(rows,2)-a(:,2).';
     t=(sx.*v(:,1).'+sy.*v(:,2).')./ell.';t=max(0,min(1,t));
     d2=(sx-t.*v(:,1).').^2+(sy-t.*v(:,2).').^2;
-    h(rows)=min(1.2*sqrt(ell).'+.30*sqrt(d2),[],2);
+    h(rows)=min(1.2*sqrt(ell).'+growth*sqrt(d2),[],2);
 end
 end
-function [ratio,bad]=neighbor_ratio(T,L)
+function [ratio,bad]=neighbor_ratio(T,L,target)
 n=size(T,1);E=sort([T(:,[1 2]);T(:,[2 3]);T(:,[3 1])],2);
 which=repmat((1:n)',3,1);[~,~,g]=unique(E,'rows');
 lo=accumarray(g,L(which),[],@min);hi=accumarray(g,L(which),[],@max);
 % Refine only the larger neighbor. Refining the small side as well would
 % amplify the size jump and create a refinement cascade.
-ratio=max(hi./lo);bad=accumarray(which,L(which)>2.5*lo(g),[n,1],@max)>0;
+ratio=max(hi./lo);bad=accumarray(which,L(which)>target*lo(g),[n,1],@max)>0;
 end
 function d=segment_distance(z,P,E)
 a=P(E(:,1),:);b=P(E(:,2),:);v=b-a;
