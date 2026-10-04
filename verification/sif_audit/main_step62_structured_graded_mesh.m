@@ -720,7 +720,8 @@ end
 end
 function assert_audit_branch(root)
 branch=current_branch(root);
-ok=strcmp(branch,'sif-asymmetric-mesh-audit')||startsWith(branch,'audit/step62');
+ok=strcmp(branch,'sif-asymmetric-mesh-audit')||startsWith(branch,'audit/step62')|| ...
+    strcmp(branch,'audit/step63-calibrated-physical-solve');
 assert(ok,'step62:Branch', ...
     'Step62 must run on sif-asymmetric-mesh-audit or an audit/step62* branch.');
 end
