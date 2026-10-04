@@ -548,9 +548,11 @@ end
 
 function assert_step63_branch(root)
 [status,b]=system(sprintf('git -C "%s" branch --show-current',root));
-assert(status==0&&strcmp(strtrim(b),'audit/step63-calibrated-physical-solve'), ...
+ok=status==0&&(strcmp(strtrim(b),'audit/step63-calibrated-physical-solve')|| ...
+    strcmp(strtrim(b),'audit/step63r-recover-lost-physical-field'));
+assert(ok, ...
     'step63:Branch', ...
-    'Run Step63 only on audit/step63-calibrated-physical-solve.');
+    'Run Step63 only on the Step63 or Step63R audit branches.');
 end
 
 function need(s,f)
