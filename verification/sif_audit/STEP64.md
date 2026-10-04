@@ -103,3 +103,27 @@ run:
     disp(R64.CODcomparison);
 
 Return the complete console output.
+
+
+## Completed local Step64 result — 2026-10-04
+
+Step64 ran on the recovered Step63R physical field with zero additional FEM solves.
+
+Fixed matched annulus:
+- r_inner = 0.8 mm;
+- r_outer = 5.2 mm = 0.65 a0;
+- tip median edge = 0.0540246508 mm.
+
+Single 16-point FE-nodal-q interaction EDI:
+
+[
+K_I = 0.43785,qquad
+K_{II} = 4.6547	imes10^{-5},qquad
+K_{II}/K_I = 1.0631	imes10^{-4}.
+]
+
+The eight Step63 COD-fit ratios span 1.0416e-4 to 1.0583e-4, with mean 1.0523e-4 and median 1.0544e-4. The EDI value lies 0.456% above the closest/highest COD fit, 0.814% above the COD median, and 1.014% above the COD mean. Individual COD-vs-EDI gaps range from 0.456% to 2.027%.
+
+The four quadratic COD fits are the closest subset: their relative gaps to EDI are approximately 0.645%, 0.566%, 0.462%, and 0.456%.
+
+Interpretation: COD and interaction EDI independently identify the same positive Mode-II signal of order 1.05e-4 on the same deliberately paired physical mesh. This is strong cross-extractor evidence, but it remains a one-mesh result rather than a mesh-convergence proof.
