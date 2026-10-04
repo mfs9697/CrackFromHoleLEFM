@@ -1,0 +1,13 @@
+[Warning: Name is nonexistent or not a directory: C:\Users\Mikhailo\Google Drive\Projects\8 - CohZonFEM\Asphalt\remmers2003]
+    level    T3Nodes    T3Triangles    T6Nodes    reflectionError_m    literalSupportMaxNodeRadius_mm    prescribedFieldsQualified
+    _____    _______    ___________    _______    _________________    ______________________________    _________________________
+
+      0       15329        29777        60435         2.733e-17                    5.2773                          true
+
+PASS: saved candidate source hashes, T6 rebuild, fan, reflection, full support closure.
+    level    T3Nodes    T3Triangles     T6Nodes      reflectionError_m    literalSupportMaxNodeRadius_mm    prescribedFieldsQualified
+    _____    _______    ___________    __________    _________________    ______________________________    _________________________
+
+      1       55980     1.1069e+05     2.2265e+05        2.821e-17                    5.2705                          false
+
+PASS: saved candidate source hashes, T6 rebuild, fan, reflection, full support closure.

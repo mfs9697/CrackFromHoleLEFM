@@ -1,0 +1,2 @@
+oldT3Nodes,oldT3,oldT6Nodes,newT3Nodes,newT3,newT6Nodes,replacedOldT3,retainedOldT3,pairedRadius_mm,nearestPhysicalBoundary_mm,maxPhysicalRadius_mm,oldTipMedian_mm,newTipMedian_mm,oldPrimarySupport,newPrimarySupport,patchMinAngle_deg,exteriorMinAngle_deg,pairErrorT3_m,pairErrorT6_m
+20164,39441,79769,15329,29777,60435,39441,0,6,8.00000000000001,240.639950824687,0.0534276766059198,0.054024650785388,14215,10278,40.6538461117998,25.0357683746691,2.73296379506294e-17,5.12037361925283e-17
