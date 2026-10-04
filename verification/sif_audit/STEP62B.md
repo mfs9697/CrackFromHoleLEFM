@@ -92,3 +92,77 @@ On branch audit/step62b-mesh-calibration run:
 Return the complete console output. If a candidate is selected, also return the overview and tip PNGs with prefix step62b_calibrated_mesh_selected.
 
 Do **not** run a physical FEM solve afterward. The exact selected mesh must be reviewed first.
+
+
+## Completed local calibration result — 2026-10-04
+
+The investigator completed the full Step62B run locally using the archived Step62 candidate as the checkpoint-independent source.
+
+### Baseline grading defect localized
+
+The archived Step62 baseline maximum adjacent characteristic-size ratio was
+
+[
+2.3110209728.
+]
+
+The worst pair lies entirely in the far-field exterior, at crack-tip-local radii approximately (70.6) and (72.6) mm. The next-worst pairs are likewise exterior/exterior pairs, typically at radii (18)–(67) mm. Therefore the problematic grading is **not** in the structured paired crack-tip / EDI region.
+
+### Eight-candidate mesh-only screen
+
+All eight predeclared candidates passed every structural gate and the prospective ratio target (<=1.8).
+
+| candidate | L (mm) | far slope | max neighbor ratio | T3 | T6 nodes | exterior min angle (deg) |
+| --- | ---: | ---: | ---: | ---: | ---: | ---: |
+| C03 | 8 | 0.10 | **1.7968** | 32980 | 66854 | 25.072 |
+| C01 | 6 | 0.10 | 1.7969 | 32338 | 65570 | 25.043 |
+| C07 | 12 | 0.10 | 1.7969 | 34126 | 69152 | 25.037 |
+| C04 | 8 | 0.15 | 1.7972 | 30246 | 61386 | 25.036 |
+| C08 | 12 | 0.15 | 1.7972 | 31411 | 63719 | 25.052 |
+| C02 | 6 | 0.15 | 1.7994 | 29593 | 60081 | 25.038 |
+| C06 | 10 | 0.15 | 1.7996 | 30843 | 62579 | 25.017 |
+| C05 | 10 | 0.10 | 1.7998 | 33514 | 67922 | 25.009 |
+
+The structured paired patch minimum angle stayed fixed at (40.654^circ) for every candidate. All candidates retained complete q-support containment, excluded the exterior from the primary support, preserved the six-triangle/seven-edge tip fan, and retained adequate native crack-face sampling.
+
+The predeclared lexicographic rule selected **C03** because it had the smallest achieved neighbor ratio. The differences among the leading ratios are very small; this selection should be interpreted as protocol-following rather than as evidence that (L=8) mm and far slope (0.10) are physically superior parameters.
+
+### Prescribed-field qualification
+
+Only C03 and C01 were subjected to prescribed-field qualification, as predeclared. Their results were identical to displayed precision:
+
+- pure-I: (K_I=1.00000006621), (K_{II}=9.05395	imes10^{-15});
+- pure-II: (K_I=2.10975	imes10^{-15}), (K_{II}=1.00000003838);
+- tiny mixed input (K_I=1, K_{II}=10^{-4}): recovered (K_{II}=1.00000003847	imes10^{-4});
+- affine interpolation error: (8.7311	imes10^{-11});
+- recovery-matrix error: (7.6533	imes10^{-8});
+- relative tiny-(K_{II}) error: (3.847	imes10^{-8}).
+
+Both synthetic qualifications passed.
+
+### Selected C03 candidate
+
+The exact selected candidate was regenerated with full artifacts and provenance:
+
+`verification/step62b_calibrated_mesh_selected_candidate_T3.mat`
+
+Key properties:
+
+- T3 triangles: **32980**;
+- T6 nodes: **66854**;
+- paired radius: (6) mm;
+- tip median edge: (0.054025) mm;
+- patch minimum angle: (40.654^circ);
+- exterior minimum angle: (25.072^circ);
+- maximum adjacent-size ratio: **1.79678451**;
+- all topology, geometry, support-containment, Jacobian, grading, and sampling gates passed;
+- prescribed-field qualification passed;
+- **zero physical FEM solves** were performed.
+
+Compared with the archived Step62 baseline, the ratio was reduced from (2.3110) to (1.7968), at the cost of increasing the mesh from 29777 to 32980 T3 triangles. This remains below the historical Step38 count of 39441 T3 triangles.
+
+### Reporting caveat in checkpoint-independent mode
+
+In the current console/figure helper text, some comparison labels still say `Step38 affected`, `Saved Step38`, or `Step38 original fan`. During Step62B checkpoint-independent regeneration, those labels refer to the **archived Step62 source candidate**, not to a recomputed Step38 mesh. The numerical candidate is unaffected; the labels should be corrected before final publication-quality artifact generation.
+
+The exact selected mesh should be visually reviewed before any physical asymmetric solve is proposed.
