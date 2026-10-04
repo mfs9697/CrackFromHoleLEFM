@@ -1,0 +1,12 @@
+# Preserve Step62 source and MATLAB table bytes for reproducible provenance.
+.gitattributes -text
+sif_audit/build_step62_structured_patch.m -text
+sif_audit/build_step62_graded_exterior.m -text
+sif_audit/main_step62_structured_graded_mesh.m -text
+sif_audit/test_step62_structured_family.m -text
+sif_audit/test_step62_saved_candidate.m -text
+sif_audit/STEP62.md -text
+step62_structured_graded_mesh*.csv -text whitespace=blank-at-eol,blank-at-eof,space-before-tab,cr-at-eol
+step62_structured_graded_mesh*.mat -text
+step62_structured_graded_mesh*.png -text
+step62_structured_graded_mesh*.log -text
