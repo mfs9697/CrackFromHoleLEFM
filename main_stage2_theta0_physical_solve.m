@@ -48,6 +48,7 @@ function R = main_stage2_theta0_physical_solve(varargin)
     opt=ip.Results;
 
     root=fileparts(mfilename('fullpath'));
+    local_assert_branch(root);
     outDir=fullfile(root,'verification','crack_path');
     if exist(outDir,'dir')~=7,mkdir(outDir);end
 
@@ -650,4 +651,13 @@ end
 
 function tf=local_matlab_callable(name)
     tf=exist(name,'file')~=0 || exist(name,'builtin')~=0;
+end
+
+
+function local_assert_branch(root)
+    [status,b]=system(sprintf('git -C "%s" branch --show-current',root));
+    assert(status==0 && strcmp(strtrim(b),'stage2-theta0-physical-solve'), ...
+        'stage2phys:Branch', ...
+        ['Run the guarded theta0 physical qualification only on ', ...
+         'stage2-theta0-physical-solve.']);
 end
