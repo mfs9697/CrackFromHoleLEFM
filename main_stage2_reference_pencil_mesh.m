@@ -32,7 +32,8 @@ function R2 = main_stage2_reference_pencil_mesh(varargin)
 %
 % Name-value options
 % ------------------
-%   'StateFile'      frozen Stage-I MAT file
+%   'FrozenState'    in-memory frozen R0 struct; preferred when available
+%   'StateFile'      frozen Stage-I MAT file (used when FrozenState is empty)
 %   'Theta1Deg'      trial first-segment angle in the frozen local frame
 %   'PlotGeom'       pass through to Stage-II builder
 %   'PlotMesh'       pass through to Stage-II builder
@@ -57,6 +58,8 @@ function R2 = main_stage2_reference_pencil_mesh(varargin)
 % recovery, solve_cracked_LEFM, or any SIF routine.
 
     ip = inputParser;
+    addParameter(ip, 'FrozenState', [], ...
+        @(x)isempty(x) || isstruct(x));
     addParameter(ip, 'StateFile', '', ...
         @(s)ischar(s) || isstring(s));
     addParameter(ip, 'Theta1Deg', 0, ...
@@ -73,6 +76,7 @@ function R2 = main_stage2_reference_pencil_mesh(varargin)
         @(s)ischar(s) || isstring(s));
     parse(ip, varargin{:});
 
+    frozenState  = ip.Results.FrozenState;
     stateFileIn   = char(ip.Results.StateFile);
     theta1Deg     = ip.Results.Theta1Deg;
     plotGeom      = logical(ip.Results.PlotGeom);
@@ -81,48 +85,57 @@ function R2 = main_stage2_reference_pencil_mesh(varargin)
     saveCompact   = logical(ip.Results.SaveCompact);
     outputFile    = char(ip.Results.OutputFile);
 
-    % Resolve the frozen checkpoint relative to this source file, not pwd.
-    % This keeps the driver robust when MATLAB is launched from another
-    % directory or when the user changes branches/worktrees.
+    % Resolve source relative to this source file, not pwd.
+    % Prefer an explicitly supplied in-memory frozen state. This allows
+    % Stage II to continue directly from accepted R0 without repeating the
+    % Stage-I physical solve merely because a checkpoint file disappeared
+    % during a branch/worktree transition.
     repoRoot = fileparts(mfilename('fullpath'));
+    stateFile = '';
 
-    if isempty(strtrim(stateFileIn))
-        stateFile = fullfile(repoRoot, ...
-            'verification', 'crack_path', 'stage1_starting_state.mat');
+    if ~isempty(frozenState)
+        S = struct('R0', frozenState);
+        sourceLabel = '<in-memory FrozenState>';
     else
-        stateFile = stateFileIn;
-
-        if exist(stateFile, 'file') ~= 2 && ~local_is_absolute_path(stateFile)
-            candidate = fullfile(repoRoot, stateFile);
-            if exist(candidate, 'file') == 2
-                stateFile = candidate;
+        if isempty(strtrim(stateFileIn))
+            stateFile = fullfile(repoRoot, ...
+                'verification', 'crack_path', 'stage1_starting_state.mat');
+        else
+            stateFile = stateFileIn;
+            if exist(stateFile, 'file') ~= 2 && ~local_is_absolute_path(stateFile)
+                candidate = fullfile(repoRoot, stateFile);
+                if exist(candidate, 'file') == 2
+                    stateFile = candidate;
+                end
             end
         end
+
+        if exist(stateFile, 'file') ~= 2
+            defaultState = fullfile(repoRoot, ...
+                'verification', 'crack_path', 'stage1_starting_state.mat');
+
+            error('main_stage2_reference_pencil_mesh:MissingStateFile', ...
+                ['Frozen Stage-I state file not found.\n', ...
+                 'Resolved path:\n  %s\n', ...
+                 'Repository root:\n  %s\n', ...
+                 'Expected default checkpoint:\n  %s\n', ...
+                 'If R0 is still in the MATLAB workspace, pass ', ...
+                 '''FrozenState'',R0. Otherwise rerun the Stage-I freeze once.'], ...
+                stateFile, repoRoot, defaultState);
+        end
+
+        S = load(stateFile);
+        sourceLabel = stateFile;
     end
 
     fprintf('\n');
     fprintf('============================================================\n');
     fprintf('CRACK PATH: STAGE-II REFERENCE PENCIL MESH\n');
     fprintf('============================================================\n');
-    fprintf('  Frozen Stage-I state: %s\n', stateFile);
-    fprintf('  theta_1 = %+ .10f deg\n', theta1Deg);
+    fprintf('  Frozen Stage-I state: %s\n', sourceLabel);
+    fprintf('  theta_1 = %+.10f deg\n', theta1Deg);
     fprintf('  NO Stage-I solve and NO SIF calculation are performed here.\n\n');
 
-    if exist(stateFile, 'file') ~= 2
-        defaultState = fullfile(repoRoot, ...
-            'verification', 'crack_path', 'stage1_starting_state.mat');
-
-        error('main_stage2_reference_pencil_mesh:MissingStateFile', ...
-            ['Frozen Stage-I state file not found.\n', ...
-             'Resolved path:\n  %s\n', ...
-             'Repository root:\n  %s\n', ...
-             'Expected default checkpoint:\n  %s\n', ...
-             'Run main_stage1_freeze_starting_state in this working copy, ', ...
-             'or pass the original absolute StateFile path.'], ...
-            stateFile, repoRoot, defaultState);
-    end
-
-    S = load(stateFile);
     T = local_extract_summary_table(S);
 
     if height(T) ~= 1
@@ -143,12 +156,16 @@ function R2 = main_stage2_reference_pencil_mesh(varargin)
     row = T(1,:);
 
     % ------------------------------------------------------------
-    % Reconstruct Stage-II configuration from the frozen summary.
-    % Start from the canonical project configuration only to inherit material,
-    % loading and currently tested Stage-II pencil controls. All geometry and
-    % Stage-I mesh scales are overwritten by the frozen state.
+    % Reconstruct Stage-II configuration from the frozen state.
+    % Prefer the exact frozen R0.C when available. Fall back to the canonical
+    % project configuration only for legacy checkpoints lacking R0.C.
     % ------------------------------------------------------------
-    C = cfg_hole_initiation();
+    if isfield(S, 'R0') && isstruct(S.R0) && ...
+            isfield(S.R0, 'C') && isstruct(S.R0.C)
+        C = S.R0.C;
+    else
+        C = cfg_hole_initiation();
+    end
 
     C.A = row.A_m;
     C.B = row.B_m;
@@ -358,6 +375,7 @@ function R2 = main_stage2_reference_pencil_mesh(varargin)
     R2.gates = gates;
     R2.diagnostics = diagnostics;
     R2.frozenSummary = row;
+    R2.frozenSource = sourceLabel;
     R2.C = C;
     R2.I = I;
     R2.G2 = G2;
@@ -370,7 +388,11 @@ function R2 = main_stage2_reference_pencil_mesh(varargin)
     % ------------------------------------------------------------
     if saveCompact
         if isempty(outputFile)
-            outDir = fileparts(stateFile);
+            if ~isempty(stateFile)
+                outDir = fileparts(stateFile);
+            else
+                outDir = fullfile(repoRoot, 'verification', 'crack_path');
+            end
             if isempty(outDir)
                 outDir = '.';
             end
@@ -392,6 +414,7 @@ function R2 = main_stage2_reference_pencil_mesh(varargin)
         Rsave.gates = gates;
         Rsave.diagnostics = diagnostics;
         Rsave.frozenSummary = row;
+        Rsave.frozenSource = sourceLabel;
         Rsave.C = C;
         Rsave.I = I;
         Rsave.G2_crack = G2.crack;
