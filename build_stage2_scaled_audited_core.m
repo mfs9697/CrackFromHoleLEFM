@@ -314,7 +314,10 @@ function mirrorT6 = local_build_t6_mirror(T3,T6,mirrorT3,nUpper,nElemUpper)
     for k = 1:size(upperEdges,1)
         ab = upperEdges(k,1:2);
         midU = upperEdges(k,3);
-        abM = sort(mirrorT3(ab));
+        % mirrorT3 is a column vector. MATLAB preserves that vector
+        % orientation for vector indexing, so force the reflected edge back
+        % to a 1x2 row before the row-wise lookup.
+        abM = sort(mirrorT3(ab(:))).';
         [tf,j] = ismember(abM,edgePairs,'rows');
         assert(tf,'stage2core:MirrorEdge','Reflected T3 edge not found.');
         mirrorT6(midU) = edgeMids(j);
@@ -325,7 +328,8 @@ function mirrorT6 = local_build_t6_mirror(T3,T6,mirrorT3,nUpper,nElemUpper)
         'stage2core:MirrorT6Incomplete','Incomplete T6 mirror map.');
 
     % Reflected element connectivity including the T6 edge-node permutation.
-    expectedLower = mirrorT6(T6(upperElems,[1 3 2 6 5 4]));
+    lowerPattern = T6(upperElems,[1 3 2 6 5 4]);
+    expectedLower = reshape(mirrorT6(lowerPattern(:)),size(lowerPattern));
     actualLower = T6(nElemUpper+(1:nElemUpper),:);
 
     assert(isequal(expectedLower,actualLower), ...
