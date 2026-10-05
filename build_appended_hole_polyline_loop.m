@@ -3,8 +3,9 @@ function [Vapp,G]=build_appended_hole_polyline_loop(hole,Pmid,eps,varargin)
 % Build one circular-hole inner loop with a genuinely polyline sharp pencil.
 %
 % Pmid is ordered mouth -> ... -> tip. The two finite-width pencil faces
-% follow the complete polyline through mitered offset vertices and taper
-% linearly from the circular-hole mouth shift to zero at the sharp tip.
+% follow the complete polyline through mitered offset vertices at a uniform
+% nominal half-width eps along the already-created crack. Only the final
+% carrier segment tapers from full width to zero at the sharp current tip.
 % The geometry is only a meshing carrier: the two faces are later collapsed
 % onto Pmid while retaining distinct upper/lower topology.
 
@@ -79,9 +80,14 @@ function [Vapp,G]=build_appended_hole_polyline_loop(hole,Pmid,eps,varargin)
     end
 
     n=size(P,1);
-    cum=[0;cumsum(L)];
-    Ltot=cum(end);
-    width=eps*(1-cum/Ltot);
+
+    % Uniform finite-width meshing carrier.
+    % Every historical crack vertex has the same nominal half-width eps.
+    % The miter construction below makes the offset faces meet correctly at
+    % kinks while preserving that perpendicular offset from the adjacent
+    % midline segments. Only the final carrier segment closes to the sharp
+    % current tip, so only the final vertex has zero width.
+    width=eps*ones(n,1);
     width(end)=0;
 
     Up=zeros(n,2);Lo=zeros(n,2);
