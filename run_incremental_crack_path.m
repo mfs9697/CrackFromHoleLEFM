@@ -121,12 +121,13 @@ function Path = run_incremental_crack_path(varargin)
         resumed=false;
     else
         [vertices,thetaDeg,rows,stepResults,regression, ...
-            completedPhysicalSegments,startK]=local_prepare_resume( ...
+            completedPhysicalSegments,startK,resumeHistoryMode]=local_prepare_resume( ...
             resumeState,resumeSourceDir,opt.MaxSegments,rows,seedRow,stepResults, ...
             regression,p0,p1,p2,theta2Deg,increment,nMat,tHat,C, ...
             opt.RegressionGates,opt.StopAtCoreClearance);
         resumed=true;
     end
+    if ~resumed,resumeHistoryMode='fresh';end
 
     fprintf('\n============================================================\n');
     fprintf('GENERAL INCREMENTAL CRACK-PATH DRIVER\n');
@@ -144,6 +145,7 @@ function Path = run_incremental_crack_path(varargin)
         fprintf('  resume state      = %s\n',resumeLabel);
         fprintf('  completed physical= %d segments\n',completedPhysicalSegments);
         fprintf('  first resumed step= %d\n',startK);
+        fprintf('  resume history    = %s\n',resumeHistoryMode);
     end
 
     stopReason='max_segments_reached';
@@ -323,6 +325,7 @@ function Path = run_incremental_crack_path(varargin)
     Path.resumeStateSource=resumeLabel;
     Path.resumeSourceDir=resumeSourceDir;
     Path.resumeStartSegment=startK;
+    Path.resumeHistoryMode=resumeHistoryMode;
     Path.completedPhysicalSegmentsAtStart=completedPhysicalSegments;
     Path.thirdAndLaterGenerated=nExisting>=3;
     Path.complete=strcmp(stopReason,'max_segments_reached') || ...
@@ -385,7 +388,7 @@ function [State,label,sourceDir]=local_load_resume_state(root,Rin,fileIn,sourceI
     end
 end
 
-function [vertices,thetaDeg,rows,stepResults,regression,kDone,startK]= ...
+function [vertices,thetaDeg,rows,stepResults,regression,kDone,startK,historyMode]= ...
         local_prepare_resume(State,sourceDir,maxSegments,rows,seedRow,stepResults, ...
         regression,p0,p1,p2,theta2Deg,increment,nMat,tHat,C, ...
         regressionGates,stopAtCoreClearance)
@@ -451,31 +454,38 @@ function [vertices,thetaDeg,rows,stepResults,regression,kDone,startK]= ...
             'Legacy appended resume state has inconsistent nextThetaDeg.');
     end
 
-    % Hydrate accepted physical history. New-format states embed the compact
-    % numeric rows. Legacy states are reconstructed from prior R files.
-    hasEmbedded=isfield(State,'rowsThroughCompleted') && ...
+    % Recover as much accepted numeric history as is available. A legacy
+    % path_run_state.mat is itself an atomic accepted-step checkpoint, so
+    % missing old per-step result files must not make the path unusable.
+    historyMode='checkpoint_only';
+    hasEmbeddedShape=isfield(State,'rowsThroughCompleted') && ...
         isnumeric(State.rowsThroughCompleted) && ...
         size(State.rowsThroughCompleted,2)==size(rows,2) && ...
         size(State.rowsThroughCompleted,1)>=kDone;
 
-    if hasEmbedded
+    if hasEmbeddedShape
         hist=State.rowsThroughCompleted(1:kDone,:);
-        if any(hist(:,1)~=(1:kDone).')
-            error('pathrun:ResumeRows','Embedded resume row indices are inconsistent.');
-        end
-        rows(1:kDone,:)=hist;
-    else
-        if kDone>=2 && (isempty(sourceDir)||exist(sourceDir,'dir')~=7)
-            error('pathrun:ResumeHistoryMissing', ...
-                ['Legacy resume state has no embedded row history. Pass ', ...
-                 'ResumeSourceDir containing step_###_physical_small.mat files.']);
-        end
         for kk=2:kDone
-            f=fullfile(sourceDir,sprintf('step_%03d_physical_small.mat',kk));
-            if exist(f,'file')~=2
-                error('pathrun:ResumeHistoryMissing', ...
-                    'Missing accepted compact physical result: %s',f);
+            if isfinite(hist(kk,1))
+                if hist(kk,1)~=kk
+                    error('pathrun:ResumeRows', ...
+                        'Embedded resume row index %g is inconsistent at segment %d.', ...
+                        hist(kk,1),kk);
+                end
+                rows(kk,:)=hist(kk,:);
             end
+        end
+        historyMode='embedded_partial';
+    end
+
+    % Opportunistically hydrate any missing historical rows from surviving
+    % compact physical results. ResumeSourceDir is an aid, not a dependency.
+    if kDone>=2 && ~isempty(sourceDir) && exist(sourceDir,'dir')==7
+        hydratedAny=false;
+        for kk=2:kDone
+            if local_row_complete(rows(kk,:)),continue,end
+            f=fullfile(sourceDir,sprintf('step_%03d_physical_small.mat',kk));
+            if exist(f,'file')~=2,continue,end
             d=load(f,'R');
             if ~isfield(d,'R')||~isstruct(d.R)
                 error('pathrun:ResumeHistoryBad','%s does not contain struct R.',f);
@@ -484,13 +494,26 @@ function [vertices,thetaDeg,rows,stepResults,regression,kDone,startK]= ...
             local_validate_resume_result(R,kk,vertices,thetaDeg);
             rows(kk,:)=local_row_from_result(R,kk);
             stepResults{kk}=R;
+            hydratedAny=true;
         end
+        if hydratedAny,historyMode='mixed_or_external';end
     end
 
     % Never trust a stored seed row over the current frozen P1 seed.
     rows(1,:)=seedRow;
 
+    historyComplete=true;
     if kDone>=2
+        historyComplete=all(arrayfun(@(kk)local_row_complete(rows(kk,:)),2:kDone));
+    end
+    if historyComplete
+        historyMode='complete';
+    end
+
+    % P2 is the immutable regression bridge. Prefer its numeric row when
+    % available. Otherwise validate the regression record stored in the
+    % atomic legacy checkpoint.
+    if kDone>=2 && local_row_complete(rows(2,:))
         KI=rows(2,5);KII=rows(2,6);
         deltaNextDeg=rows(2,8);thetaNextDeg=rows(2,9);
         regression.KI2_pass=abs(KI-regression.KI2_expected)<=5e-10;
@@ -501,10 +524,20 @@ function [vertices,thetaDeg,rows,stepResults,regression,kDone,startK]= ...
             abs(thetaNextDeg-regression.theta3_expected_deg)<=5e-9;
         regression.step2_pass=regression.KI2_pass&&regression.KII2_pass&& ...
             regression.deltaTheta3_pass&&regression.theta3_pass;
-        if regressionGates && ~regression.step2_pass
-            error('pathrun:ResumeStage3DRegression', ...
-                'Resume history does not reproduce accepted Stage III-D.');
-        end
+    elseif kDone>=2
+        local_validate_legacy_regression(State,regression);
+        regression.theta2_pass=true;
+        regression.KI2_pass=true;
+        regression.KII2_pass=true;
+        regression.deltaTheta3_pass=true;
+        regression.theta3_pass=true;
+        regression.step2_pass=true;
+        historyMode='checkpoint_only';
+    end
+
+    if kDone>=2 && regressionGates && ~regression.step2_pass
+        error('pathrun:ResumeStage3DRegression', ...
+            'Resume history does not reproduce accepted Stage III-D.');
     end
 
     % New solved-end states contain no next leg yet. Reconstruct exactly one
@@ -540,6 +573,49 @@ function [vertices,thetaDeg,rows,stepResults,regression,kDone,startK]= ...
     if nSeg~=startK
         error('pathrun:ResumeInternal', ...
             'Validated resume state did not produce exactly one unsolved segment.');
+    end
+end
+
+function tf=local_row_complete(row)
+    tf=isnumeric(row)&&isvector(row)&&numel(row)==14 && ...
+        all(isfinite(row));
+end
+
+function local_validate_legacy_regression(State,current)
+    if ~isfield(State,'regression')||~isstruct(State.regression)|| ...
+            ~isscalar(State.regression)
+        error('pathrun:ResumeRegressionMissing', ...
+            ['Legacy checkpoint has no complete numeric P2 history and no ', ...
+             'stored regression record. It cannot be resumed safely.']);
+    end
+
+    old=State.regression;
+    req={'theta2_expected_deg','KI2_expected','KII2_expected', ...
+        'deltaTheta3_expected_deg','theta3_expected_deg','step2_pass'};
+    for j=1:numel(req)
+        if ~isfield(old,req{j})||isempty(old.(req{j}))
+            error('pathrun:ResumeRegressionMissing', ...
+                'Legacy regression record is missing %s.',req{j});
+        end
+    end
+
+    if abs(old.theta2_expected_deg-current.theta2_expected_deg)>5e-11 || ...
+            abs(old.KI2_expected-current.KI2_expected)>5e-10 || ...
+            abs(old.KII2_expected-current.KII2_expected)>5e-10 || ...
+            abs(old.deltaTheta3_expected_deg-current.deltaTheta3_expected_deg)>5e-9 || ...
+            abs(old.theta3_expected_deg-current.theta3_expected_deg)>5e-9 || ...
+            ~logical(old.step2_pass)
+        error('pathrun:ResumeRegressionMismatch', ...
+            'Legacy checkpoint regression does not match the accepted Stage III-D bridge.');
+    end
+
+    passNames={'theta2_pass','KI2_pass','KII2_pass', ...
+        'deltaTheta3_pass','theta3_pass'};
+    for j=1:numel(passNames)
+        if isfield(old,passNames{j}) && ~logical(old.(passNames{j}))
+            error('pathrun:ResumeRegressionMismatch', ...
+                'Legacy checkpoint records failed regression gate %s.',passNames{j});
+        end
     end
 end
 
@@ -582,6 +658,12 @@ function State=local_make_resume_state(vertices,thetaDeg,kDone,nextThetaDeg, ...
     State.stopReason=stopReason;
     State.rowsThroughCompleted=rows(1:kDone,:);
     State.rowVariableNames=local_row_variable_names();
+    if kDone<=1
+        State.rowHistoryComplete=true;
+    else
+        State.rowHistoryComplete=all(arrayfun( ...
+            @(kk)local_row_complete(rows(kk,:)),2:kDone));
+    end
     State.fastEDI=logical(fastEDI);
     State.sourceOutputDir=outDir;
 end
