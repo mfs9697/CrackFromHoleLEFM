@@ -269,6 +269,9 @@ function Path = run_incremental_crack_path(varargin)
         if pNext(1)<0 || pNext(1)>C.A || pNext(2)<-C.B || pNext(2)>C.B
             stopReason='next_tip_outside_plate';
             fprintf('  STOP: proposed next tip is outside the plate.\n');
+            State=local_make_resume_state(vertices,thetaDeg,k,thetaNextDeg, ...
+                regression,stopReason,rows,opt.FastEDI,outDir);
+            local_atomic_save_state(outDir,State);
             clear stepProfileCleanup
             break
         end
@@ -280,6 +283,9 @@ function Path = run_incremental_crack_path(varargin)
                 stopReason=sprintf('next_tip_core_clearance_%.6g_m',clearance);
                 fprintf('  STOP: proposed next tip clearance %.6f mm <= rCore %.6f mm.\n', ...
                     1e3*clearance,1e3*rCore);
+                State=local_make_resume_state(vertices,thetaDeg,k,thetaNextDeg, ...
+                    regression,stopReason,rows,opt.FastEDI,outDir);
+                local_atomic_save_state(outDir,State);
                 clear stepProfileCleanup
                 break
             end
@@ -458,7 +464,6 @@ function [vertices,thetaDeg,rows,stepResults,regression,kDone,startK]= ...
             error('pathrun:ResumeRows','Embedded resume row indices are inconsistent.');
         end
         rows(1:kDone,:)=hist;
-        rows(1,:)=rows(1,:); %#ok<NASGU>
     else
         if kDone>=2 && (isempty(sourceDir)||exist(sourceDir,'dir')~=7)
             error('pathrun:ResumeHistoryMissing', ...
