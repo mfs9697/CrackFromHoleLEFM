@@ -92,6 +92,7 @@ function Path = run_incremental_crack_path(varargin)
     rows=nan(opt.MaxSegments,14);
     rows(1,:)=[1,p1,theta1Deg,opt.SeedKI,opt.SeedKII,opt.SeedKII/opt.SeedKI, ...
         theta2Deg,theta2Deg,NaN,NaN,NaN,NaN,0];
+    seedRow=rows(1,:);
 
     regression=struct();
     regression.theta2_expected_deg=-0.00131272214162;
@@ -121,7 +122,7 @@ function Path = run_incremental_crack_path(varargin)
     else
         [vertices,thetaDeg,rows,stepResults,regression, ...
             completedPhysicalSegments,startK]=local_prepare_resume( ...
-            resumeState,resumeSourceDir,opt.MaxSegments,rows,stepResults, ...
+            resumeState,resumeSourceDir,opt.MaxSegments,rows,seedRow,stepResults, ...
             regression,p0,p1,p2,theta2Deg,increment,nMat,tHat,C, ...
             opt.RegressionGates,opt.StopAtCoreClearance);
         resumed=true;
@@ -367,6 +368,11 @@ function [State,label,sourceDir]=local_load_resume_state(root,Rin,fileIn,sourceI
 
     if isempty(State),return,end
 
+    if isempty(sourceDir) && isfield(State,'sourceOutputDir') && ...
+            (ischar(State.sourceOutputDir)||isstring(State.sourceOutputDir))
+        sourceDir=char(State.sourceOutputDir);
+    end
+
     if ~isempty(strtrim(sourceIn))
         sourceDir=char(sourceIn);
         if ~local_is_absolute_path(sourceDir),sourceDir=fullfile(root,sourceDir);end
@@ -374,7 +380,7 @@ function [State,label,sourceDir]=local_load_resume_state(root,Rin,fileIn,sourceI
 end
 
 function [vertices,thetaDeg,rows,stepResults,regression,kDone,startK]= ...
-        local_prepare_resume(State,sourceDir,maxSegments,rows,stepResults, ...
+        local_prepare_resume(State,sourceDir,maxSegments,rows,seedRow,stepResults, ...
         regression,p0,p1,p2,theta2Deg,increment,nMat,tHat,C, ...
         regressionGates,stopAtCoreClearance)
 
@@ -476,14 +482,8 @@ function [vertices,thetaDeg,rows,stepResults,regression,kDone,startK]= ...
         end
     end
 
-    % Never trust a stored seed row over the current frozen seed.
-    rows(1,:)=[1,p1,0,rows(1,5)*0+rows(1,4),rows(1,5),rows(1,6), ...
-        theta2Deg,theta2Deg,NaN,NaN,NaN,NaN,0];
-    % Restore the deterministic accepted P1 values if legacy history did not
-    % provide a meaningful row 1 (the caller initialized them before resume).
-    if ~all(isfinite(rows(1,4:8)))
-        error('pathrun:ResumeSeedRow','Accepted P1 seed row is not finite.');
-    end
+    % Never trust a stored seed row over the current frozen P1 seed.
+    rows(1,:)=seedRow;
 
     if kDone>=2
         KI=rows(2,5);KII=rows(2,6);
