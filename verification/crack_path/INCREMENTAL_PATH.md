@@ -212,7 +212,10 @@ with optional
 
     'ResumeSourceDir', '<directory-with-prior-step-results>'
 
-for legacy state files.
+for legacy state files. `ResumeSourceDir` is optional: surviving compact
+results are used to reconstruct historical SIF rows when available, but an
+atomic legacy path state remains resumable when that old output directory no
+longer exists.
 
 Only one of `ResumeState` and `ResumeStateFile` may be supplied.
 
@@ -227,11 +230,14 @@ Before continuing, the driver verifies:
 - all physical gates in those compact results;
 - the fixed 11316-element EDI support fingerprint.
 
-New state files use schema version 2 and embed the complete numeric step-row
-history. They can therefore be resumed without reconstructing older rows from
-per-step files. Legacy state files remain supported; for those files the
-driver reconstructs the accepted history from
-`step_###_physical_small.mat` in `ResumeSourceDir`.
+New state files use schema version 2 and embed the available numeric step-row
+history. When the complete history is available, it is carried forward. For a
+legacy state whose old per-step files have disappeared, the driver enters
+`checkpoint_only` mode: it validates the atomic accepted path checkpoint and
+its stored Stage III-D regression record, continues from the first unsolved
+segment, and leaves unavailable historical SIF rows absent rather than
+inventing them. Any surviving `step_###_physical_small.mat` files in
+`ResumeSourceDir` are validated and used opportunistically.
 
 There are two supported resume-state shapes:
 
@@ -273,15 +279,17 @@ Path17r = run_incremental_crack_path( ...
     'FastEDI',true, ...
     'ReuseCandidates',true, ...
     'RegressionGates',true, ...
-    'ResumeStateFile',fullfile(oldDir,'path_run_state.mat'), ...
+    'ResumeState',S17.State, ...
     'ResumeSourceDir',oldDir, ...
     'OutputDir',probeDir);
 ```
 
-The resume must report `first resumed step = 17`; the existing P17 candidate
-and physical checkpoint are validated and reused, so `newSolve` at P17 must
-be false. The resulting `probeDir/path_run_state.mat` is a schema-2 solved-P17
-state.
+The resume must report `first resumed step = 17`. If the old directory has
+been removed, it may also report `resume history = checkpoint_only`; this is
+expected and means no unavailable SIF history was fabricated. The existing
+P17 candidate and physical checkpoint are validated and reused, so `newSolve`
+at P17 must be false. The resulting `probeDir/path_run_state.mat` is a
+schema-2 solved-P17 state.
 
 Continuation to P20 then starts directly at P18:
 
