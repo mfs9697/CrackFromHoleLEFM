@@ -239,6 +239,8 @@ function F = main_stage3c_kinked_two_leg_qualification(varargin)
 
     exteriorIDs=zeros(size(Ze,1),1);
     tol=1e-12;
+    nRetainedCrackExteriorNodes=0;
+    nRetainedCrackSourceMatches=0;
     upperAxis=axisUp(Zp(axisUp,1)<0);
     lowerAxis=mirrorMap(upperAxis);
 
@@ -247,7 +249,15 @@ function F = main_stage3c_kinked_two_leg_qualification(varargin)
         side=ext.nodeSide(j);
 
         candidates=outerIDs;
-        if z(1)<0&&abs(z(2))<tol
+
+        % For the retained crack OUTSIDE the paired core, use topology rather
+        % than the old straight-crack test x_2=0. In a kinked current-tip
+        % frame the earlier leg and crack mouth are generally off-axis.
+        % ext.crackNodeMask identifies both copies of every retained crack
+        % vertex after exterior duplication; nodeSide selects the source face.
+        onRetainedCrack=logical(ext.crackNodeMask(j));
+        if onRetainedCrack
+            nRetainedCrackExteriorNodes=nRetainedCrackExteriorNodes+1;
             if side>=0
                 candidates=setdiff(candidates,loOld);
             else
@@ -259,6 +269,9 @@ function F = main_stage3c_kinked_two_leg_qualification(varargin)
         [dd,ii]=min(d);
         if dd<tol
             exteriorIDs(j)=candidates(ii);
+            if onRetainedCrack
+                nRetainedCrackSourceMatches=nRetainedCrackSourceMatches+1;
+            end
             continue
         end
 
@@ -419,6 +432,8 @@ function F = main_stage3c_kinked_two_leg_qualification(varargin)
     gates.carrierUsesMultipleFaceEdges=carrierMultiEdge;
     gates.retainedExteriorPathExact=norm(ext.retainedCrackPath- ...
         [pathLocal(1:end-1,:);[-rp,0]],'fro')<=1e-12;
+    gates.sideAwareRetainedCrackMapping=nRetainedCrackExteriorNodes>0 && ...
+        nRetainedCrackSourceMatches>=2;
     gates.carrierKinkUpperNode=numel(carrierUpAtKink)==1;
     gates.carrierKinkLowerNode=numel(carrierLoAtKink)==1;
     gates.carrierKinkFacesDistinct=numel(carrierUpAtKink)==1&& ...
@@ -476,6 +491,8 @@ function F = main_stage3c_kinked_two_leg_qualification(varargin)
     fprintf('  prior-tip distance   = %.6f mm from new tip\n',1e3*cornerDistance);
     fprintf('  kink/chord deviation = %.6e mm\n',1e3*chordDeviation);
     fprintf('  carrier face edges   = %d upper / %d lower\n',numel(polyIDs.upperEdges),numel(polyIDs.lowerEdges));
+    fprintf('  retained crack nodes = %d exterior copies; %d source-side matches\n', ...
+        nRetainedCrackExteriorNodes,nRetainedCrackSourceMatches);
     fprintf('  primary EDI elements = %d (literal), %d (skip-constant)\n', ...
         numel(support),numel(supportSkipConstant));
     fprintf('  core coord error     = %.3e m\n',coreCoordErr);
