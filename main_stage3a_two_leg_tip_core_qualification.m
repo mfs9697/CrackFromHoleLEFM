@@ -372,7 +372,8 @@ function F = main_stage3a_two_leg_tip_core_qualification(varargin)
     exteriorOutside=~any(ismember(support,exteriorRows)) && ...
         ~any(ismember(supportSkipConstant,exteriorRows));
 
-    % The crack segment outside the core must span exactly a0-rp=1 mm.
+    % The retained crack outside the new-tip core spans mouth -> rear core:
+    % totalLength-rp = 8 mm - 3 mm = 5 mm for the Stage III-A baseline.
     exteriorCrackLength=totalLength-rp;
     sU=cr.upperS;
     sL=cr.lowerS;
@@ -405,6 +406,8 @@ function F = main_stage3a_two_leg_tip_core_qualification(varargin)
     gates.newTipUnchanged=norm(crGlobal.Pmid(end,:)-p2)<=1e-12;
     gates.firstLegLength=abs(norm(p1-p0)-a1)<=1e-14;
     gates.secondLegLength=abs(norm(p2-p1)-a2)<=1e-14;
+    gates.firstLegDirection=norm((p1-p0)/a1-nMat)<=1e-13;
+    gates.lastLegDirection=norm((p2-p1)/a2-eLast)<=1e-13;
     gates.straightContinuation=abs(deltaTheta2Deg)<=1e-14;
     gates.priorTipUpperNode=numel(upCorner)==1;
     gates.priorTipLowerNode=numel(loCorner)==1;
@@ -412,6 +415,8 @@ function F = main_stage3a_two_leg_tip_core_qualification(varargin)
     gates.priorTipOutsideCore=cornerDistance>rp+1e-12;
     gates.priorTipOutsideEDI=cornerDistance>ro+1e-12;
     gates.mouthOutsideEDI=mouthDistance>ro+1e-12;
+    gates.physicalBoundaryOutsideCore=physicalClearance>rp+1e-12;
+    gates.physicalBoundaryOutsideEDI=physicalClearance>ro+1e-12;
     gates.coreBitwiseCoordinates=coreCoordErr==0;
     gates.coreConnectivityExact=coreConnExact;
     gates.completeT3CorePairing=pair3<=1e-13;
@@ -434,6 +439,7 @@ function F = main_stage3a_two_leg_tip_core_qualification(varargin)
     gates.EDIInsideUntouchedCore=supportInside;
     gates.exteriorExcludedFromEDI=exteriorOutside;
     gates.nativeSamplingAdequate=all(sampleN>=12);
+    gates.nativeSamplingExact=isequal(sampleN,[38;55;44;34]);
     gates.exteriorCrackLengthCorrect=abs(exteriorCrackLength-(totalLength-rp))<=1e-14;
     gates.upperMouthAtZero=mouthUpper<=1e-12;
     gates.lowerMouthAtZero=mouthLower<=1e-12;
@@ -560,6 +566,7 @@ function F = main_stage3a_two_leg_tip_core_qualification(varargin)
     candidate.mat=mat;
     candidate.firstLegLength=a1;
     candidate.secondLegLength=a2;
+    candidate.currentIncrementLength=a2;
     candidate.totalCrackLength=totalLength;
     candidate.theta1=theta1;
     candidate.theta1Deg=rad2deg(theta1);
