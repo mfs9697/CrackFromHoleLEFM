@@ -76,6 +76,8 @@ C.stage2.criterion='local_symmetry';
 C.sif.method='pending_qualified_interaction_EDI';
 
 % Quiet Stage-I solve for reproducible baseline generation.
+C.solver.linear_solver='backslash';
+C.solver.check_symmetry=false;
 C.solver.verbose=0;
 C.plot.show_mesh1=false;
 C.plot.show_mesh2=false;
