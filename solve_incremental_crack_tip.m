@@ -22,6 +22,8 @@ function R = solve_incremental_crack_tip(candidate,varargin)
     parse(ip,varargin{:});
     opt=ip.Results;
 
+    incremental_profile_clock('begin','physical',candidate.nSegments);
+    profileCleanup=onCleanup(@()incremental_profile_clock('end','physical'));
     root=fileparts(mfilename('fullpath'));
     outDir=fullfile(root,'verification','crack_path');
     if exist(outDir,'dir')~=7,mkdir(outDir);end
@@ -119,9 +121,11 @@ function R = solve_incremental_crack_tip(candidate,varargin)
         'pathsolve:CoreFingerprint','Qualified core element count changed.');
     assert(numel(candidate.primarySupportElementIDs)==11316, ...
         'pathsolve:SupportFingerprint','Qualified EDI support count changed.');
+    incremental_profile_clock('phase','physical','t3_t6');
     [P6,T6]=T3toT6_fast(P,T);
     mesh=struct('coord3',P,'connect3',T,'coord',P6,'connect',T6);
 
+    incremental_profile_clock('phase','physical','preflight');
     assert(isfield(candidate.mat,'E')&&isfield(candidate.mat,'nu')&& ...
            isfield(candidate.mat,'ps') && ...
            abs(candidate.mat.E-C.E)<=1e-12*max(1,abs(C.E)) && ...
@@ -210,6 +214,7 @@ function R = solve_incremental_crack_tip(candidate,varargin)
     % ------------------------------------------------------------------
     newSolve=false;
 
+    incremental_profile_clock('phase','physical','checkpoint_validation');
     if exist(cp,'file')==2
         s0=load(cp,'meta','mesh','U','mat','crack','currentIncrement','solverInfo');
         local_validate_checkpoint(s0,mesh,crack,currentIncrement,ndof,path,thetaSegmentsDeg);
@@ -224,7 +229,9 @@ function R = solve_incremental_crack_tip(candidate,varargin)
         fprintf('\nPHASE 1: ASSEMBLE UNCLAMPED SYMMETRIC SYSTEM\n');
         fprintf('  stif_assem(...,fixvar=[]) -- no row clamping.\n');
 
+        incremental_profile_clock('phase','physical','stiffness_assembly');
         K=stif_assem(mesh,mat,quad,[]);
+        incremental_profile_clock('phase','physical','stiffness_checks');
         if size(K,1)~=ndof || size(K,2)~=ndof
             error('pathsolve:StiffnessSize','Unexpected stiffness dimensions.');
         end
@@ -236,6 +243,7 @@ function R = solve_incremental_crack_tip(candidate,varargin)
         end
 
         % Exact unit remote-y traction vector.
+        incremental_profile_clock('phase','physical','loads');
         Fload=zeros(ndof,1);
         eps1=1e-8*max(A,2*B);
         elod=edge_loads_T6(mesh.coord,B,eps1);
@@ -264,6 +272,7 @@ function R = solve_incremental_crack_tip(candidate,varargin)
         % DOFs exactly as in the audited Step67A free-DOF formulation.
         Fload(fixvar)=0;
 
+        incremental_profile_clock('phase','physical','free_dof_extraction');
         Kff=K(free,free);
         Ff=Fload(free);
         Kff=(Kff+Kff.')/2;
@@ -278,6 +287,7 @@ function R = solve_incremental_crack_tip(candidate,varargin)
             topResultant,bottomResultant);
         fprintf('  Building symamd + SGS preconditioner.\n');
 
+        incremental_profile_clock('phase','physical','symamd_and_permutation');
         p=symamd(Kff);
         Ap=Kff(p,p);
         bp=Ff(p);
@@ -289,6 +299,7 @@ function R = solve_incremental_crack_tip(candidate,varargin)
                 'SGS requires a finite positive diagonal.');
         end
 
+        incremental_profile_clock('phase','physical','sgs_construction');
         tPre=tic;
         M1=tril(Ap);              % D + L
         Dinv=spdiags(1./d,0,numel(d),numel(d));
@@ -303,11 +314,13 @@ function R = solve_incremental_crack_tip(candidate,varargin)
         fprintf('  SGS storage estimate      = %.4f GiB\n',preconditionerGiB);
         fprintf('  Starting exactly ONE authorized physical PCG solve.\n');
 
+        incremental_profile_clock('phase','physical','pcg');
         tSolve=tic;
         [xp,flag,relres,iter,resvec]=pcg( ...
             Ap,bp,pcgTol,pcgMaxIt,M1,M2);
         solveSeconds=toc(tSolve);
 
+        incremental_profile_clock('phase','physical','residual_gates');
         if flag~=0 || ~isfinite(relres) || relres>pcgTol || ...
                 any(~isfinite(xp))
             error('pathsolve:PCGFailed', ...
@@ -374,6 +387,7 @@ function R = solve_incremental_crack_tip(candidate,varargin)
             'noThirdLegGenerated',true, ...
             'noAngleSweep',true);
 
+        incremental_profile_clock('phase','physical','checkpoint_save');
         tmp=[cp '.incomplete.mat'];
         if exist(tmp,'file')==2
             error('pathsolve:InterruptedSave', ...
@@ -398,11 +412,14 @@ function R = solve_incremental_crack_tip(candidate,varargin)
     % Phase 2. Postprocess ONLY from the checkpoint.
     % ------------------------------------------------------------------
     fprintf('\nPHASE 2: POSTPROCESS SAVED PHYSICAL FIELD\n');
+    incremental_profile_clock('phase','physical','checkpoint_reload');
     s=load(cp,'mesh','U','mat','crack','currentIncrement','meta','solverInfo');
     local_validate_checkpoint(s,mesh,crack,currentIncrement,ndof,path,thetaSegmentsDeg);
 
+    incremental_profile_clock('phase','physical','native_cod');
     [r,app,face]=native_COD_polyline_audit( ...
         s.mesh,s.U,s.mat,s.crack,8);
+    incremental_profile_clock('phase','physical','cod_fits');
     rr=r/currentIncrement;
 
     fitDegrees=[1 2];
@@ -440,6 +457,7 @@ function R = solve_incremental_crack_tip(candidate,varargin)
     fprintf('  Running ONE matched physical EDI: r=[%.6f, %.6f] mm.\n', ...
         1e3*ri,1e3*ro);
 
+    incremental_profile_clock('phase','physical','physical_edi');
     [KI,KII,Aux]=SIF_LEFM_interaction_EDI( ...
         s.mesh,s.U,s.crack.Pmid,s.mat, ...
         struct('r_inner',ri,'r_outer',ro), ...
@@ -449,6 +467,7 @@ function R = solve_incremental_crack_tip(candidate,varargin)
         'QuadratureRule',16, ...
         'StoreGPDiagnostics',false);
 
+    incremental_profile_clock('phase','physical','postprocessing_gates');
     qEDI=KII/KI;
 
     [deltaThetaNext,deltaThetaNextDeg,sigmaTTMTS]=kink_angle_LEFM_MTS(KI,KII);
@@ -594,6 +613,7 @@ function R = solve_incremental_crack_tip(candidate,varargin)
         'The measured current-tip KI,KII predict the next MTS turn. ', ...
         'No next segment is generated by this function.'];
 
+    incremental_profile_clock('phase','physical','compact_save');
     save(saveFile,'R','-v7');
     fprintf('  Compact physical result saved: %s\n',saveFile);
 end
@@ -695,5 +715,4 @@ end
 function tf=local_matlab_callable(name)
     tf=exist(name,'file')~=0 || exist(name,'builtin')~=0;
 end
-
 

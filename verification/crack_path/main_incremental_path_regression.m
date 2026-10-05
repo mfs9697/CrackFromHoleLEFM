@@ -20,6 +20,7 @@ function Path = main_incremental_path_regression(varargin)
     addParameter(ip,'FrozenState',[],@(x)isempty(x)||isstruct(x));
     addParameter(ip,'AllowSolve',false,@(x)islogical(x)&&isscalar(x));
     addParameter(ip,'PlotEachStep',false,@(x)islogical(x)&&isscalar(x));
+    addParameter(ip,'OutputDir','',@(x)ischar(x)||isstring(x));
     parse(ip,varargin{:});
     opt=ip.Results;
 
@@ -30,7 +31,8 @@ function Path = main_incremental_path_regression(varargin)
         'RunSynthetic',true, ...
         'ReuseCandidates',true, ...
         'RegressionGates',true, ...
-        'PlotEachStep',opt.PlotEachStep);
+        'PlotEachStep',opt.PlotEachStep, ...
+        'OutputDir',opt.OutputDir);
 
     assert(isfield(Path.regression,'step2_pass')&&Path.regression.step2_pass, ...
         'pathreg:Stage3DRegression','Accepted Stage III-D regression failed.');
