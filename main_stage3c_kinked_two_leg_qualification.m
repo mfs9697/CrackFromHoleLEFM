@@ -378,8 +378,8 @@ function F = main_stage3c_kinked_two_leg_qualification(varargin)
     exteriorOutside=~any(ismember(support,exteriorRows)) && ...
         ~any(ismember(supportSkipConstant,exteriorRows));
 
-    % The retained crack outside the new-tip core spans mouth -> rear core:
-    % totalLength-rp = 8 mm - 3 mm = 5 mm for the Stage III-A baseline.
+    % The retained polyline outside the new-tip core spans the crack mouth
+    % through every historical kink to the rear core intersection.
     exteriorCrackLength=pathLength-rp;
     sU=cr.upperS;
     sL=cr.lowerS;
@@ -417,6 +417,8 @@ function F = main_stage3c_kinked_two_leg_qualification(varargin)
     gates.nonCollinearSecondLeg=abs(theta2Deg-theta1Deg)>1e-8;
     gates.kinkAnglePreserved=abs(local_turn_deg(pathGlobal)-(theta2Deg-theta1Deg))<=1e-10;
     gates.carrierUsesMultipleFaceEdges=carrierMultiEdge;
+    gates.retainedExteriorPathExact=norm(ext.retainedCrackPath- ...
+        [pathLocal(1:end-1,:);[-rp,0]],'fro')<=1e-12;
     gates.carrierKinkUpperNode=numel(carrierUpAtKink)==1;
     gates.carrierKinkLowerNode=numel(carrierLoAtKink)==1;
     gates.carrierKinkFacesDistinct=numel(carrierUpAtKink)==1&& ...
