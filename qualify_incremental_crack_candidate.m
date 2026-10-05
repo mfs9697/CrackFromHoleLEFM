@@ -30,7 +30,6 @@ function F = qualify_incremental_crack_candidate(pathGlobal,varargin)
     opt=ip.Results;
 
     root=fileparts(mfilename('fullpath'));
-    local_assert_branch(root);
     [R0,sourceLabel]=local_load_frozen_state(root,opt.FrozenState,char(opt.StateFile));
 
     assert(isfield(R0,'summary')&&istable(R0.summary)&&height(R0.summary)==1, ...
@@ -1026,9 +1025,3 @@ function tf=local_is_absolute_path(p)
 end
 
 
-function local_assert_branch(root)
-    [status,b]=system(sprintf('git -C "%s" branch --show-current',root));
-    assert(status==0 && strcmp(strtrim(b),'incremental-general-crack-path'), ...
-        'pathqual:Branch', ...
-        'Run generic incremental qualification only on incremental-general-crack-path.');
-end
