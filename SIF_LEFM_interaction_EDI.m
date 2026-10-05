@@ -34,6 +34,9 @@ function [KI, KII, Aux] = SIF_LEFM_interaction_EDI(mesh, U, V, mat, domain, vara
 %                    [KI,KII] (diagnostic): override the actual field at
 %                    each Gauss point with an exact Williams field. Never
 %                    use this option to extract SIFs from FEM solutions.
+%   'SkipUnusedAuxWork' false (default): when GP diagnostics are disabled,
+%                    omit unused u0 and discarded auxiliary mismatch work.
+%                    Integral fields, quadrature and summation are unchanged.
 %
 % Outputs:
 %   KI, KII signed stress intensity factors
@@ -60,6 +63,7 @@ function [KI, KII, Aux] = SIF_LEFM_interaction_EDI(mesh, U, V, mat, domain, vara
     addParameter(ip, 'AnalyticActualK', [], ...
         @(x)isempty(x) || (isnumeric(x) && isreal(x) && numel(x)==2 && all(isfinite(x(:)))));
     addParameter(ip, 'StoreGPDiagnostics', true, @(x)islogical(x)&&isscalar(x));
+    addParameter(ip, 'SkipUnusedAuxWork', false, @(x)islogical(x)&&isscalar(x));
     parse(ip, varargin{:});
 
     Kaux = ip.Results.AuxK;
@@ -69,6 +73,7 @@ function [KI, KII, Aux] = SIF_LEFM_interaction_EDI(mesh, U, V, mat, domain, vara
     analyticActualK = ip.Results.AnalyticActualK;
     analyticActual = ~isempty(analyticActualK);
     storeGP = ip.Results.StoreGPDiagnostics;
+    skipUnusedAuxWork = ip.Results.SkipUnusedAuxWork && ~storeGP;
     if ~(strcmpi(weightFunction,'analytic_radial') || strcmpi(weightFunction,'fe_nodal'))
         error('SIF_LEFM_interaction_EDI:BadWeightFunction', ...
             'WeightFunction must be analytic_radial or fe_nodal.');
@@ -270,7 +275,7 @@ function [KI, KII, Aux] = SIF_LEFM_interaction_EDI(mesh, U, V, mat, domain, vara
                 % Keep the SAME FE-nodal q gradient and quadrature.
                 actual = local_aux_LEFM_fields(x1,x2, ...
                     analyticActualK(1),analyticActualK(2), ...
-                    E,nu,mu,kappa,Dmat,auxDerivativeScale);
+                    E,nu,mu,kappa,Dmat,auxDerivativeScale,skipUnusedAuxWork);
                 eps1 = actual.eps;
                 sig1 = actual.sig;
                 du1_dx1 = actual.du_dx1;
@@ -290,10 +295,10 @@ function [KI, KII, Aux] = SIF_LEFM_interaction_EDI(mesh, U, V, mat, domain, vara
             end
 
             % Auxiliary mode I, normalized by Kaux.
-            auxI = local_aux_LEFM_fields(x1, x2, Kaux, 0.0, E, nu, mu, kappa, Dmat, auxDerivativeScale);
+            auxI = local_aux_LEFM_fields(x1, x2, Kaux, 0.0, E, nu, mu, kappa, Dmat, auxDerivativeScale, skipUnusedAuxWork);
 
             % Auxiliary mode II, normalized by Kaux.
-            auxII = local_aux_LEFM_fields(x1, x2, 0.0, Kaux, E, nu, mu, kappa, Dmat, auxDerivativeScale);
+            auxII = local_aux_LEFM_fields(x1, x2, 0.0, Kaux, E, nu, mu, kappa, Dmat, auxDerivativeScale, skipUnusedAuxWork);
             if storeGP
                 auxMismatchI(end+1,1) = auxI.eps_mismatch; %#ok<AGROW>
                 auxMismatchII(end+1,1) = auxII.eps_mismatch; %#ok<AGROW>
@@ -476,7 +481,7 @@ end
 % Auxiliary LEFM fields by finite-difference derivatives of displacements
 % =========================================================================
 
-function aux = local_aux_LEFM_fields(x1, x2, KI, KII, E, nu, mu, kappa, Dmat, derivativeScale)
+function aux = local_aux_LEFM_fields(x1, x2, KI, KII, E, nu, mu, kappa, Dmat, derivativeScale, skipUnusedWork)
 % Return auxiliary stress, strain, and du/dx1 in local crack coordinates.
 %
 % This prototype evaluates stresses from standard near-tip formulas and
@@ -495,12 +500,16 @@ function aux = local_aux_LEFM_fields(x1, x2, KI, KII, E, nu, mu, kappa, Dmat, de
     end
 
     sig = local_aux_stress_polar_to_cart(r, th, KI, KII);
-    eps_from_sig = Dmat \ sig;
+    if ~skipUnusedWork
+        eps_from_sig = Dmat \ sig;
+    end
 
     % Numerical derivative of auxiliary displacement wrt local x1.
     h = derivativeScale * max(1e-7, 1e-5*r);
 
-    u0 = local_aux_displacement(x1, x2, KI, KII, mu, kappa); %#ok<NASGU>
+    if ~skipUnusedWork
+        u0 = local_aux_displacement(x1, x2, KI, KII, mu, kappa); %#ok<NASGU>
+    end
     up = local_aux_displacement(x1 + h, x2, KI, KII, mu, kappa);
     um = local_aux_displacement(x1 - h, x2, KI, KII, mu, kappa);
 
@@ -523,13 +532,17 @@ function aux = local_aux_LEFM_fields(x1, x2, KI, KII, E, nu, mu, kappa, Dmat, de
     % with the analytical-stress strain. Do not call the strain vector "eps"
     % here, because that shadows MATLAB's eps() function and previously made
     % the denominator vector-valued.
-    mismatchDen = max(norm(eps_from_sig), eps(max(1,norm(eps_from_sig))));
+    if ~skipUnusedWork
+        mismatchDen = max(norm(eps_from_sig), eps(max(1,norm(eps_from_sig))));
+    end
 
     aux = struct();
     aux.sig = sig;
     aux.eps = eps_fd;
-    aux.eps_from_sig = eps_from_sig;
-    aux.eps_mismatch = norm(eps_fd - eps_from_sig) / mismatchDen;
+    if ~skipUnusedWork
+        aux.eps_from_sig = eps_from_sig;
+        aux.eps_mismatch = norm(eps_fd - eps_from_sig) / mismatchDen;
+    end
     aux.du_dx1 = du_dx1;
 end
 

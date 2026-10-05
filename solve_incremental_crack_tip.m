@@ -16,6 +16,7 @@ function R = solve_incremental_crack_tip(candidate,varargin)
 
     ip=inputParser;
     addParameter(ip,'AllowSolve',false,@(x)islogical(x)&&isscalar(x));
+    addParameter(ip,'FastEDI',false,@(x)islogical(x)&&isscalar(x));
     addParameter(ip,'FrozenState',[],@(x)isempty(x)||isstruct(x));
     addParameter(ip,'CheckpointFile','',@(x)ischar(x)||isstring(x));
     addParameter(ip,'SaveFile','',@(x)ischar(x)||isstring(x));
@@ -465,7 +466,7 @@ function R = solve_incremental_crack_tip(candidate,varargin)
         'Verbose',false, ...
         'WeightFunction','fe_nodal', ...
         'QuadratureRule',16, ...
-        'StoreGPDiagnostics',false);
+        'StoreGPDiagnostics',false,'SkipUnusedAuxWork',opt.FastEDI);
 
     incremental_profile_clock('phase','physical','postprocessing_gates');
     qEDI=KII/KI;
@@ -592,6 +593,7 @@ function R = solve_incremental_crack_tip(candidate,varargin)
     R.gates=gates;
     R.pass=pass;
     R.newSolve=newSolve;
+    R.fastEDI=opt.FastEDI;
     R.checkpointPath=cp;
     R.candidateSource=candidateSource;
     R.frozenSource=frozenSource;
@@ -715,4 +717,3 @@ end
 function tf=local_matlab_callable(name)
     tf=exist(name,'file')~=0 || exist(name,'builtin')~=0;
 end
-

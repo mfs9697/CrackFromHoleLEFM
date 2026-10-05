@@ -21,6 +21,7 @@ function F = qualify_incremental_crack_candidate(pathGlobal,varargin)
     addParameter(ip,'NArc',480,@(x)isnumeric(x)&&isscalar(x)&&isfinite(x)&&x>=32&&x==round(x));
     addParameter(ip,'ExteriorVerbose',true,@(x)islogical(x)&&isscalar(x));
     addParameter(ip,'RunSynthetic',true,@(x)islogical(x)&&isscalar(x));
+    addParameter(ip,'FastEDI',false,@(x)islogical(x)&&isscalar(x));
     addParameter(ip,'SaveCandidate',true,@(x)islogical(x)&&isscalar(x));
     addParameter(ip,'CandidateFile','',@(x)ischar(x)||isstring(x));
     addParameter(ip,'SaveCompact',true,@(x)islogical(x)&&isscalar(x));
@@ -531,6 +532,7 @@ function F = qualify_incremental_crack_candidate(pathGlobal,varargin)
             'WeightFunction','fe_nodal', ...
             'QuadratureRule',16, ...
             'StoreGPDiagnostics',false, ...
+            'SkipUnusedAuxWork',opt.FastEDI, ...
             'Verbose',false);
 
         incremental_profile_clock('end','synthetic_edi');
@@ -649,6 +651,7 @@ function F = qualify_incremental_crack_candidate(pathGlobal,varargin)
     F.sampleCounts=table(windows(:,1),windows(:,2),sampleN, ...
         'VariableNames',{'lower_r_over_DeltaA','upper_r_over_DeltaA','nativePoints'});
     F.pass=pass;
+    F.fastEDI=opt.FastEDI;
 
     if opt.Plot
         local_plot_full_mesh(Pg,Tc,crGlobal,patchRows,exteriorRows,ri,ro,tip,R);
@@ -1046,4 +1049,3 @@ function tf=local_is_absolute_path(p)
     tf=startsWith(p,filesep)|| ...
         ~isempty(regexp(p,'^[A-Za-z]:[\\/]','once'))||startsWith(p,'\\');
 end
-

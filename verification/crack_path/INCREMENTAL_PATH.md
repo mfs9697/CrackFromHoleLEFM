@@ -232,3 +232,30 @@ Likely optimization targets after the three- and five-segment tests pass are:
 
 No solver tolerance, EDI radius, mesh scale, MTS convention, or qualification
 gate should be changed merely to improve runtime.
+
+### Measured optional EDI optimization
+
+`FastEDI` defaults to **false** in the incremental driver, qualifier, solver,
+regression entry point and profiling harness. Enable it explicitly:
+
+```matlab
+Path5 = run_incremental_crack_path('FrozenState',R0,'MaxSegments',5, ...
+    'AllowPhysicalSolves',true,'RunSynthetic',true,'FastEDI',true, ...
+    'OutputDir','<separate output directory>');
+```
+
+This removes only an unused auxiliary displacement evaluation and discarded
+auxiliary strain-mismatch calculations in EDI calls whose GP diagnostics are
+already disabled. It retains the full finite-difference auxiliary fields,
+integration formula, 16-point quadrature, support search, accumulation order,
+all synthetic replays and every existing gate. It adds no geometry cache and
+changes no physical solve. The extractor option is `SkipUnusedAuxWork=false`
+by default; when `StoreGPDiagnostics=true`, it retains the original diagnostic
+calculations regardless of that option.
+
+See [Phase A profiling](INCREMENTAL_PROFILE_PHASE_A.md) for the measurements
+that motivated the experiment. `main_incremental_path_profile` accepts the
+same explicit `FastEDI` option and requires new empty benchmark directories.
+`test_incremental_fast_edi` compares full returned SIFs and diagnostics bitwise;
+its optional `CheckpointFile` argument also measures paired stored-field EDI
+timings without a physical solve.

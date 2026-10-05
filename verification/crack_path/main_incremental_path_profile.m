@@ -1,13 +1,15 @@
 function Report=main_incremental_path_profile(varargin)
-%MAIN_INCREMENTAL_PATH_PROFILE Phase A only: sequential strict benchmarks.
+%MAIN_INCREMENTAL_PATH_PROFILE Sequential benchmarks with strict gates.
 % Empty fresh directories are required. Existing investigator results are
-% read as full-precision anchors and never overwritten. No optimization,
-% changed gate, angle sweep, parallelism or new Stage-I solve is performed.
+% read as full-precision anchors and never overwritten. Strict mode is the
+% default; FastEDI explicitly benchmarks optional unused-work removal.
+% No changed gate, angle sweep, parallelism or new Stage-I solve is performed.
 ip=inputParser;
 addParameter(ip,'FrozenState',[],@(x)isstruct(x)&&isscalar(x));
 addParameter(ip,'OutputDir','',@(x)ischar(x)||isstring(x));
 addParameter(ip,'ReferenceDir','',@(x)ischar(x)||isstring(x));
 addParameter(ip,'AllowPhysicalSolves',false,@(x)islogical(x)&&isscalar(x));
+addParameter(ip,'FastEDI',false,@(x)islogical(x)&&isscalar(x));
 parse(ip,varargin{:});opt=ip.Results;
 assert(~isempty(opt.FrozenState),'pathprofile:FrozenState','Pass the exact accepted R0.');
 assert(opt.AllowPhysicalSolves,'pathprofile:SolveGuard','Fresh benchmarks require explicit authorization.');
@@ -25,16 +27,17 @@ if exist(out,'dir')~=7,mkdir(out);end
 cleanup=onCleanup(@()incremental_profile_clock('reset',false));
 Report=struct('matlabVersion',version,'baselineCommit',git_head(root), ...
     'scientificBaseCommit','10c39ac1e38a76520817d44f4a2d31ef28cb25e2', ...
-    'runOrder',{{'fresh3','fresh5','resumed5'}},'optimizationPerformed',false);
+    'runOrder',{{'fresh3','fresh5','resumed5'}},'optimizationPerformed',opt.FastEDI, ...
+    'FastEDI',opt.FastEDI);
 names={'fresh3','fresh5','resumed5'};
 for j=1:3
     name=names{j};incremental_profile_clock('reset',true);wall=tic;
     if j==1
         Path=main_incremental_path_regression('FrozenState',opt.FrozenState, ...
-            'AllowSolve',true,'OutputDir',fullfile(out,'fresh3'));
+            'AllowSolve',true,'FastEDI',opt.FastEDI,'OutputDir',fullfile(out,'fresh3'));
     else
         Path=run_incremental_crack_path('FrozenState',opt.FrozenState, ...
-            'MaxSegments',5,'AllowPhysicalSolves',j==2,'RunSynthetic',true, ...
+            'MaxSegments',5,'AllowPhysicalSolves',j==2,'RunSynthetic',true,'FastEDI',opt.FastEDI, ...
             'OutputDir',fullfile(out,'fresh5'));
     end
     wallSeconds=toc(wall);phases=incremental_profile_clock('snapshot');
