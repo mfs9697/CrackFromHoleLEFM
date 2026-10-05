@@ -16,6 +16,18 @@ function Path = run_incremental_crack_path(varargin)
 % DEFAULT IS SAFE:
 %   AllowPhysicalSolves = false
 %
+% Optional resume:
+%   ResumeState     : in-memory State struct written by this driver
+%   ResumeStateFile : MAT file containing State
+%   ResumeSourceDir : directory containing prior compact physical results;
+%                     needed only for legacy State files without embedded
+%                     row history. If ResumeStateFile is used, its folder
+%                     is the default ResumeSourceDir.
+%
+% A resumed State is validated against the frozen Stage-I geometry, the
+% prescribed 4-mm increments, stored segment angles, and accepted physical
+% history before any new candidate or physical solve is attempted.
+%
 % The default MaxSegments=5 is intended as the first production regression
 % run. Increase only after the short run passes.
 
@@ -30,6 +42,9 @@ function Path = run_incremental_crack_path(varargin)
     addParameter(ip,'RegressionGates',true,@(x)islogical(x)&&isscalar(x));
     addParameter(ip,'StopAtCoreClearance',true,@(x)islogical(x)&&isscalar(x));
     addParameter(ip,'OutputDir','',@(x)ischar(x)||isstring(x));
+    addParameter(ip,'ResumeState',[],@(x)isempty(x)||(isstruct(x)&&isscalar(x)));
+    addParameter(ip,'ResumeStateFile','',@(x)ischar(x)||isstring(x));
+    addParameter(ip,'ResumeSourceDir','',@(x)ischar(x)||isstring(x));
     addParameter(ip,'SeedKI',0.366479612185,@(x)isnumeric(x)&&isscalar(x)&&isfinite(x));
     addParameter(ip,'SeedKII',4.19826648316e-6,@(x)isnumeric(x)&&isscalar(x)&&isfinite(x));
     parse(ip,varargin{:});
@@ -62,7 +77,7 @@ function Path = run_incremental_crack_path(varargin)
     if exist(outDir,'dir')~=7,mkdir(outDir);end
 
     % --------------------------------------------------------------
-    % Initial finite segment: prescribed radial/material-normal direction.
+    % Deterministic seed and accepted Stage III-D regression constants.
     % --------------------------------------------------------------
     theta1Deg=0;
     p0=mouth;
@@ -74,10 +89,6 @@ function Path = run_incremental_crack_path(varargin)
     e2=e2/norm(e2);
     p2=p1+increment*e2;
 
-    vertices=[p0;p1;p2];
-    thetaDeg=[theta1Deg;theta2Deg];
-
-    % Accepted seed is itself a physical tip state at P1.
     rows=nan(opt.MaxSegments,14);
     rows(1,:)=[1,p1,theta1Deg,opt.SeedKI,opt.SeedKII,opt.SeedKII/opt.SeedKI, ...
         theta2Deg,theta2Deg,NaN,NaN,NaN,NaN,0];
@@ -95,6 +106,27 @@ function Path = run_incremental_crack_path(varargin)
             'Seed MTS theta_2 changed: got %.15g deg.',theta2Deg);
     end
 
+    stepResults=cell(opt.MaxSegments,1);
+    qualification=cell(opt.MaxSegments,1);
+
+    [resumeState,resumeLabel,resumeSourceDir]=local_load_resume_state( ...
+        root,opt.ResumeState,char(opt.ResumeStateFile),char(opt.ResumeSourceDir));
+
+    if isempty(resumeState)
+        vertices=[p0;p1;p2];
+        thetaDeg=[theta1Deg;theta2Deg];
+        startK=2;
+        completedPhysicalSegments=1;
+        resumed=false;
+    else
+        [vertices,thetaDeg,rows,stepResults,regression, ...
+            completedPhysicalSegments,startK]=local_prepare_resume( ...
+            resumeState,resumeSourceDir,opt.MaxSegments,rows,stepResults, ...
+            regression,p0,p1,p2,theta2Deg,increment,nMat,tHat,C, ...
+            opt.RegressionGates,opt.StopAtCoreClearance);
+        resumed=true;
+    end
+
     fprintf('\n============================================================\n');
     fprintf('GENERAL INCREMENTAL CRACK-PATH DRIVER\n');
     fprintf('============================================================\n');
@@ -106,16 +138,21 @@ function Path = run_incremental_crack_path(varargin)
     fprintf('  theta_2           = %+.12g deg (MTS from P1)\n',theta2Deg);
     fprintf('  physical solves   = %d\n',logical(opt.AllowPhysicalSolves));
     fprintf('  output directory  = %s\n',outDir);
+    fprintf('  resume mode       = %d\n',resumed);
+    if resumed
+        fprintf('  resume state      = %s\n',resumeLabel);
+        fprintf('  completed physical= %d segments\n',completedPhysicalSegments);
+        fprintf('  first resumed step= %d\n',startK);
+    end
 
     stopReason='max_segments_reached';
-    stepResults=cell(opt.MaxSegments,1);
-    qualification=cell(opt.MaxSegments,1);
 
     % --------------------------------------------------------------
     % k = number of already existing finite crack segments.
-    % Start at k=2 because the accepted P1 state seeded segment 2.
+    % A fresh run starts at k=2. A resumed run starts at the first
+    % validated segment that does not yet have an accepted physical state.
     % --------------------------------------------------------------
-    for k=2:opt.MaxSegments
+    for k=startK:opt.MaxSegments
         incremental_profile_clock('begin','step',k);
         stepProfileCleanup=onCleanup(@()incremental_profile_clock('end','step'));
         pathNow=vertices(1:k+1,:);
@@ -211,7 +248,13 @@ function Path = run_incremental_crack_path(varargin)
         end
 
         % Driver stops after recording the physical state at MaxSegments.
+        % Save a solved-end resume state as well. On a later continuation
+        % the next segment is reconstructed from thetaNextDeg without
+        % repeating this accepted physical solve.
         if k==opt.MaxSegments
+            State=local_make_resume_state(vertices,thetaDeg,k,thetaNextDeg, ...
+                regression,'max_segments_reached',rows,opt.FastEDI,outDir);
+            local_atomic_save_state(outDir,State);
             clear stepProfileCleanup
             break
         end
@@ -245,23 +288,15 @@ function Path = run_incremental_crack_path(varargin)
         thetaDeg(end+1,1)=thetaNextDeg; %#ok<AGROW>
 
         % Atomic compact path-state checkpoint after each accepted append.
-        State=struct('vertices',vertices,'thetaDeg',thetaDeg, ...
-            'completedPhysicalSegments',k,'nextThetaDeg',thetaNextDeg, ...
-            'regression',regression,'stopReason','running');
-        tmp=fullfile(outDir,'path_run_state.incomplete.mat');
-        dst=fullfile(outDir,'path_run_state.mat');
-        save(tmp,'State','-v7');
-        [ok,msg]=movefile(tmp,dst,'f');
-        if ~ok,error('pathrun:StateSave','%s',msg);end
+        State=local_make_resume_state(vertices,thetaDeg,k,thetaNextDeg, ...
+            regression,'running',rows,opt.FastEDI,outDir);
+        local_atomic_save_state(outDir,State);
         clear stepProfileCleanup
     end
 
     used=find(isfinite(rows(:,1)));
     StepTable=array2table(rows(used,:), ...
-        'VariableNames',{'segment','tip_x_m','tip_y_m','theta_deg', ...
-        'KI_unit','KII_unit','KII_over_KI','delta_theta_next_deg', ...
-        'theta_next_deg','PCG_iterations','PCG_relres','true_rel_residual', ...
-        'EDI_elements','newSolve'});
+        'VariableNames',local_row_variable_names());
     StepTable.pass=true(height(StepTable),1);
 
     nExisting=size(vertices,1)-1;
@@ -277,6 +312,11 @@ function Path = run_incremental_crack_path(varargin)
     Path.stopReason=stopReason;
     Path.outputDir=outDir;
     Path.fastEDI=opt.FastEDI;
+    Path.resumed=resumed;
+    Path.resumeStateSource=resumeLabel;
+    Path.resumeSourceDir=resumeSourceDir;
+    Path.resumeStartSegment=startK;
+    Path.completedPhysicalSegmentsAtStart=completedPhysicalSegments;
     Path.thirdAndLaterGenerated=nExisting>=3;
     Path.complete=strcmp(stopReason,'max_segments_reached') || ...
         startsWith(stopReason,'next_tip_');
@@ -294,6 +334,266 @@ function Path = run_incremental_crack_path(varargin)
             StepTable.KI_unit(end),StepTable.KII_unit(end));
         fprintf('  next predicted theta = %+.12g deg\n',StepTable.theta_next_deg(end));
     end
+end
+
+function [State,label,sourceDir]=local_load_resume_state(root,Rin,fileIn,sourceIn)
+    if ~isempty(Rin) && ~isempty(strtrim(fileIn))
+        error('pathrun:ResumeSourceConflict', ...
+            'Pass either ResumeState or ResumeStateFile, not both.');
+    end
+
+    State=[];
+    label='<none>';
+    sourceDir='';
+
+    if ~isempty(Rin)
+        State=Rin;
+        label='<in-memory ResumeState>';
+    elseif ~isempty(strtrim(fileIn))
+        f=char(fileIn);
+        if ~local_is_absolute_path(f),f=fullfile(root,f);end
+        if exist(f,'file')~=2
+            error('pathrun:MissingResumeState','ResumeStateFile not found: %s',f);
+        end
+        d=load(f,'State');
+        if ~isfield(d,'State')||~isstruct(d.State)||~isscalar(d.State)
+            error('pathrun:BadResumeStateFile', ...
+                'ResumeStateFile must contain one scalar struct named State.');
+        end
+        State=d.State;
+        label=f;
+        sourceDir=fileparts(f);
+    end
+
+    if isempty(State),return,end
+
+    if ~isempty(strtrim(sourceIn))
+        sourceDir=char(sourceIn);
+        if ~local_is_absolute_path(sourceDir),sourceDir=fullfile(root,sourceDir);end
+    end
+end
+
+function [vertices,thetaDeg,rows,stepResults,regression,kDone,startK]= ...
+        local_prepare_resume(State,sourceDir,maxSegments,rows,stepResults, ...
+        regression,p0,p1,p2,theta2Deg,increment,nMat,tHat,C, ...
+        regressionGates,stopAtCoreClearance)
+
+    req={'vertices','thetaDeg','completedPhysicalSegments','nextThetaDeg'};
+    for j=1:numel(req)
+        if ~isfield(State,req{j})||isempty(State.(req{j}))
+            error('pathrun:ResumeField','Resume State missing %s.',req{j});
+        end
+    end
+
+    vertices=State.vertices;
+    thetaDeg=State.thetaDeg(:);
+    validateattributes(vertices,{'numeric'},{'2d','ncols',2,'finite'});
+    validateattributes(thetaDeg,{'numeric'},{'column','finite'});
+
+    nSeg=size(vertices,1)-1;
+    kDone=State.completedPhysicalSegments;
+    if ~isscalar(kDone)||~isfinite(kDone)||kDone~=round(kDone)||kDone<1
+        error('pathrun:ResumeCompleted','Invalid completedPhysicalSegments.');
+    end
+    if numel(thetaDeg)~=nSeg
+        error('pathrun:ResumeAngles','thetaDeg count does not match resumed segments.');
+    end
+    if ~(nSeg==kDone || nSeg==kDone+1)
+        error('pathrun:ResumeShape', ...
+            ['Resume State must contain either the solved path (N=kDone) ', ...
+             'or exactly one already-appended unsolved segment (N=kDone+1).']);
+    end
+    if maxSegments<max(2,kDone+1)
+        error('pathrun:ResumeMaxSegments', ...
+            'MaxSegments=%d cannot continue after completed segment %d.', ...
+            maxSegments,kDone);
+    end
+
+    seg=diff(vertices,1,1);
+    segLength=vecnorm(seg,2,2);
+    if max(abs(segLength-increment))>2e-12
+        error('pathrun:ResumeIncrement','Resumed path changed the frozen increment.');
+    end
+
+    directions=seg./segLength;
+    thetaGeomDeg=atan2d(directions*tHat(:),directions*nMat(:));
+    if max(abs(thetaGeomDeg-thetaDeg))>1e-10
+        error('pathrun:ResumeGeometryAngles', ...
+            'Stored resume angles do not match the path geometry.');
+    end
+
+    if norm(vertices(1,:)-p0)>2e-12 || ...
+            norm(vertices(2,:)-p1)>2e-12 || ...
+            abs(thetaDeg(1))>5e-11
+        error('pathrun:ResumeSeedGeometry', ...
+            'Resumed mouth/first segment differs from the frozen prescription.');
+    end
+    if nSeg>=2 && (norm(vertices(3,:)-p2)>2e-12 || ...
+            abs(thetaDeg(2)-theta2Deg)>5e-11)
+        error('pathrun:ResumeTheta2', ...
+            'Resumed second segment differs from the accepted P1 MTS seed.');
+    end
+
+    if abs(State.nextThetaDeg-thetaDeg(end))>1e-10 && nSeg==kDone+1
+        error('pathrun:ResumeNextAngle', ...
+            'Legacy appended resume state has inconsistent nextThetaDeg.');
+    end
+
+    % Hydrate accepted physical history. New-format states embed the compact
+    % numeric rows. Legacy states are reconstructed from prior R files.
+    hasEmbedded=isfield(State,'rowsThroughCompleted') && ...
+        isnumeric(State.rowsThroughCompleted) && ...
+        size(State.rowsThroughCompleted,2)==size(rows,2) && ...
+        size(State.rowsThroughCompleted,1)>=kDone;
+
+    if hasEmbedded
+        hist=State.rowsThroughCompleted(1:kDone,:);
+        if any(hist(:,1)~=(1:kDone).')
+            error('pathrun:ResumeRows','Embedded resume row indices are inconsistent.');
+        end
+        rows(1:kDone,:)=hist;
+        rows(1,:)=rows(1,:); %#ok<NASGU>
+    else
+        if kDone>=2 && (isempty(sourceDir)||exist(sourceDir,'dir')~=7)
+            error('pathrun:ResumeHistoryMissing', ...
+                ['Legacy resume state has no embedded row history. Pass ', ...
+                 'ResumeSourceDir containing step_###_physical_small.mat files.']);
+        end
+        for kk=2:kDone
+            f=fullfile(sourceDir,sprintf('step_%03d_physical_small.mat',kk));
+            if exist(f,'file')~=2
+                error('pathrun:ResumeHistoryMissing', ...
+                    'Missing accepted compact physical result: %s',f);
+            end
+            d=load(f,'R');
+            if ~isfield(d,'R')||~isstruct(d.R)
+                error('pathrun:ResumeHistoryBad','%s does not contain struct R.',f);
+            end
+            R=d.R;
+            local_validate_resume_result(R,kk,vertices,thetaDeg);
+            rows(kk,:)=local_row_from_result(R,kk);
+            stepResults{kk}=R;
+        end
+    end
+
+    % Never trust a stored seed row over the current frozen seed.
+    rows(1,:)=[1,p1,0,rows(1,5)*0+rows(1,4),rows(1,5),rows(1,6), ...
+        theta2Deg,theta2Deg,NaN,NaN,NaN,NaN,0];
+    % Restore the deterministic accepted P1 values if legacy history did not
+    % provide a meaningful row 1 (the caller initialized them before resume).
+    if ~all(isfinite(rows(1,4:8)))
+        error('pathrun:ResumeSeedRow','Accepted P1 seed row is not finite.');
+    end
+
+    if kDone>=2
+        KI=rows(2,5);KII=rows(2,6);
+        deltaNextDeg=rows(2,8);thetaNextDeg=rows(2,9);
+        regression.KI2_pass=abs(KI-regression.KI2_expected)<=5e-10;
+        regression.KII2_pass=abs(KII-regression.KII2_expected)<=5e-10;
+        regression.deltaTheta3_pass= ...
+            abs(deltaNextDeg-regression.deltaTheta3_expected_deg)<=5e-9;
+        regression.theta3_pass= ...
+            abs(thetaNextDeg-regression.theta3_expected_deg)<=5e-9;
+        regression.step2_pass=regression.KI2_pass&&regression.KII2_pass&& ...
+            regression.deltaTheta3_pass&&regression.theta3_pass;
+        if regressionGates && ~regression.step2_pass
+            error('pathrun:ResumeStage3DRegression', ...
+                'Resume history does not reproduce accepted Stage III-D.');
+        end
+    end
+
+    % New solved-end states contain no next leg yet. Reconstruct exactly one
+    % proposed segment from the stored MTS angle before entering the loop.
+    if nSeg==kDone
+        thetaNextDeg=State.nextThetaDeg;
+        if ~isfinite(thetaNextDeg)
+            error('pathrun:ResumeNextAngle','Solved-end nextThetaDeg is not finite.');
+        end
+        eNext=cosd(thetaNextDeg)*nMat+sind(thetaNextDeg)*tHat;
+        eNext=eNext/norm(eNext);
+        pNext=vertices(end,:)+increment*eNext;
+
+        if pNext(1)<0 || pNext(1)>C.A || pNext(2)<-C.B || pNext(2)>C.B
+            error('pathrun:ResumeNextTipOutside', ...
+                'Saved solved-end state predicts a next tip outside the plate.');
+        end
+        if stopAtCoreClearance
+            rCore=.75*increment;
+            clearance=local_physical_clearance(pNext,C);
+            if clearance<=rCore
+                error('pathrun:ResumeNextTipClearance', ...
+                    'Saved solved-end next tip violates the current core-clearance gate.');
+            end
+        end
+
+        vertices(end+1,:)=pNext;
+        thetaDeg(end+1,1)=thetaNextDeg;
+        nSeg=nSeg+1;
+    end
+
+    startK=kDone+1;
+    if nSeg~=startK
+        error('pathrun:ResumeInternal', ...
+            'Validated resume state did not produce exactly one unsolved segment.');
+    end
+end
+
+function local_validate_resume_result(R,k,vertices,thetaDeg)
+    req={'pass','nSegments','pathFixed','thetaCurrentDeg','EDI', ...
+        'solverInfo','gates','newSolve','deltaThetaNextDeg','thetaNextDeg'};
+    for j=1:numel(req)
+        if ~isfield(R,req{j})||isempty(R.(req{j}))
+            error('pathrun:ResumeResultField', ...
+                'Accepted compact result for segment %d is missing %s.',k,req{j});
+        end
+    end
+    if ~logical(R.pass)||R.nSegments~=k || ...
+            norm(R.pathFixed-vertices(1:k+1,:),'fro')>2e-12 || ...
+            abs(R.thetaCurrentDeg-thetaDeg(k))>1e-10 || ...
+            ~all(structfun(@logical,R.gates)) || ...
+            R.EDI.EDI_elements(1)~=11316
+        error('pathrun:ResumeResultMismatch', ...
+            'Accepted compact physical result for segment %d does not match resume path.',k);
+    end
+end
+
+function row=local_row_from_result(R,k)
+    row=[k,R.pathFixed(end,:),R.thetaCurrentDeg, ...
+        R.EDI.KI_unit(1),R.EDI.KII_unit(1),R.EDI.KII_over_KI(1), ...
+        R.deltaThetaNextDeg,R.thetaNextDeg,R.solverInfo.iter, ...
+        R.solverInfo.relres,R.solverInfo.trueRelResidual, ...
+        R.EDI.EDI_elements(1),logical(R.newSolve)];
+end
+
+function State=local_make_resume_state(vertices,thetaDeg,kDone,nextThetaDeg, ...
+        regression,stopReason,rows,fastEDI,outDir)
+    State=struct();
+    State.schemaVersion=2;
+    State.vertices=vertices;
+    State.thetaDeg=thetaDeg;
+    State.completedPhysicalSegments=kDone;
+    State.nextThetaDeg=nextThetaDeg;
+    State.regression=regression;
+    State.stopReason=stopReason;
+    State.rowsThroughCompleted=rows(1:kDone,:);
+    State.rowVariableNames=local_row_variable_names();
+    State.fastEDI=logical(fastEDI);
+    State.sourceOutputDir=outDir;
+end
+
+function local_atomic_save_state(outDir,State)
+    tmp=fullfile(outDir,'path_run_state.incomplete.mat');
+    dst=fullfile(outDir,'path_run_state.mat');
+    save(tmp,'State','-v7');
+    [ok,msg]=movefile(tmp,dst,'f');
+    if ~ok,error('pathrun:StateSave','%s',msg);end
+end
+
+function names=local_row_variable_names()
+    names={'segment','tip_x_m','tip_y_m','theta_deg', ...
+        'KI_unit','KII_unit','KII_over_KI','delta_theta_next_deg', ...
+        'theta_next_deg','PCG_iterations','PCG_relres','true_rel_residual', ...
+        'EDI_elements','newSolve'};
 end
 
 function R0=local_load_frozen(root,Rin)
