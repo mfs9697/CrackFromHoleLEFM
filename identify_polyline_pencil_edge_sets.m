@@ -42,8 +42,9 @@ function ids=identify_polyline_pencil_edge_sets(M,D,varargin)
     end
 
     upper=unique(upper);lower=unique(lower);
-    upper=setdiff(upper,lower);
-    lower=setdiff(lower,upper);
+    overlap=intersect(upper,lower);
+    assert(isempty(overlap),'stage3c:FaceEdgeCollision', ...
+        'A PDE geometry edge was classified on both crack faces.');
 
     assert(numel(upper)>=size(U,1)-1,'stage3c:UpperEdges', ...
         'Did not recover all upper polyline face edges.');
