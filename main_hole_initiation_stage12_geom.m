@@ -35,25 +35,27 @@ function out = main_hole_initiation_stage12_geom()
     % 1. Stage I: geometry
     %% ============================================================
     fprintf('\n=== Stage I: hole-only geometry ===\n');
-    G = geom_hole_only(C);
+    R1 = run_stage1_hole_initiation(C);
+    G  = R1.G;
 
     %% ============================================================
     % 2. Stage I: solve at unit load
     %% ============================================================
     fprintf('\n=== Stage I: elastic solution at unit load ===\n');
-    S1 = solve_hole_only(C, G, 'lambda', 1.0);
+    S1 = R1.S1;
 
     %% ============================================================
     % 3. Stage I: boundary stress sampling
     %% ============================================================
-    fprintf('\n=== Stage I: sample hole-boundary stress ===\n');
-    B = sample_hole_boundary_stress(C, G, S1);
+    fprintf('\n=== Stage I: boundary-limit stress postprocessing ===\n');
+    B = R1.B;
 
     %% ============================================================
     % 4. Stage I: initiation point
     %% ============================================================
     fprintf('\n=== Stage I: initiation point ===\n');
-    I = find_hole_initiation_point(C, B);
+    I = R1.I;
+    fprintf('  method          = %s\n', R1.method);
 
     fprintf('Initiation point:\n');
     fprintf('  phi_*          = %.6f rad = %.3f deg\n', I.phi_star, I.phi_star*180/pi);

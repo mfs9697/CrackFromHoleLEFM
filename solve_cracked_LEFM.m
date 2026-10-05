@@ -142,6 +142,42 @@ function S1 = solve_cracked_LEFM(C, G, varargin)
             bc.corner_nodes.left_bottom  = iLB;
             bc.corner_nodes.right_bottom = iRB;
 
+        case 'symmetry_half_x'
+            % Right-half symmetry model: ux=0 on x=x_sym, plus one uy
+            % gauge constraint at the right boundary to remove rigid
+            % vertical translation.  This is valid for the collapsed
+            % crack mesh because the short crack lies inside the retained
+            % half-domain rather than on the symmetry boundary.
+            if isfield(C,'domain') && isfield(C.domain,'symmetry_x') ...
+                    && ~isempty(C.domain.symmetry_x)
+                xSym=C.domain.symmetry_x;
+            elseif isfield(C,'hole') && isfield(C.hole,'center')
+                xSym=C.hole.center(1);
+            else
+                error('solve_cracked_LEFM:MissingSymmetryLine', ...
+                    'symmetry_half_x requires C.domain.symmetry_x or C.hole.center.');
+            end
+
+            span=max([1,max(mesh.coord(:,1))-min(mesh.coord(:,1)), ...
+                        max(mesh.coord(:,2))-min(mesh.coord(:,2))]);
+            tolSym=1e-9*span;
+
+            symNodes=find(abs(mesh.coord(:,1)-xSym)<tolSym);
+            if numel(symNodes)<2
+                error('solve_cracked_LEFM:NoSymmetryNodes', ...
+                    'Could not identify the vertical symmetry boundary on the T6 mesh.');
+            end
+
+            Ause=getf(C,'A',max(mesh.coord(:,1)));
+            iGauge=nearest_node(mesh.coord,[Ause,0]);
+
+            fixvar=[2*symNodes-1;2*iGauge];
+
+            bc.symmetry_x=xSym;
+            bc.symmetry_nodes=symNodes;
+            bc.gauge_node=iGauge;
+            bc.gauge_point=mesh.coord(iGauge,:);
+
         otherwise
             error('solve_hole_only:UnknownAnchorMode', ...
                 'Unsupported C.bc.anchor_mode = "%s".', bc.anchor_mode);

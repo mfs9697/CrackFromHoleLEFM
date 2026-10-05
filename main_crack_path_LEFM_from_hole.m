@@ -64,11 +64,13 @@ function Results = main_crack_path_LEFM_from_hole()
     %% ============================================================
     fprintf('\n=== Stage I: hole-only solution and initiation point ===\n');
 
-    G  = geom_hole_only(C);
-    S1 = solve_hole_only(C, G, 'lambda', 1.0);
-    B  = sample_hole_boundary_stress(C, G, S1);
-    I  = find_hole_initiation_point(C, B);
+    R1 = run_stage1_hole_initiation(C);
+    G  = R1.G;
+    S1 = R1.S1;
+    B  = R1.B;
+    I  = R1.I;
 
+    fprintf('  Stage-I method = %s\n', R1.method);
     fprintf('\nInitiation point:\n');
     fprintf('  phi_*          = %.8f rad = %.4f deg\n', ...
         I.phi_star, rad2deg(I.phi_star));
@@ -399,6 +401,7 @@ function Results = main_crack_path_LEFM_from_hole()
     Results.C = C;
 
     Results.Stage1 = struct();
+    Results.Stage1.method = R1.method;
     Results.Stage1.G  = G;
     Results.Stage1.S1 = S1;
     Results.Stage1.B  = B;

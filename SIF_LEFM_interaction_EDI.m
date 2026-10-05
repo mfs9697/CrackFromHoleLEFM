@@ -26,6 +26,14 @@ function [KI, KII, Aux] = SIF_LEFM_interaction_EDI(mesh, U, V, mat, domain, vara
 %   'UsePlaneStrain' true/false. If omitted, uses mat.ps if present;
 %                    otherwise assumes plane strain.
 %   'Verbose'       true/false
+%   'WeightFunction' 'analytic_radial' (legacy audit behavior) or
+%                    'fe_nodal' (FE-consistent nodal q, default remains legacy)
+%   'QuadratureRule'  7 (legacy), 12 (degree 6), or 16 (degree 8)
+%                    Dunavant points; default 7 for backward compatibility.
+%   'AnalyticActualK' [] (default): use FE displacement gradients;
+%                    [KI,KII] (diagnostic): override the actual field at
+%                    each Gauss point with an exact Williams field. Never
+%                    use this option to extract SIFs from FEM solutions.
 %
 % Outputs:
 %   KI, KII signed stress intensity factors
@@ -43,10 +51,28 @@ function [KI, KII, Aux] = SIF_LEFM_interaction_EDI(mesh, U, V, mat, domain, vara
     addParameter(ip, 'AuxK', 1.0, @(x)isnumeric(x) && isscalar(x) && x > 0);
     addParameter(ip, 'UsePlaneStrain', [], @(x)islogical(x) || isnumeric(x) || isempty(x));
     addParameter(ip, 'Verbose', false, @(x)islogical(x) || isnumeric(x));
+    addParameter(ip, 'WeightFunction', 'analytic_radial', ...
+        @(x)ischar(x) || (isstring(x) && isscalar(x)));
+    addParameter(ip, 'AuxDerivativeScale', 1.0, ...
+        @(x)isnumeric(x) && isscalar(x) && isfinite(x) && x>0);
+    addParameter(ip, 'QuadratureRule', 7, ...
+        @(x)isnumeric(x) && isscalar(x) && ismember(x,[7 12 16]));
+    addParameter(ip, 'AnalyticActualK', [], ...
+        @(x)isempty(x) || (isnumeric(x) && isreal(x) && numel(x)==2 && all(isfinite(x(:)))));
+    addParameter(ip, 'StoreGPDiagnostics', true, @(x)islogical(x)&&isscalar(x));
     parse(ip, varargin{:});
 
     Kaux = ip.Results.AuxK;
     verbose = logical(ip.Results.Verbose);
+    weightFunction = char(ip.Results.WeightFunction);
+    auxDerivativeScale = ip.Results.AuxDerivativeScale;
+    analyticActualK = ip.Results.AnalyticActualK;
+    analyticActual = ~isempty(analyticActualK);
+    storeGP = ip.Results.StoreGPDiagnostics;
+    if ~(strcmpi(weightFunction,'analytic_radial') || strcmpi(weightFunction,'fe_nodal'))
+        error('SIF_LEFM_interaction_EDI:BadWeightFunction', ...
+            'WeightFunction must be analytic_radial or fe_nodal.');
+    end
 
     %% ------------------------------------------------------------
     % 1. Checks and unpacking
@@ -138,10 +164,26 @@ function [KI, KII, Aux] = SIF_LEFM_interaction_EDI(mesh, U, V, mat, domain, vara
     R_gl = [e1, e2];
     R_loc = R_gl.';
 
+    % FE-consistent scalar weight q, used only when requested. The nodal
+    % values are radial: q=1 for r<=r_inner, linearly decreasing to q=0 at
+    % r_outer, and q=0 outside. Its gradient is then obtained with the same
+    % T6 interpolation as the displacement field.
+    qNode = [];
+    if strcmpi(weightFunction,'fe_nodal')
+        Xloc_all = (R_loc * (coord - x_tip.').').';
+        r_all = hypot(Xloc_all(:,1),Xloc_all(:,2));
+
+        qNode = ones(size(coord,1),1);
+        qNode(r_all >= r_outer) = 0;
+
+        mid = (r_all > r_inner) & (r_all < r_outer);
+        qNode(mid) = (r_outer - r_all(mid))/(r_outer-r_inner);
+    end
+
     %% ------------------------------------------------------------
     % 3. Quadrature
     %% ------------------------------------------------------------
-    [nip2, xip2, w2] = local_integr_T6();
+    [nip2, xip2, w2] = local_integr_T6(ip.Results.QuadratureRule);
 
     %% ------------------------------------------------------------
     % 4. Loop over elements and Gauss points
@@ -154,6 +196,8 @@ function [KI, KII, Aux] = SIF_LEFM_interaction_EDI(mesh, U, V, mat, domain, vara
     nElem_used = 0;
 
     rows = [];
+    auxMismatchI = zeros(0,1);
+    auxMismatchII = zeros(0,1);
 
     for e = 1:size(connect,1)
 
@@ -172,6 +216,11 @@ function [KI, KII, Aux] = SIF_LEFM_interaction_EDI(mesh, U, V, mat, domain, vara
         elemUsed = false;
 
         uel = [U(2*nodes - 1), U(2*nodes)];
+        if strcmpi(weightFunction,'fe_nodal')
+            qel = qNode(nodes);
+        else
+            qel = [];
+        end
 
         for igp = 1:nip2
 
@@ -193,48 +242,62 @@ function [KI, KII, Aux] = SIF_LEFM_interaction_EDI(mesh, U, V, mat, domain, vara
             x2 = xl(2);
             r = hypot(x1, x2);
 
-            if r <= r_inner || r >= r_outer
-                continue;
-            end
-
             % Exclude points extremely close to the crack tip.
             if r < 1e-12
                 continue;
             end
 
+            % Weight-function gradient in local crack coordinates.
+            if strcmpi(weightFunction,'analytic_radial')
+                if r <= r_inner || r >= r_outer
+                    continue;
+                end
+                qgrad = local_qgrad_radial(xl,r_inner,r_outer);
+            else
+                qgrad_gl = dNdx*qel;
+                qgrad = R_loc*qgrad_gl;
+                if norm(qgrad) <= 1e-14
+                    continue;
+                end
+            end
+
             nGP_used = nGP_used + 1;
             elemUsed = true;
 
-            % Actual FEM gradient in global coordinates.
-            dux_dx = dNdx(1,:) * uel(:,1);
-            dux_dy = dNdx(2,:) * uel(:,1);
-            duy_dx = dNdx(1,:) * uel(:,2);
-            duy_dy = dNdx(2,:) * uel(:,2);
-
-            GradU_gl = [dux_dx, dux_dy;
-                        duy_dx, duy_dy];
-
-            % Rotate actual gradient to local crack-tip frame.
-            GradU1 = R_loc * GradU_gl * R_gl;
-
-            eps1 = [ ...
-                GradU1(1,1);
-                GradU1(2,2);
-                GradU1(1,2) + GradU1(2,1)];
-
-            sig1 = Dmat * eps1;
-
-            du1_dx1 = GradU1(:,1);
-
-            % Weight function q and gradient q_,j in local coordinates.
-            % q = 1 at r_inner, q = 0 at r_outer.
-            qgrad = local_qgrad_radial(xl, r_inner, r_outer);
+            if analyticActual
+                % TEST ONLY: evaluate exact Williams actual fields directly
+                % at this Gauss point, bypassing T6 nodal interpolation.
+                % Keep the SAME FE-nodal q gradient and quadrature.
+                actual = local_aux_LEFM_fields(x1,x2, ...
+                    analyticActualK(1),analyticActualK(2), ...
+                    E,nu,mu,kappa,Dmat,auxDerivativeScale);
+                eps1 = actual.eps;
+                sig1 = actual.sig;
+                du1_dx1 = actual.du_dx1;
+            else
+                % Production: use the actual FEM T6 displacement gradient.
+                dux_dx = dNdx(1,:) * uel(:,1);
+                dux_dy = dNdx(2,:) * uel(:,1);
+                duy_dx = dNdx(1,:) * uel(:,2);
+                duy_dy = dNdx(2,:) * uel(:,2);
+                GradU_gl = [dux_dx, dux_dy;
+                            duy_dx, duy_dy];
+                GradU1 = R_loc * GradU_gl * R_gl;
+                eps1 = [GradU1(1,1); GradU1(2,2); ...
+                    GradU1(1,2) + GradU1(2,1)];
+                sig1 = Dmat * eps1;
+                du1_dx1 = GradU1(:,1);
+            end
 
             % Auxiliary mode I, normalized by Kaux.
-            auxI = local_aux_LEFM_fields(x1, x2, Kaux, 0.0, E, nu, mu, kappa, Dmat);
+            auxI = local_aux_LEFM_fields(x1, x2, Kaux, 0.0, E, nu, mu, kappa, Dmat, auxDerivativeScale);
 
             % Auxiliary mode II, normalized by Kaux.
-            auxII = local_aux_LEFM_fields(x1, x2, 0.0, Kaux, E, nu, mu, kappa, Dmat);
+            auxII = local_aux_LEFM_fields(x1, x2, 0.0, Kaux, E, nu, mu, kappa, Dmat, auxDerivativeScale);
+            if storeGP
+                auxMismatchI(end+1,1) = auxI.eps_mismatch; %#ok<AGROW>
+                auxMismatchII(end+1,1) = auxII.eps_mismatch; %#ok<AGROW>
+            end
 
             % Interaction integral densities.
             densI  = local_interaction_density(sig1, eps1, du1_dx1, auxI,  qgrad);
@@ -245,7 +308,9 @@ function [KI, KII, Aux] = SIF_LEFM_interaction_EDI(mesh, U, V, mat, domain, vara
             I_modeI  = I_modeI  + densI  * dA;
             I_modeII = I_modeII + densII * dA;
 
-            rows = [rows; e, igp, x1, x2, r, densI, densII, dA]; %#ok<AGROW>
+            if storeGP
+                rows = [rows; e, igp, x1, x2, r, densI, densII, dA]; %#ok<AGROW>
+            end
         end
 
         if elemUsed
@@ -256,13 +321,24 @@ function [KI, KII, Aux] = SIF_LEFM_interaction_EDI(mesh, U, V, mat, domain, vara
     %% ------------------------------------------------------------
     % 5. Convert interaction integrals to SIFs
     %% ------------------------------------------------------------
-    % With Kaux = 1:
-    %   I_modeI  = KI_actual  * Kaux / Eeff
-    %   I_modeII = KII_actual * Kaux / Eeff
+    % For the interaction integral implemented above, the standard
+    % isotropic relation is
     %
-    % The sign may need one global convention correction after validation.
-    KI  = Eeff * I_modeI  / Kaux;
-    KII = Eeff * I_modeII / Kaux;
+    %   I^(1,2) = 2/Eeff * (KI^(1) KI^(2) + KII^(1) KII^(2)).
+    %
+    % Therefore, using a unit pure-mode auxiliary field Kaux,
+    %
+    %   KI_actual  = Eeff/(2*Kaux) * I_modeI
+    %   KII_actual = Eeff/(2*Kaux) * I_modeII
+    %
+    % The factor 1/2 was independently verified on 2026-09-27 with exact
+    % leading-order Williams displacement fields on a polar crack annulus:
+    % the pre-correction implementation converged to K_recovered/K_input=2
+    % for pure mode I, pure mode II, and a mixed-mode field.
+    normalizationFactor = Eeff/(2*Kaux);
+
+    KI  = normalizationFactor * I_modeI;
+    KII = normalizationFactor * I_modeII;
 
     %% ------------------------------------------------------------
     % 6. Diagnostics
@@ -278,9 +354,24 @@ function [KI, KII, Aux] = SIF_LEFM_interaction_EDI(mesh, U, V, mat, domain, vara
 
     Aux.Kaux = Kaux;
     Aux.Eeff = Eeff;
+    Aux.normalizationFactor = normalizationFactor;
+    Aux.normalizationRelation = 'K = Eeff/(2*Kaux) * I';
     Aux.mu = mu;
     Aux.kappa = kappa;
     Aux.planeStrain = planeStrain;
+    Aux.weightFunction = weightFunction;
+    Aux.analyticActualK = analyticActualK;
+    Aux.actualFieldSource = 'FEM_T6';
+    if analyticActual
+        Aux.actualFieldSource = 'exact_Williams_Gauss_diagnostic';
+    end;
+    Aux.quadratureRule = nip2;
+    Aux.storeGPDiagnostics = storeGP;
+    Aux.auxDerivativeScale = auxDerivativeScale;
+    Aux.auxEpsMismatchI_median = local_median_finite(auxMismatchI);
+    Aux.auxEpsMismatchI_max = local_max_finite(auxMismatchI);
+    Aux.auxEpsMismatchII_median = local_median_finite(auxMismatchII);
+    Aux.auxEpsMismatchII_max = local_max_finite(auxMismatchII);
 
     Aux.r_inner = r_inner;
     Aux.r_outer = r_outer;
@@ -305,6 +396,7 @@ function [KI, KII, Aux] = SIF_LEFM_interaction_EDI(mesh, U, V, mat, domain, vara
     if verbose
         fprintf('\nSIF_LEFM_interaction_EDI summary:\n');
         fprintf('  r_inner, r_outer = %.6e, %.6e\n', r_inner, r_outer);
+        fprintf('  weight function    = %s\n', weightFunction);
         fprintf('  GP used / total   = %d / %d\n', nGP_used, nGP_total);
         fprintf('  elements used     = %d\n', nElem_used);
         fprintf('  I_modeI           = %.8e\n', I_modeI);
@@ -384,7 +476,7 @@ end
 % Auxiliary LEFM fields by finite-difference derivatives of displacements
 % =========================================================================
 
-function aux = local_aux_LEFM_fields(x1, x2, KI, KII, E, nu, mu, kappa, Dmat)
+function aux = local_aux_LEFM_fields(x1, x2, KI, KII, E, nu, mu, kappa, Dmat, derivativeScale)
 % Return auxiliary stress, strain, and du/dx1 in local crack coordinates.
 %
 % This prototype evaluates stresses from standard near-tip formulas and
@@ -406,7 +498,7 @@ function aux = local_aux_LEFM_fields(x1, x2, KI, KII, E, nu, mu, kappa, Dmat)
     eps_from_sig = Dmat \ sig;
 
     % Numerical derivative of auxiliary displacement wrt local x1.
-    h = max(1e-7, 1e-5*r);
+    h = derivativeScale * max(1e-7, 1e-5*r);
 
     u0 = local_aux_displacement(x1, x2, KI, KII, mu, kappa); %#ok<NASGU>
     up = local_aux_displacement(x1 + h, x2, KI, KII, mu, kappa);
@@ -422,21 +514,22 @@ function aux = local_aux_LEFM_fields(x1, x2, KI, KII, E, nu, mu, kappa, Dmat)
 
     Grad = [du_dx1, du_dx2];
 
-    eps = [ ...
+    eps_fd = [ ...
         Grad(1,1);
         Grad(2,2);
         Grad(1,2) + Grad(2,1)];
 
-    % For consistency, one could use eps = inv(Dmat)*sig.
-    % But using displacement derivatives makes du_dx1 and eps compatible.
-    % If needed, compare with:
-    % eps_from_sig = Dmat \ sig;
+    % Consistency diagnostic: compare finite-difference displacement strain
+    % with the analytical-stress strain. Do not call the strain vector "eps"
+    % here, because that shadows MATLAB's eps() function and previously made
+    % the denominator vector-valued.
+    mismatchDen = max(norm(eps_from_sig), eps(max(1,norm(eps_from_sig))));
 
     aux = struct();
     aux.sig = sig;
-    aux.eps = eps;
+    aux.eps = eps_fd;
     aux.eps_from_sig = eps_from_sig;
-    aux.eps_mismatch = norm(eps - eps_from_sig) / max(norm(eps_from_sig), eps);
+    aux.eps_mismatch = norm(eps_fd - eps_from_sig) / mismatchDen;
     aux.du_dx1 = du_dx1;
 end
 
@@ -578,42 +671,92 @@ end
 % Quadrature for T6 triangle
 % =========================================================================
 
-function [nip, xip, w] = local_integr_T6()
-% Simple 7-point Dunavant rule on reference triangle.
-% Weights sum to 1 for the parent triangle area convention used with DetJ/2.
+function [nip, xip, w] = local_integr_T6(rule)
+% Dunavant rules for reference triangle; weights sum to 1 (not 1/2),
+% consistent with dA=w*DetJ/2 in this EDI implementation.
+%
+% 7 points: degree 5, original repo implementation (unchanged).
+% 12 points: degree 6.
+% 16 points: degree 8.
+% Each group of three has barycentric permutations of (a,a,b);
+% each group of six has all barycentric permutations of (a,b,c).
 
-    nip = 7;
+if nargin<1,rule=7;end
+switch rule
+    case 7
+        nip=7;
+        xip=zeros(2,nip);
+        w=zeros(1,nip);
+        xip(:,1)=[1/3;1/3];
+        w(1)=0.225;
+        a1=0.059715871789770;
+        b1=0.470142064105115;
+        xip(:,2:4)=[a1 b1 b1;b1 a1 b1];
+        w(2:4)=0.132394152788506;
+        a2=0.797426985353087;
+        b2=0.101286507323456;
+        xip(:,5:7)=[a2 b2 b2;b2 a2 b2];
+        w(5:7)=0.125939180544827;
 
-    xip = zeros(2,nip);
-    w = zeros(1,nip);
+    case 12
+        xip=zeros(2,12);w=zeros(1,12);
+        a=0.249286745170910;b=0.501426509658179;
+        xip(:,1:3)=[a a b;a b a];
+        w(1:3)=0.116786275726379;
+        a=0.063089014491502;b=0.873821971016996;
+        xip(:,4:6)=[a a b;a b a];
+        w(4:6)=0.050844906370207;
+        a=0.310352451033784;
+        b=0.636502499121399;
+        d=0.053145049844817;
+        xip(:,7:12)=[a a b b d d;b d a d a b];
+        w(7:12)=0.082851075618374;
+        nip=12;
 
-    % centroid
-    xip(:,1) = [1/3; 1/3];
-    w(1) = 0.225;
+    case 16
+        xip=zeros(2,16);w=zeros(1,16);
+        xip(:,1)=[1/3;1/3];
+        w(1)=0.144315607677787;
+        a=0.170569307751760;b=0.658861384496480;
+        xip(:,2:4)=[a a b;a b a];
+        w(2:4)=0.103217370534718;
+        a=0.050547228317031;b=0.898905543365938;
+        xip(:,5:7)=[a a b;a b a];
+        w(5:7)=0.032458497623198;
+        a=0.459292588292723;b=0.081414823414554;
+        xip(:,8:10)=[a a b;a b a];
+        w(8:10)=0.095091634267285;
+        a=0.263112829634638;
+        b=0.728492392955404;
+        d=0.008394777409958;
+        xip(:,11:16)=[a a b b d d;b d a d a b];
+        w(11:16)=0.027230314174435;
+        nip=16;
 
-    a1 = 0.059715871789770;
-    b1 = 0.470142064105115;
-    w1 = 0.132394152788506;
-
-    xip(:,2) = [a1; b1];
-    xip(:,3) = [b1; a1];
-    xip(:,4) = [b1; b1];
-    w(2:4) = w1;
-
-    a2 = 0.797426985353087;
-    b2 = 0.101286507323456;
-    w2 = 0.125939180544827;
-
-    xip(:,5) = [a2; b2];
-    xip(:,6) = [b2; a2];
-    xip(:,7) = [b2; b2];
-    w(5:7) = w2;
+    otherwise
+        error('SIF_LEFM_interaction_EDI:BadQuadratureRule', ...
+            'QuadratureRule must be 7, 12, or 16.');
 end
-
+if any(w<=0) || abs(sum(w)-1)>1e-12 || ...
+        any(xip(:)<0) || any(sum(xip,1)>1+1e-12)
+    error('SIF_LEFM_interaction_EDI:InvalidQuadrature', ...
+        'Dunavant quadrature rule %d has invalid weights/nodes.',rule);
+end
+end
 
 % =========================================================================
 % Utility
 % =========================================================================
+
+function y = local_median_finite(x)
+    x = x(isfinite(x));
+    if isempty(x), y = NaN; else, y = median(x); end
+end
+
+function y = local_max_finite(x)
+    x = x(isfinite(x));
+    if isempty(x), y = NaN; else, y = max(x); end
+end
 
 function rad = local_element_radius(X)
 

@@ -1,0 +1,110 @@
+[Warning: Name is nonexistent or not a directory: C:\Users\Mikhailo\Google Drive\Projects\8 - CohZonFEM\Asphalt\remmers2003]
+L 50 (C 17-18): ALIGN: This keyword might not be aligned with its matching END on line 52.
+
+L 152 (C 31): AGROW: Variable appears to change size on every loop iteration. Consider preallocating for speed.
+L 156 (C 5): AGROW: Variable appears to change size on every loop iteration. Consider preallocating for speed.
+
+L 561 (C 28-37): FGREN: 'Renderer' will be removed in a future release. There is no simple replacement for this.
+L 612 (C 28-37): FGREN: 'Renderer' will be removed in a future release. There is no simple replacement for this.
+
+L 6 (C 14-15): ASGLU: Value assigned to variable might be unused. Consider replacing the variable with ~ instead.
+
+    level    scale    T3Nodes    T3Triangles    T6Nodes    rings    maximumRadialWidthRatio
+    _____    _____    _______    ___________    _______    _____    _______________________
+
+      0         1       6486        12678        25649       59             1.0242
+      1       0.5      25048        49518        99613      117             1.0121
+
+PASS: deterministic family, seven-edge fan, coverage and grading.
+STEP62: saved asymmetric mesh, no physical U loaded.
+Exterior refinement 1: 15591 cells, 695 flagged, angle 6.86848, ratio 3.43553
+Exterior refinement 2: 16405 cells, 441 flagged, angle 11.7106, ratio 3.08735
+Exterior refinement 3: 16995 cells, 53 flagged, angle 19.5951, ratio 2.33244
+Exterior refinement 4: 17089 cells, 4 flagged, angle 23.154, ratio 2.31102
+Exterior refinement 5: 17097 cells, 2 flagged, angle 21.3313, ratio 2.31102
+Exterior refinement 6: 17099 cells, 0 flagged, angle 25.0358, ratio 2.31102
+Exterior refinement 1: 15591 cells, 695 flagged, angle 6.86848, ratio 3.43553
+Exterior refinement 2: 16405 cells, 441 flagged, angle 11.7106, ratio 3.08735
+Exterior refinement 3: 16995 cells, 53 flagged, angle 19.5951, ratio 2.33244
+Exterior refinement 4: 17089 cells, 4 flagged, angle 23.154, ratio 2.31102
+Exterior refinement 5: 17097 cells, 2 flagged, angle 21.3313, ratio 2.31102
+Exterior refinement 6: 17099 cells, 0 flagged, angle 25.0358, ratio 2.31102
+  COD new mesh: native nodes upper/lower=138/138; abscissa mismatch 0.00000e+00 m
+    oldT3Nodes    oldT3    oldT6Nodes    newT3Nodes    newT3    newT6Nodes    replacedOldT3    retainedOldT3    pairedRadius_mm    nearestPhysicalBoundary_mm    maxPhysicalRadius_mm    oldTipMedian_mm    newTipMedian_mm    oldPrimarySupport    newPrimarySupport    patchMinAngle_deg    exteriorMinAngle_deg    pairErrorT3_m    pairErrorT6_m
+    __________    _____    __________    __________    _____    __________    _____________    _____________    _______________    __________________________    ____________________    _______________    _______________    _________________    _________________    _________________    ____________________    _____________    _____________
+
+      20164       39441      79769         15329       29777      60435           39441              0                 6                       8                        240.64              0.053428           0.054025              14215                10278               40.654                 25.036             2.733e-17       5.1204e-17
+
+            region             nT3     minAngle_deg    minShape    medianShape    longestMedian_mm    longestP90_mm
+    ______________________    _____    ____________    ________    ___________    ________________    _____________
+
+    {'Step38 affected'   }    39441       3.6014       0.10853        0.9803          0.16405             3.9474
+    {'Candidate paired'  }    12678       40.654       0.82662       0.86607          0.17107            0.25815
+    {'Candidate exterior'}    17099       25.036       0.50785       0.96156          0.91166             5.6071
+    {'Candidate affected'}    29777       25.036       0.50785       0.93817          0.29482              5.225
+
+    lower_r_over_a0    upper_r_over_a0    nativePoints
+    _______________    _______________    ____________
+
+         0.04                0.2               38
+         0.04                0.3               55
+         0.08                0.3               44
+         0.12                0.3               34
+
+             physicalGeometryUnchanged: 1
+        physicalBoundaryNodesUnchanged: 1
+                     materialUnchanged: 1
+                deterministicWholeMesh: 1
+                     completeT3Pairing: 1
+                     completeT6Pairing: 1
+                    crackFacesDistinct: 1
+                  intactLigamentShared: 1
+               crackT6MidsidesDistinct: 1
+                intactT6MidsidesShared: 1
+                       positiveT3Areas: 1
+                   positiveT6Jacobians: 1
+                 noHangingGapsOverlaps: 1
+     originalSupportInsidePairedRegion: 1
+    candidateSupportInsidePairedRegion: 1
+                exteriorOutsideSupport: 1
+                nativeSamplingAdequate: 1
+                  tipResolutionMatched: 1
+                    tipFanSixTriangles: 1
+                 monotoneStructuredLaw: 1
+                   monotoneExteriorLaw: 1
+                     minimumAngle20deg: 1
+                       noAbruptGrading: 1
+                        structuralPass: 1
+
+STRUCTURAL PASS: starting prescribed fields ONLY.
+  COD new mesh: native nodes upper/lower=138/138; abscissa mismatch 0.00000e+00 m
+prescribed case 1: KI=1.00000006621 KII=+9.05395362602e-15
+prescribed case 2: KI=2.10975040397e-15 KII=+1.00000003838
+prescribed case 3: KI=1.00000006621 KII=+0.000100000003847
+    inputKI    inputKII    recoveredKI    recoveredKII     deltaKI      deltaKII     literalEDIElementsUsed
+    _______    ________    ___________    ____________    __________    _________    ______________________
+
+       1             0              1      9.054e-15      6.6214e-08    9.054e-15            11316
+       0             1     2.1098e-15              1      2.1098e-15    3.838e-08            11316
+       1        0.0001              1         0.0001      6.6214e-08    3.847e-12            11316
+
+Synthetic qualification passed=1
+Step62 finished: proposal ready=1; zero FEM solves.
+                performed: 1
+                   passed: 1
+              affineError: 8.7311e-11
+                    table: [3x7 table]
+           recoveryMatrix: [2x2 double]
+              matrixError: 7.6533e-08
+    mixedRelativeKIIError: 3.8470e-08
+       superpositionError: 1.2213e-14
+
+    2.3110
+
+     8
+
+       11316
+
+   2.4456e-09
+
+PASS: saved candidate reload, T6 reconstruction, no physical field, complete support closure.
