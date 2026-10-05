@@ -35,7 +35,6 @@ function Path = run_incremental_crack_path(varargin)
     opt=ip.Results;
 
     root=fileparts(mfilename('fullpath'));
-    local_assert_branch(root);
     R0=local_load_frozen(root,opt.FrozenState);
     C=R0.C;
     S0=R0.summary(1,:);
@@ -321,9 +320,3 @@ function tf=local_is_absolute_path(p)
         ~isempty(regexp(p,'^[A-Za-z]:[\\/]','once'))||startsWith(p,'\\');
 end
 
-function local_assert_branch(root)
-    [status,b]=system(sprintf('git -C "%s" branch --show-current',root));
-    assert(status==0&&strcmp(strtrim(b),'incremental-general-crack-path'), ...
-        'pathrun:Branch', ...
-        'Run the general path driver only on incremental-general-crack-path.');
-end
