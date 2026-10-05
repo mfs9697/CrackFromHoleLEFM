@@ -353,11 +353,7 @@ function F = main_stage3c_kinked_two_leg_qualification(varargin)
     coreConnExact=isequal(Tc(patchRows,:),pairedIDs(Tp));
 
     [pair3,pair6]=local_pair_errors(meshLocal,pairedIDs,mirrorMap,nUpper,patchRows);
-    crTip=cr;
-    crTip.Pmid=[-a2,0;0,0];
-    crTip.x0=[-a2,0];
-    crTip.xtip=[0,0];
-    [topology,nativeR,faceSide]=local_topology_audit(meshLocal,crTip, ...
+    [topology,nativeR,faceSide]=local_topology_audit(meshLocal,cr, ...
         pairedIDs,axisUp,mirrorMap,Zp,C);
 
     % Original physical boundary geometry, permitting exact straight-segment
@@ -433,6 +429,7 @@ function F = main_stage3c_kinked_two_leg_qualification(varargin)
     gates.crackT6MidsidesDistinct=topology.crackMidsDistinct;
     gates.intactT6MidsidesShared=topology.intactMidsShared;
     gates.T6FaceAbscissaeMatched=topology.faceGridMismatch<=1e-13;
+    gates.lastSegmentCODFrame=topology.usesLastSegmentCODFrame;
     gates.positiveT3Areas=all(area>0);
     gates.positiveT6Jacobians=minJ>0 && midErr<=1e-13;
     gates.edgeIncidenceValid=maxIncidence<=2;
@@ -804,10 +801,11 @@ function [out,r,face]=local_topology_audit(mesh,cr,ids,axisIDs,map,Z,C)
     end
 
     mat=local_material(C);
-    [r,~,diag]=native_COD_audit(mesh,zeros(2*size(mesh.coord,1),1), ...
+    [r,~,diag]=native_COD_polyline_audit(mesh,zeros(2*size(mesh.coord,1),1), ...
         mat,cr,2,true);
     face=diag.faceSide;
     out.faceGridMismatch=diag.gridMismatch;
+    out.usesLastSegmentCODFrame=logical(diag.usesLastSegmentFrame);
     out.crackDistinct=out.crackDistinct&& ...
         diag.nUpper==diag.nLower&&diag.gridMismatch<1e-12;
 end
