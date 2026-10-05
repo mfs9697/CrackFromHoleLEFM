@@ -176,6 +176,11 @@ function F = main_stage3c_kinked_two_leg_qualification(varargin)
     assert(all(local_signed_area(X,Told)>0), ...
         'stage3c:CarrierOrientation','Carrier contains nonpositive T3 area.');
 
+    carrierUpAtKink=Mc.crack.pathVertexUpperNodes{2};
+    carrierLoAtKink=Mc.crack.pathVertexLowerNodes{2};
+    chordDeviation=local_point_segment_distance(p1,p0,p2);
+    carrierMultiEdge=numel(polyIDs.upperEdges)>=2&&numel(polyIDs.lowerEdges)>=2;
+
     % ------------------------------------------------------------------
     % Exact already-qualified structured core at scale s=1.
     % ------------------------------------------------------------------
@@ -411,6 +416,12 @@ function F = main_stage3c_kinked_two_leg_qualification(varargin)
     gates.lastLegDirection=norm((p2-p1)/a2-eLast)<=1e-13;
     gates.nonCollinearSecondLeg=abs(theta2Deg-theta1Deg)>1e-8;
     gates.kinkAnglePreserved=abs(local_turn_deg(pathGlobal)-(theta2Deg-theta1Deg))<=1e-10;
+    gates.carrierUsesMultipleFaceEdges=carrierMultiEdge;
+    gates.carrierKinkUpperNode=numel(carrierUpAtKink)==1;
+    gates.carrierKinkLowerNode=numel(carrierLoAtKink)==1;
+    gates.carrierKinkFacesDistinct=numel(carrierUpAtKink)==1&& ...
+        numel(carrierLoAtKink)==1&&carrierUpAtKink~=carrierLoAtKink;
+    gates.kinkOffMouthTipChord=chordDeviation>1e-12;
     gates.priorTipUpperNode=numel(upCorner)==1;
     gates.priorTipLowerNode=numel(loCorner)==1;
     gates.priorTipFacesDistinct=numel(upCorner)==1&&numel(loCorner)==1&&upCorner~=loCorner;
@@ -461,6 +472,8 @@ function F = main_stage3c_kinked_two_leg_qualification(varargin)
     fprintf('  physical clearance   = %.6f mm\n',1e3*physicalClearance);
     fprintf('  exterior crack       = %.6f mm (mouth to rear core)\n',1e3*exteriorCrackLength);
     fprintf('  prior-tip distance   = %.6f mm from new tip\n',1e3*cornerDistance);
+    fprintf('  kink/chord deviation = %.6e mm\n',1e3*chordDeviation);
+    fprintf('  carrier face edges   = %d upper / %d lower\n',numel(polyIDs.upperEdges),numel(polyIDs.lowerEdges));
     fprintf('  primary EDI elements = %d (literal), %d (skip-constant)\n', ...
         numel(support),numel(supportSkipConstant));
     fprintf('  core coord error     = %.3e m\n',coreCoordErr);
@@ -591,6 +604,8 @@ function F = main_stage3c_kinked_two_leg_qualification(varargin)
     candidate.pairedMirrorLocal=mirrorMap;
     candidate.structuredDesign=design;
     candidate.exteriorDesign=ext;
+    candidate.polylineCarrierEdgeIDs=polyIDs;
+    candidate.kinkChordDeviation=chordDeviation;
     candidate.gates=gates;
     candidate.synthetic=Synthetic;
     candidate.syntheticGates=syntheticGates;
@@ -722,6 +737,12 @@ function tag=local_angle_tag(thetaDeg)
     s=sprintf('%+.8f',thetaDeg);
     s=strrep(s,'+','p');s=strrep(s,'-','m');s=strrep(s,'.','p');
     tag=['theta_' s 'deg'];
+end
+
+function d=local_point_segment_distance(x,A,B)
+    v=B-A;L2=max(dot(v,v),1e-30);
+    t=dot(x-A,v)/L2;t=max(0,min(1,t));
+    d=norm(x-(A+t*v));
 end
 
 function a=local_signed_area(P,T)
