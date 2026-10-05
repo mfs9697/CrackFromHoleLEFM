@@ -45,6 +45,8 @@ with at least two finite crack segments.
 The routine generalizes the accepted Stage III-C qualification. It keeps:
 
 - the true appended-hole polyline carrier;
+- uniform nominal carrier half-width along every historical crack segment;
+- tapering to zero width only on the final carrier segment at the current tip;
 - exact upper/lower face separation at every interior path vertex;
 - the explicit retained crack polyline in the exterior;
 - the qualified 4-mm-scaled paired current-tip core;
@@ -194,6 +196,111 @@ core would intersect a plate or circular-hole boundary.
 
 This is a numerical termination rule for the qualified sharp-tip machinery;
 it is not a separate fracture criterion.
+
+## Resume from a validated path state
+
+The production driver can resume without replaying all earlier physical
+segments. The resume interface is:
+
+    'ResumeState', State
+
+or
+
+    'ResumeStateFile', '<path-to-path_run_state.mat>'
+
+with optional
+
+    'ResumeSourceDir', '<directory-with-prior-step-results>'
+
+for legacy state files.
+
+Only one of `ResumeState` and `ResumeStateFile` may be supplied.
+
+Before continuing, the driver verifies:
+
+- the frozen mouth and prescribed first segment;
+- the accepted P1-to-theta2 MTS seed;
+- every segment length against the frozen increment;
+- every stored absolute segment angle against the actual path geometry;
+- the accepted Stage III-D P2 regression;
+- every reconstructed legacy compact physical result against the stored path;
+- all physical gates in those compact results;
+- the fixed 11316-element EDI support fingerprint.
+
+New state files use schema version 2 and embed the complete numeric step-row
+history. They can therefore be resumed without reconstructing older rows from
+per-step files. Legacy state files remain supported; for those files the
+driver reconstructs the accepted history from
+`step_###_physical_small.mat` in `ResumeSourceDir`.
+
+There are two supported resume-state shapes:
+
+1. an appended state containing exactly one not-yet-solved segment
+   (`N = completedPhysicalSegments + 1`); the driver starts at that segment;
+2. a solved-end state (`N = completedPhysicalSegments`); the driver rebuilds
+   exactly one next 4-mm segment from the stored MTS `nextThetaDeg` after
+   applying the ordinary plate/core-clearance checks.
+
+The driver writes `path_run_state.mat` atomically after every accepted append
+and now also at `MaxSegments` and geometry-clearance stops. Thus a completed
+run can itself become the source for a later continuation.
+
+### Upgrading the validated P17 case without another linear solve
+
+For the 2026-10-05 long-path test, the legacy state in
+`incremental_test_fast_10` contains the accepted path through the proposed
+P17 and records P16 as the last completed physical segment. The independently
+validated P17 candidate and physical checkpoint are in
+`uniform_carrier_k17_probe`.
+
+After switching to the resume branch, the legacy state can be promoted to a
+schema-2 solved-P17 state with no new physical solve:
+
+```matlab
+repoRoot = fileparts(which('run_incremental_crack_path'));
+
+oldDir = fullfile(repoRoot, ...
+    'verification','crack_path','incremental_test_fast_10');
+
+probeDir = fullfile(repoRoot, ...
+    'verification','crack_path','uniform_carrier_k17_probe');
+
+Path17r = run_incremental_crack_path( ...
+    'FrozenState',R0, ...
+    'MaxSegments',17, ...
+    'AllowPhysicalSolves',false, ...
+    'RunSynthetic',true, ...
+    'FastEDI',true, ...
+    'ReuseCandidates',true, ...
+    'RegressionGates',true, ...
+    'ResumeStateFile',fullfile(oldDir,'path_run_state.mat'), ...
+    'ResumeSourceDir',oldDir, ...
+    'OutputDir',probeDir);
+```
+
+The resume must report `first resumed step = 17`; the existing P17 candidate
+and physical checkpoint are validated and reused, so `newSolve` at P17 must
+be false. The resulting `probeDir/path_run_state.mat` is a schema-2 solved-P17
+state.
+
+Continuation to P20 then starts directly at P18:
+
+```matlab
+Path20r = run_incremental_crack_path( ...
+    'FrozenState',R0, ...
+    'MaxSegments',20, ...
+    'AllowPhysicalSolves',true, ...
+    'RunSynthetic',true, ...
+    'FastEDI',true, ...
+    'ReuseCandidates',true, ...
+    'RegressionGates',true, ...
+    'ResumeStateFile',fullfile(probeDir,'path_run_state.mat'), ...
+    'OutputDir',probeDir);
+```
+
+P17 is not revisited in this second call; only P18-P20 require new candidate
+qualification and physical solves unless exact matching checkpoints already
+exist.
 
 ## Output directory
 
