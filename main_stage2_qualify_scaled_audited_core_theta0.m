@@ -1,9 +1,9 @@
 function Q = main_stage2_qualify_scaled_audited_core_theta0(varargin)
 %MAIN_STAGE2_QUALIFY_SCALED_AUDITED_CORE_THETA0
-% Stage II-B1/B2 reference qualification, NO PHYSICAL FEM SOLVE.
+% Stage II-B1/B2 BASE reference qualification, NO PHYSICAL FEM SOLVE.
 %
 % Construct the closed-audit reflection-paired crack-tip/core topology,
-% rescaled from the historical a0=8 mm audit to the current frozen a0,
+% rescaled from the historical a0=8 mm audit to the current frozen a0.\n% This driver intentionally qualifies only the audited BASE scale s=1,
 % place it at the frozen Stage-I initiation point with theta_1=0 deg,
 % upgrade T3->T6, and qualify the topology/extractor using prescribed
 % leading Williams displacement fields.
@@ -38,7 +38,7 @@ function Q = main_stage2_qualify_scaled_audited_core_theta0(varargin)
     ip = inputParser;
     addParameter(ip,'FrozenState',[],@(x)isempty(x)||isstruct(x));
     addParameter(ip,'StateFile','',@(x)ischar(x)||isstring(x));
-    addParameter(ip,'Scale',1,@(x)isnumeric(x)&&isscalar(x)&&isfinite(x)&&x>0&&x<=1);
+    addParameter(ip,'Scale',1,@(x)isnumeric(x)&&isscalar(x)&&isfinite(x)&&abs(x-1)<=10*eps);
     addParameter(ip,'SaveCompact',true,@(x)islogical(x)&&isscalar(x));
     addParameter(ip,'OutputFile','',@(x)ischar(x)||isstring(x));
     addParameter(ip,'VerboseEDI',false,@(x)islogical(x)&&isscalar(x));
