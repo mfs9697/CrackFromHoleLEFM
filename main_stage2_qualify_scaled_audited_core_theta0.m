@@ -177,6 +177,12 @@ function Q = main_stage2_qualify_scaled_audited_core_theta0(varargin)
     gates.theta0FrameConsistent = frameErr <= 1e-10;
     gates.tipLocationCorrect = tipGlobalErr <= 1e-12*max(1,a0);
     gates.auditedRingCount59 = Core.design.nRings==59;
+    gates.auditedT3NodeCount = size(X3,1)==6486;
+    gates.auditedT3ElementCount = size(T3,1)==12678;
+    gates.auditedT6NodeCount = size(X6,1)==25649;
+    gates.auditedFaceNodeCounts = ...
+        numel(up3)==60 && numel(lo3)==60 && ...
+        numel(up6)==119 && numel(lo6)==119;
     gates.tipSixTriangles = numel(tipElems)==6;
     gates.tipSevenTopologicalEdges = numel(tipNeighbors)==7;
     gates.positiveT3Areas = minArea2>0;
@@ -195,7 +201,8 @@ function Q = main_stage2_qualify_scaled_audited_core_theta0(varargin)
     fprintf('CORE TOPOLOGY\n');
     fprintf('  T3 nodes/elements = %d / %d\n',size(X3,1),size(T3,1));
     fprintf('  T6 nodes/elements = %d / %d\n',size(X6,1),size(T6,1));
-    fprintf('  rings             = %d\n',Core.design.nRings);
+    fprintf('  rings             = %d (audited base: 59)\n',Core.design.nRings);
+    fprintf('  expected counts   = T3 6486 nodes / 12678 elements; T6 25649 nodes\n');
     fprintf('  tip T3 fan        = %d triangles / %d topological edges\n', ...
         numel(tipElems),numel(tipNeighbors));
     fprintf('  face T3 nodes     = %d / %d\n',numel(up3),numel(lo3));
