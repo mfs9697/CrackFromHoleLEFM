@@ -278,6 +278,12 @@ function F = main_stage2_embed_scaled_core_full_domain_theta0(varargin)
     maxIncidence=max(allNew(:,3));
     duplicateTri=local_has_duplicate_triangles(Tc);
 
+    % Every geometric outer edge of the structured core must be shared by
+    % exactly one exterior triangle after assembly. Exterior centroids must
+    % remain outside the paired-core polygon.
+    [seamShared,exteriorOutsideCore]=local_seam_audit( ...
+        Pc,Tc,patchRows,exteriorRows,ext.innerPolygon);
+
     % Exact preservation of the structured core after assembly.
     coreCoordErr=max(vecnorm(Pc(pairedIDs,:)-Zp,2,2));
     coreConnExact=isequal(Tc(patchRows,:),pairedIDs(Tp));
@@ -336,6 +342,8 @@ function F = main_stage2_embed_scaled_core_full_domain_theta0(varargin)
     gates.positiveT6Jacobians=minJ>0 && midErr<=1e-13;
     gates.edgeIncidenceValid=maxIncidence<=2;
     gates.noDuplicateTriangles=~duplicateTri;
+    gates.structuredCoreSeamShared=seamShared;
+    gates.exteriorOutsideCore=exteriorOutsideCore;
     gates.domainAreaPreserved=areaRel<=5e-10;
     gates.physicalBoundaryGeometryPreserved=physicalBoundarySame;
     gates.originalPhysicalVerticesPreserved=physicalVerticesSame;
@@ -722,43 +730,44 @@ function pass=local_boundary_same(P,T,Q,S,cr,crNew)
     A=local_canonical_segments(A);
     B=local_canonical_segments(B);
 
+    % Exact carrier-polygon coverage permits subdivision of its straight
+    % segments. Original physical vertices are checked separately.
     assigned=zeros(size(B,1),1);
     intervals=zeros(size(B,1),2);
     pass=true;
 
     for j=1:size(B,1)
-        v=A(:,3:4)-A(:,1:2);ell=sum(v.^2,2);
-        u=B(j,1:2)-A(:,1:2);w=B(j,3:4)-A(:,1:2);
-        cross1=abs(v(:,1).*u(:,2)-v(:,2).*u(:,1));
-        cross2=abs(v(:,1).*w(:,2)-v(:,2).*w(:,1));
-        t1=sum(u.*v,2)./ell;t2=sum(w.*v,2)./ell;
-        ok=cross1<=1e-12*sqrt(ell)&cross2<=1e-12*sqrt(ell)& ...
-            min(t1,t2)>=-1e-9&max(t1,t2)<=1+1e-9;
-        hit=find(ok,1);
-        if isempty(hit),pass=false;return,end
-        assigned(j)=hit;intervals(j,:)=sort([t1(hit),t2(hit)]);
+        v=A(:,3:4)-A(:,1:2);
+        ell=sum(v.^2,2);
+        u=B(j,1:2)-A(:,1:2);
+        w=B(j,3:4)-A(:,1:2);
+        t=sum(u.*v,2)./ell;
+        s=sum(w.*v,2)./ell;
+
+        match=vecnorm(u-t.*v,2,2)<1e-12 & ...
+              vecnorm(w-s.*v,2,2)<1e-12 & ...
+              t>=-1e-9 & t<=1+1e-9 & s>=-1e-9 & s<=1+1e-9;
+
+        k=find(match,1);
+        if isempty(k),pass=false;return,end
+        assigned(j)=k;
+        intervals(j,:)=sort([t(k),s(k)]);
     end
 
-    for i=1:size(A,1)
-        I=intervals(assigned==i,:);
-        if isempty(I),pass=false;return,end
-        I=sortrows(I,1);x=0;
-        for k=1:size(I,1)
-            if I(k,1)>x+1e-9,pass=false;return,end
-            x=max(x,I(k,2));
+    for j=1:size(A,1)
+        spans=sortrows(intervals(assigned==j,:));
+        if isempty(spans) || abs(spans(1,1))>1e-9 || ...
+                abs(spans(end,2)-1)>1e-9 || ...
+                any(abs(spans(2:end,1)-spans(1:end-1,2))>1e-9)
+            pass=false;
+            return
         end
-        if x<1-1e-9,pass=false;return,end
     end
 end
 
 function A=local_canonical_segments(A)
-    for k=1:size(A,1)
-        a=A(k,1:2);b=A(k,3:4);
-        if a(1)>b(1)||(a(1)==b(1)&&a(2)>b(2))
-            A(k,:)=[b,a];
-        end
-    end
-    A=sortrows(A,[1 2 3 4]);
+    flip=A(:,1)>A(:,3) | (A(:,1)==A(:,3) & A(:,2)>A(:,4));
+    A(flip,:)=A(flip,[3 4 1 2]);
 end
 
 function tf=local_has_duplicate_triangles(T)
@@ -766,20 +775,31 @@ function tf=local_has_duplicate_triangles(T)
     tf=size(unique(C,'rows'),1)~=size(C,1);
 end
 
-function ratio=local_max_neighbor_size_ratio(T,L,rows)
-    use=false(size(T,1),1);use(rows)=true;
+function [seamShared,exteriorOutside]=local_seam_audit(P,T,patchRows,extRows,inner)
+    [~,inventory]=local_edge_inventory(T);
+
+    [freePatch,~]=local_edge_inventory(T(patchRows,:));
+    E=freePatch(:,1:2);
+    rr=reshape(vecnorm(P(E(:),:),2,2),size(E));
+    rp=max(vecnorm(inner,2,2));
+    E=E(all(rr>rp-1e-12,2),:);
+
+    [has,where]=ismember(sort(E,2),inventory(:,1:2),'rows');
+    seamShared=all(has) && all(inventory(where(has),3)==2);
+
+    cent=(P(T(extRows,1),:)+P(T(extRows,2),:)+P(T(extRows,3),:))/3;
+    exteriorOutside=~any(inpolygon(cent(:,1),cent(:,2),inner(:,1),inner(:,2)));
+end
+
+function ratio=local_max_neighbor_size_ratio(T,L,affected)
     n=size(T,1);
     E=sort([T(:,[1 2]);T(:,[2 3]);T(:,[3 1])],2);
     which=repmat((1:n)',3,1);
     [~,~,g]=unique(E,'rows');
-    groups=accumarray(g,which,[],@(x){x});
-    ratio=1;
-    for k=1:numel(groups)
-        e=groups{k};e=e(use(e));
-        if numel(e)==2
-            ratio=max(ratio,max(L(e))/min(L(e)));
-        end
-    end
+    lo=accumarray(g,L(which),[],@min);
+    hi=accumarray(g,L(which),[],@max);
+    touch=accumarray(g,ismember(which,affected),[],@max)>0;
+    ratio=max(hi(touch)./lo(touch));
 end
 
 function xi=local_rule16()
