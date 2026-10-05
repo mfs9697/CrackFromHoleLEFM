@@ -78,7 +78,7 @@ function Path = run_incremental_crack_path(varargin)
     % Accepted seed is itself a physical tip state at P1.
     rows=nan(opt.MaxSegments,14);
     rows(1,:)=[1,p1,theta1Deg,opt.SeedKI,opt.SeedKII,opt.SeedKII/opt.SeedKI, ...
-        theta2Deg,theta2Deg,NaN,NaN,NaN,NaN,0,1];
+        theta2Deg,theta2Deg,NaN,NaN,NaN,NaN,0];
 
     regression=struct();
     regression.theta2_expected_deg=-0.00131272214162;
@@ -181,7 +181,7 @@ function Path = run_incremental_crack_path(varargin)
         rows(k,:)=[k,pathNow(end,:),thetaDeg(k),KI,KII,ratio, ...
             deltaNextDeg,thetaNextDeg,R.solverInfo.iter, ...
             R.solverInfo.relres,R.solverInfo.trueRelResidual, ...
-            R.EDI.EDI_elements,R.newSolve,R.pass];
+            R.EDI.EDI_elements,R.newSolve];
 
         % Exact regression bridge to the accepted Stage III-D calculation.
         if k==2
@@ -212,6 +212,12 @@ function Path = run_incremental_crack_path(varargin)
         eNext=eNext/norm(eNext);
         pNext=pathNow(end,:)+increment*eNext;
 
+        if pNext(1)<0 || pNext(1)>C.A || pNext(2)<-C.B || pNext(2)>C.B
+            stopReason='next_tip_outside_plate';
+            fprintf('  STOP: proposed next tip is outside the plate.\n');
+            break
+        end
+
         if opt.StopAtCoreClearance
             rCore=.75*increment;
             clearance=local_physical_clearance(pNext,C);
@@ -221,12 +227,6 @@ function Path = run_incremental_crack_path(varargin)
                     1e3*clearance,1e3*rCore);
                 break
             end
-        end
-
-        if pNext(1)<0 || pNext(1)>C.A || pNext(2)<-C.B || pNext(2)>C.B
-            stopReason='next_tip_outside_plate';
-            fprintf('  STOP: proposed next tip is outside the plate.\n');
-            break
         end
 
         vertices(end+1,:)=pNext; %#ok<AGROW>
