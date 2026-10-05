@@ -114,7 +114,7 @@ function [Vapp,G]=build_appended_hole_polyline_loop(hole,Pmid,eps,varargin)
 
     % Inner-loop path:
     % Mup -> retained hole -> Mlo -> lower face -> tip -> upper face -> Mup.
-    Vapp=[arcMain;Lo(2:end);flipud(Up(1:end-1))];
+    Vapp=[arcMain;Lo(2:end,:);flipud(Up(1:end-1,:))];
     Vapp=remove_consecutive(Vapp,1e-12);
     if norm(Vapp(end,:)-Vapp(1,:))<1e-12
         Vapp(end,:)=[];
