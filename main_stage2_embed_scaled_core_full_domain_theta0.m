@@ -252,17 +252,27 @@ function F = main_stage2_embed_scaled_core_full_domain_theta0(varargin)
     [P6,T6]=T3toT6_fast(Pc,Tc);
     meshLocal=struct('coord3',Pc,'connect3',Tc,'coord',P6,'connect',T6);
 
-    % Rotate final candidate back to global coordinates.
+    % Rotate final candidate back to global coordinates. Then restore every
+    % original carrier physical-boundary vertex BITWISE, following the
+    % closed-audit preservation rule. Rebuild T6 midsides from this final
+    % T3 geometry; connectivity ordering must remain identical.
     Pg=tip+Pc*R.';
-    P6g=tip+P6*R.';
+    assert(all(oldToNew(physicalIDs)>0), ...
+        'stage2full:LostPhysicalVertex','A source physical vertex was lost.');
+    Pg(oldToNew(physicalIDs),:)=Mc.p(physicalIDs,:);
+
+    [P6g,T6g]=T3toT6_fast(Pg,Tc);
+    assert(isequal(T6g,T6), ...
+        'stage2full:T6OrderingChanged','Global T6 connectivity ordering changed.');
+
     crGlobal=cr;
-    crGlobal.Pmid=tip+cr.Pmid*R.';
+    crGlobal.Pmid=[mouth;tip];
     crGlobal.x0=mouth;
     crGlobal.xtip=tip;
-    crGlobal.upperTarget=tip+Pc(cr.upperNodes,:)*R.';
-    crGlobal.lowerTarget=tip+Pc(cr.lowerNodes,:)*R.';
+    crGlobal.upperTarget=Pg(cr.upperNodes,:);
+    crGlobal.lowerTarget=Pg(cr.lowerNodes,:);
 
-    meshGlobal=struct('coord3',Pg,'connect3',Tc,'coord',P6g,'connect',T6);
+    meshGlobal=struct('coord3',Pg,'connect3',Tc,'coord',P6g,'connect',T6g);
 
     % ------------------------------------------------------------------
     % Structural qualification.
@@ -298,6 +308,8 @@ function F = main_stage2_embed_scaled_core_full_domain_theta0(varargin)
         X,Told,Pc,Tc,crLocal,cr);
     physicalVerticesSame=all(oldToNew(physicalIDs)>0) && ...
         isequal(Pc(oldToNew(physicalIDs),:),X(physicalIDs,:));
+    globalPhysicalVerticesBitwise= ...
+        isequal(Pg(oldToNew(physicalIDs),:),Mc.p(physicalIDs,:));
 
     % EDI support must be wholly within the untouched core rows.
     support=local_q_support(meshLocal,cr,ri,ro,false);
@@ -347,6 +359,7 @@ function F = main_stage2_embed_scaled_core_full_domain_theta0(varargin)
     gates.domainAreaPreserved=areaRel<=5e-10;
     gates.physicalBoundaryGeometryPreserved=physicalBoundarySame;
     gates.originalPhysicalVerticesPreserved=physicalVerticesSame;
+    gates.globalPhysicalVerticesBitwise=globalPhysicalVerticesBitwise;
     gates.EDIInsideUntouchedCore=supportInside;
     gates.exteriorExcludedFromEDI=exteriorOutside;
     gates.nativeSamplingAdequate=all(sampleN>=12);
