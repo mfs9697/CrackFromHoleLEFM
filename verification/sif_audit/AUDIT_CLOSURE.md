@@ -64,6 +64,7 @@ The audit therefore isolated these mechanisms one at a time rather than immediat
 | Steps52--56 | Can an exactly reflection-paired mesh be constructed? | Yes | Controlled mesh design |
 | Steps57--59 | Does a symmetric physical FEM solution on that paired mesh still leak Mode II? | Actual EDI \(K_{II}/K_I\approx-4.69\times10^{-14}\); exact-nodal pure-I about \(-1.09\times10^{-15}\) | Strong validation that exact reflection pairing removes the spurious symmetric Mode-II mechanism |
 | Step60 | Is the old asymmetric Step38 mesh a clean refinement family? | No; support intersects an irregular patchwork mesh | Justifies replacing ad hoc refinement |
+| Step61 | Can a locally paired patch be inserted into the real asymmetric geometry? | Yes; all structural and prescribed-field controls passed, but tip connectivity and shell resolution changed together | Feasibility/design evidence only; not used as physical convergence proof |
 | Step62 | Can a deterministic structured paired-core family be built? | Yes; exact pairing and synthetic mixed recovery | Family construction |
 | Step62B | Can the exterior be calibrated without using physical SIFs? | C03 selected with max adjacent-size ratio 1.79678451 | Avoids result-driven mesh tuning |
 | Step63/63R | Is the Level-0 physical COD signal reproducible? | Replacement solve reproduced the first Step63 COD fingerprint essentially exactly | Physical field reproducibility |

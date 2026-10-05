@@ -17,6 +17,11 @@ structured C03 convergence family at \(s=1,\ 1/\sqrt2,\ 1/2\).
 
 See **[AUDIT_CLOSURE.md](AUDIT_CLOSURE.md)** for the complete evidence chain,
 numerical recommendation, limitations, production guidance, and merge record.
+See **[STEP_INDEX.md](STEP_INDEX.md)** for the canonical numbering map,
+including the historical 39--43, 48/50/51, and restored Step61 records.
+
+The exact pre-cleanup repository state is frozen on
+`archive/sif-audit-closed-2026-10-05`.
 
 The material below documents the historical verification harness and earlier
 gates. Statements there describing EDI as a prototype or the audit as
@@ -57,14 +62,17 @@ The output contains:
 - `R.edi`: `SIF_LEFM_interaction_EDI` result and diagnostics;
 - `R.difference`: signed method-to-method differences.
 
-## Scientific status
+## Historical status at the first control stage
 
-The interaction EDI implementation is still a prototype. Its normalization,
-mode-II sign, and auxiliary-field derivatives must be independently verified
-before EDI is used as the reference method.
+At the beginning of the audit, the interaction EDI implementation was still a
+prototype whose normalization, Mode-II sign, and auxiliary-field derivatives
+required independent verification. The material below preserves that
+chronological state. Those verification gates were subsequently completed;
+for the final scientific status use `AUDIT_CLOSURE.md` rather than this early
+stage description.
 
-The older published two-segment benchmark is a separate reproduction gate.
-This control harness does not claim that reproduction yet.
+The older published two-segment benchmark remained a separate reproduction
+gate at this point in the chronology.
 
 ## Literal-lattice crack geometry gate (Step 4C)
 
