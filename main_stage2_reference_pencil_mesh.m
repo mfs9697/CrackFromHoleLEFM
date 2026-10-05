@@ -57,8 +57,7 @@ function R2 = main_stage2_reference_pencil_mesh(varargin)
 % recovery, solve_cracked_LEFM, or any SIF routine.
 
     ip = inputParser;
-    addParameter(ip, 'StateFile', ...
-        fullfile('verification', 'crack_path', 'stage1_starting_state.mat'), ...
+    addParameter(ip, 'StateFile', '', ...
         @(s)ischar(s) || isstring(s));
     addParameter(ip, 'Theta1Deg', 0, ...
         @(x)isnumeric(x) && isscalar(x) && isfinite(x));
@@ -74,13 +73,32 @@ function R2 = main_stage2_reference_pencil_mesh(varargin)
         @(s)ischar(s) || isstring(s));
     parse(ip, varargin{:});
 
-    stateFile     = char(ip.Results.StateFile);
+    stateFileIn   = char(ip.Results.StateFile);
     theta1Deg     = ip.Results.Theta1Deg;
     plotGeom      = logical(ip.Results.PlotGeom);
     plotMesh      = logical(ip.Results.PlotMesh);
     plotCollapsed = logical(ip.Results.PlotCollapsed);
     saveCompact   = logical(ip.Results.SaveCompact);
     outputFile    = char(ip.Results.OutputFile);
+
+    % Resolve the frozen checkpoint relative to this source file, not pwd.
+    % This keeps the driver robust when MATLAB is launched from another
+    % directory or when the user changes branches/worktrees.
+    repoRoot = fileparts(mfilename('fullpath'));
+
+    if isempty(strtrim(stateFileIn))
+        stateFile = fullfile(repoRoot, ...
+            'verification', 'crack_path', 'stage1_starting_state.mat');
+    else
+        stateFile = stateFileIn;
+
+        if exist(stateFile, 'file') ~= 2 && ~local_is_absolute_path(stateFile)
+            candidate = fullfile(repoRoot, stateFile);
+            if exist(candidate, 'file') == 2
+                stateFile = candidate;
+            end
+        end
+    end
 
     fprintf('\n');
     fprintf('============================================================\n');
@@ -91,10 +109,17 @@ function R2 = main_stage2_reference_pencil_mesh(varargin)
     fprintf('  NO Stage-I solve and NO SIF calculation are performed here.\n\n');
 
     if exist(stateFile, 'file') ~= 2
+        defaultState = fullfile(repoRoot, ...
+            'verification', 'crack_path', 'stage1_starting_state.mat');
+
         error('main_stage2_reference_pencil_mesh:MissingStateFile', ...
-            ['Frozen Stage-I state file not found:\n  %s\n', ...
-             'Run main_stage1_freeze_starting_state first, or pass StateFile.'], ...
-            stateFile);
+            ['Frozen Stage-I state file not found.\n', ...
+             'Resolved path:\n  %s\n', ...
+             'Repository root:\n  %s\n', ...
+             'Expected default checkpoint:\n  %s\n', ...
+             'Run main_stage1_freeze_starting_state in this working copy, ', ...
+             'or pass the original absolute StateFile path.'], ...
+            stateFile, repoRoot, defaultState);
     end
 
     S = load(stateFile);
@@ -528,4 +553,13 @@ function tag = local_angle_tag(thetaDeg)
     raw = strrep(raw, '.', 'p');
 
     tag = ['theta_', sgn, raw];
+end
+
+
+function tf = local_is_absolute_path(p)
+    p = char(p);
+
+    tf = startsWith(p, filesep) || ...
+         ~isempty(regexp(p, '^[A-Za-z]:[\\/]', 'once')) || ...
+         startsWith(p, '\\');
 end
