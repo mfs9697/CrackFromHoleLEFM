@@ -224,8 +224,8 @@ function R2 = main_stage2_reference_pencil_mesh(varargin)
         local_face_distance_to_segment(Mc, I.x_star, xExpected);
 
     sharedFaceNodes = intersect(Mc.crack.upperNodes(:), Mc.crack.lowerNodes(:));
-    sharedOnlyAtTip = isempty(sharedFaceNodes) || ...
-        all(sharedFaceNodes == Mc.crack.tipNode);
+    sharedOnlyAtTip = numel(sharedFaceNodes) == 1 && ...
+        sharedFaceNodes(1) == Mc.crack.tipNode;
 
     [noInversion, minAreaRatio, minAbsArea2] = ...
         local_check_collapse_element_orientation(M.p, Mc.p, Mc.t);
