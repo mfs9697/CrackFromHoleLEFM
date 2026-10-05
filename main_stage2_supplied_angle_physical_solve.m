@@ -8,7 +8,7 @@ function R = main_stage2_supplied_angle_physical_solve(varargin)
 %
 % Required scientific lineage:
 %   frozen Stage-I initiation state
-%     -> qualified 4-mm theta_1=0 crack geometry
+%     -> qualified 4-mm supplied-angle crack geometry
 %     -> qualified a0-scaled paired core
 %     -> qualified full-domain core embedding
 %     -> THIS DRIVER: exactly one unit-load physical solve
