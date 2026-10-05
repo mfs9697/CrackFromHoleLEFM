@@ -35,15 +35,15 @@ PCG iterations remain 2442/2457/2482/2509 and true residuals remain below 1e-10.
 | Rank | Phase | Total across P2–P5 (s) |
 |---:|---|---:|
 | 1 | PCG | 190.445 |
-| 2 | Synthetic qualification, principally three EDI replays per tip | 56.161 |
-| 3 | Exterior triangulation/refinement | 21.517 |
-| 4 | Physical EDI | 18.520 |
+| 2 | Synthetic qualification, principally three EDI replays per tip | 56.158 |
+| 3 | Exterior triangulation/refinement | 21.522 |
+| 4 | Physical EDI | 18.519 |
 | 5 | Unclamped stiffness assembly | 13.674 |
-| 6 | Geometry mapping/bookkeeping | 9.841 |
-| 7 | Source carrier, including its internal geometry-ID fallback | 8.979 |
-| 8 | Structured core | 5.526 |
-| 9 | Structural qualification | 3.614 |
-| 10 | symamd and sparse permutation | 2.050 |
+| 6 | Geometry mapping/bookkeeping | 9.838 |
+| 7 | Source carrier, including its internal geometry-ID fallback | 8.976 |
+| 8 | Structured core | 5.527 |
+| 9 | Structural qualification | 3.608 |
+| 10 | symamd and sparse permutation | 2.053 |
 
 Whole qualification totals 107.790 s. These inclusive totals must not be
 added to their child phases. The CSVs separately record Williams replay and
@@ -51,8 +51,8 @@ synthetic EDI; their times are already included in synthetic qualification.
 Carrier geometry-only ID identification falls back to a temporary PDE mesh;
 that internal work is included in source_carrier. The separately timed
 geometry_id_recovery is the subsequent polyline edge-set identification.
-T3-to-T6 totals about 0.155 s over all three conversions per tip, SGS 0.188 s,
-native COD 0.048 s, and physical checkpoint writes 0.807 s. These are poor
+T3-to-T6 totals about 0.157 s over all three conversions per tip, SGS 0.191 s,
+native COD 0.053 s, and physical checkpoint writes 0.811 s. These are poor
 first optimization targets. Resumed runtime is predominantly physical EDI;
 qualification, assembly and PCG are skipped by existing validated reuse.
 
