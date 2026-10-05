@@ -642,7 +642,7 @@ function F = qualify_incremental_crack_candidate(pathGlobal,varargin)
         file=char(opt.CandidateFile);
         if isempty(file)
             file=fullfile(outDir, ...
-                ['stage3c_kinked_' local_angle_tag(thetincrementDeg) '_candidate_T3.mat']);
+                sprintf('incremental_step_%03d_candidate_T3.mat',nSegments));
         end
         save(file,'candidate','-v7');
         F.candidateFile=file;
@@ -655,7 +655,7 @@ function F = qualify_incremental_crack_candidate(pathGlobal,varargin)
         file=char(opt.CompactFile);
         if isempty(file)
             file=fullfile(outDir, ...
-                ['stage3c_kinked_' local_angle_tag(thetincrementDeg) '_small_data.mat']);
+                sprintf('incremental_step_%03d_qualification_small.mat',nSegments));
         end
         Small=rmfield(F,{'candidate','mesh','localMesh','Core'});
         save(file,'Small','-v7');
@@ -729,18 +729,6 @@ function s=local_polyline_parameter(X,P)
         end
         s(i)=bs;
     end
-end
-
-function a=local_turn_deg(P)
-    u=P(2,:)-P(1,:);v=P(3,:)-P(2,:);
-    u=u/norm(u);v=v/norm(v);
-    a=atan2d(u(1)*v(2)-u(2)*v(1),dot(u,v));
-end
-
-function tag=local_angle_tag(thetaDeg)
-    s=sprintf('%+.8f',thetaDeg);
-    s=strrep(s,'+','p');s=strrep(s,'-','m');s=strrep(s,'.','p');
-    tag=['theta_' s 'deg'];
 end
 
 function d=local_point_segment_distance(x,A,B)
