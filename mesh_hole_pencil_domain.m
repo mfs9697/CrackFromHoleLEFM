@@ -69,10 +69,23 @@ function M = mesh_hole_pencil_domain(D, varargin)
     % checks
     % ------------------------------------------------------------
     must(D, 'outerPoly');
-    must(D, 'holeLoops');
+
+    % holeLoops may legitimately be empty.  In the centered right-half
+    % benchmark the semicircular cavity and temporary Stage-II appendix are
+    % represented directly in the concave outer boundary, so there is no
+    % separate inner loop.
+    if ~isfield(D, 'holeLoops')
+        error('mesh_hole_pencil_domain:MissingField', ...
+            'Required field "holeLoops" is missing.');
+    end
 
     outerPoly = D.outerPoly;
     holeLoops = D.holeLoops;
+
+    if ~iscell(holeLoops)
+        error('mesh_hole_pencil_domain:BadHoleLoops', ...
+            'D.holeLoops must be a cell array (possibly empty).');
+    end
 
     validate_polygon(outerPoly, 'outerPoly');
     for k = 1:numel(holeLoops)

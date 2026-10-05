@@ -1,0 +1,67 @@
+[Warning: Name is nonexistent or not a directory: C:\Users\Mikhailo\Google Drive\Projects\8 - CohZonFEM\Asphalt\remmers2003]
+STEP62: saved asymmetric mesh, no physical U loaded.
+Exterior refinement 1: 55239 cells, 1853 flagged, angle 11.8686, ratio 2.86699
+Exterior refinement 2: 57610 cells, 1777 flagged, angle 18.7294, ratio 2.76979
+Exterior refinement 3: 59920 cells, 927 flagged, angle 18.7294, ratio 2.46951
+Exterior refinement 4: 61074 cells, 65 flagged, angle 25.3158, ratio 2.00899
+Exterior refinement 5: 61166 cells, 5 flagged, angle 25.4247, ratio 2.1229
+Exterior refinement 6: 61174 cells, 0 flagged, angle 25.4247, ratio 2.00899
+Exterior refinement 1: 55239 cells, 1853 flagged, angle 11.8686, ratio 2.86699
+Exterior refinement 2: 57610 cells, 1777 flagged, angle 18.7294, ratio 2.76979
+Exterior refinement 3: 59920 cells, 927 flagged, angle 18.7294, ratio 2.46951
+Exterior refinement 4: 61074 cells, 65 flagged, angle 25.3158, ratio 2.00899
+Exterior refinement 5: 61166 cells, 5 flagged, angle 25.4247, ratio 2.1229
+Exterior refinement 6: 61174 cells, 0 flagged, angle 25.4247, ratio 2.00899
+  COD new mesh: native nodes upper/lower=272/272; abscissa mismatch 0.00000e+00 m
+    oldT3Nodes    oldT3    oldT6Nodes    newT3Nodes      newT3       newT6Nodes    replacedOldT3    retainedOldT3    pairedRadius_mm    nearestPhysicalBoundary_mm    maxPhysicalRadius_mm    oldTipMedian_mm    newTipMedian_mm    oldPrimarySupport    newPrimarySupport    patchMinAngle_deg    exteriorMinAngle_deg    pairErrorT3_m    pairErrorT6_m
+    __________    _____    __________    __________    __________    __________    _____________    _____________    _______________    __________________________    ____________________    _______________    _______________    _________________    _________________    _________________    ____________________    _____________    _____________
+
+      20164       39441      79769         55980       1.1069e+05    2.2265e+05        39441              0                 6                       8                        240.64              0.053428           0.027012              14215                40146               40.815                 25.425             2.821e-17       5.2172e-17
+
+            region               nT3        minAngle_deg    minShape    medianShape    longestMedian_mm    longestP90_mm
+    ______________________    __________    ____________    ________    ___________    ________________    _____________
+
+    {'Step38 affected'   }         39441       3.6014       0.10853        0.9803           0.16405            3.9474
+    {'Candidate paired'  }         49518       40.815       0.83677       0.86182          0.085291           0.13116
+    {'Candidate exterior'}         61174       25.425       0.54366       0.96342           0.53478            2.8787
+    {'Candidate affected'}    1.1069e+05       25.425       0.54366        0.9371           0.14285            2.6928
+
+    lower_r_over_a0    upper_r_over_a0    nativePoints
+    _______________    _______________    ____________
+
+         0.04                0.2               74
+         0.04                0.3              108
+         0.08                0.3               86
+         0.12                0.3               67
+
+             physicalGeometryUnchanged: 1
+        physicalBoundaryNodesUnchanged: 1
+                     materialUnchanged: 1
+                deterministicWholeMesh: 1
+                     completeT3Pairing: 1
+                     completeT6Pairing: 1
+                    crackFacesDistinct: 1
+                  intactLigamentShared: 1
+               crackT6MidsidesDistinct: 1
+                intactT6MidsidesShared: 1
+                       positiveT3Areas: 1
+                   positiveT6Jacobians: 1
+                 noHangingGapsOverlaps: 1
+     originalSupportInsidePairedRegion: 1
+    candidateSupportInsidePairedRegion: 1
+                exteriorOutsideSupport: 1
+                nativeSamplingAdequate: 1
+                  tipResolutionMatched: 1
+                    tipFanSixTriangles: 1
+                 monotoneStructuredLaw: 1
+                   monotoneExteriorLaw: 1
+                     minimumAngle20deg: 1
+                       noAbruptGrading: 1
+                        structuralPass: 1
+
+Step62 finished: proposal ready=0; zero FEM solves.
+    2.0090
+
+   261
+
+PASS: full exterior and structured patch at family level one; no physical FEM.

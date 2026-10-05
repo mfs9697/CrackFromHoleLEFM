@@ -1,0 +1,20 @@
+# Editor / autosave files
+*.asv
+*~
+
+# LaTeX transient build products
+*.aux
+*.bbl
+*.blg
+*.fdb_latexmk
+*.fls
+*.out
+*.synctex.gz
+*.toc
+
+# Interrupted audit checkpoints
+*.incomplete.mat
+
+# OS clutter
+.DS_Store
+Thumbs.db
