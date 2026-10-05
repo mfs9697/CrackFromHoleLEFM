@@ -23,7 +23,6 @@ function R = solve_incremental_crack_tip(candidate,varargin)
     opt=ip.Results;
 
     root=fileparts(mfilename('fullpath'));
-    local_assert_branch(root);
     outDir=fullfile(root,'verification','crack_path');
     if exist(outDir,'dir')~=7,mkdir(outDir);end
 
@@ -698,10 +697,3 @@ function tf=local_matlab_callable(name)
 end
 
 
-function local_assert_branch(root)
-    [status,b]=system(sprintf('git -C "%s" branch --show-current',root));
-    assert(status==0 && strcmp(strtrim(b),'incremental-general-crack-path'), ...
-        'pathsolve:Branch', ...
-        ['Run the generic incremental physical solve only on ', ...
-         'incremental-general-crack-path.']);
-end
