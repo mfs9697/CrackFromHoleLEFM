@@ -34,17 +34,51 @@ function Mc=collapse_polyline_pencil_faces_to_midline(M,D,varargin)
 
     sU=polyline_parameter(M.p(up,:),Pmid,opt.Tol);
     sL=polyline_parameter(M.p(lo,:),Pmid,opt.Tol);
-    [sU,iu]=sort(sU);up=up(iu);
-    [sL,il]=sort(sL);lo=lo(il);
 
     p=M.p;
     p(up,:)=polyline_points(Pmid,sU);
     p(lo,:)=polyline_points(Pmid,sL);
     p(tip,:)=Pmid(end,:);
 
-    % Every historical path vertex before the current tip must exist on
-    % both faces after collapse. These IDs remain topologically distinct.
+    % Orthogonal projection of a finite-width miter vertex onto a kinked
+    % midline is not guaranteed to land on the path vertex itself. The
+    % carrier metadata gives the exact corresponding upper/lower geometry
+    % vertex for every Pmid vertex, so snap those specific mesh nodes to the
+    % matching crack-path vertex after the general projection.
+    G=D.channelGeom.append;
+    assert(isfield(G,'face_upper_chain')&&isfield(G,'face_lower_chain'), ...
+        'stage3c:MissingFaceChains','Polyline carrier face chains are required.');
+    Uchain=G.face_upper_chain;
+    Lchain=G.face_lower_chain;
     nVert=size(Pmid,1);
+    assert(size(Uchain,1)==nVert&&size(Lchain,1)==nVert, ...
+        'stage3c:FaceChainSize','Carrier face-chain/path-vertex counts differ.');
+
+    snapUp=zeros(nVert,1);
+    snapLo=zeros(nVert,1);
+    snapTol=1e-8*max(1,norm(Pmid(end,:)-Pmid(1,:)));
+    for k=1:nVert
+        [du,iu]=min(vecnorm(M.p(up,:)-Uchain(k,:),2,2));
+        [dl,il]=min(vecnorm(M.p(lo,:)-Lchain(k,:),2,2));
+        assert(du<=snapTol&&dl<=snapTol, ...
+            'stage3c:CarrierVertexNodeMissing', ...
+            'Could not recover a mesh node for carrier path vertex %d.',k);
+        snapUp(k)=up(iu);
+        snapLo(k)=lo(il);
+        p(snapUp(k),:)=Pmid(k,:);
+        p(snapLo(k),:)=Pmid(k,:);
+    end
+    p(tip,:)=Pmid(end,:);
+
+    % Recompute arc-length parameters after the exact vertex snaps, then
+    % sort both faces consistently from mouth to current tip.
+    sU=polyline_parameter(p(up,:),Pmid,opt.Tol);
+    sL=polyline_parameter(p(lo,:),Pmid,opt.Tol);
+    [sU,iu]=sort(sU);up=up(iu);
+    [sL,il]=sort(sL);lo=lo(il);
+
+    % Every historical path vertex before the current tip must now exist on
+    % both faces after collapse. Interior upper/lower IDs remain distinct.
     vUp=cell(nVert,1);vLo=cell(nVert,1);
     for k=1:nVert
         vUp{k}=up(vecnorm(p(up,:)-Pmid(k,:),2,2)<=50*opt.Tol);
@@ -63,6 +97,8 @@ function Mc=collapse_polyline_pencil_faces_to_midline(M,D,varargin)
     crack.sameCount=numel(up)==numel(lo);
     crack.pathVertexUpperNodes=vUp;
     crack.pathVertexLowerNodes=vLo;
+    crack.snappedUpperPathVertexNodes=snapUp;
+    crack.snappedLowerPathVertexNodes=snapLo;
 
     Mc=M;
     Mc.p0=M.p;Mc.p=p;Mc.t=M.t;
