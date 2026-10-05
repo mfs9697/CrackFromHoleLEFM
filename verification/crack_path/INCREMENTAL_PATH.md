@@ -219,6 +219,18 @@ longer exists.
 
 Only one of `ResumeState` and `ResumeStateFile` may be supplied.
 
+If the first unsolved resumed segment has already been solved independently,
+its accepted compact result can be supplied without repeating the linear solve:
+
+    'ResumeAcceptedResult', R
+
+or
+
+    'ResumeAcceptedResultFile', '<path-to-step_###_physical_small.mat>'
+
+The result is accepted only after the same path, angle, EDI-support, and
+physical-gate validation used for legacy compact history.
+
 Before continuing, the driver verifies:
 
 - the frozen mouth and prescribed first segment;
@@ -280,15 +292,16 @@ Path17r = run_incremental_crack_path( ...
     'ReuseCandidates',true, ...
     'RegressionGates',true, ...
     'ResumeState',S17.State, ...
-    'ResumeSourceDir',oldDir, ...
+    'ResumeAcceptedResult',R17u, ...
     'OutputDir',probeDir);
 ```
 
-The resume must report `first resumed step = 17`. If the old directory has
-been removed, it may also report `resume history = checkpoint_only`; this is
-expected and means no unavailable SIF history was fabricated. The existing
-P17 candidate and physical checkpoint are validated and reused, so `newSolve`
-at P17 must be false. The resulting `probeDir/path_run_state.mat` is a
+The resume must report `first resumed step = 17` and `promoted result = P17`.
+If the old directory has been removed, it may also report
+`resume history = checkpoint_only`; this is expected and means no unavailable
+SIF history was fabricated. `R17u` is validated against the exact resumed P17
+path and all of its stored physical gates, so no P17 candidate rebuild or
+linear solve is required. The resulting `probeDir/path_run_state.mat` is a
 schema-2 solved-P17 state.
 
 Continuation to P20 then starts directly at P18:
