@@ -3,8 +3,9 @@ function Q = main_stage2_qualify_scaled_audited_core_theta0(varargin)
 % Stage II-B1/B2 BASE reference qualification, NO PHYSICAL FEM SOLVE.
 %
 % Construct the closed-audit reflection-paired crack-tip/core topology,
-% rescaled from the historical a0=8 mm audit to the current frozen a0.\n% This driver intentionally qualifies only the audited BASE scale s=1,
-% place it at the frozen Stage-I initiation point with theta_1=0 deg,
+% rescaled from the historical a0=8 mm audit to the current frozen a0.
+% This driver intentionally qualifies only the audited BASE scale s=1,
+% places it at the frozen Stage-I initiation point with theta_1=0 deg,
 % upgrade T3->T6, and qualify the topology/extractor using prescribed
 % leading Williams displacement fields.
 %
