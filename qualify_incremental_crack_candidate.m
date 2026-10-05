@@ -21,6 +21,7 @@ function F = qualify_incremental_crack_candidate(pathGlobal,varargin)
     addParameter(ip,'NArc',480,@(x)isnumeric(x)&&isscalar(x)&&isfinite(x)&&x>=32&&x==round(x));
     addParameter(ip,'ExteriorVerbose',true,@(x)islogical(x)&&isscalar(x));
     addParameter(ip,'RunSynthetic',true,@(x)islogical(x)&&isscalar(x));
+    addParameter(ip,'FastEDI',false,@(x)islogical(x)&&isscalar(x));
     addParameter(ip,'SaveCandidate',true,@(x)islogical(x)&&isscalar(x));
     addParameter(ip,'CandidateFile','',@(x)ischar(x)||isstring(x));
     addParameter(ip,'SaveCompact',true,@(x)islogical(x)&&isscalar(x));
@@ -29,6 +30,8 @@ function F = qualify_incremental_crack_candidate(pathGlobal,varargin)
     parse(ip,varargin{:});
     opt=ip.Results;
 
+    incremental_profile_clock('begin','qualification',size(pathGlobal,1)-1);
+    profileCleanup=onCleanup(@()incremental_profile_clock('end','qualification'));
     root=fileparts(mfilename('fullpath'));
     [R0,sourceLabel]=local_load_frozen_state(root,opt.FrozenState,char(opt.StateFile));
 
@@ -107,6 +110,7 @@ function F = qualify_incremental_crack_candidate(pathGlobal,varargin)
     % ------------------------------------------------------------------
     % True polyline source carrier. No source triangle is retained later.
     % ------------------------------------------------------------------
+    incremental_profile_clock('phase','qualification','source_carrier');
     D=build_domain_hole_true_polyline( ...
         pathGlobal,C.A,C.B,C.holes,C.mesh2.chw, ...
         'corner_tol',1e-10,'epsMode','arclength', ...
@@ -116,12 +120,15 @@ function F = qualify_incremental_crack_candidate(pathGlobal,varargin)
         'Hmin',C.mesh1.hmin,'Hmax',C.mesh1.hmax,'Hgrad',C.mesh1.hgrad, ...
         'PlotGeom',false,'PlotMesh',false);
 
+    incremental_profile_clock('phase','qualification','geometry_id_recovery');
     polyIDs=identify_polyline_pencil_edge_sets(M,D,'Verbose',true);
+    incremental_profile_clock('phase','qualification','crack_face_collapse');
     Mc=collapse_polyline_pencil_faces_to_midline(M,D, ...
         'UpperEdgeIDs',polyIDs.upperEdges, ...
         'LowerEdgeIDs',polyIDs.lowerEdges, ...
         'TipVertexID',polyIDs.v_tip);
 
+    incremental_profile_clock('phase','qualification','carrier_checks');
     assert(norm(Mc.crack.x0-p0)<=1e-12*max(1,pathLength), ...
         'pathqual:CarrierMouth','Carrier mouth changed.');
     assert(norm(Mc.crack.xtip-tip)<=1e-12*max(1,pathLength), ...
@@ -160,6 +167,7 @@ function F = qualify_incremental_crack_candidate(pathGlobal,varargin)
     % ------------------------------------------------------------------
     % Exact already-qualified structured core at scale s=1.
     % ------------------------------------------------------------------
+    incremental_profile_clock('phase','qualification','structured_core');
     Core=build_stage2_scaled_audited_core([0 0],[1 0],increment,'Scale',1);
     Zp=Core.local.coord3;
     Tp=Core.local.connect3;
@@ -179,6 +187,7 @@ function F = qualify_incremental_crack_candidate(pathGlobal,varargin)
         'Unexpected core radius/a0.');
 
     % Physical-boundary clearance in the actual carrier geometry.
+    incremental_profile_clock('phase','qualification','carrier_clearance');
     [freeOld,~]=local_edge_inventory(Told);
     freeOld=freeOld(:,1:2);
     faceOld=local_face_edge_mask(freeOld,crLocal.upperNodes, ...
@@ -192,9 +201,11 @@ function F = qualify_incremental_crack_candidate(pathGlobal,varargin)
     % ------------------------------------------------------------------
     % Audited C03-style full exterior, scaled by a0.
     % ------------------------------------------------------------------
+    incremental_profile_clock('phase','qualification','exterior');
     [Ze,Te,ext,physicalIDs]=build_stage3c_polyline_exterior( ...
         X,Told,crLocal,Zp,Tp,rp,design);
 
+    incremental_profile_clock('phase','qualification','geometry_mapping');
     outerIDs=ext.originalPhysicalIDs;
     upOld=unique(crLocal.upperNodes(:));
     loOld=unique(crLocal.lowerNodes(:));
@@ -297,6 +308,7 @@ function F = qualify_incremental_crack_candidate(pathGlobal,varargin)
     cr.lowerNodes=unique([newLower;cr.tipNode]);
     cr=local_refresh_crack_metadata_polyline(cr,Pc);
 
+    incremental_profile_clock('phase','qualification','t3_t6_local');
     [P6,T6]=T3toT6_fast(Pc,Tc);
     meshLocal=struct('coord3',Pc,'connect3',Tc,'coord',P6,'connect',T6);
 
@@ -304,11 +316,13 @@ function F = qualify_incremental_crack_candidate(pathGlobal,varargin)
     % original carrier physical-boundary vertex BITWISE, following the
     % closed-audit preservation rule. Rebuild T6 midsides from this final
     % T3 geometry; connectivity ordering must remain identical.
+    incremental_profile_clock('phase','qualification','global_boundary_restore');
     Pg=tip+Pc*R.';
     assert(all(oldToNew(physicalIDs)>0), ...
         'pathqual:LostPhysicalVertex','A source physical vertex was lost.');
     Pg(oldToNew(physicalIDs),:)=Mc.p(physicalIDs,:);
 
+    incremental_profile_clock('phase','qualification','t3_t6_global');
     [P6g,T6g]=T3toT6_fast(Pg,Tc);
     assert(isequal(T6g,T6), ...
         'pathqual:T6OrderingChanged','Global T6 connectivity ordering changed.');
@@ -325,6 +339,7 @@ function F = qualify_incremental_crack_candidate(pathGlobal,varargin)
     % ------------------------------------------------------------------
     % Structural qualification.
     % ------------------------------------------------------------------
+    incremental_profile_clock('phase','qualification','structural_qualification');
     area=local_signed_area(Pc,Tc);
     q=local_quality(Pc,Tc);
     [minJ,midErr]=local_jacobian_audit(P6,T6);
@@ -484,6 +499,7 @@ function F = qualify_incremental_crack_candidate(pathGlobal,varargin)
     end
 
     % ------------------------------------------------------------------
+    incremental_profile_clock('phase','qualification','synthetic_qualification');
     % Full-mesh prescribed Williams qualification.
     % ------------------------------------------------------------------
     mat=local_material(C);
@@ -498,6 +514,7 @@ function F = qualify_incremental_crack_candidate(pathGlobal,varargin)
     Z([up;lo],2)=0;
 
     for k=1:3
+        incremental_profile_clock('begin','williams_replay',nSegments);
         Uloc=exact_williams_displacement_audit( ...
             Z,cases(k,1),cases(k,2),mat.E,mat.nu,mat.ps, ...
             'UpperFaceIDs',up,'LowerFaceIDs',lo);
@@ -506,6 +523,8 @@ function F = qualify_incremental_crack_candidate(pathGlobal,varargin)
         U(1:2:end)=ug(:,1);
         U(2:2:end)=ug(:,2);
 
+        incremental_profile_clock('end','williams_replay');
+        incremental_profile_clock('begin','synthetic_edi',nSegments);
         [ki,kii,aux]=SIF_LEFM_interaction_EDI( ...
             meshGlobal,U,crGlobal.Pmid,mat, ...
             struct('r_inner',ri,'r_outer',ro), ...
@@ -513,8 +532,10 @@ function F = qualify_incremental_crack_candidate(pathGlobal,varargin)
             'WeightFunction','fe_nodal', ...
             'QuadratureRule',16, ...
             'StoreGPDiagnostics',false, ...
+            'SkipUnusedAuxWork',opt.FastEDI, ...
             'Verbose',false);
 
+        incremental_profile_clock('end','synthetic_edi');
         rows(k,:)=[cases(k,:),ki,kii, ...
             ki-cases(k,1),kii-cases(k,2),aux.nElem_used,aux.nGP_used];
     end
@@ -557,6 +578,7 @@ function F = qualify_incremental_crack_candidate(pathGlobal,varargin)
         fprintf('\nSYNTHETIC REPLAY SKIPPED BY EXPLICIT OPTION.\n');
     end
 
+    incremental_profile_clock('phase','qualification','result_packaging');
     pass=structuralPass&&syntheticPass;
 
     Summary=table( ...
@@ -629,6 +651,7 @@ function F = qualify_incremental_crack_candidate(pathGlobal,varargin)
     F.sampleCounts=table(windows(:,1),windows(:,2),sampleN, ...
         'VariableNames',{'lower_r_over_DeltaA','upper_r_over_DeltaA','nativePoints'});
     F.pass=pass;
+    F.fastEDI=opt.FastEDI;
 
     if opt.Plot
         local_plot_full_mesh(Pg,Tc,crGlobal,patchRows,exteriorRows,ri,ro,tip,R);
@@ -637,6 +660,7 @@ function F = qualify_incremental_crack_candidate(pathGlobal,varargin)
     outDir=fullfile(root,'verification','crack_path');
     if exist(outDir,'dir')~=7,mkdir(outDir);end
 
+    incremental_profile_clock('phase','qualification','candidate_save');
     if opt.SaveCandidate
         file=char(opt.CandidateFile);
         if isempty(file)
@@ -650,6 +674,7 @@ function F = qualify_incremental_crack_candidate(pathGlobal,varargin)
         F.candidateFile='';
     end
 
+    incremental_profile_clock('phase','qualification','compact_save');
     if opt.SaveCompact
         file=char(opt.CompactFile);
         if isempty(file)
@@ -664,6 +689,7 @@ function F = qualify_incremental_crack_candidate(pathGlobal,varargin)
         F.compactFile='';
     end
 
+    incremental_profile_clock('phase','qualification','finish');
     if pass
         fprintf('\nINCREMENTAL CANDIDATE QUALIFICATION PASS.\n');
         fprintf('  Full assembled T3/T6 mesh and prescribed EDI are qualified.\n');
@@ -1023,5 +1049,3 @@ function tf=local_is_absolute_path(p)
     tf=startsWith(p,filesep)|| ...
         ~isempty(regexp(p,'^[A-Za-z]:[\\/]','once'))||startsWith(p,'\\');
 end
-
-

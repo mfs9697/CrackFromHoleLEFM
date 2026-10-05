@@ -24,6 +24,7 @@ function Path = run_incremental_crack_path(varargin)
     addParameter(ip,'MaxSegments',5,@(x)isnumeric(x)&&isscalar(x)&&isfinite(x)&&x>=2&&x==round(x));
     addParameter(ip,'AllowPhysicalSolves',false,@(x)islogical(x)&&isscalar(x));
     addParameter(ip,'RunSynthetic',true,@(x)islogical(x)&&isscalar(x));
+    addParameter(ip,'FastEDI',false,@(x)islogical(x)&&isscalar(x));
     addParameter(ip,'ReuseCandidates',true,@(x)islogical(x)&&isscalar(x));
     addParameter(ip,'PlotEachStep',false,@(x)islogical(x)&&isscalar(x));
     addParameter(ip,'RegressionGates',true,@(x)islogical(x)&&isscalar(x));
@@ -34,6 +35,8 @@ function Path = run_incremental_crack_path(varargin)
     parse(ip,varargin{:});
     opt=ip.Results;
 
+    incremental_profile_clock('begin','run',0);
+    profileCleanup=onCleanup(@()incremental_profile_clock('end','run'));
     root=fileparts(mfilename('fullpath'));
     R0=local_load_frozen(root,opt.FrozenState);
     C=R0.C;
@@ -113,6 +116,8 @@ function Path = run_incremental_crack_path(varargin)
     % Start at k=2 because the accepted P1 state seeded segment 2.
     % --------------------------------------------------------------
     for k=2:opt.MaxSegments
+        incremental_profile_clock('begin','step',k);
+        stepProfileCleanup=onCleanup(@()incremental_profile_clock('end','step'));
         pathNow=vertices(1:k+1,:);
 
         fprintf('\n------------------------------------------------------------\n');
@@ -124,6 +129,7 @@ function Path = run_incremental_crack_path(varargin)
         candidateFile=fullfile(outDir,sprintf('step_%03d_candidate.mat',k));
         qualFile=fullfile(outDir,sprintf('step_%03d_qualification_small.mat',k));
 
+        incremental_profile_clock('phase','step','qualification_or_candidate_reuse');
         useSaved=false;
         if opt.ReuseCandidates && exist(candidateFile,'file')==2
             d=load(candidateFile,'candidate');
@@ -143,6 +149,7 @@ function Path = run_incremental_crack_path(varargin)
             Q=qualify_incremental_crack_candidate(pathNow, ...
                 'FrozenState',R0, ...
                 'RunSynthetic',opt.RunSynthetic, ...
+                'FastEDI',opt.FastEDI, ...
                 'SaveCandidate',true, ...
                 'CandidateFile',candidateFile, ...
                 'SaveCompact',true, ...
@@ -159,9 +166,11 @@ function Path = run_incremental_crack_path(varargin)
         cp=fullfile(outDir,sprintf('step_%03d_physical_solved.mat',k));
         sf=fullfile(outDir,sprintf('step_%03d_physical_small.mat',k));
 
+        incremental_profile_clock('phase','step','physical');
         R=solve_incremental_crack_tip(candidate, ...
             'FrozenState',R0, ...
             'AllowSolve',opt.AllowPhysicalSolves, ...
+            'FastEDI',opt.FastEDI, ...
             'CheckpointFile',cp, ...
             'SaveFile',sf);
 
@@ -171,6 +180,7 @@ function Path = run_incremental_crack_path(varargin)
         end
         stepResults{k}=R;
 
+        incremental_profile_clock('phase','step','recurrence_and_checkpoint');
         KI=R.EDI.KI_unit;
         KII=R.EDI.KII_unit;
         ratio=R.EDI.KII_over_KI;
@@ -202,6 +212,7 @@ function Path = run_incremental_crack_path(varargin)
 
         % Driver stops after recording the physical state at MaxSegments.
         if k==opt.MaxSegments
+            clear stepProfileCleanup
             break
         end
 
@@ -214,6 +225,7 @@ function Path = run_incremental_crack_path(varargin)
         if pNext(1)<0 || pNext(1)>C.A || pNext(2)<-C.B || pNext(2)>C.B
             stopReason='next_tip_outside_plate';
             fprintf('  STOP: proposed next tip is outside the plate.\n');
+            clear stepProfileCleanup
             break
         end
 
@@ -224,6 +236,7 @@ function Path = run_incremental_crack_path(varargin)
                 stopReason=sprintf('next_tip_core_clearance_%.6g_m',clearance);
                 fprintf('  STOP: proposed next tip clearance %.6f mm <= rCore %.6f mm.\n', ...
                     1e3*clearance,1e3*rCore);
+                clear stepProfileCleanup
                 break
             end
         end
@@ -240,6 +253,7 @@ function Path = run_incremental_crack_path(varargin)
         save(tmp,'State','-v7');
         [ok,msg]=movefile(tmp,dst,'f');
         if ~ok,error('pathrun:StateSave','%s',msg);end
+        clear stepProfileCleanup
     end
 
     used=find(isfinite(rows(:,1)));
@@ -262,6 +276,7 @@ function Path = run_incremental_crack_path(varargin)
     Path.regression=regression;
     Path.stopReason=stopReason;
     Path.outputDir=outDir;
+    Path.fastEDI=opt.FastEDI;
     Path.thirdAndLaterGenerated=nExisting>=3;
     Path.complete=strcmp(stopReason,'max_segments_reached') || ...
         startsWith(stopReason,'next_tip_');
@@ -319,4 +334,3 @@ function tf=local_is_absolute_path(p)
     tf=startsWith(p,filesep)|| ...
         ~isempty(regexp(p,'^[A-Za-z]:[\\/]','once'))||startsWith(p,'\\');
 end
-
