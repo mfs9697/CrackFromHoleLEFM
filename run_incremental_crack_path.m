@@ -19,10 +19,11 @@ function Path = run_incremental_crack_path(varargin)
 % Optional resume:
 %   ResumeState     : in-memory State struct written by this driver
 %   ResumeStateFile : MAT file containing State
-%   ResumeSourceDir : directory containing prior compact physical results;
-%                     needed only for legacy State files without embedded
-%                     row history. If ResumeStateFile is used, its folder
-%                     is the default ResumeSourceDir.
+%   ResumeSourceDir : optional directory containing prior compact physical
+%                     results. If present, surviving rows are recovered.
+%   ResumeAcceptedResult     : accepted in-memory R struct for the first
+%                     unsolved resumed segment (for example R17u).
+%   ResumeAcceptedResultFile : MAT file containing that struct as R.
 %
 % A resumed State is validated against the frozen Stage-I geometry, the
 % prescribed 4-mm increments, stored segment angles, and accepted physical
@@ -45,6 +46,8 @@ function Path = run_incremental_crack_path(varargin)
     addParameter(ip,'ResumeState',[],@(x)isempty(x)||(isstruct(x)&&isscalar(x)));
     addParameter(ip,'ResumeStateFile','',@(x)ischar(x)||isstring(x));
     addParameter(ip,'ResumeSourceDir','',@(x)ischar(x)||isstring(x));
+    addParameter(ip,'ResumeAcceptedResult',[],@(x)isempty(x)||(isstruct(x)&&isscalar(x)));
+    addParameter(ip,'ResumeAcceptedResultFile','',@(x)ischar(x)||isstring(x));
     addParameter(ip,'SeedKI',0.366479612185,@(x)isnumeric(x)&&isscalar(x)&&isfinite(x));
     addParameter(ip,'SeedKII',4.19826648316e-6,@(x)isnumeric(x)&&isscalar(x)&&isfinite(x));
     parse(ip,varargin{:});
@@ -129,6 +132,24 @@ function Path = run_incremental_crack_path(varargin)
     end
     if ~resumed,resumeHistoryMode='fresh';end
 
+    [resumeAcceptedResult,resumeAcceptedLabel]=local_load_resume_accepted_result( ...
+        root,opt.ResumeAcceptedResult,char(opt.ResumeAcceptedResultFile));
+
+    promotedAcceptedSegment=0;
+    promotedNextThetaDeg=NaN;
+    if ~isempty(resumeAcceptedResult)
+        if ~resumed
+            error('pathrun:AcceptedResultWithoutResume', ...
+                'ResumeAcceptedResult requires ResumeState or ResumeStateFile.');
+        end
+        [vertices,thetaDeg,rows,stepResults,completedPhysicalSegments,startK, ...
+            promotedAcceptedSegment,promotedNextThetaDeg]= ...
+            local_promote_accepted_result( ...
+                resumeAcceptedResult,opt.MaxSegments,vertices,thetaDeg,rows, ...
+                stepResults,completedPhysicalSegments,startK,increment,nMat,tHat,C, ...
+                opt.StopAtCoreClearance);
+    end
+
     fprintf('\n============================================================\n');
     fprintf('GENERAL INCREMENTAL CRACK-PATH DRIVER\n');
     fprintf('============================================================\n');
@@ -146,9 +167,25 @@ function Path = run_incremental_crack_path(varargin)
         fprintf('  completed physical= %d segments\n',completedPhysicalSegments);
         fprintf('  first resumed step= %d\n',startK);
         fprintf('  resume history    = %s\n',resumeHistoryMode);
+        if promotedAcceptedSegment>0
+            fprintf('  promoted result   = P%d from %s\n', ...
+                promotedAcceptedSegment,resumeAcceptedLabel);
+            if startK<=opt.MaxSegments
+                fprintf('  first new step    = %d\n',startK);
+            else
+                fprintf('  first new step    = none (target already accepted)\n');
+            end
+        end
     end
 
     stopReason='max_segments_reached';
+
+    if promotedAcceptedSegment>0 && startK>opt.MaxSegments
+        State=local_make_resume_state(vertices,thetaDeg,completedPhysicalSegments, ...
+            promotedNextThetaDeg,regression,'max_segments_reached', ...
+            rows,opt.FastEDI,outDir);
+        local_atomic_save_state(outDir,State);
+    end
 
     % --------------------------------------------------------------
     % k = number of already existing finite crack segments.
@@ -326,6 +363,8 @@ function Path = run_incremental_crack_path(varargin)
     Path.resumeSourceDir=resumeSourceDir;
     Path.resumeStartSegment=startK;
     Path.resumeHistoryMode=resumeHistoryMode;
+    Path.promotedAcceptedSegment=promotedAcceptedSegment;
+    Path.resumeAcceptedResultSource=resumeAcceptedLabel;
     Path.completedPhysicalSegmentsAtStart=completedPhysicalSegments;
     Path.thirdAndLaterGenerated=nExisting>=3;
     Path.complete=strcmp(stopReason,'max_segments_reached') || ...
@@ -386,6 +425,92 @@ function [State,label,sourceDir]=local_load_resume_state(root,Rin,fileIn,sourceI
         sourceDir=char(sourceIn);
         if ~local_is_absolute_path(sourceDir),sourceDir=fullfile(root,sourceDir);end
     end
+end
+
+function [R,label]=local_load_resume_accepted_result(root,Rin,fileIn)
+    if ~isempty(Rin) && ~isempty(strtrim(fileIn))
+        error('pathrun:AcceptedResultSourceConflict', ...
+            'Pass either ResumeAcceptedResult or ResumeAcceptedResultFile, not both.');
+    end
+    R=[];
+    label='<none>';
+    if ~isempty(Rin)
+        R=Rin;
+        label='<in-memory accepted physical result>';
+        return
+    end
+    if isempty(strtrim(fileIn)),return,end
+    f=char(fileIn);
+    if ~local_is_absolute_path(f),f=fullfile(root,f);end
+    if exist(f,'file')~=2
+        error('pathrun:MissingAcceptedResult', ...
+            'ResumeAcceptedResultFile not found: %s',f);
+    end
+    d=load(f,'R');
+    if ~isfield(d,'R')||~isstruct(d.R)||~isscalar(d.R)
+        error('pathrun:BadAcceptedResultFile', ...
+            'ResumeAcceptedResultFile must contain one scalar struct named R.');
+    end
+    R=d.R;
+    label=f;
+end
+
+function [vertices,thetaDeg,rows,stepResults,kDone,startK,promotedK,nextThetaDeg]= ...
+        local_promote_accepted_result(R,maxSegments,vertices,thetaDeg,rows, ...
+        stepResults,kDone,startK,increment,nMat,tHat,C,stopAtCoreClearance)
+
+    promotedK=startK;
+    if promotedK~=kDone+1
+        error('pathrun:AcceptedResultOrder', ...
+            'Accepted result must correspond to the first unsolved resumed segment.');
+    end
+    if promotedK>maxSegments
+        error('pathrun:AcceptedResultBeyondTarget', ...
+            'Accepted result segment %d exceeds MaxSegments=%d.',promotedK,maxSegments);
+    end
+    if size(vertices,1)-1~=promotedK || numel(thetaDeg)~=promotedK
+        error('pathrun:AcceptedResultPathShape', ...
+            'Resume path must contain exactly the promoted unsolved segment.');
+    end
+
+    local_validate_resume_result(R,promotedK,vertices,thetaDeg);
+    rows(promotedK,:)=local_row_from_result(R,promotedK);
+    stepResults{promotedK}=R;
+    kDone=promotedK;
+    nextThetaDeg=R.thetaNextDeg;
+
+    if kDone==maxSegments
+        % Keep exactly the solved path. The schema-2 state records the next
+        % MTS angle but does not append a segment beyond the requested target.
+        startK=maxSegments+1;
+        return
+    end
+
+    if ~isfinite(nextThetaDeg)
+        error('pathrun:AcceptedResultNextAngle', ...
+            'Accepted result has a nonfinite next MTS angle.');
+    end
+
+    eNext=cosd(nextThetaDeg)*nMat+sind(nextThetaDeg)*tHat;
+    eNext=eNext/norm(eNext);
+    pNext=vertices(end,:)+increment*eNext;
+
+    if pNext(1)<0 || pNext(1)>C.A || pNext(2)<-C.B || pNext(2)>C.B
+        error('pathrun:AcceptedResultNextTipOutside', ...
+            'Accepted result predicts a next tip outside the plate.');
+    end
+    if stopAtCoreClearance
+        rCore=.75*increment;
+        clearance=local_physical_clearance(pNext,C);
+        if clearance<=rCore
+            error('pathrun:AcceptedResultNextTipClearance', ...
+                'Accepted result predicts a next tip inside the core-clearance stop.');
+        end
+    end
+
+    vertices(end+1,:)=pNext;
+    thetaDeg(end+1,1)=nextThetaDeg;
+    startK=kDone+1;
 end
 
 function [vertices,thetaDeg,rows,stepResults,regression,kDone,startK,historyMode]= ...
