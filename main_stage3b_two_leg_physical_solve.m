@@ -517,6 +517,11 @@ function R = main_stage3b_two_leg_physical_solve(varargin)
     gates.physicalEDIFinite=isfinite(KI)&&isfinite(KII)&&isfinite(qEDI);
     gates.modeIPositive=KI>0;
     gates.matchedEDISupport=Aux.nElem_used==11316;
+    gates.mtsFinite=isfinite(deltaTheta3)&&isfinite(deltaTheta3Deg)&& ...
+        isfinite(theta3Deg)&&isfinite(globalTheta3Deg)&&isfinite(sigmaTTMTS);
+    gates.codMTSFinite=all(isfinite(fitTable.deltaTheta3_MTS_deg));
+    gates.checkpointBeforePostprocessing= ...
+        ~logical(s.meta.postprocessingPerformedBeforeCheckpoint);
     gates.singlePhysicalState=logical(s.meta.singlePhysicalStateOnly);
     gates.theta2Prescribed=logical(s.meta.theta2Prescribed) && abs(theta2Deg)<=1e-12;
     gates.noThirdLegGenerated=logical(s.meta.noThirdLegGenerated);
@@ -533,12 +538,19 @@ function R = main_stage3b_two_leg_physical_solve(varargin)
         'deltaTheta3_MTS_deg','theta3_local_deg','theta3_global_deg', ...
         'sigmaTT_MTS','lambda_ini','KI_at_lambda_ini','KII_at_lambda_ini'});
 
+    Prediction=table(theta2Deg,globalTheta2Deg,deltaTheta3Deg, ...
+        theta3Deg,globalTheta3Deg,sigmaTTMTS, ...
+        'VariableNames',{'theta2_local_deg','theta2_global_deg', ...
+        'deltaTheta3_MTS_deg','theta3_local_deg','theta3_global_deg','sigmaTT_MTS'});
+
     Solver=struct2table(s.solverInfo,'AsArray',true);
 
     fprintf('\nPHYSICAL COD FITS\n');
     disp(fitTable);
     fprintf('\nPHYSICAL EDI\n');
     disp(EDI);
+    fprintf('\nMTS PREDICTION FOR NEXT SEGMENT\n');
+    disp(Prediction);
     fprintf('\nSOLVER INFO\n');
     disp(Solver);
     fprintf('\nPHYSICAL-SOLVE GATES\n');
@@ -585,6 +597,7 @@ function R = main_stage3b_two_leg_physical_solve(varargin)
     R.summary=Summary;
     R.fitTable=fitTable;
     R.EDI=EDI;
+    R.prediction=Prediction;
     R.solverInfo=s.solverInfo;
     R.gates=gates;
     R.pass=pass;
@@ -602,6 +615,7 @@ function R = main_stage3b_two_leg_physical_solve(varargin)
     R.theta3=theta3;
     R.theta3GlobalDeg=globalTheta3Deg;
     R.pathFixed=[p0;p1;p2];
+    R.currentIncrementLength=currentIncrement;
     R.thirdLegGenerated=false;
     R.interpretation=[ ...
         'One qualified physical LEFM solve of the fixed Stage III-A two-leg state. ', ...
