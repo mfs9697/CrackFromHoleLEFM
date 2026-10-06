@@ -473,9 +473,13 @@ The additional figures are:
     degrees 1 and 2 compared with the EDI MTS prediction;
 12. `12_COD_mode_mixity_sensitivity`: the corresponding COD-versus-EDI
     KII/KI comparison for all stored fits;
-13. `13_trajectory_late_detail`: path overview plus a late-path enlargement
-    with the mode-mixity maximum, interpolated local-symmetry location,
-    P23, and qualified-but-unsolved P24.
+13. `13_trajectory_late_detail`: two stacked true-scale x-y panels. The
+    upper panel shows the hole, accepted P0--P23 path, and the separately
+    dashed qualified-but-unsolved P23--P24 geometry. The lower wide strip
+    shows P15--P24 at the same 1 mm = 1 mm scale, with the mode-mixity
+    maximum, the linearly interpolated KII/KI=0 location, P23, and P24.
+    Stacking avoids the aspect-ratio distortion of a narrow side-by-side
+    spatial zoom.
 
 By default EPS and 300-dpi PNG files are written to
 `final_clean_run/plots`. The function returns the assembled authoritative
