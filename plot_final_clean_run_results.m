@@ -1,7 +1,10 @@
 function Out = plot_final_clean_run_results(varargin)
 %PLOT_FINAL_CLEAN_RUN_RESULTS Plot the accepted clean incremental path.
 %
-%   Out = plot_final_clean_run_results('FrozenState',R0)
+%   Out = plot_final_clean_run_results()
+%
+% With no FrozenState argument, the function loads the accepted Stage-I
+% state from verification/crack_path/stage1_starting_state.mat.
 %
 % Reads the atomic path state and the compact per-step qualification/physical
 % results from verification/crack_path/final_clean_run. Only accepted
