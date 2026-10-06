@@ -392,7 +392,9 @@ timings without a physical solve.
 ## Final clean-run plotting
 
 The accepted production rerun can be plotted directly from its atomic
-`path_run_state.mat` and compact per-step files. This is intentionally
+`path_run_state.mat` and compact per-step files. The plotting function loads
+`verification/crack_path/stage1_starting_state.mat` automatically unless an
+in-memory `FrozenState` is supplied explicitly. This is intentionally
 independent of whether the driver returned normally: if a later physical solve
 fails after earlier accepted states were checkpointed, the accepted history is
 still recoverable.
@@ -401,7 +403,6 @@ Use:
 
 ```matlab
 P = plot_final_clean_run_results( ...
-    'FrozenState',R0, ...
     'RunDir',fullfile(fileparts(which('run_incremental_crack_path')), ...
         'verification','crack_path','final_clean_run'));
 ```
