@@ -447,3 +447,28 @@ The default COD comparison uses the quadratic fit over
 P = plot_final_clean_run_results('FrozenState',R0, ...
     'CODWindow',[0.04 0.30],'CODDegree',2);
 ```
+
+
+### Portable scientific snapshot (no local MAT archive)
+
+A fresh clone on another computer does not contain the untracked
+`final_clean_run` MAT artifacts. For that situation the repository includes
+a compact accepted scientific snapshot through P23:
+
+```text
+verification/crack_path/reference/accepted_clean_run_P1_P23.csv
+verification/crack_path/reference/accepted_clean_run_vertices_P0_P23.csv
+```
+
+These files are sufficient for the five scientific plots and can be used with:
+
+```matlab
+P = plot_accepted_clean_run_snapshot;
+```
+
+This fallback reproduces the accepted P1-P23 trajectory, local angle, MTS turn,
+mode-I SIF, and mode-mixity curves without any FEM solve. It is deliberately
+limited: the original compact MAT archive remains authoritative for COD-vs-EDI,
+mesh-quality, and solver diagnostics. When `final_clean_run` is later copied
+from the original machine, use `plot_final_clean_run_results` for the full
+seven-figure audit.
