@@ -23,6 +23,7 @@ function Out = plot_final_clean_run_additional_results(varargin)
 %   'Formats'          : default {'eps','png'}.
 %   'Visible'          : 'on' or 'off', default 'on'.
 %   'CloseExisting'    : close figures created here first, default false.
+%   'UseLatex'          : use LaTeX interpreters for all figure text, default true.
 %   'LateStartSegment' : first segment in late-path zoom, default 15.
 %   'PlateA'           : plate width [m], default 0.300.
 %   'PlateB'           : plate half-height [m], default 0.100.
