@@ -441,3 +441,47 @@ The default COD comparison uses the quadratic fit over
 P = plot_final_clean_run_results('FrozenState',R0, ...
     'CODWindow',[0.04 0.30],'CODDegree',2);
 ```
+
+
+## Additional final clean-run scientific plots
+
+The audited P1--P23 clean-run archive supports a second postprocessing-only
+plotting set without any new FE solve:
+
+```matlab
+A = plot_final_clean_run_additional_results( ...
+    'RunDir',fullfile(fileparts(which('run_incremental_crack_path')), ...
+        'verification','crack_path','final_clean_run'));
+```
+
+The routine reads only `path_run_state.mat` and the accepted compact physical
+and qualification files. It does not require the missing historical Stage-I
+MAT file. The 4-mm increment is recovered from the accepted path geometry.
+For the trajectory panel, the asymmetric hole center is reconstructed from
+the audited crack mouth, first-segment direction and 30-mm hole radius.
+
+The additional figures are:
+
+8. `08_KII`: mode-II stress-intensity factor versus crack length, including
+   the positive maximum, the post-peak local-symmetry crossing, and the last
+   accepted state;
+9. `09_KI_KII_panels`: aligned mode-I and mode-II histories, emphasizing
+   that KI continues to rise while KII changes sign;
+10. `10_late_mode_mixity_MTS`: late-path KII/KI and MTS turn in aligned
+    panels, defaulting to P15--P23;
+11. `11_COD_turn_sensitivity`: all four stored COD windows for polynomial
+    degrees 1 and 2 compared with the EDI MTS prediction;
+12. `12_COD_mode_mixity_sensitivity`: the corresponding COD-versus-EDI
+    KII/KI comparison for all stored fits;
+13. `13_trajectory_late_detail`: path overview plus a late-path enlargement
+    with the mode-mixity maximum, interpolated local-symmetry location,
+    P23, and qualified-but-unsolved P24.
+
+By default EPS and 300-dpi PNG files are written to
+`final_clean_run/plots`. The function returns the assembled authoritative
+step table, the complete 176-row COD-sensitivity table for P2--P23, detected
+landmarks, figure handles, and validation counts.
+
+P24 is never included in the scientific SIF or MTS curves. It is shown only
+as qualified-unsolved diagnostic geometry when the compact qualification file
+is present and no P24 physical result/checkpoint exists.
