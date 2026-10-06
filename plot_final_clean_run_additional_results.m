@@ -48,6 +48,7 @@ function Out = plot_final_clean_run_additional_results(varargin)
     addParameter(ip,'Visible','on', ...
         @(x)(ischar(x)||isstring(x))&&any(strcmpi(char(x),{'on','off'})));
     addParameter(ip,'CloseExisting',false,@(x)islogical(x)&&isscalar(x));
+    addParameter(ip,'UseLatex',true,@(x)islogical(x)&&isscalar(x));
     addParameter(ip,'LateStartSegment',15, ...
         @(x)isnumeric(x)&&isscalar(x)&&isfinite(x)&&x==round(x)&&x>=1);
     addParameter(ip,'PlateA',0.300,@(x)isnumeric(x)&&isscalar(x)&&isfinite(x)&&x>0);
@@ -351,6 +352,13 @@ function Out = plot_final_clean_run_additional_results(varargin)
     xlim(ax2,[xlo xhi]);ylim(ax2,[ylo yhi]);
     hold(ax2,'off');
 
+    if opt.UseLatex
+        figNames=fieldnames(F);
+        for j=1:numel(figNames)
+            local_apply_latex(F.(figNames{j}));
+        end
+    end
+
     if opt.SaveFigures
         local_export(F.KII,figDir,'08_KII',formats);
         local_export(F.KIKII,figDir,'09_KI_KII_panels',formats);
@@ -371,6 +379,7 @@ function Out = plot_final_clean_run_additional_results(varargin)
     V.increment_m=da;
     V.holeCenter_m=holeCenter;
     V.holeRadius_m=opt.HoleRadius;
+    V.UseLatex=opt.UseLatex;
 
     Out=struct();
     Out.stepTable=T;
@@ -637,6 +646,27 @@ function formats=local_formats(x)
     bad=formats(~ismember(formats,allowed));
     if ~isempty(bad)
         error('cleanplot2:Format','Unsupported figure format(s): %s',strjoin(bad,', '));
+    end
+end
+
+
+function local_apply_latex(fig)
+    if isempty(fig) || ~isgraphics(fig),return,end
+
+    tickObjs=findall(fig,'-property','TickLabelInterpreter');
+    for k=1:numel(tickObjs)
+        try
+            set(tickObjs(k),'TickLabelInterpreter','latex');
+        catch
+        end
+    end
+
+    interpObjs=findall(fig,'-property','Interpreter');
+    for k=1:numel(interpObjs)
+        try
+            set(interpObjs(k),'Interpreter','latex');
+        catch
+        end
     end
 end
 
