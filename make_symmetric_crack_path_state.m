@@ -39,6 +39,7 @@ function R0 = make_symmetric_crack_path_state()
     R0.summary=Summary;
     R0.gates=gates;
     R0.stage1Pass=true;
+    R0.isPrescribedSymmetryBenchmark=true;
     R0.method='symmetry_prescribed_centered_hole_benchmark';
     R0.interpretation=[ ...
         'Centered-hole full-domain benchmark. Initiation point and local ', ...
