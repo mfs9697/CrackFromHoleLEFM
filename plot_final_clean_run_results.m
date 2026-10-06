@@ -484,9 +484,9 @@ function Mesh=local_collect_mesh(runDir,nGeom,kDone,da)
         'segment','crack_length_mm','accepted', ...
         'physical_clearance_mm','min_angle_deg','max_neighbor_ratio', ...
         'T3_elements','T6_nodes','EDI_elements','pass','physical_result_present'});
-    Mesh.accepted=logical(Mesh.accepted);
-    Mesh.pass=logical(Mesh.pass);
-    Mesh.physical_result_present=logical(Mesh.physical_result_present);
+    Mesh.accepted=Mesh.accepted==1;
+    Mesh.pass=Mesh.pass==1;
+    Mesh.physical_result_present=Mesh.physical_result_present==1;
 end
 
 
@@ -610,7 +610,7 @@ function [xmin,xmax,ymin,ymax]=local_trajectory_limits(C,vertices)
     if isempty(holeX),holeX=xx;holeY=yy;end
     margin=5;
     xmin=max(0,min([xx;holeX(:)])-margin);
-    xmax=min(A+2,max(A,max(xx)+margin));
+    xmax=min(1e3*C.A+2,max(1e3*C.A,max(xx)+margin)+2);
     ymin=max(-1e3*C.B,min([yy;holeY(:)])-margin);
     ymax=min( 1e3*C.B,max([yy;holeY(:)])+margin);
 end
