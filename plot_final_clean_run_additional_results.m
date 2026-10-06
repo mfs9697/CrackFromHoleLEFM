@@ -267,10 +267,20 @@ function Out = plot_final_clean_run_additional_results(varargin)
     end
 
     % ==================================================================
-    % 13. Publication-style trajectory overview and late detail
+    % 13. Publication-style trajectory overview and true-scale late detail
+    %
+    % The panels are stacked deliberately. A side-by-side late-path panel
+    % is too narrow for an equal-scale x-y plot: the axes then expand and
+    % suppress the small but meaningful curvature. Both panels below keep
+    % 1 mm = 1 mm. The accepted path ends at P23; the qualified-but-unsolved
+    % P23->P24 segment is shown separately as dashed diagnostic geometry.
     % ==================================================================
-    F.trajectoryDetail=local_new_figure(opt.Visible,'Trajectory overview and late detail');
-    tl=tiledlayout(F.trajectoryDetail,1,2,'TileSpacing','compact','Padding','compact');
+    F.trajectoryDetail=local_new_figure(opt.Visible, ...
+        'Trajectory overview and true-scale late detail');
+    set(F.trajectoryDetail,'Position',[100 100 1000 560], ...
+        'PaperPositionMode','auto');
+    tl=tiledlayout(F.trajectoryDetail,2,1, ...
+        'TileSpacing','compact','Padding','compact');
 
     allVertices=State.vertices;
     p0=allVertices(1,:);
@@ -278,46 +288,68 @@ function Out = plot_final_clean_run_additional_results(varargin)
     e1=e1/norm(e1);
     holeCenter=p0-opt.HoleRadius*e1;
 
+    % ----- overview: actual geometry at true scale
     ax1=nexttile(tl);
     local_plot_geometry(ax1,opt.PlateA,opt.PlateB,holeCenter,opt.HoleRadius);
     hold(ax1,'on');
     plot(ax1,1e3*verticesAccepted(:,1),1e3*verticesAccepted(:,2), ...
-        '-o','LineWidth',1.5,'MarkerSize',4,'DisplayName','accepted path');
+        '-o','LineWidth',1.5,'MarkerSize',4, ...
+        'DisplayName',sprintf('accepted path, P_0--P_{%d}',kDone));
     local_plot_path_landmarks(ax1,L);
+
     if hasQualifiedUnsolved && QnextPass
+        plot(ax1,1e3*allVertices(end-1:end,1),1e3*allVertices(end-1:end,2), ...
+            '--','LineWidth',1.4, ...
+            'DisplayName',sprintf('P_{%d}--P_{%d}: qualified, unsolved', ...
+            kDone,nGeom));
         plot(ax1,1e3*allVertices(end,1),1e3*allVertices(end,2),'x', ...
-            'MarkerSize',9,'LineWidth',1.5, ...
-            'DisplayName',sprintf('P_{%d}: qualified, unsolved',nGeom));
+            'MarkerSize',9,'LineWidth',1.5,'HandleVisibility','off');
     end
+
     xlabel(ax1,'x [mm]');ylabel(ax1,'y [mm]');
-    title(ax1,'Accepted crack path');
-    axis(ax1,'equal');grid(ax1,'on');box(ax1,'on');
+    title(ax1,'Crack trajectory: accepted path and next qualified geometry');
+    grid(ax1,'on');box(ax1,'on');
+    daspect(ax1,[1 1 1]);
     [xmin,xmax,ymin,ymax]=local_overview_limits(opt.PlateA,opt.PlateB, ...
         holeCenter,opt.HoleRadius,allVertices);
     xlim(ax1,[xmin xmax]);ylim(ax1,[ymin ymax]);
-    legend(ax1,'Location','best');hold(ax1,'off');
+    legend(ax1,'Location','eastoutside');
+    hold(ax1,'off');
 
+    % ----- late detail: same physical x-y scale, but in a wide strip
     ax2=nexttile(tl);
     hold(ax2,'on');box(ax2,'on');
-    plot(ax2,1e3*verticesAccepted(:,1),1e3*verticesAccepted(:,2), ...
-        '-o','LineWidth',1.6,'MarkerSize',5,'DisplayName','accepted path');
-    xline(ax2,1e3*opt.PlateA,'--','right boundary','HandleVisibility','off');
+
+    lateVertexStart=max(1,lateStart+1); % row corresponding to P_lateStart
+    lateAccepted=verticesAccepted(lateVertexStart:end,:);
+    plot(ax2,1e3*lateAccepted(:,1),1e3*lateAccepted(:,2), ...
+        '-o','LineWidth',1.7,'MarkerSize',5,'HandleVisibility','off');
+
+    xline(ax2,1e3*opt.PlateA,'--','right boundary', ...
+        'LabelVerticalAlignment','middle','HandleVisibility','off');
     local_plot_path_landmarks(ax2,L);
+
     if hasQualifiedUnsolved && QnextPass
+        plot(ax2,1e3*allVertices(end-1:end,1),1e3*allVertices(end-1:end,2), ...
+            '--','LineWidth',1.5,'HandleVisibility','off');
         plot(ax2,1e3*allVertices(end,1),1e3*allVertices(end,2),'x', ...
-            'MarkerSize',10,'LineWidth',1.6, ...
-            'DisplayName',sprintf('P_{%d}: qualified, unsolved',nGeom));
+            'MarkerSize',10,'LineWidth',1.7,'HandleVisibility','off');
     end
-    lateVertexStart=max(1,lateStart+1); % vertex row P_lateStart
+
     lateVertices=allVertices(lateVertexStart:end,:);
-    xlo=min(1e3*lateVertices(:,1))-2;
-    xhi=1e3*opt.PlateA+1;
-    ylo=min(1e3*lateVertices(:,2))-1.5;
-    yhi=max(1e3*lateVertices(:,2))+1.5;
-    xlim(ax2,[xlo xhi]);ylim(ax2,[ylo yhi]);
+    xlo=min(1e3*lateVertices(:,1))-1.5;
+    xhi=1e3*opt.PlateA+1.0;
+    ylo=min(1e3*lateVertices(:,2))-1.0;
+    yhi=max(1e3*lateVertices(:,2))+1.0;
+
     xlabel(ax2,'x [mm]');ylabel(ax2,'y [mm]');
-    title(ax2,sprintf('Late-path detail, P_{%d}--P_{%d}',lateStart,nGeom));
-    axis(ax2,'equal');grid(ax2,'on');legend(ax2,'Location','best');hold(ax2,'off');
+    title(ax2,sprintf( ...
+        'True-scale late-path detail, P_{%d}--P_{%d}; P_{%d} is unsolved', ...
+        lateStart,nGeom,nGeom));
+    grid(ax2,'on');
+    daspect(ax2,[1 1 1]);
+    xlim(ax2,[xlo xhi]);ylim(ax2,[ylo yhi]);
+    hold(ax2,'off');
 
     if opt.SaveFigures
         local_export(F.KII,figDir,'08_KII',formats);
@@ -552,7 +584,7 @@ function local_plot_path_landmarks(ax,L)
         'DisplayName',sprintf('P_{%d}: max mode mixity',L.peakSegment));
     if L.hasZeroCrossing
         plot(ax,L.xLS_mm,L.yLS_mm,'d','MarkerSize',8,'LineWidth',1.5, ...
-            'DisplayName',sprintf('local symmetry, %.2f mm',L.aLS_mm));
+            'DisplayName',sprintf('linear K_{II}/K_I=0 estimate, %.2f mm',L.aLS_mm));
     end
     plot(ax,L.xLast_mm,L.yLast_mm,'s','MarkerSize',8,'LineWidth',1.5, ...
         'DisplayName',sprintf('P_{%d}: last accepted',L.lastSegment));
