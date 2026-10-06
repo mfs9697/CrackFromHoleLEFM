@@ -392,9 +392,14 @@ timings without a physical solve.
 ## Final clean-run plotting
 
 The accepted production rerun can be plotted directly from its atomic
-`path_run_state.mat` and compact per-step files. The plotting function loads
-`verification/crack_path/stage1_starting_state.mat` automatically unless an
-in-memory `FrozenState` is supplied explicitly. This is intentionally
+`path_run_state.mat` and compact per-step files. If the local generated
+`verification/crack_path/stage1_starting_state.mat` exists, the plotting
+function loads it automatically. If that uncommitted artifact is absent, the
+plotter uses only the immutable plate/hole geometry and 4-mm increment from
+`cfg_first_segment_asymmetric`, after checking the accepted geometry
+fingerprint. The crack mouth and trajectory coordinates still come from the
+atomic path state, so no Stage-I solve is rerun and no trajectory data are
+reconstructed from the configuration. This is intentionally
 independent of whether the driver returned normally: if a later physical solve
 fails after earlier accepted states were checkpointed, the accepted history is
 still recoverable.
