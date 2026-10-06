@@ -376,8 +376,10 @@ end
 
 % =========================================================================
 function [COD,nPhysical]=local_collect_all_cod(runDir,T)
-    rows=cell(0,13);
+    nExpected=8*max(0,height(T)-1);
+    data=nan(nExpected,13);
     nPhysical=0;
+    nRow=0;
 
     for i=2:height(T)
         k=T.segment(i);
@@ -411,25 +413,22 @@ function [COD,nPhysical]=local_collect_all_cod(runDir,T)
         end
 
         for j=1:height(F)
-            rows(end+1,:)={ ...
+            nRow=nRow+1;
+            data(nRow,:)=[ ...
                 k,T.crack_length_mm(i),F.lower_r_over_DeltaA(j), ...
                 F.upper_r_over_DeltaA(j),F.degree(j), ...
                 F.KI_COD(j),F.KII_COD(j),F.ratio_COD(j),F.RMSE_KII(j), ...
                 F.median_pointwise_ratio(j),F.delta_theta_next_MTS_deg(j), ...
-                T.delta_theta_next_deg(i),T.KII_over_KI(i)}; %#ok<AGROW>
+                T.delta_theta_next_deg(i),T.KII_over_KI(i)];
         end
     end
 
-    COD=cell2table(rows,'VariableNames',{ ...
+    data=data(1:nRow,:);
+    COD=array2table(data,'VariableNames',{ ...
         'segment','crack_length_mm','lower_r_over_DeltaA','upper_r_over_DeltaA', ...
         'degree','KI_COD','KII_COD','ratio_COD','RMSE_KII', ...
         'median_pointwise_ratio','delta_theta_COD_deg', ...
         'delta_theta_EDI_deg','ratio_EDI'});
-
-    numericVars=COD.Properties.VariableNames;
-    for j=1:numel(numericVars)
-        COD.(numericVars{j})=cell2mat(COD.(numericVars{j}));
-    end
 end
 
 
