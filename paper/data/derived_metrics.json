@@ -1,0 +1,15 @@
+{
+  "last_horizontal_ligament_mm": 8.159515931494777,
+  "minimum_theta_deg": -3.645963829383184,
+  "minimum_theta_segment": 22,
+  "COD_max_absolute_turn_difference_deg": 0.010236059250824492,
+  "COD_P23_quadratic_turn_min_deg": 0.6204355782965233,
+  "COD_P23_quadratic_turn_max_deg": 0.6224779975149831,
+  "COD_P21_rear_linear_ratio_relative_difference_percent": 26.319624527913835,
+  "COD_P21_rear_linear_absolute_turn_difference_deg": 0.0024533004311927294,
+  "all_COD_signs_P21_positive": true,
+  "all_COD_signs_P22_negative": true,
+  "positive_KI_monotone": true,
+  "max_tiny_mixed_relative_error": 3.8617376851846075e-08,
+  "source_evidence_sha256": "db7c5908e2cad5c749c7914f4eb742b28d1d404b4124a03107f35b94ad013bd3"
+}

@@ -1,0 +1,770 @@
+\documentclass[11pt]{article}
+\usepackage[a4paper,margin=24mm]{geometry}
+\usepackage[T1]{fontenc}
+\usepackage{lmodern}
+\usepackage{amsmath,amssymb,bm,booktabs}
+\usepackage{pgfplots,pgfplotstable}
+\usepgfplotslibrary{groupplots}
+\usepackage[hidelinks]{hyperref}
+\pgfplotsset{compat=1.17}
+\definecolor{pathblue}{RGB}{35,82,133}
+\definecolor{diagorange}{RGB}{181,77,28}
+\definecolor{fitgreen}{RGB}{40,119,91}
+\definecolor{fitpurple}{RGB}{128,65,130}
+\definecolor{fitgold}{RGB}{170,125,20}
+\pgfplotsset{pilot/.style={scale only axis,grid=major,
+  grid style={gray!18},tick label style={font=\footnotesize},
+  label style={font=\small},title style={font=\small},
+  legend style={font=\footnotesize,draw=none,fill=white},
+  scaled ticks=false,thick,mark size=1.1pt}}
+\setlength{\parindent}{1.4em}
+\setlength{\parskip}{2pt}
+\setlength{\textfloatsep}{14pt}
+\newcommand{\qmix}{q_{\!K}}
+\newcommand{\dd}{\mathrm{d}}
+% BEGIN AUDITED DATA: populated by sync_manuscript_data.py
+% Snapshot: cfdf0f110010d688a4e3c48f6d88a00fd17dc698; no P24 physical data.
+% Evidence JSON SHA256: db7c5908e2cad5c749c7914f4eb742b28d1d404b4124a03107f35b94ad013bd3
+\newcommand{\PlateAMM}{300}
+\newcommand{\PlateBMM}{100}
+\newcommand{\HoleCxMM}{170}
+\newcommand{\HoleCyMM}{-20}
+\newcommand{\HoleRMM}{30}
+\newcommand{\PhiStar}{-1.5606127781}
+\newcommand{\MouthX}{0.199988872196}
+\newcommand{\MouthY}{-0.0208170339049}
+\newcommand{\NormalX}{0.999629073206}
+\newcommand{\NormalY}{-0.0272344634968}
+\newcommand{\PeakStress}{3.714071}
+\newcommand{\LoadFactor}{80.773906}
+\newcommand{\LastXMM}{291.840484}
+\newcommand{\LastYMM}{-25.578941}
+\newcommand{\NextXMM}{295.82903102415526}
+\newcommand{\NextYMM}{-25.88141953450841}
+\newcommand{\PeakXMM}{267.92899482309275}
+\newcommand{\PeakYMM}{-23.523225184169007}
+\newcommand{\LSXMM}{284.0177399633381}
+\newcommand{\LSYMM}{-24.883313761306805}
+\newcommand{\LSLengthMM}{84.15}
+\newcommand{\LSPlotMM}{84.146369911940909}
+\newcommand{\LastLigamentMM}{8.1595}
+\newcommand{\MinimumTheta}{-3.645964}
+\newcommand{\MaxCODError}{0.010236}
+\newcommand{\CODQuadMin}{0.620436}
+\newcommand{\CODQuadMax}{0.622478}
+\newcommand{\CODNearZeroPercent}{26.3}
+\newcommand{\CODNearZeroTurnDiff}{0.002453}
+\newcommand{\SyntheticRelativeError}{3.86\times10^{-8}}
+\newcommand{\MaxTrueResidual}{9.9963\times10^{-11}}
+\newcommand{\AcceptedPath}{(199.98887219617035,-20.817033904903479) (203.98738848899305,-20.925971758890608) (207.98590228485588,-21.035001224149582) (211.9843955660842,-21.144780457031466) (215.98283758040762,-21.256411358188707) (219.98119440561345,-21.371052966385204) (223.97943074107815,-21.489822515385697) (227.97750805110485,-21.613829866174555) (231.97538052629849,-21.74427400015125) (235.97298995218983,-21.882545031189707) (239.97025995623034,-22.030303329765797) (243.96708978875873,-22.18952421348127) (247.96334803126268,-22.362498371144053) (251.9588671699544,-22.551778090998248) (255.95344089768685,-22.760058511849294) (259.94682736038413,-22.989981454475512) (263.93876321917611,-23.243847756475425) (267.92899482309275,-23.523225184169007) (271.9173329996143,-23.828444105110275) (275.90373608327047,-24.157974763193305) (279.88841901949223,-24.507691645517824) (283.87197397527342,-24.870031146913096) (287.85546993101264,-25.233018709522714) (291.84048406850519,-25.578941134329611)}
+\newcommand{\LateAcceptedPath}{(259.94682736038413,-22.989981454475512) (263.93876321917611,-23.243847756475425) (267.92899482309275,-23.523225184169007) (271.9173329996143,-23.828444105110275) (275.90373608327047,-24.157974763193305) (279.88841901949223,-24.507691645517824) (283.87197397527342,-24.870031146913096) (287.85546993101264,-25.233018709522714) (291.84048406850519,-25.578941134329611)}
+\newcommand{\UnsolvedPath}{(291.84048406850519,-25.578941134329611) (295.82903102415526,-25.88141953450841)}
+\pgfplotstableread[col sep=space]{
+a KI KII q theta turn
+3.9999999999999956 0.36647961218500003 4.19826648316e-06 1.1455661771003791e-05 0 -0.0013127221416232755
+7.9999999999999911 0.43786411992502006 4.1052401599804965e-05 9.3756030082653926e-05 -0.0013127221416232755 -0.010743649434918219
+11.999999999999986 0.47433442057575592 0.00010983083646528917 0.00023154726222898703 -0.012056371576516994 -0.026533358447746368
+15.999999999999982 0.49980952309767473 0.00018817285594658126 0.00037648913686225979 -0.038589730024278575 -0.043142462880692879
+19.999999999999979 0.52140232836718392 0.00026915450747619704 0.00051621270721800849 -0.081732192904973355 -0.059153582128952935
+23.999999999999972 0.54172610708400648 0.00035484556173797721 0.00065502761838087057 -0.14088577503390906 -0.075060560849188593
+27.999999999999968 0.56182743182265604 0.00045227473306039197 0.00080500649744556264 -0.21594633588308029 -0.092246810083853922
+31.999999999999964 0.58212714596308346 0.00056985407971255726 0.00097891686320482211 -0.30819314596695796 -0.1121753586899914
+35.999999999999964 0.60277606955306895 0.00071529708399245605 0.0011866713363767349 -0.42036850465697662 -0.13598207168199794
+39.999999999999957 0.62380653819635667 0.00089446780796736611 0.0014338865548822013 -0.55635057633898766 -0.16431050752988413
+43.999999999999957 0.64520691877960812 0.0011101791907057697 0.0017206560537286928 -0.72066108386885519 -0.1971712976539878
+47.999999999999943 0.66696741160671635 0.0013608198320193329 0.0020403093289687638 -0.91783238152286561 -0.23379995594178465
+51.999999999999943 0.68911949463083855 0.0016387671308114803 0.0023780594564218041 -1.151632337464628 -0.27250194484052515
+55.999999999999936 0.71178121037317699 0.0019285231958166005 0.0027094325724129507 -1.424134282305149 -0.31047278452229848
+59.999999999999936 0.73521773293634196 0.0022045320433689481 0.0029984750701868954 -1.7346070668274343 -0.34359272501216054
+63.999999999999929 0.75993029407917456 0.0024287981178289708 0.0031960801362340774 -2.0781997918395656 -0.36623507661361798
+67.999999999999915 0.78679320268293362 0.0025483687397468229 0.0032389308029822659 -2.4444348684531754 -0.37114504550967681
+71.999999999999929 0.81728107479095569 0.0024916033450165403 0.003048649261398648 -2.8155799139628819 -0.34934189588896231
+75.999999999999915 0.85387786416743305 0.0021624143917316108 0.0025324633445557884 -3.1649218098518879 -0.29019458026012157
+79.999999999999915 0.90089328189309825 0.0014271272956059987 0.0015841246952214972 -3.4551163901120114 -0.18152625561645902
+83.999999999999915 0.96630991609036399 7.8602232231099033e-05 8.134267373465366e-05 -3.6366426457284851 -0.0093211836547026847
+87.999999999999915 1.0667238036514248 -0.0022844867450100134 -0.002141591607115312 -3.645963829383184 0.24540569483929087
+91.999999999999901 1.2443604436565869 -0.0067803124600387017 -0.0054488331693625441 -3.4005581345438949 0.62434703800227054
+}\historydata
+\pgfplotstableread[col sep=space]{
+a qEDI tEDI qd1w1 qd1w2 qd1w3 qd1w4 qd2w1 qd2w2 qd2w3 qd2w4 td1w1 td1w2 td1w3 td1w4 td2w1 td2w2 td2w3 td2w4
+7.9999999999999911 9.3756030082653926e-05 -0.010743649434918219 9.320704998468637e-05 9.3148960792751589e-05 9.3116191035797405e-05 9.3026382931025254e-05 9.3167130841228203e-05 9.3271044808224278e-05 9.3408258880004846e-05 9.346739494894916e-05 -0.010680740953466 -0.010674084422804172 -0.010670329285493883 -0.010660038035378875 -0.010676166556860205 -0.01068807421961855 -0.010703797793065295 -0.010710574286986161
+11.999999999999986 0.00023154726222898703 -0.026533358447746368 0.00023023833019381393 0.00023011584010092587 0.0002300573057751805 0.0002298540901471927 0.0002301012775531554 0.0002303714365631704 0.00023072812307258257 0.00023089713882799945 -0.026383365941150996 -0.026369329615647363 -0.026362622078489314 -0.026339335291479488 -0.026367660871213471 -0.026398618801868754 -0.026439492049858085 -0.026458859821548636
+15.999999999999982 0.00037648913686225979 -0.043142462880692879 0.00037451457610392151 0.00037443541054692778 0.00037445463281500767 0.00037424678471107011 0.00037414089102642237 0.00037458420678340389 0.00037516950025930508 0.00037545141572715366 -0.04291619510833241 -0.042907123412640288 -0.042909326120145704 -0.042885508505239214 -0.042873373994718009 -0.042924174188614793 -0.042991243814527846 -0.043023548915649197
+19.999999999999979 0.00051621270721800849 -0.059153582128952935 0.00051368909778432361 0.00051372993959070666 0.00051389781312018959 0.00051376648826500842 0.00051299344701346704 0.0005136015632193836 0.00051440442667668063 0.00051479183947356045 -0.058864398326363934 -0.058869078443985319 -0.058888315297897682 -0.058873266605816023 -0.058784682767039839 -0.058854367622623686 -0.058946368827734061 -0.058990762981822702
+23.999999999999972 0.00065502761838087057 -0.075060560849188593 0.0006520113030728333 0.00065221659093725438 0.00065257471908887249 0.00065256623517357878 0.00065094165687420524 0.00065171213450964424 0.00065272936788164616 0.00065321923386960827 -0.074714917608867615 -0.074738441795274738 -0.074779480136232646 -0.074778507954050513 -0.074592345547516065 -0.074680635518771077 -0.074797201529658519 -0.074853335869392884
+27.999999999999968 0.00080500649744556264 -0.092246810083853922 0.00080147107597277375 0.00080186588323803655 0.00080244061424093716 0.00080257724386438697 0.00079998369680865157 0.00080092868408513209 0.00080217632514397743 0.00080277538066378536 -0.09184168245517238 -0.091886923831686049 -0.091952782856690285 -0.091968439387668702 -0.091671242122854518 -0.09177952920244678 -0.091922497693497723 -0.091991144090013452
+31.999999999999964 0.00097891686320482211 -0.1121753586899914 0.0009747601601239695 0.00097535969117059685 0.00097617127707490866 0.00097646078328084607 0.00097280715021790074 0.00097395414669796429 0.00097546849990157451 0.00097619361862838873 -0.1116990387851277 -0.11176773952522874 -0.11186073979945679 -0.1118939145455894 -0.11147524182071333 -0.11160667706384492 -0.1117802080043067 -0.11186329993582364
+35.999999999999964 0.0011866713363767349 -0.13598207168199794 0.0011817366064604572 0.0011825513716641793 0.0011836181587761331 0.001184060067482538 0.0011792631396965799 0.0011806516161896909 0.0011824848067988486 0.0011833606747740468 -0.135416598838417 -0.13550996314003907 -0.13563220674062559 -0.13568284525145974 -0.13513316319067642 -0.13529226932602997 -0.13550233544300766 -0.1356027015366868
+39.999999999999957 0.0014338865548822013 -0.16431050752988413 0.0014279872532983085 0.0014290258314002182 0.0014303658117380419 0.0014309557043427003 0.001424933498955882 0.001426609907555523 0.0014288232643069657 0.0014298794500756827 -0.16363450705338578 -0.16375351763725821 -0.16390706587623435 -0.16397466162098054 -0.16328457756663239 -0.16347667710809827 -0.16373030549000092 -0.16385133373299704
+43.999999999999957 0.0017206560537286928 -0.1971712976539878 0.001713604712082888 0.0017148750113430609 0.0017165056196596048 0.0017172382850687777 0.001709911248484574 0.0017119224765106301 0.0017145779010953738 0.0017158446298191246 -0.19636329009865808 -0.19650885267704346 -0.19669570277612539 -0.19677965831530814 -0.19594005902752815 -0.19617052406021482 -0.19647480705128512 -0.19661996048136671
+47.999999999999943 0.0020403093289687638 -0.23379995594178465 0.0020319524786485579 0.0020334623016395204 0.0020353993198335414 0.002036271543569724 0.0020275677880748758 0.0020299534547221581 0.0020331032550011847 0.0020346066787735122 -0.23284235922527605 -0.23301536719170918 -0.23323732669574029 -0.23333727327380424 -0.23233992518651722 -0.232613294570885 -0.23297422466830883 -0.23314649935388332
+51.999999999999943 0.0023780594564218041 -0.27250194484052515 0.0023683182188211148 0.002370075338614904 0.0023723309148825835 0.0023733443031516551 0.0023632088307708283 0.002365991647332906 0.0023696658087320756 0.0023714218358794957 -0.2713857252430476 -0.27158706842851921 -0.27184552825702935 -0.27196164942206197 -0.27080025543812153 -0.27111913024592282 -0.27154014160565659 -0.27174135957900419
+55.999999999999936 0.0027094325724129507 -0.31047278452229848 0.002698351345008189 0.0027003634995480387 0.0027029437557696866 0.0027041079393869479 0.0026925137707781159 0.0026956883243404025 0.0026998796957328182 0.0027018870541107676 -0.30920303438030367 -0.30943359854596075 -0.30972925902307608 -0.30986265781365391 -0.30853413166700877 -0.30889789022738262 -0.30937816154171111 -0.30960817612246266
+59.999999999999936 0.0029984750701868954 -0.34359272501216054 0.0029862786170610223 0.0029885535539493483 0.0029914557610195552 0.0029927922911227611 0.0029797536335738595 0.0029832728821675277 0.00298791935324125 0.0029901509947667885 -0.34219520203084203 -0.34245587431073127 -0.34278842193244685 -0.34294156740311105 -0.34144754057118598 -0.34185079166151405 -0.34238320480518875 -0.34263891609456232
+63.999999999999929 0.0031960801362340774 -0.36623507661361798 0.0031832409020643624 0.0031857873930321349 0.0031889976677074959 0.0031905454464796622 0.0031761286215845411 0.0031798885252127692 0.0031848527246024598 0.0031872460746516923 -0.36476391352586063 -0.36505569918270792 -0.36542354340301431 -0.36560089315428868 -0.36394896389354386 -0.3643797866537945 -0.36494860167663384 -0.36522283990375204
+67.999999999999915 0.0032389308029822659 -0.37114504550967681 0.0032262445927891759 0.0032290765018144017 0.0032325700724196594 0.0032343943375509657 0.0032187173777826305 0.0032225400478387094 0.0032275871004305593 0.0032300333438762688 -0.36969141923426435 -0.37001590844132509 -0.37041621289437493 -0.37062524298143096 -0.36882892662656092 -0.36926694054507986 -0.36984524806520602 -0.37012554646026924
+71.999999999999929 0.003048649261398648 -0.34934189588896231 0.0030373230964848936 0.0030404700050052766 0.0030442175178419543 0.0030464258171800243 0.0030296313496341416 0.0030332472939480185 0.0030380213880260016 0.0030403539064996318 -0.34804409711476281 -0.34840468295848576 -0.34883408847537317 -0.34908712451279666 -0.34716274462272284 -0.34757707466630638 -0.34812411026290402 -0.34839137991054442
+75.999999999999915 0.0025324633445557884 -0.29019458026012157 0.0025242205835940309 0.0025277552041295631 0.0025317449970629854 0.0025345203219210954 0.0025166775463411205 0.0025197083130753949 0.0025237097711367489 0.0025256928348172652 -0.2892500716952775 -0.28965509128312206 -0.29011226739526413 -0.29043028191322157 -0.28838574173221476 -0.28873302660171379 -0.28919153950953708 -0.28941877172952057
+79.999999999999915 0.0015841246952214972 -0.18152625561645902 0.0015813555344750909 0.0015854624253386421 0.0015897621329847538 0.0015934382197990921 0.0015742704101261128 0.0015762121783427514 0.001578775809170904 0.0015800934089844616 -0.18120893873363048 -0.18167954550115206 -0.18217224701065457 -0.18259348806023867 -0.18039705743681456 -0.18061956381916067 -0.18091332915530958 -0.18106431233560652
+83.999999999999915 8.134267373465366e-05 -0.0093211836547026847 8.7409584550920258e-05 9.2569114739409259e-05 9.7495902622065918e-05 0.00010275176004258049 8.0881877502596113e-05 8.1086803843545834e-05 8.1357262429677816e-05 8.1601494155364435e-05 -0.010016400388950105 -0.010607638963567144 -0.011172207232332979 -0.011774484085895414 -0.0092683802985096628 -0.0092918631263265421 -0.009322855395932219 -0.0093508422888416865
+87.999999999999915 -0.002141591607115312 0.24540569483929087 -0.0021214214217062928 -0.0021138584599506766 -0.0021072033041539409 -0.0020987396288728402 -0.0021281589367666384 -0.002130526485829723 -0.0021336524917201605 -0.0021350013741791678 0.24309443535341801 0.24222781097900659 0.24146521007887517 0.24049537435693977 0.243866473309338 0.24413776583708519 0.244495968327376 0.24465053394259803
+91.999999999999901 -0.0054488331693625441 0.62434703800227054 -0.0054033507294756417 -0.0053887618249769918 -0.0053762566248845229 -0.0053594884394935075 -0.0054146921945643287 -0.0054208212976673206 -0.0054289138820190191 -0.0054325193345747726 0.6191362082425983 0.6174647836020396 0.61603208377652918 0.61411097875144605 0.62043557829652329 0.62113777750063104 0.6220649283625318 0.62247799751498312
+}\coddata
+\pgfplotstableread[col sep=space]{
+a angle ratio iter res
+7.9999999999999911 25.010454925243625 1.7964188452400884 2442 9.9895616082428446e-11
+11.999999999999986 25.002217889117922 1.7970927264739118 2457 9.9753691148286726e-11
+15.999999999999982 25.000440331283201 1.7977159517252732 2482 9.9169026619377228e-11
+19.999999999999979 25.001445894846473 1.7962913556382374 2509 9.9618703830397281e-11
+23.999999999999972 25.046570897142665 1.799190433508874 2513 9.8525767362746914e-11
+27.999999999999968 25.021444680184114 1.79859189973486 2582 9.9002202938165024e-11
+31.999999999999964 25.004204529416423 1.7997355139806033 2584 9.8539143013828256e-11
+35.999999999999964 25.00680816512163 1.7995959778101007 2631 9.897952986538865e-11
+39.999999999999957 25.006641222194315 1.7996939072842311 2635 9.8824296955100255e-11
+43.999999999999957 25.031166577473574 1.7993650797132406 2655 9.7847797626306074e-11
+47.999999999999943 25.005507149490338 1.7980648153034513 2689 9.8492603795730544e-11
+51.999999999999943 25.009919722152244 1.7989571832241211 2703 9.9573111467058322e-11
+55.999999999999936 25.012179196062789 1.7997531320933735 2702 9.7384227583868984e-11
+59.999999999999936 25.070288817285455 1.7993786832659084 2726 9.993478611145241e-11
+63.999999999999929 25.012427487052584 1.7971712127828654 2764 9.9708511774384541e-11
+67.999999999999915 25.042446928795801 1.7995586894148579 2813 9.600833088693895e-11
+71.999999999999929 25.033870578053836 1.7996360836226146 2812 9.6307387388740908e-11
+75.999999999999915 25.020832424774376 1.7998180722992001 2861 9.909663968294755e-11
+79.999999999999915 25.01110215499131 1.7972756021798884 2879 9.620945722832311e-11
+83.999999999999915 25.008627396081479 1.7997360980884147 2912 9.6397049302603536e-11
+87.999999999999915 25.009706294891593 1.799964880192789 2960 9.9962833186239518e-11
+91.999999999999901 25.001403038569425 1.799933957066598 3011 9.9218443146061957e-11
+}\qualitydata
+\newcommand{\CODTurnPlotsOne}{\addplot[pathblue,mark=*] table[x=a,y expr={\thisrow{td1w1}-\thisrow{tEDI}}] {\coddata};
+\addplot[diagorange,mark=*] table[x=a,y expr={\thisrow{td1w2}-\thisrow{tEDI}}] {\coddata};
+\addplot[fitgreen,mark=*] table[x=a,y expr={\thisrow{td1w3}-\thisrow{tEDI}}] {\coddata};
+\addplot[fitpurple,mark=*] table[x=a,y expr={\thisrow{td1w4}-\thisrow{tEDI}}] {\coddata};
+\addplot[black,dashed,thin,forget plot] coordinates {(60,0) (92,0)};}
+\newcommand{\CODRatioPlotsOne}{\addplot[pathblue,mark=*] table[x=a,y expr={100000*(\thisrow{qd1w1}-\thisrow{qEDI})}] {\coddata};
+\addplot[diagorange,mark=*] table[x=a,y expr={100000*(\thisrow{qd1w2}-\thisrow{qEDI})}] {\coddata};
+\addplot[fitgreen,mark=*] table[x=a,y expr={100000*(\thisrow{qd1w3}-\thisrow{qEDI})}] {\coddata};
+\addplot[fitpurple,mark=*] table[x=a,y expr={100000*(\thisrow{qd1w4}-\thisrow{qEDI})}] {\coddata};
+\addplot[black,dashed,thin,forget plot] coordinates {(60,0) (92,0)};}
+\newcommand{\CODTurnPlotsTwo}{\addplot[pathblue,mark=*] table[x=a,y expr={\thisrow{td2w1}-\thisrow{tEDI}}] {\coddata};
+\addplot[diagorange,mark=*] table[x=a,y expr={\thisrow{td2w2}-\thisrow{tEDI}}] {\coddata};
+\addplot[fitgreen,mark=*] table[x=a,y expr={\thisrow{td2w3}-\thisrow{tEDI}}] {\coddata};
+\addplot[fitpurple,mark=*] table[x=a,y expr={\thisrow{td2w4}-\thisrow{tEDI}}] {\coddata};
+\addplot[black,dashed,thin,forget plot] coordinates {(60,0) (92,0)};}
+\newcommand{\CODRatioPlotsTwo}{\addplot[pathblue,mark=*] table[x=a,y expr={100000*(\thisrow{qd2w1}-\thisrow{qEDI})}] {\coddata};
+\addplot[diagorange,mark=*] table[x=a,y expr={100000*(\thisrow{qd2w2}-\thisrow{qEDI})}] {\coddata};
+\addplot[fitgreen,mark=*] table[x=a,y expr={100000*(\thisrow{qd2w3}-\thisrow{qEDI})}] {\coddata};
+\addplot[fitpurple,mark=*] table[x=a,y expr={100000*(\thisrow{qd2w4}-\thisrow{qEDI})}] {\coddata};
+\addplot[black,dashed,thin,forget plot] coordinates {(60,0) (92,0)};}
+\newcommand{\CODRatioPlotsTwoLegend}{\addplot[pathblue,mark=*] table[x=a,y expr={100000*(\thisrow{qd2w1}-\thisrow{qEDI})}] {\coddata};
+\addlegendentry{$[0.04,0.20]\Delta a$}
+\addplot[diagorange,mark=*] table[x=a,y expr={100000*(\thisrow{qd2w2}-\thisrow{qEDI})}] {\coddata};
+\addlegendentry{$[0.04,0.30]\Delta a$}
+\addplot[fitgreen,mark=*] table[x=a,y expr={100000*(\thisrow{qd2w3}-\thisrow{qEDI})}] {\coddata};
+\addlegendentry{$[0.08,0.30]\Delta a$}
+\addplot[fitpurple,mark=*] table[x=a,y expr={100000*(\thisrow{qd2w4}-\thisrow{qEDI})}] {\coddata};
+\addlegendentry{$[0.12,0.30]\Delta a$}
+\addplot[black,dashed,thin,forget plot] coordinates {(60,0) (92,0)};}
+\newcommand{\CharacteristicRows}{$P_{1}$ & 4 & 0.366480 & $4.1983\times10^{-6}$ & $1.1456\times10^{-5}$ & 0.000000 & -0.001313 \\
+$P_{17}$ & 68 & 0.786793 & $2.5484\times10^{-3}$ & $3.2389\times10^{-3}$ & -2.444435 & -0.371145 \\
+$P_{21}$ & 84 & 0.966310 & $7.8602\times10^{-5}$ & $8.1343\times10^{-5}$ & -3.636643 & -0.009321 \\
+$P_{22}$ & 88 & 1.066724 & $-2.2845\times10^{-3}$ & $-2.1416\times10^{-3}$ & -3.645964 & +0.245406 \\
+$P_{23}$ & 92 & 1.244360 & $-6.7803\times10^{-3}$ & $-5.4488\times10^{-3}$ & -3.400558 & +0.624347 \\}
+% END AUDITED DATA
+\title{Incremental LEFM Prediction of a Crack Trajectory\\from a Circular Hole}
+\author{}
+\date{Pilot manuscript}
+
+\begin{document}
+\maketitle
+\begin{abstract}
+The incremental direction of a hole-initiated crack is examined in an
+asymmetric elastic plate using linear elastic fracture mechanics and the
+maximum tangential stress criterion. A stress-selected point on the circular
+hole defines the initiation location and a frozen material-side normal.
+Only the first crack segment is prescribed along that normal. Subsequent
+directions follow from the current-tip stress-intensity factors after one
+elastic solution of each fixed, complete crack geometry. A constant 4-mm
+increment produces an accepted history from 4 to 92 mm. The opening-mode
+intensity increases throughout this history, whereas positive mode mixity
+reaches a maximum at 68 mm and changes sign between the solved 84- and
+88-mm states. This change reverses the sign of the incremental turn while
+the absolute crack direction remains negatively inclined. Reflection-paired
+tip meshes, prescribed-field controls, strict residual checks, and
+crack-opening-displacement comparisons support the numerical interpretation.
+The late redirection is consistent with increasing free-boundary influence
+rather than unloading, although this single trajectory does not isolate
+boundary effects from accumulated curvature. The next geometry is qualified
+but physically unsolved. The findings establish a verified fixed-increment
+pilot sequence, not increment-size convergence or a prediction of arrest,
+branching, or boundary intersection.
+\end{abstract}
+\noindent\textbf{Keywords:} crack trajectory; circular hole; linear elastic
+fracture mechanics; maximum tangential stress; mode mixity; interaction
+integral; crack-opening displacement.
+
+\section{Introduction}
+Stress concentrations around holes identify possible crack-initiation
+sites, but an initiation site alone does not determine the subsequent
+trajectory. Once a finite crack exists, its direction depends on the
+mixed-mode field at its current tip and on the entire existing crack
+geometry. A direction-selection calculation must therefore update the
+elastic problem as the crack advances, rather than assign the complete
+trajectory at initiation.
+% TODO: verified literature on crack initiation and trajectories from holes/notches.
+
+The present pilot considers a single crack growing from a circular hole in
+a finite, asymmetric plate. The scientific question is how its direction
+evolves when each new segment is determined only by the current-tip
+opening- and sliding-mode stress-intensity factors. The maximum tangential
+stress (MTS) rule supplies a local turn; accumulating that turn updates the
+absolute direction in a fixed initiation frame. The imposed finite
+increment specifies the geometric advance, while the stress-intensity
+factors determine its direction.
+% TODO: classic MTS references, with the exact convention verified.
+% TODO: numerical LEFM crack-path methods and finite-increment limitations.
+
+The central result is a change in the sign of mode II while mode I continues
+to increase. Positive mode mixity first grows, reaches a maximum, and then
+decreases through zero. The resulting change in turning sense occurs as
+the tip approaches the right free boundary. The calculation provides
+evidence for this evolution within one qualified discretization; it does
+not by itself establish a causal boundary-effect decomposition or
+convergence of the predicted trajectory. Numerical verification is used to
+separate this physical interpretation from extraction artifacts and from
+the eventual linear-solver limit.
+% TODO: interaction/domain integral and COD extraction references.
+
+\section{Problem formulation}
+\subsection{Geometry, material, and loading}
+The plate occupies $[0,A]\times[-B,B]$, with $A=\PlateAMM$ mm and
+$B=\PlateBMM$ mm. A circular hole of radius $R=\HoleRMM$ mm is centered at
+$(\HoleCxMM,\HoleCyMM)$ mm. The finite-element hole boundary is represented
+by a 480-segment polygon with the fitted initiation point retained. The
+material is isotropic, with $E=210000$ MPa and $\nu=0.30$, under plane
+strain. For the crack geometry $\Gamma_k$ ending at $P_k$, the elastic
+problem is
+\begin{align}
+ \nabla\!\cdot\bm{\sigma}&=\bm0 &&\text{in }\Omega_k,\label{eq:equilibrium}\\
+ \bm{\varepsilon}&=\tfrac12(\nabla\bm u+\nabla\bm u^{\mathsf T}),\qquad
+ \varepsilon_{33}=0,\label{eq:strain}\\
+ \bm{\sigma}&=2\mu\bm{\varepsilon}
+       +\lambda\,\operatorname{tr}(\bm{\varepsilon})\bm I,
+ \quad \mu=\frac{E}{2(1+\nu)},\quad
+ \lambda=\frac{E\nu}{(1+\nu)(1-2\nu)}.\label{eq:constitutive}
+\end{align}
+The top and bottom tractions are $(0,\sigma_0)$ and $(0,-\sigma_0)$,
+respectively, with $\sigma_0=1$ MPa. The vertical sides, hole boundary, and
+crack faces are traction free. Rigid-body motions are removed by imposing
+$u_x=u_y=0$ at the lower left corner and $u_y=0$ at the lower right corner.
+There are no body forces.
+
+All reported SIFs correspond to this unit traction and have units
+MPa$\sqrt{\mathrm m}$. For a fixed geometry, positive scaling of the
+traction scales both SIFs equally and preserves their ratio and the MTS
+direction. The sequence studied here is a direction-selection calculation
+under normalized loading, not a load-versus-time fracture-growth history.
+
+\subsection{Stress-selected initiation and the frozen frame}
+The uncracked-hole elastic field selects the initiation point from the
+maximum positive tangential boundary stress. In the recorded initiation
+procedure, T6 stresses sampled at three material-side offsets are
+extrapolated linearly to the boundary, followed by a local quadratic
+angular fit. With tensile threshold $\sigma_c=300$ MPa, the normalized
+initiation rule is
+\begin{equation}
+ \phi_* = \mathop{\operatorname{arg\,max}}_\phi
+      \sigma_{tt}^{+}(\phi;\sigma_0),\qquad
+ \lambda_{\mathrm{ini}}=
+      \frac{\sigma_c}{\max_\phi\sigma_{tt}^{+}(\phi;\sigma_0)},
+ \quad \sigma_{tt}^{+}=\max(\sigma_{tt},0).\label{eq:initiation}
+\end{equation}
+The accepted fitted angle is $\phi_*=\PhiStar^\circ$. The initiation point is
+\begin{equation}
+ P_0=(\MouthX,\MouthY)\ \mathrm m.
+\end{equation}
+The fitted peak stress is
+$\PeakStress$ MPa at unit loading, giving $\lambda_{\mathrm{ini}}=\LoadFactor$.
+This initiation condition supplies the location; it is not reused as a
+growth or arrest criterion along the crack.
+
+The frozen basis is
+\begin{equation}
+ \bm n_{\mathrm{mat}}=\begin{bmatrix}\NormalX\\\NormalY\end{bmatrix},
+ \qquad \bm t=\begin{bmatrix}-n_{\mathrm{mat},y}\\n_{\mathrm{mat},x}\end{bmatrix}.
+ \label{eq:frozenframe}
+\end{equation}
+The normal points radially out of the hole and into the material; $\bm t$
+is its counterclockwise rotation. All absolute crack angles $\theta_k$
+below are measured relative to this frozen normal, not to the global
+$x$ axis. The first segment is prescribed by
+\begin{equation}
+ \Delta a=4\ \mathrm{mm},\qquad \theta_1=0,\qquad
+ P_1=P_0+\Delta a\,\bm n_{\mathrm{mat}}.\label{eq:first}
+\end{equation}
+An earlier first-angle sweep was an independent verification exercise and
+does not determine $\theta_1$ in this formulation. The study retains one
+active crack; subsequent competing initiation sites are not modeled.
+
+\section{Incremental crack-path formulation}
+\subsection{Current-tip frame and stress-intensity factors}
+At $P_k$, the local forward direction is the \emph{last} segment direction,
+$\bm e_1^{(k)}=(P_k-P_{k-1})/\Delta a$, with
+$\bm e_2^{(k)}=(-e_{1y}^{(k)},e_{1x}^{(k)})$. This frame is not the
+mouth-to-tip chord. With $r$ measured ahead of the tip along $x_1$, the
+signed conventions correspond to
+\begin{equation}
+ K_I^{(k)}=\lim_{r\to0^+}\sqrt{2\pi r}\,\sigma_{22}(r,0),\qquad
+ K_{II}^{(k)}=\lim_{r\to0^+}\sqrt{2\pi r}\,\sigma_{12}(r,0).
+ \label{eq:sifdefinition}
+\end{equation}
+These are evaluated numerically by the interaction integral described
+below. The complete previous crack geometry is retained during each
+elastic solution.
+
+\subsection{The implemented MTS rule}
+Let $\alpha$ be a turn relative to $\bm e_1^{(k)}$, and write
+$c=\cos(\alpha/2)$ and $s=\sin(\alpha/2)$. The implemented angular
+coefficients are exactly
+\begin{align}
+ S(\alpha)&=K_I^{(k)}c^3-3K_{II}^{(k)}s c^2,\label{eq:stt}\\
+ T(\alpha)&=K_I^{(k)}s c^2+K_{II}^{(k)}c(1-3s^2).
+ \label{eq:trt}
+\end{align}
+Their physical stress amplitudes carry the common factor
+$1/\sqrt{2\pi r}$. Since $S'=-3T/2$, the direction rule finds a tensile
+stationary direction by solving $T(\alpha)=0$. In the implementation the
+root lies in $[-80^\circ,80^\circ]$: a bracket of $\pm10^\circ$ around a
+clipped initial estimate $-2K_{II}/K_I$ is used first and expanded to the
+full interval if necessary. For $|K_I|<10^{-12}$ the initial estimate is
+$\operatorname{sign}(K_{II})70.5^\circ$ instead. The routine sets $\alpha=0$ when
+$|K_{II}|<10^{-12}$ in the stored SIF units, and includes an opposite-angle
+safeguard if the computed circumferential coefficient is compressive.
+The accepted history has $K_I>0$ and small tensile-branch turns. No angular
+scan is performed during propagation.
+
+For small mode mixity, expansion of Eq.~\eqref{eq:trt} gives
+$\alpha\simeq-2K_{II}/K_I$ in radians. This relation explains the turning
+sign but does not replace the root calculation used for the results.
+
+\subsection{Finite-increment recurrence}
+Define the direction vector in the frozen frame by
+\begin{equation}
+ \bm e(\theta)=\cos\theta\,\bm n_{\mathrm{mat}}
+                 +\sin\theta\,\bm t.\label{eq:direction}
+\end{equation}
+The incremental and absolute angles are distinguished in the recurrence
+\begin{align}
+ \Delta\theta_{k+1}&=\alpha_{\mathrm{MTS}}
+                     (K_I^{(k)},K_{II}^{(k)}),\label{eq:turn}\\
+ \theta_{k+1}&=\theta_k+\Delta\theta_{k+1},\label{eq:angleupdate}\\
+ P_{k+1}&=P_k+\Delta a\,\bm e(\theta_{k+1}).\label{eq:pointupdate}
+\end{align}
+Thus each fixed current geometry is qualified, solved once, and used to
+append one segment. Only the first direction and the increment length are
+prescribed. The accepted first-tip SIFs are
+$K_I^{(1)}=0.366479612185$ and $K_{II}^{(1)}=4.19826648316\times10^{-6}$,
+which give $\Delta\theta_2=\theta_2=-0.001312722142^\circ$.
+This previously qualified first-tip state seeds the long run; the accepted
+subsequent elastic states are $P_2$ through $P_{23}$.
+
+\section{Numerical implementation and verification}
+\subsection{Geometry and paired tip discretization}
+The crack is represented by its complete polyline with distinct upper and
+lower face topology, including previous kink vertices. A temporary
+appended-hole carrier supports geometric identification; its crack faces
+are collapsed to the zero-width polyline while preserving separate face
+identities. A structured core is aligned with the last segment and paired
+under local reflection across that segment. The asymmetric physical
+exterior is retained through conforming graded triangulation. T3
+triangles are converted to straight-sided quadratic T6 elements.
+
+The fixed production scales are
+\begin{equation}
+ \frac{h_{\mathrm{tip}}}{\Delta a}=0.00675308135,\quad
+ \frac{r_i}{\Delta a}=0.10,\quad
+ \frac{r_o}{\Delta a}=0.65,\quad
+ \frac{r_c}{\Delta a}=0.75.\label{eq:meshscales}
+\end{equation}
+For this 4-mm increment these give $h_{\mathrm{tip}}=0.0270123$ mm,
+$r_i=0.4$ mm, $r_o=2.6$ mm, and $r_c=3$ mm. The grading transition is
+4 mm and the far-field size cap is 2.5 mm. The paired core contains 12678
+T3 triangles. All primary FE-nodal integration support lies inside this
+core, with a fixed fingerprint of 11316 participating elements.
+
+Geometry and mesh checks retain the physical boundary vertices, distinct
+crack faces, shared intact ligament, conforming seams, positive element
+areas and T6 Jacobians. The mesh-angle and adjacent longest-edge-ratio
+gates are $20^\circ$ and 1.8, respectively. These checks establish
+discretization integrity, not mesh-independent physical predictions.
+
+\subsection{Interaction/domain integral}
+For actual field $(\bm\sigma,\bm\varepsilon,\bm u)$ and a unit auxiliary
+mode $m$, the implemented local-frame density gives
+\begin{equation}
+ I^{(m)}=\int_{\Omega_k}
+ \left[-(\bm\sigma^{(m)}\!:\bm\varepsilon)\delta_{1j}
+ +\sigma_{ij}u^{(m)}_{i,1}
+ +\sigma^{(m)}_{ij}u_{i,1}\right]q_{,j}\,\dd A,
+ \qquad i,j\in\{1,2\}.\label{eq:interaction}
+\end{equation}
+Actual gradients use the T6 displacement field. Analytical near-tip
+auxiliary stresses and centered finite-difference derivatives of auxiliary
+displacements are used, with the recorded derivative step
+$h=\max(10^{-7}\ \mathrm m,10^{-5}r)$. A radial nodal weight is one for
+$r\leq r_i$, decreases linearly to zero at $r_o$, and is zero outside.
+Its T6 interpolant supplies the FE-consistent gradient in
+Eq.~\eqref{eq:interaction}. Integration uses the 16-point triangular rule.
+For auxiliary amplitude $K_{\mathrm{aux}}=1$ and plane strain,
+\begin{equation}
+ K_m=\frac{E'}{2K_{\mathrm{aux}}}I^{(m)},\qquad
+ E'=\frac{E}{1-\nu^2},\qquad m\in\{I,II\}.\label{eq:normalization}
+\end{equation}
+The normalization and sign convention are those used in the recorded
+extraction procedure.
+% TODO: verified interaction-integral and quadrature references.
+
+\subsection{Independent COD postprocessing}
+Native upper/lower T6 face nodes are paired in the last-segment frame.
+If $[\![u_i]\!]$ denotes the upper-minus-lower displacement jump behind
+the tip at distance $r$, the apparent COD SIFs are
+\begin{equation}
+ \begin{bmatrix}K_I^{\mathrm{app}}(r)\\K_{II}^{\mathrm{app}}(r)\end{bmatrix}
+ =\frac{\mu}{\kappa+1}\sqrt{\frac{2\pi}{r}}
+ \begin{bmatrix}{[\![u_2]\!]}\\{[\![u_1]\!]}\end{bmatrix},
+ \qquad \kappa=3-4\nu.\label{eq:cod}
+\end{equation}
+Linear and quadratic fits in $r/\Delta a$ extrapolate these quantities to
+$r=0$. The four fitting windows are $[0.04,0.20]$, $[0.04,0.30]$,
+$[0.08,0.30]$, and $[0.12,0.30]$ times $\Delta a$, with 38, 55, 44,
+and 34 native samples. COD verifies a second extraction route from the
+\emph{same} elastic field. The production direction always uses the EDI
+SIFs; window/order scatter is not a statistical uncertainty interval.
+
+\subsection{Solver and evidence checks}
+The unclamped symmetric stiffness is reduced to free degrees of freedom,
+symmetrized within the audited formulation, and reordered by a symmetric
+approximate minimum-degree permutation. Parameter-free symmetric
+Gauss--Seidel preconditioning is used with conjugate gradients. The
+reported-residual tolerance is $10^{-10}$, the iteration limit is 5000,
+and the independently computed true-relative-residual gate is
+$5\times10^{-10}$. Constrained degrees of freedom remain exactly zero.
+Only an accepted elastic field is checkpointed, before SIF/COD/MTS
+postprocessing.
+
+Prescribed nodal pure-I, pure-II, and tiny-mixed $(K_I,K_{II})=(1,10^{-4})$
+fields test modal recovery and leakage on each qualified mesh. Recovery
+and tiny-mixed relative-error gates are $2\times10^{-4}$; the pure-mode
+cross-leakage and superposition gates are $10^{-10}$. The observed maximum
+tiny-mixed relative error is $\SyntheticRelativeError$. These controls
+qualify extraction capability and topology rather than the global physical
+finite-element error.
+
+A short regression reproduces a previously accepted two-segment $P_2$
+state before extending the path. Historical straight 8-mm calculations
+provided separate extraction and controlled-mesh verification; they are
+not points on the propagated trajectory and do not establish convergence
+of the present 4-mm path.
+
+The authoritative long-run archive contains 22 accepted compact physical
+records ($P_2$--$P_{23}$) and 23 qualification records
+($P_2$--$P_{24}$). A semantic audit against the atomic path state confirms
+the accepted SIFs, mode mixity, turns, absolute directions, and geometry.
+The maximum direction-record difference is $4.36\times10^{-14}$ degrees;
+the other compared scientific quantities agree exactly. The maximum
+accepted true residual is $\MaxTrueResidual$, and iteration counts range
+from 2442 to 3011. Supporting diagnostics are given in Fig.~\ref{fig:quality}.
+
+\section{Crack-trajectory results}
+\subsection{Accepted path and direction history}
+Figure~\ref{fig:trajectory} distinguishes the accepted $P_0$--$P_{23}$
+polyline from the dashed, qualified but unsolved $P_{23}$--$P_{24}$
+extension. The accepted crack length is 92 mm. The last tip and its
+horizontal clearance from the right boundary are
+\begin{equation}
+ P_{23}=(\LastXMM,\LastYMM)\ \mathrm{mm},\qquad
+ A-x_{23}=\LastLigamentMM\ \mathrm{mm}.
+\end{equation}
+Directions vary gradually, although the
+finite-increment representation is piecewise linear rather than a
+continuously smooth curve.
+
+The absolute direction becomes increasingly negative up to
+$\theta_{22}=\MinimumTheta^\circ$, then rotates toward a less negative
+inclination at $P_{23}$ (Fig.~\ref{fig:intensities}). A positive late turn
+does not imply an upward-moving tip: the accepted segments remain
+negatively inclined and their global $y$ coordinates continue to decrease.
+
+\begin{figure}[tbp]
+\centering
+\begin{tikzpicture}
+\begin{axis}[pilot,width=138mm,height=56.53mm,axis equal image,
+ xmin=136,xmax=302,ymin=-54,ymax=14,xlabel={$x$ [mm]},ylabel={$y$ [mm]},
+ title={(a) Hole and accepted trajectory},legend pos=north east]
+\addplot[black,thin,domain=0:360,samples=481,forget plot]
+ ({\HoleCxMM+\HoleRMM*cos(x)},{\HoleCyMM+\HoleRMM*sin(x)});
+\addplot[black,thin,forget plot] coordinates {(\PlateAMM,-54) (\PlateAMM,14)};
+\addplot[pathblue,mark=*,mark size=.8pt] coordinates {\AcceptedPath};
+\addlegendentry{Accepted $P_0$--$P_{23}$}
+\addplot[diagorange,dashed,mark=x,mark size=2pt] coordinates {\UnsolvedPath};
+\addlegendentry{Qualified, unsolved extension}
+\addplot[black,only marks,mark=square*,mark size=2pt,forget plot]
+ coordinates {(\LastXMM,\LastYMM)};
+\end{axis}
+\end{tikzpicture}\par\vspace{4mm}
+\begin{tikzpicture}
+\begin{axis}[pilot,width=138mm,height=18.82mm,axis equal image,
+ xmin=258,xmax=302,ymin=-27.3,ymax=-21.3,xlabel={$x$ [mm]},ylabel={$y$ [mm]},
+ title={(b) Late-path detail; equal spatial scales}]
+\addplot[pathblue,mark=*,mark size=1pt] coordinates {\LateAcceptedPath};
+\addplot[diagorange,dashed,mark=x,mark size=2pt] coordinates {\UnsolvedPath};
+\addplot[black,thin] coordinates {(\PlateAMM,-27.3) (\PlateAMM,-21.3)};
+\addplot[fitgreen,only marks,mark=o,mark size=2.5pt] coordinates {(\PeakXMM,\PeakYMM)};
+\addplot[fitpurple,only marks,mark=diamond,mark size=2.5pt] coordinates {(\LSXMM,\LSYMM)};
+\addplot[black,only marks,mark=square*,mark size=2pt] coordinates {(\LastXMM,\LastYMM)};
+\node[font=\scriptsize,above] at (axis cs:\PeakXMM,\PeakYMM) {$P_{17}$};
+\node[font=\scriptsize,above] at (axis cs:\LSXMM,\LSYMM) {linear $\qmix=0$ estimate};
+\node[font=\scriptsize,above left] at (axis cs:\LastXMM,\LastYMM) {$P_{23}$};
+\node[font=\scriptsize,below right,text=diagorange] at (axis cs:\NextXMM,\NextYMM) {$P_{24}$: unsolved};
+\end{axis}
+\end{tikzpicture}
+\caption{Hole-initiated trajectory and late detail. Both spatial panels
+use equal $x$ and $y$ scales within the panel. The circle gives geometric
+context; the numerical hole is polygonally discretized. Solid segments are
+accepted geometry through $P_{23}$. The dashed extension is qualified
+geometry only and has no accepted physical SIFs. The diamond is a linear
+interpolation marker, not a solved tip.}\label{fig:trajectory}
+\end{figure}
+
+\subsection{Mode intensities and the positive maximum}
+Figure~\ref{fig:intensities} shows monotonically increasing $K_I$, from
+0.366480 at $P_1$ to 1.244360 at $P_{23}$. The initially very small positive
+$K_{II}$ grows to its positive maximum at $P_{17}$, where $a=68$ mm,
+$K_{II}=0.002548369$, and $\qmix=K_{II}/K_I=0.003238931$.
+The positive mode-mixity maximum occurs at the same state. It is not the
+maximum \emph{absolute} mode-II intensity: the negative mode-II magnitude
+at the last accepted tip is larger.
+
+From $P_{17}$ through $P_{21}$, $K_{II}$ remains positive but decreases.
+Accordingly the negative incremental MTS turn becomes smaller in
+magnitude (Fig.~\ref{fig:late}). This change in turning response accompanies
+an increasing opening-mode intensity, not unloading.
+
+\begin{figure}[tbp]\centering
+\begin{tikzpicture}
+\begin{groupplot}[group style={group size=1 by 3,vertical sep=10mm},
+ pilot,width=135mm,height=31mm,xmin=4,xmax=92,xtick={4,20,36,52,68,84,92}]
+\nextgroupplot[ylabel={$K_I$ [MPa$\sqrt{\mathrm m}$]},title={(a) Opening mode}]
+\addplot[pathblue,mark=*] table[x=a,y=KI] {\historydata};
+\nextgroupplot[ylabel={$K_{II}$ [MPa$\sqrt{\mathrm m}$]},title={(b) Sliding mode}]
+\addplot[pathblue,mark=*] table[x=a,y=KII] {\historydata};
+\addplot[black,dashed,thin] coordinates {(4,0) (92,0)};
+\nextgroupplot[ylabel={$\theta_k$ [deg]},xlabel={Crack length $a$ [mm]},
+ title={(c) Absolute direction in the frozen initiation frame}]
+\addplot[pathblue,mark=*] table[x=a,y=theta] {\historydata};
+\end{groupplot}
+\end{tikzpicture}
+\caption{Accepted intensities and absolute direction. Intensities correspond
+to unit remote traction. The direction minimum occurs at $P_{22}$;
+positive turning there produces the less negative $P_{23}$ direction.
+No physical curve includes $P_{24}$.}\label{fig:intensities}
+\end{figure}
+
+\subsection{Local-symmetry crossing and late turning reversal}
+At $P_{21}$ ($a=84$ mm), $\qmix=+8.134267\times10^{-5}$; at $P_{22}$
+($a=88$ mm), $\qmix=-0.002141592$. The sign change is therefore bracketed
+by two solved states. For visualization only, linear interpolation gives
+\begin{equation}
+ a_{\mathrm{LS}}=a_{21}
+ -\frac{\qmix^{(21)}}{\qmix^{(22)}-\qmix^{(21)}}(a_{22}-a_{21})
+ \simeq\LSLengthMM\ \mathrm{mm}.\label{eq:zeroestimate}
+\end{equation}
+This estimate is not an independently solved local-symmetry state and does
+not quantify interpolation or increment-size error.
+
+Mode II is negative at $P_{22}$ and $P_{23}$, so the next turning increments
+are positive. The last accepted state has $K_I=1.244360444$,
+$K_{II}=-0.006780312$, and $\qmix=-0.005448833$. It predicts
+$\Delta\theta_{24}=+0.624347038^\circ$ and
+$\theta_{24}=-2.776211097^\circ$. The latter defines the next qualified
+geometry, not a physical solution at $P_{24}$.
+
+\begin{table}[tbp]\centering\small\setlength{\tabcolsep}{3.5pt}
+\caption{Characteristic accepted states. SIFs have units MPa$\sqrt{\mathrm m}$;
+angles are in degrees. The interpolated row contains only a graphical
+zero estimate, not a solved stress field or crack direction.}
+\begin{tabular}{lrrrrrr}\toprule
+State & $a$ [mm] & $K_I$ & $K_{II}$ & $K_{II}/K_I$ & $\theta_k$ & $\Delta\theta_{k+1}$\\\midrule
+\CharacteristicRows
+Interpolated & \LSLengthMM & --- & --- & $0$ & --- & ---\\
+\bottomrule\end{tabular}\label{tab:states}
+\end{table}
+
+\begin{figure}[tbp]\centering
+\begin{tikzpicture}
+\begin{groupplot}[group style={group size=1 by 2,vertical sep=12mm},
+ pilot,width=138mm,height=37mm,xmin=60,xmax=92,xtick={60,68,76,84,88,92}]
+\nextgroupplot[ylabel={$10^3K_{II}/K_I$},title={(a) Late mode mixity}]
+\addplot[pathblue,mark=*] table[x=a,y expr={1000*\thisrow{q}}] {\historydata};
+\addplot[black,dashed,thin] coordinates {(60,0) (92,0)};
+\addplot[fitpurple,densely dotted,thin] coordinates {(\LSPlotMM,-5.8) (\LSPlotMM,3.5)};
+\nextgroupplot[ylabel={$\Delta\theta_{k+1}$ [deg]},xlabel={Crack length $a$ [mm]},
+ title={(b) Incremental turn relative to the current segment}]
+\addplot[pathblue,mark=*] table[x=a,y=turn] {\historydata};
+\addplot[black,dashed,thin] coordinates {(60,0) (92,0)};
+\addplot[fitpurple,densely dotted,thin] coordinates {(\LSPlotMM,-.42) (\LSPlotMM,.67)};
+\end{groupplot}
+\end{tikzpicture}
+\caption{Mode-mixity sign reversal and opposite-signed MTS turning.
+Each marker is an accepted current-tip state; its turn predicts the next
+segment. The vertical dotted line is the interpolated $\qmix=0$ location.
+The positive turn reported at $a=92$ mm belongs to the $P_{23}$ solution
+and predicts the unsolved next geometry.}\label{fig:late}
+\end{figure}
+
+\subsection{COD comparison and extraction sensitivity}
+All eight stored COD fit definitions retain positive mode mixity at $P_{21}$
+and negative mode mixity at $P_{22}$, corroborating the bracketed sign change
+without making COD the direction selector. Differences remain nonzero and
+depend on the fitting definition (Fig.~\ref{fig:cod}). Over all 176 fits,
+the largest absolute COD--EDI turning difference is $\MaxCODError^\circ$,
+at $P_{23}$ for a linear fit over $[0.12,0.30]\Delta a$.
+The quadratic-fit turns at $P_{23}$ range from $\CODQuadMin^\circ$ to
+$\CODQuadMax^\circ$, compared with the EDI value $0.624347038^\circ$.
+
+Near local symmetry, relative differences can be large despite small
+absolute errors. At $P_{21}$ the same rear-window linear fit gives mode
+mixity about $\CODNearZeroPercent$\% above EDI, while its turning-angle
+difference is only $\CODNearZeroTurnDiff^\circ$. Thus visual overlap of
+full-history curves is not sufficient to establish extraction accuracy.
+The late fitting sensitivity is a postprocessing limitation to investigate,
+not an error bar on the physical path. Both routes also share any error in
+the underlying elastic solution.
+
+\begin{figure}[tbp]\centering
+\begin{tikzpicture}
+\begin{groupplot}[group style={group size=2 by 2,horizontal sep=19mm,vertical sep=15mm},
+ pilot,width=58mm,height=38mm,xmin=60,xmax=92,xtick={60,76,92}]
+\nextgroupplot[ylabel={COD--EDI turn [deg]},title={(a) Linear fits}]
+\CODTurnPlotsOne
+\nextgroupplot[title={(b) Quadratic fits}]
+\CODTurnPlotsTwo
+\nextgroupplot[ylabel={$10^5$ (COD--EDI mode mixity)},xlabel={$a$ [mm]}]
+\CODRatioPlotsOne
+\nextgroupplot[xlabel={$a$ [mm]},legend style={at={(-.16,-.38)},anchor=north,
+ legend columns=2,font=\scriptsize}]
+\CODRatioPlotsTwoLegend
+\end{groupplot}
+\end{tikzpicture}\vspace{9mm}
+\caption{Late-path extraction differences for all four native COD windows
+and both polynomial degrees. Window bounds are multiples of $\Delta a$.
+Zero is equality with EDI, not a known exact solution. The upper panels
+show differences in the MTS turns computed from the two sets of SIFs;
+the lower panels show differences in mode mixity. The largest observed
+difference occurs at the last accepted tip; individual difference curves
+need not vary monotonically.}
+\label{fig:cod}
+\end{figure}
+
+\section{Discussion}
+\subsection{Interpretation of late redirection}
+The accepted sequence shows reorientation under increasing $K_I$.
+The change in turning sign is directly associated with the change in
+$K_{II}/K_I$, as required by Eqs.~\eqref{eq:trt}--\eqref{eq:angleupdate}.
+The shrinking right-side ligament makes increased free-boundary influence
+a consistent physical interpretation. However, the boundary distance and
+the accumulated crack geometry change together. A control with a more
+distant boundary, or matched fixed-geometry calculations, is needed to
+isolate that influence. The result supports a mode-mixity explanation of
+the computed redirection; it does not prove that the boundary is its sole
+cause.
+
+\subsection{Discretization and boundary proximity}
+The directions are selected from the field before adding a finite straight
+segment. A 4-mm step therefore samples a continuously changing boundary-value
+problem at discrete geometries. No increment-size study is available for
+this path. The interpolated zero in Eq.~\eqref{eq:zeroestimate} should be
+read against the 4-mm spacing of its bracketing states, not as a highly
+resolved physical crack length. A smaller-increment family and independent
+mesh/EDI-domain checks at the late tips are needed to assess path uncertainty.
+
+Local reflection pairing and synthetic recovery suppress known extraction
+leakage mechanisms, but do not bound the physical discretization error.
+Similarly, residual and element-quality gates measure numerical acceptance,
+not fracture-mechanics convergence. The historical 8-mm verification cannot
+be transferred into a mesh-independence claim for this evolving polyline.
+
+\subsection{Last accepted state and model scope}
+The geometry ending at $P_{24}$, with total polyline length 96 mm, passes
+geometric and prescribed-field qualification. It has no accepted physical
+record. The reported attempted PCG solution did not satisfy the strict
+acceptance criterion; the available compact archive does not retain a
+failure trace that would quantify its stagnation. The physical history
+therefore ends at $P_{23}$, without retrospectively relaxing the gate.
+This is a numerical limitation, not evidence of fracture arrest or boundary
+intersection.
+
+The model is quasi-static and linearly elastic. Crack advances are imposed
+for direction selection; no fracture-toughness growth law, dynamic
+instability, branching rule, plastic-zone assessment, or subsequent
+multicrack initiation calculation is provided. These restrictions define
+the scope of the present trajectory rather than mechanisms excluded by
+the results.
+
+\section{Conclusions}
+A stress-selected circular-hole point and one prescribed normal segment
+provide the initial state for an incremental trajectory whose later
+directions are determined by current-tip EDI SIFs and the implemented MTS
+rule. The accepted fixed-increment history reaches 92 mm at $P_{23}$.
+Positive mode mixity peaks at $P_{17}$, crosses zero between $P_{21}$ and
+$P_{22}$, and becomes negative while opening-mode intensity continues to
+increase. This changes the sign of the incremental turn and reduces the
+negative absolute inclination late in the history.
+
+The sign reversal is shared by all stored COD fitting definitions, although
+their late-path differences show finite extraction sensitivity. Paired-core,
+synthetic, solver, and archive checks establish a reproducible numerical
+sequence within the chosen discretization. The qualified unsolved extension
+must remain separate from the physical results. Increment-size convergence,
+late-tip mesh/domain checks, and a controlled boundary comparison are the
+next requirements for stronger predictive and causal claims.
+
+\section*{References}
+\noindent\emph{Pilot status: verified literature entries have not yet been
+assembled. Explicit literature TODOs are retained in the source and in the
+accompanying bibliography file; no unverified citation is supplied.}
+
+\clearpage
+\appendix
+\section{Supplementary numerical diagnostics}
+\renewcommand{\thefigure}{S\arabic{figure}}
+\renewcommand{\theHfigure}{S\arabic{figure}}
+\setcounter{figure}{0}
+The accepted solver and mesh checks are summarized in Fig.~\ref{fig:quality}.
+They provide reproducibility and acceptance diagnostics, rather than an
+estimate of the discretization error in the trajectory.
+\begin{figure}[htbp]\centering
+\begin{tikzpicture}
+\begin{groupplot}[group style={group size=2 by 2,horizontal sep=19mm,vertical sep=15mm},
+ pilot,width=58mm,height=36mm,xmin=8,xmax=92,xtick={8,36,64,92}]
+\nextgroupplot[ylabel={Minimum angle [deg]},ymin=19,ymax=27,title={(a) Mesh-angle check}]
+\addplot[pathblue,mark=*] table[x=a,y=angle] {\qualitydata};
+\addplot[diagorange,dashed] coordinates {(8,20) (92,20)};
+\nextgroupplot[ylabel={Adjacent size ratio},ymin=1.78,ymax=1.804,title={(b) Grading check}]
+\addplot[pathblue,mark=*] table[x=a,y=ratio] {\qualitydata};
+\addplot[diagorange,dashed] coordinates {(8,1.8) (92,1.8)};
+\nextgroupplot[ylabel={PCG iterations},xlabel={$a$ [mm]},title={(c) Accepted solves}]
+\addplot[pathblue,mark=*] table[x=a,y=iter] {\qualitydata};
+\nextgroupplot[ylabel={True residual / gate},xlabel={$a$ [mm]},ymin=0,ymax=1.1,
+ title={(d) Residual check}]
+\addplot[pathblue,mark=*] table[x=a,y expr={\thisrow{res}/5e-10}] {\qualitydata};
+\addplot[diagorange,dashed] coordinates {(8,1) (92,1)};
+\end{groupplot}
+\end{tikzpicture}
+\caption{Diagnostics for accepted $P_2$--$P_{23}$ states. Dashed lines are
+the $20^\circ$ minimum-angle gate, 1.8 adjacent-size-ratio gate, and normalized
+true-residual gate of one. The separately enforced reported-PCG tolerance
+is $10^{-10}$; the true-residual acceptance denominator is
+$5\times10^{-10}$. No failed $P_{24}$ solve is plotted.}
+\label{fig:quality}
+\end{figure}
+\end{document}

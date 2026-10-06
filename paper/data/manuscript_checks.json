@@ -1,0 +1,17 @@
+{
+  "audit_date": "2026-10-07",
+  "source_commit": "cfdf0f110010d688a4e3c48f6d88a00fd17dc698",
+  "source_manifest_count": 64,
+  "prior_archive_hashes_matched": 47,
+  "abstract_word_count": 193,
+  "main_figures": 4,
+  "supplementary_figures": 1,
+  "accepted_states": 23,
+  "accepted_compact_physical_files": 22,
+  "qualification_files": 23,
+  "P24_physical_result_present": false,
+  "existing_scientific_sources_changed": false,
+  "physical_solve_performed": false,
+  "bibliography_entries_added": 0,
+  "status": "PASS"
+}

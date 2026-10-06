@@ -1,0 +1,24 @@
+{
+  "page_count": 12,
+  "source_sha256": "080e50709f193268069a5d3716650819e0c46393227b805369e9fef5d6af967f",
+  "pdf_sha256": "d6f07004046ff9605e795e2698312092a584f3b460440f1150a88ea2e6f8dcce",
+  "unresolved_reference_marks": 0,
+  "visually_reviewed_pages": [
+    1,
+    2,
+    3,
+    4,
+    5,
+    6,
+    7,
+    8,
+    9,
+    10,
+    11,
+    12
+  ],
+  "compiler": "bundled Tectonic",
+  "overfull_warnings": 0,
+  "native_preview_limitation": "Unable to find standard directories for platform",
+  "status": "PASS"
+}
