@@ -55,6 +55,8 @@ the source was preserved and the standalone PDF was compiled separately.
 The local MiKTeX latexmk wrapper also lacks its Perl runtime; neither global
 configuration nor installed software was changed to work around it.
 Rendered PDF pages were inspected for layout and figure legibility.
+Paper-local line-ending rules preserve the audited text hashes across
+Windows checkouts without changing any scientific source outside this layer.
 
 To re-audit the investigator archive in MATLAB, without any physical solve:
 
