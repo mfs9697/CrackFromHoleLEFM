@@ -387,3 +387,57 @@ same explicit `FastEDI` option and requires new empty benchmark directories.
 `test_incremental_fast_edi` compares full returned SIFs and diagnostics bitwise;
 its optional `CheckpointFile` argument also measures paired stored-field EDI
 timings without a physical solve.
+
+
+## Final clean-run plotting
+
+The accepted production rerun can be plotted directly from its atomic
+`path_run_state.mat` and compact per-step files. This is intentionally
+independent of whether the driver returned normally: if a later physical solve
+fails after earlier accepted states were checkpointed, the accepted history is
+still recoverable.
+
+Use:
+
+```matlab
+P = plot_final_clean_run_results( ...
+    'FrozenState',R0, ...
+    'RunDir',fullfile(fileparts(which('run_incremental_crack_path')), ...
+        'verification','crack_path','final_clean_run'));
+```
+
+By default the function saves EPS and PNG files in
+`final_clean_run/plots` and returns the assembled data in:
+
+```matlab
+P.stepTable
+P.codTable
+P.meshTable
+P.landmarks
+P.validation
+```
+
+The seven generated figures are:
+
+1. accepted crack trajectory with plate and hole geometry;
+2. absolute local crack angle;
+3. incremental MTS turn;
+4. mode-I SIF;
+5. mode mixity;
+6. EDI-versus-COD MTS comparison;
+7. numerical-quality diagnostics.
+
+Three characteristic states are identified from the accepted data and marked
+consistently: the positive mode-mixity maximum, the first subsequent
+`KII/KI` zero crossing (linearly interpolated in crack length), and the last
+accepted physical state. A qualified but unsolved next geometry is excluded
+from the scientific curves and may appear only as an unsolved marker in the
+quality diagnostics.
+
+The default COD comparison uses the quadratic fit over
+`r/Delta a = [0.08, 0.30]`. This can be changed explicitly:
+
+```matlab
+P = plot_final_clean_run_results('FrozenState',R0, ...
+    'CODWindow',[0.04 0.30],'CODDegree',2);
+```
