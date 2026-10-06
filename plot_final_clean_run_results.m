@@ -131,6 +131,14 @@ function Out = plot_final_clean_run_results(varargin)
         error('cleanplot:FrozenSummary','Frozen R0.summary with a0_reserved_m is required.');
     end
     da=S0.a0_reserved_m;
+
+    segAccepted=diff(vertices,1,1);
+    if isempty(segAccepted) || max(abs(vecnorm(segAccepted,2,2)-da))>2e-12
+        error('cleanplot:RunIncrementMismatch', ...
+            ['Accepted path increment does not match the frozen plotting ', ...
+             'geometry configuration.']);
+    end
+
     T.crack_length_mm=1e3*T.segment*da;
 
     % Per-step compact physical verification data.
@@ -404,20 +412,54 @@ function R0=local_load_frozen_state(root,Rin,stateFile)
         R0=Rin;
         return
     end
+
     if isempty(strtrim(stateFile))
         stateFile=fullfile(root,'verification','crack_path','stage1_starting_state.mat');
     elseif ~local_is_absolute_path(stateFile)
         stateFile=fullfile(root,stateFile);
     end
-    if exist(stateFile,'file')~=2
+
+    if exist(stateFile,'file')==2
+        d=load(stateFile,'R0');
+        if ~isfield(d,'R0')||~isstruct(d.R0)
+            error('cleanplot:BadFrozenState','StateFile must contain struct R0.');
+        end
+        R0=d.R0;
+        return
+    end
+
+    % The Stage-I MAT is an intentionally uncommitted generated artifact.
+    % Plotting must therefore remain possible after the MATLAB workspace is
+    % cleared.  For plots we need only the immutable plate/hole geometry and
+    % the frozen 4-mm increment; the accepted crack mouth and all trajectory
+    % coordinates come from path_run_state.mat, not from this fallback.
+    if exist('cfg_first_segment_asymmetric','file')~=2
         error('cleanplot:MissingFrozenState', ...
-            'Frozen Stage-I state not found; pass ''FrozenState'',R0.');
+            ['Frozen Stage-I MAT is absent and cfg_first_segment_asymmetric ', ...
+             'is unavailable. Pass ''FrozenState'',R0 explicitly.']);
     end
-    d=load(stateFile,'R0');
-    if ~isfield(d,'R0')||~isstruct(d.R0)
-        error('cleanplot:BadFrozenState','StateFile must contain struct R0.');
+
+    C=cfg_first_segment_asymmetric();
+    geometryOK=abs(C.A-0.30)<=1e-14 && abs(C.B-0.10)<=1e-14 && ...
+        isfield(C,'hole') && isstruct(C.hole) && ...
+        strcmpi(C.hole.type,'circle') && ...
+        norm(C.hole.center-[0.17,-0.02])<=1e-14 && ...
+        abs(C.hole.r-0.030)<=1e-14 && C.hole.npoly==480 && ...
+        abs(C.a0-0.004)<=1e-14;
+    if ~geometryOK
+        error('cleanplot:FrozenGeometryMismatch', ...
+            ['Repository configuration no longer matches the accepted Stage-I ', ...
+             'geometry fingerprint. Do not plot from an unverified config.']);
     end
-    R0=d.R0;
+
+    Summary=table(C.a0, ...
+        'VariableNames',{'a0_reserved_m'});
+    R0=struct('C',C,'summary',Summary);
+
+    fprintf(['  NOTE: Stage-I MAT not found. Using verified immutable geometry ', ...
+        'from cfg_first_segment_asymmetric for plotting only.\n']);
+    fprintf(['        Crack mouth and trajectory coordinates are read from ', ...
+        'path_run_state.mat; no Stage-I solve is rerun.\n']);
 end
 
 
