@@ -665,10 +665,67 @@ function local_apply_latex(fig)
     interpObjs=findall(fig,'-property','Interpreter');
     for k=1:numel(interpObjs)
         try
-            set(interpObjs(k),'Interpreter','latex');
+            h=interpObjs(k);
+
+            if isprop(h,'String')
+                s=get(h,'String');
+                if isempty(s),continue,end
+                set(h,'String',local_latex_string(s));
+            elseif isprop(h,'Label')
+                s=get(h,'Label');
+                if isempty(s),continue,end
+                set(h,'Label',local_latex_string(s));
+            end
+
+            set(h,'Interpreter','latex');
         catch
         end
     end
+end
+
+
+function out=local_latex_string(in)
+    if iscell(in)
+        out=cellfun(@local_latex_string,in,'UniformOutput',false);
+        return
+    end
+    if isstring(in)
+        if ~isscalar(in)
+            out=arrayfun(@local_latex_string,in);
+            return
+        end
+        in=char(in);
+    end
+    if ~ischar(in)
+        out=in;
+        return
+    end
+
+    out=in;
+    dollar=char(36);
+
+    out=strrep(out,'K_{II}/K_I','@@MIX@@');
+    out=strrep(out,'K_{II}','@@KII@@');
+    out=strrep(out,'K_I','@@KI@@');
+    out=strrep(out,'\Delta\theta_{k+1}','@@DTH@@');
+    out=strrep(out,'\theta_k','@@TH@@');
+    out=strrep(out,'r_{core}','@@RCORE@@');
+    out=strrep(out,'Delta a','@@DA@@');
+    out=strrep(out,'sqrt(m)','@@SQRTM@@');
+
+    pTokens=regexp(out,'P_(?:\{\d+\}|\d+)','match');
+    for j=1:numel(pTokens)
+        out=strrep(out,pTokens{j},[dollar pTokens{j} dollar]);
+    end
+
+    out=strrep(out,'@@MIX@@',[dollar 'K_{II}/K_I' dollar]);
+    out=strrep(out,'@@KII@@',[dollar 'K_{II}' dollar]);
+    out=strrep(out,'@@KI@@',[dollar 'K_I' dollar]);
+    out=strrep(out,'@@DTH@@',[dollar '\Delta\theta_{k+1}' dollar]);
+    out=strrep(out,'@@TH@@',[dollar '\theta_k' dollar]);
+    out=strrep(out,'@@RCORE@@',[dollar 'r_{\mathrm{core}}' dollar]);
+    out=strrep(out,'@@DA@@',[dollar '\Delta a' dollar]);
+    out=strrep(out,'@@SQRTM@@',[dollar '\sqrt{\mathrm{m}}' dollar]);
 end
 
 
