@@ -37,6 +37,7 @@ function Out = plot_final_clean_run_results(varargin)
 %   'Formats'         : e.g. {'eps','png','pdf'}, default {'eps','png'}.
 %   'Visible'         : 'on' or 'off', default 'on'.
 %   'CloseExisting'   : close figures created by this function first, default false.
+%   'UseLatex'         : use LaTeX interpreters for all figure text, default true.
 %
 % Output
 %   Out.stepTable
@@ -67,6 +68,7 @@ function Out = plot_final_clean_run_results(varargin)
     addParameter(ip,'Visible','on', ...
         @(x)(ischar(x)||isstring(x))&&any(strcmpi(char(x),{'on','off'})));
     addParameter(ip,'CloseExisting',false,@(x)islogical(x)&&isscalar(x));
+    addParameter(ip,'UseLatex',true,@(x)islogical(x)&&isscalar(x));
     parse(ip,varargin{:});
     opt=ip.Results;
 
@@ -349,6 +351,13 @@ function Out = plot_final_clean_run_results(varargin)
     ylabel(ax4,'PCG iterations');
     title(ax4,'Linear-solver effort for accepted states');
     grid(ax4,'on'); box(ax4,'on'); hold(ax4,'off');
+
+    if opt.UseLatex
+        figNames=fieldnames(F);
+        for j=1:numel(figNames)
+            local_apply_latex(F.(figNames{j}));
+        end
+    end
 
     if opt.SaveFigures
         local_export(F.trajectory,figDir,'01_trajectory',formats);
@@ -656,6 +665,84 @@ function formats=local_formats(x)
     if ~isempty(bad)
         error('cleanplot:Format','Unsupported figure format(s): %s',strjoin(bad,', '));
     end
+end
+
+
+function local_apply_latex(fig)
+    if isempty(fig) || ~isgraphics(fig),return,end
+
+    tickObjs=findall(fig,'-property','TickLabelInterpreter');
+    for k=1:numel(tickObjs)
+        try
+            set(tickObjs(k),'TickLabelInterpreter','latex');
+        catch
+        end
+    end
+
+    interpObjs=findall(fig,'-property','Interpreter');
+    for k=1:numel(interpObjs)
+        try
+            h=interpObjs(k);
+
+            if isprop(h,'String')
+                s=get(h,'String');
+                if isempty(s),continue,end
+                set(h,'String',local_latex_string(s));
+            elseif isprop(h,'Label')
+                s=get(h,'Label');
+                if isempty(s),continue,end
+                set(h,'Label',local_latex_string(s));
+            end
+
+            set(h,'Interpreter','latex');
+        catch
+        end
+    end
+end
+
+
+function out=local_latex_string(in)
+    if iscell(in)
+        out=cellfun(@local_latex_string,in,'UniformOutput',false);
+        return
+    end
+    if isstring(in)
+        if ~isscalar(in)
+            out=arrayfun(@local_latex_string,in);
+            return
+        end
+        in=char(in);
+    end
+    if ~ischar(in)
+        out=in;
+        return
+    end
+
+    out=in;
+    dollar=char(36);
+
+    out=strrep(out,'K_{II}/K_I','@@MIX@@');
+    out=strrep(out,'K_{II}','@@KII@@');
+    out=strrep(out,'K_I','@@KI@@');
+    out=strrep(out,'\Delta\theta_{k+1}','@@DTH@@');
+    out=strrep(out,'\theta_k','@@TH@@');
+    out=strrep(out,'r_{core}','@@RCORE@@');
+    out=strrep(out,'Delta a','@@DA@@');
+    out=strrep(out,'sqrt(m)','@@SQRTM@@');
+
+    pTokens=regexp(out,'P_(?:\{\d+\}|\d+)','match');
+    for j=1:numel(pTokens)
+        out=strrep(out,pTokens{j},[dollar pTokens{j} dollar]);
+    end
+
+    out=strrep(out,'@@MIX@@',[dollar 'K_{II}/K_I' dollar]);
+    out=strrep(out,'@@KII@@',[dollar 'K_{II}' dollar]);
+    out=strrep(out,'@@KI@@',[dollar 'K_I' dollar]);
+    out=strrep(out,'@@DTH@@',[dollar '\Delta\theta_{k+1}' dollar]);
+    out=strrep(out,'@@TH@@',[dollar '\theta_k' dollar]);
+    out=strrep(out,'@@RCORE@@',[dollar 'r_{\mathrm{core}}' dollar]);
+    out=strrep(out,'@@DA@@',[dollar '\Delta a' dollar]);
+    out=strrep(out,'@@SQRTM@@',[dollar '\sqrt{\mathrm{m}}' dollar]);
 end
 
 
