@@ -161,14 +161,22 @@ analytical bifurcation proof.
 
 ## Running
 
-The physical solves are guarded. From the repository root:
+Follow the project workflow in two steps. First qualify all five geometries
+and their synthetic EDI recovery **without a physical solve**:
+
+```matlab
+Q = main_symmetric_stability_geometry_check;
+```
+
+Only after that preflight passes, authorize the five physical solves:
 
 ```matlab
 R = main_symmetric_path_stability( ...
     'AllowPhysicalSolves',true);
 ```
 
-The default test performs five physical solves. To test a smaller amplitude
+The physical driver reuses the qualified candidates from the preflight by
+default. The default test performs five physical solves. To test a smaller amplitude
 after inspecting the first result, for example:
 
 ```matlab
