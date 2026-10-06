@@ -21,6 +21,7 @@ function F = qualify_incremental_crack_candidate(pathGlobal,varargin)
     addParameter(ip,'NArc',480,@(x)isnumeric(x)&&isscalar(x)&&isfinite(x)&&x>=32&&x==round(x));
     addParameter(ip,'ExteriorVerbose',true,@(x)islogical(x)&&isscalar(x));
     addParameter(ip,'RunSynthetic',true,@(x)islogical(x)&&isscalar(x));
+    addParameter(ip,'AllowStraightPath',false,@(x)islogical(x)&&isscalar(x));
     addParameter(ip,'FastEDI',false,@(x)islogical(x)&&isscalar(x));
     addParameter(ip,'SaveCandidate',true,@(x)islogical(x)&&isscalar(x));
     addParameter(ip,'CandidateFile','',@(x)ischar(x)||isstring(x));
@@ -425,7 +426,14 @@ function F = qualify_incremental_crack_candidate(pathGlobal,varargin)
         [pathLocal(1:end-1,:);[-rp,0]],'fro')<=1e-12;
     gates.sideAwareRetainedCrackMapping=nRetainedCrackExteriorNodes>0 && ...
         nRetainedCrackSourceMatches>=2;
-    gates.pathNonStraight=chordDeviation>1e-12;
+    % Production crack-path candidates remain genuinely kinked by default.
+    % The symmetric stability benchmark explicitly permits the exactly
+    % straight two-segment control so that KII(theta=0) can be measured
+    % with the same audited core/EDI machinery. The raw geometry state is
+    % stored separately below; the gate means that the requested path class
+    % is admissible for this call.
+    pathIsNonStraight=chordDeviation>1e-12;
+    gates.pathNonStraight=pathIsNonStraight || opt.AllowStraightPath;
     gates.priorTipUpperNode=numel(upCorner)==1;
     gates.priorTipLowerNode=numel(loCorner)==1;
     gates.priorTipFacesDistinct=numel(upCorner)==1&&numel(loCorner)==1&&upCorner~=loCorner;
@@ -630,6 +638,8 @@ function F = qualify_incremental_crack_candidate(pathGlobal,varargin)
     candidate.exteriorDesign=ext;
     candidate.polylineCarrierEdgeIDs=polyIDs;
     candidate.maxChordDeviation=chordDeviation;
+    candidate.pathIsNonStraight=pathIsNonStraight;
+    candidate.straightPathExplicitlyAllowed=logical(opt.AllowStraightPath);
     candidate.gates=gates;
     candidate.synthetic=Synthetic;
     candidate.syntheticGates=syntheticGates;

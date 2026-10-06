@@ -41,7 +41,7 @@ for e = 1:size(connect,1)
     % element stiffness
     Ke = zeros(eldf);
     for j = 1:nip2
-        [B, DetJ] = BN_local(xip2(:,j), X);   % local helper below
+        [B, DetJ] = BN_local(xip2(:,j), X);   % shared T6 helper
         % (Optional) guard against inverted elements:
         if DetJ <= 0, error('Inverted or degenerate element at e=%d', e); end
         Ke = Ke + w2(j) * (B.' * Dmat * B) * (DetJ/2);
