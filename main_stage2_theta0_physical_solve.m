@@ -423,7 +423,7 @@ function R = main_stage2_theta0_physical_solve(varargin)
     % ------------------------------------------------------------------
     fprintf('\nPHASE 2: POSTPROCESS SAVED PHYSICAL FIELD\n');
     s=load(cp,'mesh','U','mat','crack','a0','meta','solverInfo');
-    local_validate_checkpoint(s,mesh,crack,a0,ndof);
+    local_validate_checkpoint(s,mesh,crack,a0,ndof,opt.AlternativeQualifiedCandidate);
 
     [r,app,face]=native_COD_audit( ...
         s.mesh,s.U,s.mat,s.crack,8);
