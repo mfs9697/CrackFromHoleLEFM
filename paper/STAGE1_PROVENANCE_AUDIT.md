@@ -54,6 +54,37 @@ In particular, the two statements are compatible:
 
 The second statement still needs local filesystem confirmation.
 
+## Repository-local scan result
+
+On the investigator's home checkout, the read-only audit was run from
+
+`C:\Users\Mikhailo\Documents\GitHub\CrackFromHoleLEFM`
+
+against the repository tree. The committed destination fingerprint passed:
+
+- size: **42401 bytes**;
+- SHA-256:
+  **`93bf96d515b8719258f8fbd5fdfeffa1d009e17c286f10fe4dc4e19c02e64a17`**;
+- Git blob:
+  **`9c6904005b5880b9ed32174bbf185865f940f799`**.
+
+The repository-local scan found:
+
+- exact-name `accepted_R0.mat` candidates outside the paper copy: **0**;
+- byte-identical local MAT copies outside the paper copy: **0**.
+
+The resulting status was:
+
+```text
+STATUS: DESTINATION_VERIFIED_SOURCE_NOT_IDENTIFIED
+```
+
+Therefore the committed Stage-I snapshot is internally verified, but its
+original local source path remains unresolved. The provenance audit is still
+open. No manuscript prose should be changed to describe this file as a
+canonically recovered historical source until a wider filesystem scan or an
+independent archival record closes the chain.
+
 ## Local closure test
 
 Run from the repository root on the computer where Codex prepared the pilot:
