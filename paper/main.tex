@@ -376,6 +376,12 @@ Gauss--Seidel preconditioning is used with conjugate gradients. The
 reported-residual tolerance is $10^{-10}$, the iteration limit is 5000,
 and the independently computed true-relative-residual gate is
 $5\times10^{-10}$. Constrained degrees of freedom remain exactly zero.
+For the finer fixed-geometry sensitivity meshes only, MATLAB PCG can report
+finite-precision stagnation immediately above the stated tolerance. In that
+case one Krylov restart from the returned iterate is permitted, using the
+same matrix, right-hand side, SGS factors, tolerance, and iteration limit.
+The final PCG and independently recomputed residual gates are unchanged;
+a restart therefore resets the recurrence but does not relax acceptance.
 Only an accepted elastic field is checkpointed, before SIF/COD/MTS
 postprocessing.
 
@@ -516,25 +522,25 @@ sense are unchanged.
 \begin{table}[tbp]
 \centering
 \small
-\setlength{\tabcolsep}{3.2pt}
+\setlength{\tabcolsep}{2.8pt}
 \caption{Fixed-geometry sensitivity to structured near-tip resolution.
 The crack geometries at $P_{21}$ and $P_{22}$, exterior mesh law, EDI radii,
 loading, and MTS formulation are unchanged. The final column is the linear
 interpolation of the two solved mode-mixity values and is not an independently
 solved crack state.}
 \label{tab:tipmesh}
-\begin{tabular}{lrrrrrrr}
+\begin{tabular}{lrrrrrr}
 \toprule
-Level & $h_{\rm tip}$ [mm] & $N_{\rm core}^{T3}$ &
+Level & $h_{\rm tip}$ [mm] &
 $q_K(P_{21})$ & $\Delta\theta_{22}$ [deg] &
 $q_K(P_{22})$ & $\Delta\theta_{23}$ [deg] &
 $a_{\rm LS}$ [mm]\\
 \midrule
-$H1$ & 0.0540247 & 3318  & $+7.79244\times10^{-5}$ & $-0.00892948$ &
+$H1$ & 0.0540247 & $+7.79244\times10^{-5}$ & $-0.00892948$ &
 $-2.14457\times10^{-3}$ & $+0.24574713$ & 84.140247\\
-$H0$ & 0.0270123 & 12678 & $+8.13427\times10^{-5}$ & $-0.00932118$ &
+$H0$ & 0.0270123 & $+8.13427\times10^{-5}$ & $-0.00932118$ &
 $-2.14159\times10^{-3}$ & $+0.24540569$ & 84.146370\\
-$L1$ & 0.0135062 & 49518 & $+8.30887\times10^{-5}$ & $-0.00952126$ &
+$L1$ & 0.0135062 & $+8.30887\times10^{-5}$ & $-0.00952126$ &
 $-2.13979\times10^{-3}$ & $+0.24519944$ & 84.149515\\
 \bottomrule
 \end{tabular}
@@ -585,9 +591,10 @@ at the micrometer scale.
 The result therefore supports robustness of the reported mode-mixity
 maximum, sign reversal, and late turning response with respect to a
 substantial coarsening of the \emph{exterior} mesh. It is deliberately
-narrower than a general mesh-independence claim: the paired tip core and
-interaction-domain radii are held fixed, so local tip-resolution and
-interaction-domain sensitivity remain separate questions.
+narrower than a general mesh-independence claim because the paired tip core
+and interaction-domain radii are held fixed. Local tip-resolution sensitivity
+is examined separately above, whereas interaction-domain-radius sensitivity
+remains unresolved.
 
 \input{figures/m1_mesh_sensitivity/figure}
 
