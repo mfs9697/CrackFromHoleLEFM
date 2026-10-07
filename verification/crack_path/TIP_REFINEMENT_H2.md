@@ -5,7 +5,10 @@
 This diagnostic isolates sensitivity to the near-tip finite-element scale after
 the exterior-mesh sensitivity study.
 
-The accepted crack geometries at P17 and P22 are held fixed. Only the
+The accepted crack geometries at P17 and P22 are held fixed. Their vertices,
+reference physical observables, and L0 qualification metrics are read from the
+committed audited snapshot `paper/data/evidence_exact.mat`; the diagnostic does
+not require the uncommitted `final_clean_run` archive. Only the
 reflection-paired structured core is refined from the production L0 family to
 the audited L1 family.
 
