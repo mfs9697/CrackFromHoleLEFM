@@ -20,6 +20,11 @@ function F = qualify_incremental_crack_candidate(pathGlobal,varargin)
     addParameter(ip,'StateFile','',@(x)ischar(x)||isstring(x));
     addParameter(ip,'NArc',480,@(x)isnumeric(x)&&isscalar(x)&&isfinite(x)&&x>=32&&x==round(x));
     addParameter(ip,'ExteriorVerbose',true,@(x)islogical(x)&&isscalar(x));
+    % Controlled near-tip mesh-family scale. At this stage only the audited
+    % reference scale 1 and the previously qualified h/2 Level-1 scale 0.5
+    % are admitted; rInner, rOuter, and rCore remain unchanged.
+    addParameter(ip,'CoreScale',1,@(x)isnumeric(x)&&isscalar(x)&&isfinite(x)&& ...
+        any(abs(x-[1 0.5])<=1e-14));
     % Optional exterior-only mesh controls. Defaults reproduce the accepted
     % production mesh exactly. The paired tip core and EDI radii are not
     % changed by these options.
@@ -115,6 +120,8 @@ function F = qualify_incremental_crack_candidate(pathGlobal,varargin)
     fprintf('  current tip     : [%.12g, %.12g] m\n',tip(1),tip(2));
     fprintf('  prior tip local : [%.12g, %.12g] mm\n', ...
         1e3*pathLocal(end-1,1),1e3*pathLocal(end-1,2));
+    fprintf('  core scale      : %.3f (hTip = %.9f mm expected)\n', ...
+        opt.CoreScale,1e3*opt.CoreScale*0.00675308135*increment);
 
     % ------------------------------------------------------------------
     % True polyline source carrier. No source triangle is retained later.
@@ -174,10 +181,12 @@ function F = qualify_incremental_crack_candidate(pathGlobal,varargin)
     end
 
     % ------------------------------------------------------------------
-    % Exact already-qualified structured core at scale s=1.
+    % Exact audited structured-core family. Scale 1 is the production
+    % reference; scale 0.5 is the previously qualified Level-1 h/2 family.
     % ------------------------------------------------------------------
     incremental_profile_clock('phase','qualification','structured_core');
-    Core=build_stage2_scaled_audited_core([0 0],[1 0],increment,'Scale',1);
+    Core=build_stage2_scaled_audited_core([0 0],[1 0],increment, ...
+        'Scale',opt.CoreScale);
     Zp=Core.local.coord3;
     Tp=Core.local.connect3;
     rp=Core.rCore;
@@ -199,10 +208,24 @@ function F = qualify_incremental_crack_candidate(pathGlobal,varargin)
     ri=.10*increment;
     ro=.65*increment;
 
-    assert(abs(Core.hTip/increment-0.00675308135)<1e-14, ...
-        'pathqual:HTipScale','Unexpected core hTip/a0.');
-    assert(abs(rp/increment-.75)<1e-14,'pathqual:CoreScale', ...
-        'Unexpected core radius/a0.');
+    assert(abs(Core.hTip/increment-opt.CoreScale*0.00675308135)<1e-14, ...
+        'pathqual:HTipScale','Unexpected core hTip/increment.');
+    assert(abs(rp/increment-.75)<1e-14,'pathqual:CoreRadius', ...
+        'Unexpected core radius/increment.');
+
+    if abs(opt.CoreScale-1)<=1e-14
+        expectedCoreT3=12678;
+        expectedSupport=11316;
+        expectedNative=[38;55;44;34];
+        coreFamilyLabel='L0';
+    elseif abs(opt.CoreScale-.5)<=1e-14
+        expectedCoreT3=49518;
+        expectedSupport=40146;
+        expectedNative=[74;108;86;67];
+        coreFamilyLabel='L1_h2';
+    else
+        error('pathqual:UnsupportedCoreScale','Unsupported audited core scale.');
+    end
 
     % Physical-boundary clearance in the actual carrier geometry.
     incremental_profile_clock('phase','qualification','carrier_clearance');
@@ -476,7 +499,9 @@ function F = qualify_incremental_crack_candidate(pathGlobal,varargin)
     gates.EDIInsideUntouchedCore=supportInside;
     gates.exteriorExcludedFromEDI=exteriorOutside;
     gates.nativeSamplingAdequate=all(sampleN>=12);
-    gates.nativeSamplingExact=isequal(sampleN,[38;55;44;34]);
+    gates.coreFamilyElementFingerprint=numel(patchRows)==expectedCoreT3;
+    gates.EDISupportFingerprint=numel(support)==expectedSupport;
+    gates.nativeSamplingExact=isequal(sampleN,expectedNative);
     gates.exteriorCrackLengthCorrect=abs(exteriorCrackLength-(pathLength-rp))<=1e-14;
     gates.upperMouthAtZero=mouthUpper<=1e-12;
     gates.lowerMouthAtZero=mouthLower<=1e-12;
@@ -570,7 +595,8 @@ function F = qualify_incremental_crack_candidate(pathGlobal,varargin)
     superErr=norm(rows(3,3:4).'-M*[1;1e-4]);
 
     syntheticGates=struct();
-    syntheticGates.sameEDISupportCountAsCore=all(Synthetic.nElem_used==11316);
+    syntheticGates.sameEDISupportCountAsCore= ...
+        all(Synthetic.nElem_used==expectedSupport) && numel(support)==expectedSupport;
     syntheticGates.pureIRecovery=abs(rows(1,3)-1)<=2e-4;
     syntheticGates.pureICrossLeakage=abs(rows(1,4))<=1e-10;
     syntheticGates.pureIIRecovery=abs(rows(2,4)-1)<=2e-4;
@@ -600,7 +626,7 @@ function F = qualify_incremental_crack_candidate(pathGlobal,varargin)
     pass=structuralPass&&syntheticPass;
 
     Summary=table( ...
-        nSegments,increment,pathLength,thetaPrevDeg,thetaLastDeg,Core.hTip,ri,ro,rp, ...
+        nSegments,increment,pathLength,thetaPrevDeg,thetaLastDeg,opt.CoreScale,Core.hTip,ri,ro,rp, ...
         design.transitionLength_m,design.farCap_m, ...
         size(Pc,1),size(Tc,1),size(P6,1),numel(patchRows),numel(exteriorRows), ...
         physicalClearance,cornerDistance,exteriorCrackLength,numel(support), ...
@@ -608,7 +634,7 @@ function F = qualify_incremental_crack_candidate(pathGlobal,varargin)
         matrixError,mixedRel,superErr,pass, ...
         'VariableNames',{ ...
         'n_segments','increment_m','path_length_m','theta_prev_deg','theta_current_deg', ...
-        'hTip_m','rInner_m','rOuter_m','rCore_m','transition_m','farCap_m', ...
+        'core_scale','hTip_m','rInner_m','rOuter_m','rCore_m','transition_m','farCap_m', ...
         'T3_nodes','T3_elements','T6_nodes','core_T3_elements','exterior_T3_elements', ...
         'physical_clearance_m','prior_tip_distance_m','exterior_crack_m','EDI_elements', ...
         'core_coord_error_m','pair_error_T3_m','pair_error_T6_m','area_rel_error', ...
@@ -645,6 +671,16 @@ function F = qualify_incremental_crack_candidate(pathGlobal,varargin)
     candidate.pairedNodeIDs=pairedIDs;
     candidate.pairedMirrorLocal=mirrorMap;
     candidate.structuredDesign=design;
+    candidate.coreMeshControls=struct( ...
+        'family',coreFamilyLabel, ...
+        'scale',opt.CoreScale, ...
+        'hTip_m',Core.hTip, ...
+        'rInner_m',ri, ...
+        'rOuter_m',ro, ...
+        'rCore_m',rp, ...
+        'expectedCoreT3',expectedCoreT3, ...
+        'expectedEDISupport',expectedSupport, ...
+        'expectedNativeSamples',expectedNative);
     candidate.exteriorDesign=ext;
     candidate.exteriorMeshControls=struct( ...
         'farCapOverIncrement',opt.ExteriorFarCapOverIncrement, ...
@@ -670,6 +706,7 @@ function F = qualify_incremental_crack_candidate(pathGlobal,varargin)
     F.localMesh=meshLocal;
     F.crackLocal=cr;
     F.Core=Core;
+    F.coreMeshControls=candidate.coreMeshControls;
     F.exteriorDesign=ext;
     F.exteriorMeshControls=candidate.exteriorMeshControls;
     F.sampleCounts=table(windows(:,1),windows(:,2),sampleN, ...
