@@ -3,8 +3,10 @@
 Manuscript layer prepared on `paper-pilot-crack-trajectory`, based on the
 current plotting/development snapshot
 `cfdf0f110010d688a4e3c48f6d88a00fd17dc698` (2026-10-06).
-The numerical solver, mesher, extractors, MTS routine, and plotting routines
-are unchanged. No physical solve or mesh generation was performed.
+The pilot manuscript layer is based on audited numerical archives. The
+reference solver/extractor implementation is unchanged; subsequent branches
+have added a qualified coarser-exterior M1 trajectory and publication plots
+derived from the saved reference and M1 runs.
 
 ## Title alternatives, followed by the selected title
 
@@ -18,9 +20,10 @@ The reversal is the central result in the abstract and discussion.
 
 ## Contents
 
-- `main.tex`: complete single-column article, 193-word provisional abstract,
-  seven keywords, governing equations, implemented MTS rule, characteristic
-  states, four main vector figures, and one supplementary quality figure.
+- `main.tex`: complete single-column article with governing equations,
+  implemented MTS rule, characteristic states, five main figures (including
+  the independent M1 exterior-mesh sensitivity figure), and one supplementary
+  quality figure.
 - `references.bib`: explicit literature TODOs; no fabricated entries.
 - `FIGURE_PLAN.md`: compact figure selection and source mapping.
 - `EVIDENCE_AND_PROVENANCE.md`: numerical claim-to-source mapping and limits.
@@ -77,8 +80,10 @@ on archive/state disagreement rather than silently reconciling it.
 1. **Strongest contribution:** a reproducible current-tip-driven trajectory
    showing a mode-II sign reversal while KI continues to grow. All stored
    COD definitions corroborate the P21–P22 sign-change bracket.
-2. **Weakest point:** the trajectory has only one crack-increment size.
-   Tight solver and regression tolerances do not establish path accuracy.
+2. **Weakest point:** the trajectory still has only one crack-increment
+   size. The independent M1 run now demonstrates negligible sensitivity to
+   substantial coarsening of the exterior mesh, but it does not test local
+   tip-core/EDI resolution or increment-size convergence.
 3. **Likeliest reviewer scrutiny:** the location/robustness of the local-
    symmetry crossing and the causal attribution to the free boundary.
    The 84.15-mm value is interpolation; boundary distance and curvature
@@ -89,8 +94,8 @@ on archive/state disagreement rather than silently reconciling it.
    change into one refinement and call it increment convergence.
 5. **Submission readiness:** the evidence is sufficient for a serious
    internal fracture-mechanics pilot and an informative draft. It is not
-   yet ready for journal submission: verified literature, trajectory
-   convergence, and late-tip extraction checks remain necessary. No formal
+   yet ready for journal submission: verified literature, increment-size
+   sensitivity, and local tip/EDI-domain checks remain necessary. No formal
    journal “pilot submission” category is assumed.
 
 The full prioritized list is in `REMAINING_WORK.md`.
