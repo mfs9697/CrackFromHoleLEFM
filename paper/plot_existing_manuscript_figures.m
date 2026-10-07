@@ -137,24 +137,24 @@ function S = plot_existing_manuscript_figures(varargin)
     local_mkdir(out);
     a=T.crack_length_mm;
 
-    f=local_figure(vis,[14.0 4.6]); ax=axes(f);
+    f=local_figure(vis,[6.4 5.2]); ax=axes(f);
     plot(ax,a,T.KI_unit,'-o','Color',C.blue,'LineWidth',1.2, ...
         'MarkerSize',3.1,'MarkerFaceColor','w');
     xlim(ax,[4 92]); xticks(ax,[4 20 36 52 68 84 92]);
-    ylabel(ax,'K_I [MPa m^{1/2}]');
+    xlabel(ax,'Crack length a [mm]'); ylabel(ax,'K_I [MPa m^{1/2}]');
     local_style_axis(ax);
     S.files{end+1}=local_export_axis(ax,out,'KI'); %#ok<AGROW>
 
-    f=local_figure(vis,[14.0 4.6]); ax=axes(f); hold(ax,'on');
+    f=local_figure(vis,[6.4 5.2]); ax=axes(f); hold(ax,'on');
     plot(ax,a,T.KII_unit,'-o','Color',C.blue,'LineWidth',1.2, ...
         'MarkerSize',3.1,'MarkerFaceColor','w');
     yline(ax,0,'--','Color',C.gray,'HandleVisibility','off');
     xlim(ax,[4 92]); xticks(ax,[4 20 36 52 68 84 92]);
-    ylabel(ax,'K_{II} [MPa m^{1/2}]');
+    xlabel(ax,'Crack length a [mm]'); ylabel(ax,'K_{II} [MPa m^{1/2}]');
     local_style_axis(ax);
     S.files{end+1}=local_export_axis(ax,out,'KII'); %#ok<AGROW>
 
-    f=local_figure(vis,[14.0 4.6]); ax=axes(f);
+    f=local_figure(vis,[6.4 5.2]); ax=axes(f);
     plot(ax,a,T.theta_deg,'-o','Color',C.blue,'LineWidth',1.2, ...
         'MarkerSize',3.1,'MarkerFaceColor','w');
     xlim(ax,[4 92]); xticks(ax,[4 20 36 52 68 84 92]);
@@ -169,17 +169,17 @@ function S = plot_existing_manuscript_figures(varargin)
     aLate=T.crack_length_mm(late);
     aLS=E.interpolatedZeroLength_mm;
 
-    f=local_figure(vis,[14.0 4.6]); ax=axes(f); hold(ax,'on');
+    f=local_figure(vis,[8.0 5.2]); ax=axes(f); hold(ax,'on');
     plot(ax,aLate,1e3*T.KII_over_KI(late),'-o','Color',C.blue,'LineWidth',1.2, ...
         'MarkerSize',3.1,'MarkerFaceColor','w');
     yline(ax,0,'--','Color',C.gray,'HandleVisibility','off');
     xline(ax,aLS,':','Color',C.purple,'LineWidth',1.0,'HandleVisibility','off');
     xlim(ax,[60 92]); xticks(ax,[60 68 76 84 88 92]);
-    ylabel(ax,'10^3 K_{II}/K_I');
+    xlabel(ax,'Crack length a [mm]'); ylabel(ax,'10^3 K_{II}/K_I');
     local_style_axis(ax);
     S.files{end+1}=local_export_axis(ax,out,'mode_mixity'); %#ok<AGROW>
 
-    f=local_figure(vis,[14.0 4.6]); ax=axes(f); hold(ax,'on');
+    f=local_figure(vis,[8.0 5.2]); ax=axes(f); hold(ax,'on');
     plot(ax,aLate,T.delta_theta_next_deg(late),'-o','Color',C.blue,'LineWidth',1.2, ...
         'MarkerSize',3.1,'MarkerFaceColor','w');
     yline(ax,0,'--','Color',C.gray,'HandleVisibility','off');
