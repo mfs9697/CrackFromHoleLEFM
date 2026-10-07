@@ -1,7 +1,6 @@
 # Proposed compact figure set
 
-Figures are redrawn as vector PGFPlots directly from the audited snapshot.
-They do not alter the scientific records or run the numerical solver.
+Figures 1--4 and S1 are redrawn in MATLAB from the audited manuscript snapshot and exported as separate vector PDF panels. Figure 5 is generated independently from the saved reference and M1 trajectory archives. LaTeX assembles all panels with `subcaption`; panel letters and panel titles are not embedded in the graphics. Figure generation does not alter the scientific records or run the numerical solver.
 Existing plot identifiers below name their scientific source, not a claim
 that every original plot image is currently present on disk.
 
