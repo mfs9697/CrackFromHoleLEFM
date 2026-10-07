@@ -1,6 +1,6 @@
 # Stage-I source provenance audit
 
-Status: **open pending local-source identification**.
+Status: **CLOSED — PASS_LOCAL_ORIGINAL_IDENTIFIED**.
 
 This audit is intentionally separate from the manuscript prose. No numerical
 solver, mesh generator, SIF extractor, or manuscript text is changed here.
@@ -84,6 +84,57 @@ original local source path remains unresolved. The provenance audit is still
 open. No manuscript prose should be changed to describe this file as a
 canonically recovered historical source until a wider filesystem scan or an
 independent archival record closes the chain.
+
+## Home-directory scan and closure
+
+A wider read-only scan of `C:\\Users\\Mikhailo` identified one exact-name
+source and two byte-identical copies outside the committed paper snapshot.
+
+Exact-name source:
+
+```text
+C:\Users\Mikhailo\Documents\Codex\2026-10-04\files-pasted-by-the-user-you\work\incremental-profile\accepted_R0.mat
+```
+
+Additional byte-identical Codex output copy:
+
+```text
+C:\Users\Mikhailo\Documents\Codex\2026-10-04\files-pasted-by-the-user-you\outputs\paper-pilot\data\accepted_stage1_source.mat
+```
+
+The exact-name `accepted_R0.mat` and the committed
+`paper/data/accepted_stage1_source.mat` have the same:
+
+- size: **42401 bytes**;
+- SHA-256:
+  **`93bf96d515b8719258f8fbd5fdfeffa1d009e17c286f10fe4dc4e19c02e64a17`**.
+
+The committed Git blob is:
+
+```text
+9c6904005b5880b9ed32174bbf185865f940f799
+```
+
+The wider scan reported:
+
+```text
+STATUS: PASS_LOCAL_ORIGINAL_IDENTIFIED
+```
+
+Therefore the Stage-I provenance chain is now closed for the preserved
+`R0` snapshot: Codex copied a byte-identical investigator-provided
+`accepted_R0.mat` from its preceding `incremental-profile` workspace into
+the manuscript evidence layer.
+
+This does **not** mean that the formerly expected standard file
+`verification/crack_path/stage1_starting_state.mat` has been recovered.
+That standard-path file remains absent. What has been recovered and
+identified is an equivalent accepted `R0` snapshot saved under a different
+filename during the earlier profiling workflow.
+
+The preserved manuscript copy may therefore be used as the canonical
+recovered Stage-I evidence for this paper, provided its above provenance and
+fingerprint remain recorded.
 
 ## Local closure test
 
