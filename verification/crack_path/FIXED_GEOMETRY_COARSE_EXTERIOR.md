@@ -132,3 +132,67 @@ reference vertices.
 
 No claim about trajectory robustness is made from this fixed-geometry
 diagnostic alone.
+
+## MATLAB Phase-2 result — PASS
+
+The guarded physical comparison was run on the investigator's home machine
+after restoring the exact historical `BN_local.m` dependency.
+
+Both fixed geometries passed every physical-solve gate.
+
+### P17
+
+Reference versus M1:
+
+- `KI`: 0.786793202682934 -> 0.786789736259116 MPa sqrt(m)
+  (**-0.0004406%**);
+- `KII`: 0.00254836873974682 -> 0.00254794751187779 MPa sqrt(m)
+  (**-0.0165293%**);
+- `KII/KI`: 0.00323893080298227 -> 0.00323840969760524
+  (**-0.0160888%**);
+- next MTS turn: -0.371145045509677 -> -0.371085335616167 deg
+  (**+5.971e-5 deg**, about **-0.016088%** in magnitude);
+- PCG iterations: 2813 -> 2309 (**-17.92%**).
+
+The positive mode-mixity maximum state therefore retains the same sign and
+essentially the same magnitude on the coarser exterior mesh.
+
+### P22
+
+Reference versus M1:
+
+- `KI`: 1.06672380365142 -> 1.06672056226801 MPa sqrt(m)
+  (**-0.0003039%**);
+- `KII`: -0.00228448674501001 -> -0.00228504777571877 MPa sqrt(m)
+  (**+0.0245583%** in signed ratio `M1/ref-1`; the negative magnitude is
+  slightly larger);
+- `KII/KI`: -0.00214159160711531 -> -0.00214212405436378
+  (**+0.0248622%** in signed ratio `M1/ref-1`);
+- next MTS turn: +0.245405694839291 -> +0.245466706840323 deg
+  (**+6.101e-5 deg**, about **+0.024862%**);
+- PCG iterations: 2960 -> 2498 (**-15.61%**).
+
+The post-local-symmetry state therefore retains negative mode mixity and a
+positive MTS turn.
+
+### Interpretation
+
+The fixed-geometry diagnostic is scientifically successful:
+
+1. the M1 exterior reduces the total T3 count by about 31--33% and the
+   exterior-element count by about 40--43%;
+2. the paired tip core and the 11316-element EDI support remain unchanged;
+3. all structural, synthetic-Williams, and physical solver gates pass;
+4. `KI` changes by less than 0.0005%;
+5. `KII`, `KII/KI`, and the MTS turn change by only about
+   0.016--0.025% at the two deliberately sensitive states;
+6. the physically important signs are unchanged.
+
+Thus the accepted P17/P22 interpretation is insensitive to this substantial
+coarsening of the exterior mesh when the crack geometry is held fixed.
+
+This result does **not** yet establish trajectory robustness, because an
+independently propagated M1 trajectory will accumulate small differences in
+the MTS direction and therefore develop different crack vertices.  That is
+the appropriate next experiment if trajectory sensitivity is to be studied.
+
