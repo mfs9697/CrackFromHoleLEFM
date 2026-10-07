@@ -12,6 +12,7 @@ that every original plot image is currently present on disk.
 | 3, panels a–b | `10_late_mode_mixity_MTS`, supported by `05_mode_mixity`/`03_delta_theta`; accepted rows P15–P23 | Relate the mode-mixity reversal to the MTS-turn sign reversal. Mark the interpolated zero without inserting a new physical point. | Main |
 | 4, four panels | `11_COD_turn_sensitivity`, `12_COD_mode_mixity_sensitivity`; all 176 stored `R.fitTable` rows | Compare all four windows and both degrees. Plot COD minus EDI in the late region so small but important differences are visible. EDI is the production reference, not assumed ground truth. | Main |
 | S1, four panels | Original `07_numerical_quality`, `plot_final_clean_run_results.m`; accepted solver rows and qualification summaries | Minimum triangle angle, neighboring size ratio, iterations, and true residual normalized by its gate. Verify acceptance without interpreting diagnostics as path-error bounds. | Supplementary/appendix |
+| S2, panels a–b | `paper/data/symmetric_stability_benchmark.csv`; physical control from `symmetric-path-stability` @ `6945371` | Centered-hole parity/local-stability control: mode mixity versus prescribed perturbation and the one-step map $F(\theta_2)=\theta_3$. | Supplementary/appendix |
 
 ## Selection rationale
 
@@ -20,8 +21,10 @@ trajectory views are combined; the absolute-angle plot is incorporated
 with the aligned intensity histories; the late mode-mixity/turn panels
 provide the mechanism; and the two COD sensitivity views become one
 difference figure. Numerical quality stays outside the central physical
-results. The original selected-window COD comparison is replaced with all
-eight definitions to avoid selecting the apparently best fit.
+results. The centered-hole stability control is likewise supplementary:
+it validates the directional update without becoming part of the asymmetric
+trajectory history. The original selected-window COD comparison is replaced
+with all eight definitions to avoid selecting the apparently best fit.
 
 The same shared axes and physical units are used within aligned panels.
 The two spatial panels have equal x/y scales independently; their zoom
