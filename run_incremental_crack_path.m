@@ -38,6 +38,16 @@ function Path = run_incremental_crack_path(varargin)
     addParameter(ip,'AllowPhysicalSolves',false,@(x)islogical(x)&&isscalar(x));
     addParameter(ip,'RunSynthetic',true,@(x)islogical(x)&&isscalar(x));
     addParameter(ip,'FastEDI',false,@(x)islogical(x)&&isscalar(x));
+    % Exterior-only controls. Defaults reproduce the accepted production
+    % family; nondefault values define an alternative propagated mesh family.
+    addParameter(ip,'ExteriorFarCapOverIncrement',0.625, ...
+        @(x)isnumeric(x)&&isscalar(x)&&isfinite(x)&&x>0);
+    addParameter(ip,'ExteriorTransitionOverIncrement',1.0, ...
+        @(x)isnumeric(x)&&isscalar(x)&&isfinite(x)&&x>0);
+    addParameter(ip,'ExteriorCalibration',struct(), ...
+        @(x)isstruct(x)&&isscalar(x));
+    addParameter(ip,'MeshFamilyLabel','reference', ...
+        @(x)ischar(x)||isstring(x));
     addParameter(ip,'ReuseCandidates',true,@(x)islogical(x)&&isscalar(x));
     addParameter(ip,'PlotEachStep',false,@(x)islogical(x)&&isscalar(x));
     addParameter(ip,'RegressionGates',true,@(x)islogical(x)&&isscalar(x));
@@ -52,6 +62,16 @@ function Path = run_incremental_crack_path(varargin)
     addParameter(ip,'SeedKII',4.19826648316e-6,@(x)isnumeric(x)&&isscalar(x)&&isfinite(x));
     parse(ip,varargin{:});
     opt=ip.Results;
+
+    meshControls=struct( ...
+        'farCapOverIncrement',opt.ExteriorFarCapOverIncrement, ...
+        'transitionOverIncrement',opt.ExteriorTransitionOverIncrement, ...
+        'calibrationOverride',opt.ExteriorCalibration, ...
+        'label',char(opt.MeshFamilyLabel));
+    meshControls.isReferenceProductionExterior = ...
+        abs(opt.ExteriorTransitionOverIncrement-1.0)<=10*eps && ...
+        abs(opt.ExteriorFarCapOverIncrement-0.625)<=10*eps && ...
+        isempty(fieldnames(opt.ExteriorCalibration));
 
     incremental_profile_clock('begin','run',0);
     profileCleanup=onCleanup(@()incremental_profile_clock('end','run'));
@@ -127,7 +147,7 @@ function Path = run_incremental_crack_path(varargin)
             completedPhysicalSegments,startK,resumeHistoryMode]=local_prepare_resume( ...
             resumeState,resumeSourceDir,opt.MaxSegments,rows,seedRow,stepResults, ...
             regression,p0,p1,p2,theta2Deg,increment,nMat,tHat,C, ...
-            opt.RegressionGates,opt.StopAtCoreClearance);
+            opt.RegressionGates,opt.StopAtCoreClearance,meshControls);
         resumed=true;
     end
     if ~resumed,resumeHistoryMode='fresh';end
@@ -160,6 +180,11 @@ function Path = run_incremental_crack_path(varargin)
     fprintf('  accepted P1 KII   = %+.12g MPa*sqrt(m)\n',opt.SeedKII);
     fprintf('  theta_2           = %+.12g deg (MTS from P1)\n',theta2Deg);
     fprintf('  physical solves   = %d\n',logical(opt.AllowPhysicalSolves));
+    fprintf('  mesh family       = %s\n',meshControls.label);
+    fprintf('  exterior far cap  = %.6g * DeltaA\n',meshControls.farCapOverIncrement);
+    if ~isempty(fieldnames(meshControls.calibrationOverride))
+        fprintf('  exterior override = enabled\n');
+    end
     fprintf('  output directory  = %s\n',outDir);
     fprintf('  resume mode       = %d\n',resumed);
     if resumed
@@ -183,7 +208,7 @@ function Path = run_incremental_crack_path(varargin)
     if promotedAcceptedSegment>0 && startK>opt.MaxSegments
         State=local_make_resume_state(vertices,thetaDeg,completedPhysicalSegments, ...
             promotedNextThetaDeg,regression,'max_segments_reached', ...
-            rows,opt.FastEDI,outDir);
+            rows,opt.FastEDI,outDir,meshControls);
         local_atomic_save_state(outDir,State);
     end
 
@@ -215,7 +240,8 @@ function Path = run_incremental_crack_path(varargin)
                     size(d.candidate.path,1)==size(pathNow,1) && ...
                     norm(d.candidate.path-pathNow,'fro')<=2e-12 && ...
                     isfield(d.candidate,'scientificallyReadyForIncrementalPhysicalSolve') && ...
-                    logical(d.candidate.scientificallyReadyForIncrementalPhysicalSolve)
+                    logical(d.candidate.scientificallyReadyForIncrementalPhysicalSolve) && ...
+                    local_candidate_mesh_controls_match(d.candidate,meshControls)
                 candidate=d.candidate;
                 useSaved=true;
                 fprintf('  Reusing qualified candidate: %s\n',candidateFile);
@@ -227,6 +253,9 @@ function Path = run_incremental_crack_path(varargin)
                 'FrozenState',R0, ...
                 'RunSynthetic',opt.RunSynthetic, ...
                 'FastEDI',opt.FastEDI, ...
+                'ExteriorFarCapOverIncrement',opt.ExteriorFarCapOverIncrement, ...
+                'ExteriorTransitionOverIncrement',opt.ExteriorTransitionOverIncrement, ...
+                'ExteriorCalibration',opt.ExteriorCalibration, ...
                 'SaveCandidate',true, ...
                 'CandidateFile',candidateFile, ...
                 'SaveCompact',true, ...
@@ -293,7 +322,7 @@ function Path = run_incremental_crack_path(varargin)
         % repeating this accepted physical solve.
         if k==opt.MaxSegments
             State=local_make_resume_state(vertices,thetaDeg,k,thetaNextDeg, ...
-                regression,'max_segments_reached',rows,opt.FastEDI,outDir);
+                regression,'max_segments_reached',rows,opt.FastEDI,outDir,meshControls);
             local_atomic_save_state(outDir,State);
             clear stepProfileCleanup
             break
@@ -309,7 +338,7 @@ function Path = run_incremental_crack_path(varargin)
             stopReason='next_tip_outside_plate';
             fprintf('  STOP: proposed next tip is outside the plate.\n');
             State=local_make_resume_state(vertices,thetaDeg,k,thetaNextDeg, ...
-                regression,stopReason,rows,opt.FastEDI,outDir);
+                regression,stopReason,rows,opt.FastEDI,outDir,meshControls);
             local_atomic_save_state(outDir,State);
             clear stepProfileCleanup
             break
@@ -323,7 +352,7 @@ function Path = run_incremental_crack_path(varargin)
                 fprintf('  STOP: proposed next tip clearance %.6f mm <= rCore %.6f mm.\n', ...
                     1e3*clearance,1e3*rCore);
                 State=local_make_resume_state(vertices,thetaDeg,k,thetaNextDeg, ...
-                    regression,stopReason,rows,opt.FastEDI,outDir);
+                    regression,stopReason,rows,opt.FastEDI,outDir,meshControls);
                 local_atomic_save_state(outDir,State);
                 clear stepProfileCleanup
                 break
@@ -335,7 +364,7 @@ function Path = run_incremental_crack_path(varargin)
 
         % Atomic compact path-state checkpoint after each accepted append.
         State=local_make_resume_state(vertices,thetaDeg,k,thetaNextDeg, ...
-            regression,'running',rows,opt.FastEDI,outDir);
+            regression,'running',rows,opt.FastEDI,outDir,meshControls);
         local_atomic_save_state(outDir,State);
         clear stepProfileCleanup
     end
@@ -358,6 +387,8 @@ function Path = run_incremental_crack_path(varargin)
     Path.stopReason=stopReason;
     Path.outputDir=outDir;
     Path.fastEDI=opt.FastEDI;
+    Path.exteriorMeshControls=meshControls;
+    Path.meshFamilyLabel=meshControls.label;
     Path.resumed=resumed;
     Path.resumeStateSource=resumeLabel;
     Path.resumeSourceDir=resumeSourceDir;
@@ -516,13 +547,23 @@ end
 function [vertices,thetaDeg,rows,stepResults,regression,kDone,startK,historyMode]= ...
         local_prepare_resume(State,sourceDir,maxSegments,rows,seedRow,stepResults, ...
         regression,p0,p1,p2,theta2Deg,increment,nMat,tHat,C, ...
-        regressionGates,stopAtCoreClearance)
+        regressionGates,stopAtCoreClearance,meshControls)
 
     req={'vertices','thetaDeg','completedPhysicalSegments','nextThetaDeg'};
     for j=1:numel(req)
         if ~isfield(State,req{j})||isempty(State.(req{j}))
             error('pathrun:ResumeField','Resume State missing %s.',req{j});
         end
+    end
+
+    if isfield(State,'exteriorMeshControls')
+        if ~local_mesh_controls_equal(State.exteriorMeshControls,meshControls)
+            error('pathrun:ResumeMeshFamily', ...
+                'Resume State was created with different exterior mesh controls.');
+        end
+    elseif ~meshControls.isReferenceProductionExterior
+        error('pathrun:ResumeMeshFamilyMissing', ...
+            'Alternative mesh-family resume requires stored exteriorMeshControls.');
     end
 
     vertices=State.vertices;
@@ -772,7 +813,7 @@ function row=local_row_from_result(R,k)
 end
 
 function State=local_make_resume_state(vertices,thetaDeg,kDone,nextThetaDeg, ...
-        regression,stopReason,rows,fastEDI,outDir)
+        regression,stopReason,rows,fastEDI,outDir,meshControls)
     State=struct();
     State.schemaVersion=2;
     State.vertices=vertices;
@@ -791,6 +832,8 @@ function State=local_make_resume_state(vertices,thetaDeg,kDone,nextThetaDeg, ...
     end
     State.fastEDI=logical(fastEDI);
     State.sourceOutputDir=outDir;
+    State.exteriorMeshControls=meshControls;
+    State.meshFamilyLabel=meshControls.label;
 end
 
 function local_atomic_save_state(outDir,State)
@@ -839,6 +882,58 @@ function local_require_table_variables(T,names)
     if ~isempty(miss)
         error('pathrun:FrozenFields','Missing frozen fields: %s',strjoin(miss,', '));
     end
+end
+
+function tf=local_candidate_mesh_controls_match(candidate,requested)
+    tf=false;
+    if ~isfield(candidate,'exteriorMeshControls') || ...
+            ~isstruct(candidate.exteriorMeshControls)
+        % Historical reference candidates predate explicit control metadata.
+        tf=requested.isReferenceProductionExterior;
+        return
+    end
+    tf=local_mesh_controls_equal(candidate.exteriorMeshControls,requested);
+end
+
+function tf=local_mesh_controls_equal(a,b)
+    tf=false;
+    if ~isstruct(a)||~isstruct(b),return,end
+
+    if isfield(a,'farCapOverIncrement')
+        fa=a.farCapOverIncrement;
+    elseif isfield(a,'farCapOverA0')
+        fa=a.farCapOverA0;
+    else
+        return
+    end
+    if isfield(a,'transitionOverIncrement')
+        ta=a.transitionOverIncrement;
+    elseif isfield(a,'transitionOverA0')
+        ta=a.transitionOverA0;
+    else
+        return
+    end
+
+    if ~isfield(b,'farCapOverIncrement')||~isfield(b,'transitionOverIncrement')
+        return
+    end
+
+    if abs(fa-b.farCapOverIncrement)>1e-14 || ...
+            abs(ta-b.transitionOverIncrement)>1e-14
+        return
+    end
+
+    if isfield(a,'calibrationOverride')
+        ca=a.calibrationOverride;
+    else
+        ca=struct();
+    end
+    if isfield(b,'calibrationOverride')
+        cb=b.calibrationOverride;
+    else
+        cb=struct();
+    end
+    tf=isequaln(ca,cb);
 end
 
 function tf=local_is_absolute_path(p)
