@@ -69,6 +69,34 @@ inside their respective compact MAT files. Pk uses `step_kkk_*`.
 | Near-zero P21 rear linear ratio 26.31962452791384% above EDI, absolute turn difference 0.002453300431192729 deg | P21 degree1 [0.12,0.30] row: `100*(ratio_COD/ratio_EDI-1)` and absolute turning difference; this is not a relative physical error estimate |
 | Secondary Stage-I tensile maximum about 1.34% lower (remaining-work report) | `R0.summary.primary_secondary_gap_rel=0.01336323222072076` |
 
+## Centered-hole symmetry and local-stability benchmark
+
+A separate physical control was run on 2026-10-07 from
+`symmetric-path-stability` commit
+`6945371dfdfac441b90970690b7e1728c7f06259`. Its complete MATLAB console
+log has SHA256
+`f4dd0397a86fb1ad395270a496b1eac209effe450dddc8dc3603ac1852695301`.
+The readable numerical rows are preserved in
+`data/symmetric_stability_benchmark.csv`; detailed source/run provenance is
+in `data/SYMMETRIC_STABILITY_PROVENANCE.md`.
+
+The benchmark uses a centered circular hole, an exact horizontal first
+4-mm segment, and prescribed second-segment perturbations of
+-0.10, -0.05, 0, +0.05, and +0.10 degrees. Each full-domain geometry was
+independently qualified and solved once. All qualification and physical
+gates passed. The straight control gives
+`KII/KI=6.22351746186701e-09` and
+`theta3=-7.1316256897125e-07 deg`. The pairwise one-step multipliers are
+`-0.114158317407462` and `-0.114150920881333`, and the four nonzero
+probes give the origin-constrained fit
+`F'(0)=-0.114152400186559`.
+
+This control is evidence for symmetry preservation, sign conventions, SIF
+extraction, and the local EDI/MTS directional update. It is deliberately
+kept separate from the asymmetric production trajectory. It is not a
+4/2/1-mm trajectory-convergence study and it does not establish that the
+free boundary is the sole cause of the late mode-mixity reversal.
+
 ## Claim limits and missing provenance
 
 The data support the sign change and rising KI. The nearby-boundary
