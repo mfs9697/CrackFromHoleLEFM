@@ -29,8 +29,8 @@ Refined L1:
 - core scale = 0.5;
 - hTip = 0.0135061627 mm;
 - paired core T3 = 49,518;
-- literal radial-support diagnostic = 44,130 elements;
-- primary FE-nodal EDI support (skip constant-q) = 40,146 elements;
+- production FE-nodal EDI participation = 44,130 elements;
+- skip-constant-q mesh-audit subset = 40,146 elements;
 - native COD counts = 74/108/86/67.
 
 The following remain unchanged:
@@ -70,8 +70,8 @@ No physical FEM solve is performed by default.
 
 Required outcomes include:
 
-- exact L1 core/primary-support/native-sampling fingerprints;
-- literal support contains the primary support and remains inside the paired core;
+- exact L1 core/production-EDI/native-sampling fingerprints;
+- the 40,146-element skip-constant subset is contained in the 44,130-element production EDI set, and both remain inside the paired core;
 - complete T3/T6 reflection pairing;
 - EDI support wholly inside the paired core;
 - exterior excluded from the EDI support;
@@ -114,3 +114,14 @@ If these conditions are satisfied, the next experiment should be an
 independent L1 trajectory. At that stage it is reasonable to combine the L1
 tip core with the qualified M1 exterior law to control computational cost,
 but that is a separate propagated-path experiment.
+
+
+## Support-count clarification
+
+The L1 qualification distinguishes two element sets. The unchanged production
+`SIF_LEFM_interaction_EDI` routine reports 44,130 participating elements.
+Its `SkipUnusedAuxWork` option does not alter q, quadrature, element
+participation, or summation. The smaller 40,146-element set comes from the
+Step62 mesh-audit helper that pre-skips elements whose nodal q values are
+exactly constant. It is retained only as a diagnostic subset and is not used
+as the production `nElem_used` fingerprint.
