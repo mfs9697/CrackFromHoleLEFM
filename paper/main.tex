@@ -69,11 +69,14 @@ A second trajectory, propagated independently with a substantially coarser
 exterior mesh while retaining the same paired tip core and interaction-domain
 region, preserves the $P_{17}$ mode-mixity maximum and the $P_{21}$--$P_{22}$
 sign-change bracket; the maximum separation of corresponding accepted tips
-is only $0.0674~\mu\mathrm{m}$. The late redirection is consistent with increasing
-free-boundary influence
-rather than unloading, although these calculations do not isolate
-boundary effects from accumulated curvature. The next geometry is qualified
-but physically unsolved. The findings establish a verified fixed-increment
+is only $0.0674~\mu\mathrm{m}$. A complementary fixed-geometry tip-resolution
+study with $h_{\mathrm{tip}}=0.0540$, $0.0270$, and $0.0135$ mm also preserves
+the $P_{21}$--$P_{22}$ sign-change bracket and shifts the linearly interpolated
+local-symmetry location by only a few micrometers between successive levels.
+The late redirection is consistent with increasing free-boundary influence
+rather than unloading, although these calculations do not isolate boundary
+effects from accumulated curvature. The next geometry is qualified but
+physically unsolved. The findings establish a verified fixed-increment
 pilot sequence, not increment-size convergence or a prediction of arrest,
 branching, or boundary intersection.
 \end{abstract}
@@ -110,10 +113,13 @@ calculation, an independently propagated trajectory with a substantially
 coarser exterior mesh is used to test whether this sequence is sensitive
 to the exterior discretization. The comparison preserves the characteristic
 states and produces only submicrometer differences between corresponding
-accepted tips. It does not, however, establish increment-size convergence,
-local tip-mesh convergence, or a causal boundary-effect decomposition.
-Numerical verification is used to separate the physical interpretation from
-extraction artifacts and from the eventual linear-solver limit.
+accepted tips. A separate fixed-geometry study varies the local tip resolution around the
+late mode-II sign change, so local tip-mesh sensitivity is addressed without
+mixing it with accumulated path divergence. The calculations still do not
+establish increment-size convergence, interaction-domain-radius sensitivity,
+or a causal boundary-effect decomposition. Numerical verification is used to
+separate the physical interpretation from extraction artifacts and from the
+eventual linear-solver limit.
 % TODO: interaction/domain integral and COD extraction references.
 
 \section{Problem formulation}
@@ -291,6 +297,34 @@ leaving the 12678-element paired core and the 11316-element interaction-
 domain support unchanged. These fixed-geometry checks were used only to
 qualify M1 for a subsequent independent trajectory calculation.
 
+\subsection{Controlled local tip-resolution family}
+A separate fixed-geometry study varies only the structured near-tip scale
+while keeping the accepted crack polyline, exterior grading law, material,
+loading, interaction-domain radii, and MTS formulation unchanged. The three
+physically compared levels are
+\begin{equation}
+ H1:\ h_{\mathrm{tip}}=0.0540247\ \mathrm{mm},\qquad
+ H0:\ h_{\mathrm{tip}}=0.0270123\ \mathrm{mm},\qquad
+ L1:\ h_{\mathrm{tip}}=0.0135062\ \mathrm{mm},
+ \label{eq:tiplevels}
+\end{equation}
+corresponding to structured-core scale factors $2$, $1$, and $1/2$
+relative to the production mesh $H0$. The paired-core radius remains
+$r_c=3$ mm and the EDI annulus remains $r_i=0.4$ mm to $r_o=2.6$ mm.
+The paired cores contain 3318, 12678, and 49518 T3 elements, respectively.
+The established four COD windows contain 19/28/23/18 native points on
+$H1$, 38/55/44/34 on $H0$, and 74/108/86/67 on $L1$.
+
+For geometric illustration, Fig.~\ref{fig:mesh-levels} also includes a
+coarser $H2$ core with $h_{\mathrm{tip}}=0.1080493$ mm. It contains only
+10/15/12/9 native COD points in the four established windows, so it fails
+the requirement of at least 12 points in every window. Consequently, $H2$
+is shown only as part of the mesh-resolution hierarchy and is not used for
+physical SIF or MTS comparisons. No sampling or solver acceptance criterion
+is relaxed to admit it.
+
+\input{figures/mesh_levels/figure}
+
 \subsection{Interaction/domain integral}
 For actual field $(\bm\sigma,\bm\varepsilon,\bm u)$ and a unit auxiliary
 mode $m$, the implemented local-frame density gives
@@ -463,6 +497,58 @@ the underlying elastic solution.
 \input{figures/cod/figure}
 
 
+\subsection{Sensitivity to local tip resolution}
+The controlled local-resolution test holds the crack geometry fixed, so the
+differences below isolate near-tip discretization sensitivity rather than
+accumulated path divergence. At $P_{17}$, halving the production tip size
+from $0.0270123$ to $0.0135062$ mm changes $K_I$ by $0.00141\%$,
+$K_{II}/K_I$ by $1.11\times10^{-6}$ in absolute value, and the MTS turn by
+only $-1.27\times10^{-4}$ degrees. Thus the positive mode-mixity maximum is
+stable under local refinement.
+
+The more discriminating comparison is the $P_{21}$--$P_{22}$ bracket, where
+$K_{II}$ changes sign. Table~\ref{tab:tipmesh} shows three physically
+qualified tip resolutions spanning a factor of four in $h_{\mathrm{tip}}$.
+Every level keeps $K_{II}/K_I>0$ at $P_{21}$ and $K_{II}/K_I<0$ at $P_{22}$,
+so the local-symmetry bracket and the associated reversal of MTS turning
+sense are unchanged.
+
+\begin{table}[tbp]
+\centering
+\small
+\setlength{\tabcolsep}{3.2pt}
+\caption{Fixed-geometry sensitivity to structured near-tip resolution.
+The crack geometries at $P_{21}$ and $P_{22}$, exterior mesh law, EDI radii,
+loading, and MTS formulation are unchanged. The final column is the linear
+interpolation of the two solved mode-mixity values and is not an independently
+solved crack state.}
+\label{tab:tipmesh}
+\begin{tabular}{lrrrrrrr}
+\toprule
+Level & $h_{\rm tip}$ [mm] & $N_{\rm core}^{T3}$ &
+$q_K(P_{21})$ & $\Delta\theta_{22}$ [deg] &
+$q_K(P_{22})$ & $\Delta\theta_{23}$ [deg] &
+$a_{\rm LS}$ [mm]\\
+\midrule
+$H1$ & 0.0540247 & 3318  & $+7.79244\times10^{-5}$ & $-0.00892948$ &
+$-2.14457\times10^{-3}$ & $+0.24574713$ & 84.140247\\
+$H0$ & 0.0270123 & 12678 & $+8.13427\times10^{-5}$ & $-0.00932118$ &
+$-2.14159\times10^{-3}$ & $+0.24540569$ & 84.146370\\
+$L1$ & 0.0135062 & 49518 & $+8.30887\times10^{-5}$ & $-0.00952126$ &
+$-2.13979\times10^{-3}$ & $+0.24519944$ & 84.149515\\
+\bottomrule
+\end{tabular}
+\end{table}
+
+The interpolated crossing therefore moves from $84.140247$ mm on $H1$ to
+$84.146370$ mm on $H0$ and $84.149515$ mm on $L1$. The successive changes,
+$6.12~\mu\mathrm{m}$ and $3.15~\mu\mathrm{m}$, are tiny relative to the
+4-mm crack increment. Taken only as a three-level diagnostic, their ratio
+corresponds to an observed order of approximately $0.96$ for this
+interpolated quantity. This numerical regularity should not be interpreted
+as micrometer-scale physical accuracy of $a_{\mathrm{LS}}$: the crossing is
+still inferred between two states separated by one full crack increment.
+
 \subsection{Sensitivity to exterior-mesh density}
 The fixed-geometry M1 checks establish that the coarser exterior mesh does
 not materially perturb the extracted current-tip quantities when the crack
@@ -526,20 +612,27 @@ this path. The interpolated zero in Eq.~\eqref{eq:zeroestimate} should be
 read against the 4-mm spacing of its bracketing states, not as a highly
 resolved physical crack length.
 
-The independent M1 calculation addresses one part of the discretization
-question: substantial coarsening of the exterior mesh has negligible effect
-on the accepted path when the audited local tip construction is retained.
-It does not vary the tip-core resolution or the interaction-domain radii,
-and therefore cannot bound those contributions to path uncertainty.
-A smaller-increment family, together with controlled local tip-mesh and
-interaction-domain variations, is still required.
+The independent M1 calculation addresses exterior-mesh density, while the
+fixed-geometry $H1$--$H0$--$L1$ study separately addresses local tip
+resolution around the mode-II sign change. Together they show that the
+reported $P_{21}$--$P_{22}$ bracket is insensitive both to substantial
+exterior coarsening and to a factor-of-four range in local structured
+tip size. The local study is deliberately performed on fixed accepted
+geometries, so it does not introduce accumulated path divergence into the
+comparison.
+
+These checks remain narrower than full trajectory convergence. The 4-mm
+increment is unchanged, and the interaction-domain radii are unchanged.
+Thus a smaller-increment family and controlled interaction-domain-radius
+variation are still required before claiming general path independence from
+the discretization and extraction scales.
 
 Local reflection pairing and synthetic recovery suppress known extraction
-leakage mechanisms, but do not by themselves bound the physical
+leakage mechanisms, but do not by themselves bound every physical
 discretization error. Similarly, residual and element-quality gates measure
-numerical acceptance, not fracture-mechanics convergence. The historical
-8-mm verification cannot be transferred into a general mesh-independence
-claim for this evolving polyline.
+numerical acceptance rather than fracture-mechanics convergence. The
+historical 8-mm verification cannot be transferred into a general
+mesh-independence claim for this evolving polyline.
 
 \subsection{Last accepted state and model scope}
 The geometry ending at $P_{24}$, with total polyline length 96 mm, passes
@@ -573,14 +666,20 @@ their late-path differences show finite extraction sensitivity. An
 independently propagated calculation with a substantially coarser exterior
 mesh reproduces the $P_{17}$ mode-mixity maximum, the $P_{21}$--$P_{22}$
 sign-change bracket, and the accepted trajectory through $P_{23}$; the
-maximum separation of corresponding tips is only $0.0674~\mu\mathrm{m}$. This
-supports robustness with respect to exterior-mesh density while leaving
-local tip-mesh and interaction-domain sensitivity unresolved. Paired-core,
-synthetic, solver, and archive checks establish a reproducible numerical
-sequence within the chosen discretization. The qualified unsolved extension
-must remain separate from the physical results. Increment-size convergence,
-controlled local tip/interaction-domain checks, and a boundary comparison
-are the next requirements for stronger predictive and causal claims.
+maximum separation of corresponding tips is only $0.0674~\mu\mathrm{m}$.
+A separate fixed-geometry $H1$--$H0$--$L1$ comparison spanning a factor of
+four in $h_{\mathrm{tip}}$ also preserves the $P_{21}$--$P_{22}$ sign bracket;
+the interpolated local-symmetry location changes by only $6.12$ and
+$3.15~\mu\mathrm{m}$ between successive levels. These results support
+robustness with respect to both exterior-mesh density and local tip
+resolution within the tested ranges.
+
+Paired-core, synthetic, solver, and archive checks establish a reproducible
+numerical sequence within the chosen discretization. The qualified unsolved
+extension must remain separate from the physical results. Increment-size
+convergence, interaction-domain-radius sensitivity, and a controlled
+boundary comparison remain the next requirements for stronger predictive
+and causal claims.
 
 \section*{References}
 \noindent\emph{Pilot status: verified literature entries have not yet been
