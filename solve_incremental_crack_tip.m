@@ -324,19 +324,57 @@ function R = solve_incremental_crack_tip(candidate,varargin)
             8*(size(M1,2)+size(M2,2)+2))/1024^3;
 
         fprintf('  SGS storage estimate      = %.4f GiB\n',preconditionerGiB);
-        fprintf('  Starting exactly ONE authorized physical PCG solve.\n');
+        fprintf('  Starting one authorized physical linear solve (one same-settings PCG restart permitted only on flag=3 stagnation).\n');
 
         incremental_profile_clock('phase','physical','pcg');
         tSolve=tic;
         [xp,flag,relres,iter,resvec]=pcg( ...
             Ap,bp,pcgTol,pcgMaxIt,M1,M2);
-        solveSeconds=toc(tSolve);
+        firstSolveSeconds=toc(tSolve);
+        solveSeconds=firstSolveSeconds;
+
+        firstFlag=flag;
+        firstRelres=relres;
+        firstIter=iter;
+        firstResvec=resvec;
+        firstTrueRelResidual=norm(Ap*xp-bp)/max(norm(bp),eps);
+        restarted=false;
+        restartIter=0;
+        restartFlag=NaN;
+        restartRelres=NaN;
+        restartTrueRelResidual=NaN;
+        restartResvec=[];
+
+        % A single Krylov restart is permitted only for MATLAB flag=3
+        % (stagnation) with a finite returned iterate. It uses the SAME
+        % matrix, RHS, SGS factors, tolerance and maxit, with the stalled
+        % iterate as x0. No physical/numerical acceptance gate is relaxed.
+        if flag==3 && isfinite(relres) && all(isfinite(xp))
+            fprintf('  PCG stagnated; performing ONE same-settings restart from stalled iterate.\n');
+            fprintf('    first relres / true rel = %.16e / %.16e\n', ...
+                firstRelres,firstTrueRelResidual);
+            tRestart=tic;
+            [xp,flag,relres,restartIter,restartResvec]=pcg( ...
+                Ap,bp,pcgTol,pcgMaxIt,M1,M2,xp);
+            restartSeconds=toc(tRestart);
+            solveSeconds=solveSeconds+restartSeconds;
+            restartFlag=flag;
+            restartRelres=relres;
+            restartTrueRelResidual=norm(Ap*xp-bp)/max(norm(bp),eps);
+            restarted=true;
+            iter=firstIter+restartIter;
+            resvec=restartResvec;
+            fprintf('    restart flag / iter     = %d / %d\n',restartFlag,restartIter);
+            fprintf('    restart relres / true   = %.16e / %.16e\n', ...
+                restartRelres,restartTrueRelResidual);
+        else
+            restartSeconds=0;
+        end
 
         incremental_profile_clock('phase','physical','residual_gates');
 
         % Always reconstruct the returned iterate and evaluate the true
-        % free-system residual before accepting OR rejecting PCG. This is
-        % diagnostic only: the established acceptance gates are unchanged.
+        % free-system residual before accepting OR rejecting PCG.
         uf=zeros(numel(free),1);
         uf(p)=xp;
         U=zeros(ndof,1);
@@ -352,13 +390,13 @@ function R = solve_incremental_crack_tip(candidate,varargin)
             tailCount=min(8,numel(resvec));
             tail=resvec(end-tailCount+1:end)/max(norm(bp),eps);
             fprintf('  PCG REJECTED before postprocessing.\n');
-            fprintf('    flag / iter          = %d / %d\n',flag,iter);
-            fprintf('    reported relres      = %.16e\n',relres);
-            fprintf('    recomputed true rel  = %.16e\n',trueRelResidual);
-            fprintf('    final residual tail  = %s\n',mat2str(tail(:).',8));
+            fprintf('    final flag / total iter = %d / %d\n',flag,iter);
+            fprintf('    reported relres         = %.16e\n',relres);
+            fprintf('    recomputed true rel     = %.16e\n',trueRelResidual);
+            fprintf('    final residual tail     = %s\n',mat2str(tail(:).',8));
             error('pathsolve:PCGFailed', ...
                 ['PCG failed unchanged acceptance gates: flag=%d, ', ...
-                 'relres=%.3e, trueRel=%.3e, iter=%d.'], ...
+                 'relres=%.3e, trueRel=%.3e, totalIter=%d.'], ...
                 flag,relres,trueRelResidual,iter);
         end
 
@@ -374,6 +412,15 @@ function R = solve_incremental_crack_tip(candidate,varargin)
             'preconditioner',preconditionerName, ...
             'flag',flag,'relres',relres,'iter',iter, ...
             'trueRelResidual',trueRelResidual, ...
+            'pcgRestarted',restarted, ...
+            'pcgCalls',1+double(restarted), ...
+            'firstFlag',firstFlag,'firstRelres',firstRelres, ...
+            'firstIter',firstIter,'firstTrueRelResidual',firstTrueRelResidual, ...
+            'restartFlag',restartFlag,'restartRelres',restartRelres, ...
+            'restartIter',restartIter, ...
+            'restartTrueRelResidual',restartTrueRelResidual, ...
+            'firstSolveSeconds',firstSolveSeconds, ...
+            'restartSeconds',restartSeconds, ...
             'constraintInf',constraintInf, ...
             'resvecFinal',resvec(end), ...
             'resvecLength',numel(resvec), ...
