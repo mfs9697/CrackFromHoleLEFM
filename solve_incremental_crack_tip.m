@@ -721,10 +721,13 @@ function fp=local_core_fingerprint(c,increment)
         if ~isfield(fp,'expectedEDIElements') && isfield(fp,'expectedEDISupport')
             if abs(fp.scale-1)<=1e-14
                 fp.expectedEDIElements=11316;
-                fp.expectedOptimizedSupport=11316;
+                fp.expectedOptimizedSupport=10278;
             elseif abs(fp.scale-.5)<=1e-14
                 fp.expectedEDIElements=44130;
                 fp.expectedOptimizedSupport=40146;
+            elseif abs(fp.scale-2)<=1e-14
+                fp.expectedEDIElements=2976;
+                fp.expectedOptimizedSupport=2700;
             end
         end
 
@@ -745,18 +748,21 @@ function fp=local_core_fingerprint(c,increment)
             'rInner_m',.10*increment,'rOuter_m',.65*increment, ...
             'rCore_m',.75*increment,'expectedCoreT3',12678, ...
             'expectedEDIElements',11316, ...
-            'expectedOptimizedSupport',11316, ...
+            'expectedOptimizedSupport',10278, ...
             'expectedNativeSamples',[38;55;44;34]);
     end
     fp.expectedNativeSamples=fp.expectedNativeSamples(:);
     if abs(fp.scale-1)<=1e-14
-        expected=[12678,11316,11316];
+        expected=[12678,11316,10278];
         native=[38;55;44;34];
     elseif abs(fp.scale-.5)<=1e-14
         expected=[49518,44130,40146];
         native=[74;108;86;67];
+    elseif abs(fp.scale-2)<=1e-14
+        expected=[3318,2976,2700];
+        native=[19;28;23;18];
     else
-        error('pathsolve:CoreScale','Unsupported audited core scale %.16g.',fp.scale);
+        error('pathsolve:CoreScale','Unsupported structured-core scale %.16g.',fp.scale);
     end
     if fp.expectedCoreT3~=expected(1) || ...
             fp.expectedEDIElements~=expected(2) || ...
