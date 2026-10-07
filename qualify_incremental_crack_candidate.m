@@ -20,6 +20,15 @@ function F = qualify_incremental_crack_candidate(pathGlobal,varargin)
     addParameter(ip,'StateFile','',@(x)ischar(x)||isstring(x));
     addParameter(ip,'NArc',480,@(x)isnumeric(x)&&isscalar(x)&&isfinite(x)&&x>=32&&x==round(x));
     addParameter(ip,'ExteriorVerbose',true,@(x)islogical(x)&&isscalar(x));
+    % Optional exterior-only mesh controls. Defaults reproduce the accepted
+    % production mesh exactly. The paired tip core and EDI radii are not
+    % changed by these options.
+    addParameter(ip,'ExteriorFarCapOverIncrement',0.625, ...
+        @(x)isnumeric(x)&&isscalar(x)&&isfinite(x)&&x>0);
+    addParameter(ip,'ExteriorTransitionOverIncrement',1.0, ...
+        @(x)isnumeric(x)&&isscalar(x)&&isfinite(x)&&x>0);
+    addParameter(ip,'ExteriorCalibration',struct(), ...
+        @(x)isstruct(x)&&isscalar(x));
     addParameter(ip,'RunSynthetic',true,@(x)islogical(x)&&isscalar(x));
     addParameter(ip,'FastEDI',false,@(x)islogical(x)&&isscalar(x));
     addParameter(ip,'SaveCandidate',true,@(x)islogical(x)&&isscalar(x));
@@ -174,9 +183,18 @@ function F = qualify_incremental_crack_candidate(pathGlobal,varargin)
     rp=Core.rCore;
     design=Core.design;
     design.rCore_m=rp;
-    design.transitionLength_m=1.0*increment;
-    design.farCap_m=0.625*increment;
-    design.exteriorCalibration=struct('verbose',opt.ExteriorVerbose);
+    design.transitionLength_m=opt.ExteriorTransitionOverIncrement*increment;
+    design.farCap_m=opt.ExteriorFarCapOverIncrement*increment;
+    design.exteriorCalibration=opt.ExteriorCalibration;
+    design.exteriorCalibration.verbose=opt.ExteriorVerbose;
+
+    % The accepted production defaults are intentionally explicit here.
+    % Any nondefault values define an alternative exterior mesh family for
+    % sensitivity studies; they do not alter the audited paired core.
+    exteriorIsReference = ...
+        abs(opt.ExteriorTransitionOverIncrement-1.0)<=10*eps && ...
+        abs(opt.ExteriorFarCapOverIncrement-0.625)<=10*eps && ...
+        isempty(fieldnames(opt.ExteriorCalibration));
 
     ri=.10*increment;
     ro=.65*increment;
@@ -628,6 +646,11 @@ function F = qualify_incremental_crack_candidate(pathGlobal,varargin)
     candidate.pairedMirrorLocal=mirrorMap;
     candidate.structuredDesign=design;
     candidate.exteriorDesign=ext;
+    candidate.exteriorMeshControls=struct( ...
+        'farCapOverIncrement',opt.ExteriorFarCapOverIncrement, ...
+        'transitionOverIncrement',opt.ExteriorTransitionOverIncrement, ...
+        'calibrationOverride',opt.ExteriorCalibration, ...
+        'isReferenceProductionExterior',exteriorIsReference);
     candidate.polylineCarrierEdgeIDs=polyIDs;
     candidate.maxChordDeviation=chordDeviation;
     candidate.gates=gates;
@@ -648,6 +671,7 @@ function F = qualify_incremental_crack_candidate(pathGlobal,varargin)
     F.crackLocal=cr;
     F.Core=Core;
     F.exteriorDesign=ext;
+    F.exteriorMeshControls=candidate.exteriorMeshControls;
     F.sampleCounts=table(windows(:,1),windows(:,2),sampleN, ...
         'VariableNames',{'lower_r_over_DeltaA','upper_r_over_DeltaA','nativePoints'});
     F.pass=pass;
