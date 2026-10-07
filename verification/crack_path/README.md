@@ -160,3 +160,8 @@ reference exterior law, physics, and solver gates fixed.
 ## Near-tip coarsening sensitivity
 
 See [TIP_COARSENING_H1.md](TIP_COARSENING_H1.md) for the guarded fixed-geometry H1 = 2 hTip qualification experiment around the P21--P22 local-symmetry bracket.
+
+
+## Independent local tip-resolution trajectory
+
+See [TIP_2H0_INDEPENDENT_TRAJECTORY.md](TIP_2H0_INDEPENDENT_TRAJECTORY.md) for the guarded independent `2h0` trajectory experiment with the reference exterior mesh law.
