@@ -88,7 +88,7 @@ function R = main_tip_core_mesh_level_comparison(varargin)
         fprintf('  %s: scale=%g, hTip=%.10f mm, T3=%d, T6 nodes=%d, native=%s\n', ...
             labels(i),scales(i),hTip_mm,nT3,nT6,mat2str(native));
 
-        fig=figure('Color','w','Units','centimeters','Position',[2 2 7.1 6.0]);
+        fig=figure('Color','w','Units','centimeters','Position',[2 2 6.4 5.2]);
         ax=axes(fig); hold(ax,'on');
 
         P=1e3*C.local.coord3;
@@ -106,13 +106,13 @@ function R = main_tip_core_mesh_level_comparison(varargin)
         grid(ax,'off');
         set(ax,'FontName','Times New Roman','FontSize',8.5, ...
             'TickDir','out','LineWidth',0.75,'Layer','top');
-        xlabel(ax,'x_1 (mm)','Interpreter','tex');
-        ylabel(ax,'x_2 (mm)','Interpreter','tex');
+        xlabel(ax,'x_1 [mm]','Interpreter','tex');
+        ylabel(ax,'x_2 [mm]','Interpreter','tex');
 
         pdfFile=fullfile(outDir,sprintf('tip_mesh_%s.pdf',labels(i)));
         pngFile=fullfile(outDir,sprintf('tip_mesh_%s.png',labels(i)));
-        exportgraphics(fig,pdfFile,'ContentType','vector');
-        exportgraphics(fig,pngFile,'Resolution',300);
+        exportgraphics(ax,pdfFile,'ContentType','vector');
+        exportgraphics(ax,pngFile,'Resolution',600);
         close(fig);
     end
 
@@ -131,7 +131,7 @@ function R = main_tip_core_mesh_level_comparison(varargin)
 
     % Combined preview only; final manuscript composition should use the
     % separate vector panels so LaTeX controls panel letters and caption.
-    fig=figure('Color','w','Units','centimeters','Position',[2 2 20.5 6.0]);
+    fig=figure('Color','w','Units','centimeters','Position',[2 2 19.2 5.2]);
     tl=tiledlayout(fig,1,3,'TileSpacing','compact','Padding','compact');
     for i=1:3
         ax=nexttile(tl); hold(ax,'on');
@@ -145,9 +145,9 @@ function R = main_tip_core_mesh_level_comparison(varargin)
         box(ax,'on'); grid(ax,'off');
         set(ax,'FontName','Times New Roman','FontSize',8.5, ...
             'TickDir','out','LineWidth',0.75,'Layer','top');
-        xlabel(ax,'x_1 (mm)','Interpreter','tex');
+        xlabel(ax,'x_1 [mm]','Interpreter','tex');
         if i==1
-            ylabel(ax,'x_2 (mm)','Interpreter','tex');
+            ylabel(ax,'x_2 [mm]','Interpreter','tex');
         else
             ax.YTickLabel=[];
         end
