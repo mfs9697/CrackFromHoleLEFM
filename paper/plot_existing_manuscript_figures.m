@@ -141,7 +141,7 @@ function S = plot_existing_manuscript_figures(varargin)
     plot(ax,a,T.KI_unit,'-o','Color',C.blue,'LineWidth',1.2, ...
         'MarkerSize',3.1,'MarkerFaceColor','w');
     xlim(ax,[4 92]); xticks(ax,[4 20 36 52 68 84 92]);
-    ylabel(ax,'K_I [MPa sqrt(m)]');
+    ylabel(ax,'K_I [MPa m^{1/2}]');
     local_style_axis(ax);
     S.files{end+1}=local_export_axis(ax,out,'KI'); %#ok<AGROW>
 
@@ -150,7 +150,7 @@ function S = plot_existing_manuscript_figures(varargin)
         'MarkerSize',3.1,'MarkerFaceColor','w');
     yline(ax,0,'--','Color',C.gray,'HandleVisibility','off');
     xlim(ax,[4 92]); xticks(ax,[4 20 36 52 68 84 92]);
-    ylabel(ax,'K_{II} [MPa sqrt(m)]');
+    ylabel(ax,'K_{II} [MPa m^{1/2}]');
     local_style_axis(ax);
     S.files{end+1}=local_export_axis(ax,out,'KII'); %#ok<AGROW>
 
@@ -158,7 +158,7 @@ function S = plot_existing_manuscript_figures(varargin)
     plot(ax,a,T.theta_deg,'-o','Color',C.blue,'LineWidth',1.2, ...
         'MarkerSize',3.1,'MarkerFaceColor','w');
     xlim(ax,[4 92]); xticks(ax,[4 20 36 52 68 84 92]);
-    xlabel(ax,'Crack length a [mm]'); ylabel(ax,'theta_k [deg]');
+    xlabel(ax,'Crack length a [mm]'); ylabel(ax,'\\theta_k [deg]');
     local_style_axis(ax);
     S.files{end+1}=local_export_axis(ax,out,'theta'); %#ok<AGROW>
 
@@ -185,7 +185,7 @@ function S = plot_existing_manuscript_figures(varargin)
     yline(ax,0,'--','Color',C.gray,'HandleVisibility','off');
     xline(ax,aLS,':','Color',C.purple,'LineWidth',1.0,'HandleVisibility','off');
     xlim(ax,[60 92]); xticks(ax,[60 68 76 84 88 92]);
-    xlabel(ax,'Crack length a [mm]'); ylabel(ax,'Delta theta_{k+1} [deg]');
+    xlabel(ax,'Crack length a [mm]'); ylabel(ax,'\\Delta\\theta_{k+1} [deg]');
     local_style_axis(ax);
     S.files{end+1}=local_export_axis(ax,out,'turn'); %#ok<AGROW>
 
@@ -195,8 +195,8 @@ function S = plot_existing_manuscript_figures(varargin)
     codLate=COD.crack_length_mm>=60;
     D=COD(codLate,:);
     windows=[0.04 0.20;0.04 0.30;0.08 0.30;0.12 0.30];
-    labels={'[0.04,0.20] Delta a','[0.04,0.30] Delta a', ...
-            '[0.08,0.30] Delta a','[0.12,0.30] Delta a'};
+    labels={'[0.04,0.20] \Delta a','[0.04,0.30] \Delta a', ...
+            '[0.08,0.30] \Delta a','[0.12,0.30] \Delta a'};
     cols={C.blue,C.orange,C.green,C.purple};
     marks={'o','s','^','d'};
 
