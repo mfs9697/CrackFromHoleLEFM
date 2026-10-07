@@ -556,3 +556,312 @@ itself** — monotonic KI, the P17 maximum, the P21--P22 sign change, the
 turning reversal, the right-boundary attribution, P24 termination, and
 whether any causal or predictive claim in the abstract/discussion goes
 beyond what the computed sequence actually proves.
+
+
+## Batch 3 — physical interpretation of the accepted trajectory and terminal state
+
+Status: **PASS, WITH ONE CENTRAL CAUSAL CLAIM DELIBERATELY UNPROVEN**
+
+This batch checks the abstract, Results, Discussion, Conclusions, figure plan,
+and preserved state tables against the accepted P1--P23 sequence and the
+qualified-unsolved P24 geometry.
+
+### 24. Monotonic opening-mode intensity — PASS
+
+The accepted P1--P23 record has strictly increasing `KI` at unit reference
+traction:
+
+`0.36648 -> ... -> 0.78679 (P17) -> 0.96631 (P21)
+           -> 1.06672 (P22) -> 1.24436 (P23)`.
+
+The manuscript statement that opening-mode intensity increases throughout
+the accepted history is therefore exactly supported by the preserved data.
+
+This is a **geometry-dependent SIF history under the same normalized
+traction**, not an experimentally prescribed load history.
+
+#### Author-review item C1 — replace "unloading" by a mechanics-exact statement
+
+Because every geometry is solved at the same unit reference traction and the
+MTS direction is invariant under positive load scaling, external unloading
+is not a competing process represented in this calculation.
+
+The scientifically precise observation is:
+
+> the mode-mixity reversal occurs while the normalized opening-mode SIF
+> continues to increase.
+
+The manuscript's phrase "rather than unloading" is understandable, but it
+can be read as if an external load-history mechanism had been compared.
+That comparison was not performed.
+
+### 25. P17 maximum — PASS
+
+Both the positive `KII` and the positive ratio `KII/KI` reach their
+discrete accepted maxima at P17 (68 mm):
+
+`KII(P17)=2.54836873974682e-3 MPa sqrt(m)`;
+
+`(KII/KI)(P17)=3.23893080298227e-3`.
+
+The MTS turn also reaches its largest negative magnitude there:
+
+`Delta theta_18 = -0.371145045509677 deg`.
+
+After P17, `KI` continues to rise while `KII`, `KII/KI`, and the
+negative-turn magnitude all decrease through P21.  The manuscript's stated
+sequence is therefore correct.
+
+A useful interpretive point is that the coincidence of the P17 maxima in
+`KII` and `KII/KI` is an observed property of this discrete path, not an
+identity that must hold generally.
+
+### 26. The MTS turn is exactly a function of mode mixity — IMPORTANT POSITIVE RESULT
+
+For `KI != 0`, dividing the implemented stationarity equation by `KI`
+shows that the MTS angle depends on the SIF pair only through
+
+`q=KII/KI`.
+
+Thus, under the present LEFM/MTS model, changes in the magnitude of `KI`
+alone do not determine the turn.  The sign and magnitude evolution of the
+incremental turn are an algebraic consequence of the changing mode mixity.
+
+This makes the manuscript's mode-mixity interpretation stronger than the
+phrase "primarily driven by mode II" might suggest: **within the chosen MTS
+law, the local direction selector is controlled by the SIF ratio, not by
+their common positive scale**.
+
+At the same time, this does not identify which global geometric feature
+causes the ratio itself to evolve.
+
+#### Figure-design consequence C2
+
+The plotted MTS-turn history is not an independent numerical observable
+relative to the `KII/KI` history; it is computed deterministically from it.
+Showing the two aligned is useful pedagogically for sign conventions, but it
+is not two independent pieces of physical evidence.  A final figure caption
+should make that relationship clear.
+
+### 27. Local-symmetry bracket — PASS
+
+The accepted solved states give
+
+`q(P21)=+8.13426737346537e-5` at 84 mm,
+
+`q(P22)=-2.14159160711531e-3` at 88 mm.
+
+Since `KI>0`, this brackets `KII=0` and hence the MTS zero-turn state.
+
+The manuscript's linear interpolation of `q` gives
+
+`a_LS = 84.146369911941 mm`.
+
+This is correctly labeled as an interpolation rather than a solved crack
+state.
+
+A forensic sensitivity check illustrates why the extra digits are not
+physical precision.  If one linearly interpolates `KII` itself instead of
+the ratio, the estimate is approximately
+
+`84.133049974822 mm`,
+
+only 0.01332 mm lower but already different in the third decimal place.
+Linear interpolation of the MTS turn gives approximately
+
+`84.146371418828 mm`,
+
+essentially the same as ratio interpolation near zero.  All of these
+differences are tiny compared with the 4-mm state spacing; they reinforce
+the manuscript's decision to report the crossing only as a visualization
+estimate.
+
+### 28. Turning reversal and accepted geometry — PASS, but the amount of post-reversal evidence is limited
+
+At P21 the turn is still slightly negative:
+
+`Delta theta_22=-0.00932118365470 deg`.
+
+At P22, after the sign change in mode II,
+
+`Delta theta_23=+0.245405694839291 deg`.
+
+That positive turn generates the segment P22--P23, and P23 is an accepted
+physical state.  Therefore the **first geometrical manifestation of the
+turning reversal is physically accepted**, not merely extrapolated.
+
+At P23 the physical solve gives a still more negative mode mixity and
+predicts
+
+`Delta theta_24=+0.624347038002271 deg`.
+
+That value belongs to the accepted P23 field, but the resulting P23--P24
+geometry has no accepted P24 physical SIF solution.
+
+#### Author-review item C3 — avoid implying a long established post-reversal branch
+
+There is one accepted new segment after the turn changes sign
+(P22--P23).  The next positive turn is a valid prediction from P23, but its
+endpoint is only qualified geometrically.
+
+Thus the paper can robustly claim **onset of turning reversal** and a
+continued positive next-turn prediction.  It should be more cautious with
+language suggesting that a long return branch or asymptotic reorientation
+has already been demonstrated.
+
+### 29. Absolute direction and vertical motion — PASS
+
+The most negative accepted local absolute direction occurs at P22:
+
+`theta_22=-3.64596382938318 deg`.
+
+The accepted P23 segment has the less negative direction
+
+`theta_23=-3.40055813454389 deg`.
+
+Because the frozen material normal itself is inclined downward in global
+coordinates by about 1.5606 degrees, both segments remain downward-sloping
+globally.  The tip y-coordinate decreases monotonically through P23.
+
+The manuscript correctly warns that a positive incremental turn does not
+mean that the crack tip has started moving upward.
+
+### 30. Right-boundary interpretation — PLAUSIBLE AND CAREFULLY WORDED, BUT NOT CAUSALLY ESTABLISHED
+
+The geometrical evidence for increasing proximity to the right boundary is
+unambiguous.  The horizontal/right-boundary clearance decreases from about
+
+- 32.07 mm at P17,
+- 16.13 mm at P21,
+- 12.14 mm at P22,
+- 8.16 mm at P23,
+
+while the crack advances toward `x=A`.
+
+The local EDI/core region remains well clear of that boundary, so the
+observed reversal is not a direct extraction-domain collision artifact.
+
+However, along this one trajectory several quantities change together:
+
+- distance to the right free boundary decreases;
+- distance from the original hole increases;
+- total crack length increases;
+- the complete crack shape/curvature changes;
+- the current-tip orientation changes.
+
+Therefore the present sequence cannot uniquely attribute the evolution of
+`KII/KI` to the right free boundary.
+
+The manuscript's current formulation -- "consistent with increasing
+free-boundary influence" and "does not prove that the boundary is its sole
+cause" -- is scientifically defensible.
+
+#### Author-review item C4 — do not promote "boundary-induced redirection" to the main claim before a control
+
+A stronger phrase such as "boundary-induced redirection" would require the
+control already identified in `REMAINING_WORK.md`: move the right boundary
+or compare matched fixed crack geometries while controlling what is held
+fixed.
+
+A particularly clean experiment would evaluate the **same late accepted
+polyline geometries** in plates with progressively more distant right
+boundaries.  That would separate the boundary-distance effect from changes
+in the crack path itself better than simply recomputing a wholly different
+trajectory in a wider plate.
+
+### 31. Hole influence is also a covarying physical mechanism
+
+As the crack approaches the right boundary it is simultaneously moving away
+from the circular hole from which it initiated.  The present calculation
+does not separately quantify the decay of hole-induced asymmetry versus the
+growth of right-boundary influence.
+
+Therefore a future causal discussion should not reduce the alternatives only
+to "boundary distance versus accumulated curvature"; changing hole influence
+is another geometric contribution that can be separated only by controlled
+comparisons.
+
+This does not invalidate the current interpretation, but it broadens the
+mechanism that a reviewer may ask about.
+
+### 32. P24 classification — PASS
+
+The preserved scientific archive establishes:
+
+- P24 geometry exists at total path length 96 mm;
+- its qualification gates pass;
+- its physical-boundary clearance is about 4.171 mm, still larger than the
+  3-mm paired core;
+- no accepted P24 physical result exists.
+
+The paper correctly stops every physical SIF/mode-mixity curve at P23 and
+draws P23--P24 only as a qualified-unsolved extension.
+
+The repository evidence available to the pilot does not preserve an accepted
+P24 displacement/SIF result and does not independently preserve the complete
+failed residual trace.  Therefore the manuscript is right not to quote a
+P24 SIF or reinterpret the strict solver gate after the fact.
+
+#### Author-review item C5 — "linear-solver limit" is stronger than the preserved evidence
+
+The abstract currently refers to the "eventual linear-solver limit."  What
+is strictly established by the manuscript evidence layer is that the P24
+attempt did not produce an accepted physical state under the prescribed
+solver acceptance rule.
+
+Unless the original failure trace is archived with the paper evidence,
+prefer "P24 did not satisfy the strict linear-solver acceptance criterion"
+to language implying a fundamental or asymptotic solver limit.
+
+### 33. P24 failure is not physical arrest — PASS
+
+No toughness condition, energy-release criterion, propagation threshold,
+dynamic instability calculation, or arrest criterion is evaluated at P24.
+The absence of an accepted numerical solve therefore contains no evidence
+that the physical crack arrests there.
+
+The Discussion and Conclusions explicitly preserve this distinction.
+
+### 34. Predictive scope of the trajectory — PASS, with title-level caution
+
+The method predicts the **direction** of a sequence of imposed 4-mm advances.
+It does not predict when an advance occurs or whether a particular external
+load is sufficient for the next advance.
+
+Calling the result a crack trajectory is reasonable provided that assumption
+is explicit, as it is in the present manuscript.  Claims of a complete
+fracture-growth law would not be supported.
+
+This point will matter when choosing the final title and abstract language:
+"incremental LEFM crack-trajectory prediction" is acceptable; "crack-growth
+prediction" without qualification would be too broad.
+
+### 35. Third-batch verdict
+
+The central physical sequence is real and internally coherent:
+
+`positive q -> P17 maximum -> decay -> P21/P22 zero bracket
+ -> negative q -> positive MTS turn -> accepted P22--P23 redirection`.
+
+The strongest defensible scientific statement is:
+
+> In the accepted fixed-increment LEFM sequence, the current-tip mode mixity
+> evolves nonmonotonically and changes sign while the normalized mode-I SIF
+> continues to increase; because the MTS direction depends on `KII/KI`,
+> this sign change reverses the incremental turning sense.
+
+What is **not yet established** is why the mode mixity changes sign.  The
+approaching right free boundary is a physically plausible contributor and
+the local extraction domain remains cleanly separated from it, but a causal
+boundary-effect claim requires a controlled boundary comparison.
+
+The present manuscript is notably disciplined on this distinction.  The
+scientific priority before submission is therefore not to rewrite the
+interpretation more aggressively, but to perform the control that would
+allow the interpretation to become stronger.
+
+Next forensic batch: assess the paper as a potential journal contribution
+rather than only as a correct computation -- novelty versus classical MTS
+literature, which verification material is essential in the main paper,
+what additional calculations most efficiently raise the evidence level, and
+what a skeptical fracture-mechanics reviewer is most likely to challenge.
