@@ -284,8 +284,8 @@ function S = plot_m1_vs_reference_publication(varargin)
         for jj=1:4
             panelPdf{jj}=fullfile(outDir,[panelNames{jj} '.pdf']);
             panelPng{jj}=fullfile(outDir,[panelNames{jj} '.png']);
-            exportgraphics(panelAxes{jj},panelPdf{jj},'ContentType','vector');
-            exportgraphics(panelAxes{jj},panelPng{jj},'Resolution',600);
+            local_export_tiled_axis_copy( ...
+                panelAxes{jj},panelPdf{jj},panelPng{jj},panelNames{jj});
         end
 
         csvFile=fullfile(outDir,'figure_m1_vs_reference_publication_metrics.csv');
@@ -310,6 +310,49 @@ function S = plot_m1_vs_reference_publication(varargin)
             S.combinedPng=combinedPng;
             fprintf('  combined preview             : %s\n',combinedPdf);
         end
+    end
+end
+
+function local_export_tiled_axis_copy(srcAx,pdfFile,pngFile,panelName)
+% Export one tiled-layout panel through an independent standalone figure.
+% Some MATLAB releases invalidate a shared tiled-layout figure when
+% exportgraphics is called directly on a child axes.  Cloning the axes
+% isolates the publication export from the combined preview and matches the
+% standalone-axis export path used by plot_existing_manuscript_figures.
+
+    if strcmp(panelName,'trajectory')
+        szcm=[17.0 6.7];
+        pos=[0.09 0.17 0.87 0.77];
+    else
+        szcm=[6.6 5.2];
+        pos=[0.18 0.19 0.77 0.75];
+    end
+
+    tmpFig=figure('Color','w','Visible','off','Units','centimeters', ...
+        'Position',[2 2 szcm(1) szcm(2)]);
+    cleanup=onCleanup(@()local_close_if_valid(tmpFig)); %#ok<NASGU>
+
+    tmpAx=copyobj(srcAx,tmpFig);
+    set(tmpAx,'Units','normalized','Position',pos);
+
+    % Legends are figure/tiled-layout illustration objects rather than axes
+    % children on some MATLAB releases, so recreate them from DisplayName.
+    switch panelName
+        case 'trajectory'
+            legend(tmpAx,'show','Location','northwest', ...
+                'NumColumns',2,'Box','off');
+        case 'mode_mixity'
+            legend(tmpAx,'show','Location','southwest','Box','off');
+    end
+
+    drawnow;
+    exportgraphics(tmpAx,pdfFile,'ContentType','vector');
+    exportgraphics(tmpAx,pngFile,'Resolution',600);
+end
+
+function local_close_if_valid(h)
+    if ~isempty(h) && isgraphics(h)
+        close(h);
     end
 end
 
