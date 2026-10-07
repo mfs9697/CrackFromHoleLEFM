@@ -19,16 +19,22 @@ function S = plot_m1_vs_reference_publication(varargin)
 %   S = plot_m1_vs_reference_publication('Export',false);
 %
 % Output files (default):
-%   verification/crack_path/m1_independent_run/
-%       figure_m1_vs_reference_publication.pdf
-%       figure_m1_vs_reference_publication.png
+%   paper/figures/m1_mesh_sensitivity/
+%       trajectory.pdf / trajectory.png
+%       vertical_deviation.pdf / vertical_deviation.png
+%       direction_deviation.pdf / direction_deviation.png
+%       mode_mixity.pdf / mode_mixity.png
 %       figure_m1_vs_reference_publication_metrics.csv
+%
+% Plot titles and panel letters are intentionally NOT embedded in the
+% graphics.  They belong to the LaTeX subcaptions in figure.tex.
 
     ip=inputParser;
     addParameter(ip,'ReferenceStateFile','',@(x)ischar(x)||isstring(x));
     addParameter(ip,'M1StateFile','',@(x)ischar(x)||isstring(x));
     addParameter(ip,'OutputDir','',@(x)ischar(x)||isstring(x));
     addParameter(ip,'Export',true,@(x)islogical(x)&&isscalar(x));
+    addParameter(ip,'ExportCombined',false,@(x)islogical(x)&&isscalar(x));
     addParameter(ip,'ShowMarkersEvery',2,@(x)isnumeric(x)&&isscalar(x)&& ...
         isfinite(x)&&x>=1&&x==round(x));
     parse(ip,varargin{:});
@@ -55,7 +61,7 @@ function S = plot_m1_vs_reference_publication(varargin)
 
     outDir=char(opt.OutputDir);
     if isempty(outDir)
-        outDir=fullfile(root,'verification','crack_path','m1_independent_run');
+        outDir=fullfile(root,'paper','figures','m1_mesh_sensitivity');
     elseif ~local_is_absolute_path(outDir)
         outDir=fullfile(root,outDir);
     end
@@ -172,8 +178,7 @@ function S = plot_m1_vs_reference_publication(varargin)
 
     xlabel(ax1,'x [mm]');
     ylabel(ax1,'y [mm]');
-    title(ax1,'(a) Actual trajectories: reference and independently propagated M1', ...
-        'FontWeight','normal');
+    % No title/panel label here: LaTeX supplies the subcaption.
     axis(ax1,'equal');
     xlim(ax1,[135 300]);
     ylim(ax1,[-55 15]);
@@ -188,7 +193,7 @@ function S = plot_m1_vs_reference_publication(varargin)
     yline(ax2,0,':','Color',gray,'HandleVisibility','off');
     xlabel(ax2,'crack length a [mm]');
     ylabel(ax2,'y_{M1}-y_{ref} [\mum]');
-    title(ax2,'(b) Vertical path deviation','FontWeight','normal');
+    % No title/panel label here: LaTeX supplies the subcaption.
 
     % --------------------------------------------------------------
     % (c) accumulated angular deviation
@@ -199,7 +204,7 @@ function S = plot_m1_vs_reference_publication(varargin)
     yline(ax3,0,':','Color',gray,'HandleVisibility','off');
     xlabel(ax3,'crack length a [mm]');
     ylabel(ax3,'\theta_{M1}-\theta_{ref} [mdeg]');
-    title(ax3,'(c) Direction deviation','FontWeight','normal');
+    % No title/panel label here: LaTeX supplies the subcaption.
 
     % --------------------------------------------------------------
     % (d) actual mode-mixity histories
@@ -216,7 +221,7 @@ function S = plot_m1_vs_reference_publication(varargin)
     end
     xlabel(ax4,'crack length a [mm]');
     ylabel(ax4,'K_{II}/K_I');
-    title(ax4,'(d) Mode-mixity evolution','FontWeight','normal');
+    % No title/panel label here: LaTeX supplies the subcaption.
     legend(ax4,'Location','southwest','Box','off');
 
     % Consistent typography.
@@ -270,17 +275,41 @@ function S = plot_m1_vs_reference_publication(varargin)
     fprintf('  max |dq|                     : %.6g\n',S.maxAbsDq);
 
     if opt.Export
-        pdfFile=fullfile(outDir,'figure_m1_vs_reference_publication.pdf');
-        pngFile=fullfile(outDir,'figure_m1_vs_reference_publication.png');
-        csvFile=fullfile(outDir,'figure_m1_vs_reference_publication_metrics.csv');
+        panelNames={'trajectory','vertical_deviation', ...
+            'direction_deviation','mode_mixity'};
+        panelAxes={ax1,ax2,ax3,ax4};
+        panelPdf=cell(4,1);
+        panelPng=cell(4,1);
 
-        exportgraphics(fig,pdfFile,'ContentType','vector');
-        exportgraphics(fig,pngFile,'Resolution',600);
+        for jj=1:4
+            panelPdf{jj}=fullfile(outDir,[panelNames{jj} '.pdf']);
+            panelPng{jj}=fullfile(outDir,[panelNames{jj} '.png']);
+            exportgraphics(panelAxes{jj},panelPdf{jj},'ContentType','vector');
+            exportgraphics(panelAxes{jj},panelPng{jj},'Resolution',600);
+        end
+
+        csvFile=fullfile(outDir,'figure_m1_vs_reference_publication_metrics.csv');
         writetable(Metrics,csvFile);
 
-        fprintf('  vector PDF                   : %s\n',pdfFile);
-        fprintf('  600-dpi PNG                  : %s\n',pngFile);
+        S.panelPdf=panelPdf;
+        S.panelPng=panelPng;
+        S.metricsCsv=csvFile;
+
+        fprintf('  separate vector panels       : %s\n',outDir);
+        for jj=1:4
+            fprintf('    %-20s : %s\n',panelNames{jj},panelPdf{jj});
+        end
         fprintf('  plotted-data CSV             : %s\n',csvFile);
+
+        if opt.ExportCombined
+            combinedPdf=fullfile(outDir,'combined_preview.pdf');
+            combinedPng=fullfile(outDir,'combined_preview.png');
+            exportgraphics(fig,combinedPdf,'ContentType','vector');
+            exportgraphics(fig,combinedPng,'Resolution',600);
+            S.combinedPdf=combinedPdf;
+            S.combinedPng=combinedPng;
+            fprintf('  combined preview             : %s\n',combinedPdf);
+        end
     end
 end
 
