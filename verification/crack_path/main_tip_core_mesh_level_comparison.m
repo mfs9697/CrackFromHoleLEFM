@@ -106,8 +106,8 @@ function R = main_tip_core_mesh_level_comparison(varargin)
         grid(ax,'off');
         set(ax,'FontName','Times New Roman','FontSize',8.5, ...
             'TickDir','out','LineWidth',0.75,'Layer','top');
-        xlabel(ax,'x_1 [mm]','Interpreter','tex');
-        ylabel(ax,'x_2 [mm]','Interpreter','tex');
+        xlabel(ax,'$x_1$ [mm]','Interpreter','latex');
+        ylabel(ax,'$x_2$ [mm]','Interpreter','latex');
 
         pdfFile=fullfile(outDir,sprintf('tip_mesh_%s.pdf',labels(i)));
         pngFile=fullfile(outDir,sprintf('tip_mesh_%s.png',labels(i)));
@@ -145,9 +145,9 @@ function R = main_tip_core_mesh_level_comparison(varargin)
         box(ax,'on'); grid(ax,'off');
         set(ax,'FontName','Times New Roman','FontSize',8.5, ...
             'TickDir','out','LineWidth',0.75,'Layer','top');
-        xlabel(ax,'x_1 [mm]','Interpreter','tex');
+        xlabel(ax,'$x_1$ [mm]','Interpreter','latex');
         if i==1
-            ylabel(ax,'x_2 [mm]','Interpreter','tex');
+            ylabel(ax,'$x_2$ [mm]','Interpreter','latex');
         else
             ax.YTickLabel=[];
         end
