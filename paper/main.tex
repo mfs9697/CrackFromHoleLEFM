@@ -300,25 +300,25 @@ qualify M1 for a subsequent independent trajectory calculation.
 \subsection{Controlled local tip-resolution family}
 A separate fixed-geometry study varies only the structured near-tip scale
 while keeping the accepted crack polyline, exterior grading law, material,
-loading, interaction-domain radii, and MTS formulation unchanged. The three
-physically compared levels are
+loading, interaction-domain radii, and MTS formulation unchanged. The production tip size is denoted by $h_0=0.0270123$ mm. The three
+physically compared resolutions are
 \begin{equation}
- H1:\ h_{\mathrm{tip}}=0.0540247\ \mathrm{mm},\qquad
- H0:\ h_{\mathrm{tip}}=0.0270123\ \mathrm{mm},\qquad
- L1:\ h_{\mathrm{tip}}=0.0135062\ \mathrm{mm},
+ 2h_0=0.0540247\ \mathrm{mm},\qquad
+ h_0=0.0270123\ \mathrm{mm},\qquad
+ h_0/2=0.0135062\ \mathrm{mm}.
  \label{eq:tiplevels}
 \end{equation}
-corresponding to structured-core scale factors $2$, $1$, and $1/2$
-relative to the production mesh $H0$. The paired-core radius remains
+These correspond to structured-core scale factors $2$, $1$, and $1/2$.
+The paired-core radius remains
 $r_c=3$ mm and the EDI annulus remains $r_i=0.4$ mm to $r_o=2.6$ mm.
 The paired cores contain 3318, 12678, and 49518 T3 elements, respectively.
-The established four COD windows contain 19/28/23/18 native points on
-$H1$, 38/55/44/34 on $H0$, and 74/108/86/67 on $L1$.
+The established four COD windows contain 19/28/23/18 native points at
+$2h_0$, 38/55/44/34 at $h_0$, and 74/108/86/67 at $h_0/2$.
 
 For geometric illustration, Fig.~\ref{fig:mesh-levels} also includes a
-coarser $H2$ core with $h_{\mathrm{tip}}=0.1080493$ mm. It contains only
+coarser $4h_0$ core with $h_{\mathrm{tip}}=0.1080493$ mm. It contains only
 10/15/12/9 native COD points in the four established windows, so it fails
-the requirement of at least 12 points in every window. Consequently, $H2$
+the requirement of at least 12 points in every window. Consequently, $4h_0$
 is shown only as part of the mesh-resolution hierarchy and is not used for
 physical SIF or MTS comparisons. No sampling or solver acceptance criterion
 is relaxed to admit it.
@@ -531,23 +531,23 @@ solved crack state.}
 \label{tab:tipmesh}
 \begin{tabular}{lrrrrrr}
 \toprule
-Level & $h_{\rm tip}$ [mm] &
+Resolution & $h_{\rm tip}$ [mm] &
 $q_K(P_{21})$ & $\Delta\theta_{22}$ [deg] &
 $q_K(P_{22})$ & $\Delta\theta_{23}$ [deg] &
 $a_{\rm LS}$ [mm]\\
 \midrule
-$H1$ & 0.0540247 & $+7.79244\times10^{-5}$ & $-0.00892948$ &
+$2h_0$ & 0.0540247 & $+7.79244\times10^{-5}$ & $-0.00892948$ &
 $-2.14457\times10^{-3}$ & $+0.24574713$ & 84.140247\\
-$H0$ & 0.0270123 & $+8.13427\times10^{-5}$ & $-0.00932118$ &
+$h_0$ & 0.0270123 & $+8.13427\times10^{-5}$ & $-0.00932118$ &
 $-2.14159\times10^{-3}$ & $+0.24540569$ & 84.146370\\
-$L1$ & 0.0135062 & $+8.30887\times10^{-5}$ & $-0.00952126$ &
+$h_0/2$ & 0.0135062 & $+8.30887\times10^{-5}$ & $-0.00952126$ &
 $-2.13979\times10^{-3}$ & $+0.24519944$ & 84.149515\\
 \bottomrule
 \end{tabular}
 \end{table}
 
-The interpolated crossing therefore moves from $84.140247$ mm on $H1$ to
-$84.146370$ mm on $H0$ and $84.149515$ mm on $L1$. The successive changes,
+The interpolated crossing therefore moves from $84.140247$ mm at $2h_0$ to
+$84.146370$ mm at $h_0$ and $84.149515$ mm at $h_0/2$. The successive changes,
 $6.12~\mu\mathrm{m}$ and $3.15~\mu\mathrm{m}$, are tiny relative to the
 4-mm crack increment. Taken only as a three-level diagnostic, their ratio
 corresponds to an observed order of approximately $0.96$ for this
@@ -620,7 +620,7 @@ read against the 4-mm spacing of its bracketing states, not as a highly
 resolved physical crack length.
 
 The independent M1 calculation addresses exterior-mesh density, while the
-fixed-geometry $H1$--$H0$--$L1$ study separately addresses local tip
+fixed-geometry $2h_0$--$h_0$--$h_0/2$ study separately addresses local tip
 resolution around the mode-II sign change. Together they show that the
 reported $P_{21}$--$P_{22}$ bracket is insensitive both to substantial
 exterior coarsening and to a factor-of-four range in local structured
@@ -674,8 +674,8 @@ independently propagated calculation with a substantially coarser exterior
 mesh reproduces the $P_{17}$ mode-mixity maximum, the $P_{21}$--$P_{22}$
 sign-change bracket, and the accepted trajectory through $P_{23}$; the
 maximum separation of corresponding tips is only $0.0674~\mu\mathrm{m}$.
-A separate fixed-geometry $H1$--$H0$--$L1$ comparison spanning a factor of
-four in $h_{\mathrm{tip}}$ also preserves the $P_{21}$--$P_{22}$ sign bracket;
+A separate fixed-geometry $2h_0$--$h_0$--$h_0/2$ comparison spanning a factor
+of four in $h_{\mathrm{tip}}$ also preserves the $P_{21}$--$P_{22}$ sign bracket;
 the interpolated local-symmetry location changes by only $6.12$ and
 $3.15~\mu\mathrm{m}$ between successive levels. These results support
 robustness with respect to both exterior-mesh density and local tip
