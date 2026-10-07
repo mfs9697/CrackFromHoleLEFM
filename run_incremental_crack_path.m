@@ -902,7 +902,14 @@ function tf=local_candidate_mesh_controls_match(candidate,requested)
         % Historical reference candidates predate explicit control metadata.
         exteriorOK=requested.isReferenceProductionExterior;
     else
-        exteriorOK=local_mesh_controls_equal(candidate.exteriorMeshControls,requested);
+        % candidate.exteriorMeshControls intentionally contains exterior
+        % controls only. Compare those independently of requested coreScale.
+        requestedExterior=requested;
+        if isfield(requestedExterior,'coreScale')
+            requestedExterior=rmfield(requestedExterior,'coreScale');
+        end
+        exteriorOK=local_mesh_controls_equal( ...
+            candidate.exteriorMeshControls,requestedExterior);
     end
     if ~exteriorOK,return,end
 
