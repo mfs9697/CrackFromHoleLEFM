@@ -415,13 +415,17 @@ function F = qualify_incremental_crack_candidate(pathGlobal,varargin)
     globalPhysicalVerticesBitwise= ...
         isequal(Pg(oldToNew(physicalIDs),:),Mc.p(physicalIDs,:));
 
-    % EDI support must be wholly within the untouched core rows.
-    support=local_q_support(meshLocal,cr,ri,ro,false);
-    supportSkipConstant=local_q_support(meshLocal,cr,ri,ro,true);
-    supportInside=all(ismember(support,patchRows)) && ...
-        all(ismember(supportSkipConstant,patchRows));
-    exteriorOutside=~any(ismember(support,exteriorRows)) && ...
-        ~any(ismember(supportSkipConstant,exteriorRows));
+    % EDI support must be wholly within the untouched core rows. The
+    % primary support uses the robust skip-constant-q definition inherited
+    % from the closed Step62 audit. literalSupport is retained only as a
+    % conservative containment diagnostic because constant-q gradients can
+    % acquire roundoff-level noise if evaluated numerically.
+    literalSupport=local_q_support(meshLocal,cr,ri,ro,false);
+    primarySupport=local_q_support(meshLocal,cr,ri,ro,true);
+    supportInside=all(ismember(primarySupport,patchRows)) && ...
+        all(ismember(literalSupport,patchRows));
+    exteriorOutside=~any(ismember(primarySupport,exteriorRows)) && ...
+        ~any(ismember(literalSupport,exteriorRows));
 
     % The retained polyline outside the new-tip core spans the crack mouth
     % through every historical kink to the rear core intersection.
@@ -500,7 +504,7 @@ function F = qualify_incremental_crack_candidate(pathGlobal,varargin)
     gates.exteriorExcludedFromEDI=exteriorOutside;
     gates.nativeSamplingAdequate=all(sampleN>=12);
     gates.coreFamilyElementFingerprint=numel(patchRows)==expectedCoreT3;
-    gates.EDISupportFingerprint=numel(support)==expectedSupport;
+    gates.EDISupportFingerprint=numel(primarySupport)==expectedSupport;
     gates.nativeSamplingExact=isequal(sampleN,expectedNative);
     gates.exteriorCrackLengthCorrect=abs(exteriorCrackLength-(pathLength-rp))<=1e-14;
     gates.upperMouthAtZero=mouthUpper<=1e-12;
@@ -523,8 +527,8 @@ function F = qualify_incremental_crack_candidate(pathGlobal,varargin)
     fprintf('  carrier face edges   = %d upper / %d lower\n',numel(polyIDs.upperEdges),numel(polyIDs.lowerEdges));
     fprintf('  retained crack nodes = %d exterior copies; %d source-side matches\n', ...
         nRetainedCrackExteriorNodes,nRetainedCrackSourceMatches);
-    fprintf('  primary EDI elements = %d (literal), %d (skip-constant)\n', ...
-        numel(support),numel(supportSkipConstant));
+    fprintf('  EDI support elements = %d (literal diagnostic), %d (primary)\n', ...
+        numel(literalSupport),numel(primarySupport));
     fprintf('  core coord error     = %.3e m\n',coreCoordErr);
     fprintf('  core pair error T3/6 = %.3e / %.3e m\n',pair3,pair6);
     fprintf('  area relative error  = %.3e\n',areaRel);
@@ -596,7 +600,8 @@ function F = qualify_incremental_crack_candidate(pathGlobal,varargin)
 
     syntheticGates=struct();
     syntheticGates.sameEDISupportCountAsCore= ...
-        all(Synthetic.nElem_used==expectedSupport) && numel(support)==expectedSupport;
+        all(Synthetic.nElem_used==expectedSupport) && ...
+        numel(primarySupport)==expectedSupport;
     syntheticGates.pureIRecovery=abs(rows(1,3)-1)<=2e-4;
     syntheticGates.pureICrossLeakage=abs(rows(1,4))<=1e-10;
     syntheticGates.pureIIRecovery=abs(rows(2,4)-1)<=2e-4;
@@ -629,7 +634,7 @@ function F = qualify_incremental_crack_candidate(pathGlobal,varargin)
         nSegments,increment,pathLength,thetaPrevDeg,thetaLastDeg,opt.CoreScale,Core.hTip,ri,ro,rp, ...
         design.transitionLength_m,design.farCap_m, ...
         size(Pc,1),size(Tc,1),size(P6,1),numel(patchRows),numel(exteriorRows), ...
-        physicalClearance,cornerDistance,exteriorCrackLength,numel(support), ...
+        physicalClearance,cornerDistance,exteriorCrackLength,numel(primarySupport), ...
         coreCoordErr,pair3,pair6,areaRel,min(q.minAngle),maxNeighbor,minJ, ...
         matrixError,mixedRel,superErr,pass, ...
         'VariableNames',{ ...
@@ -666,8 +671,9 @@ function F = qualify_incremental_crack_candidate(pathGlobal,varargin)
     candidate.tHatFrozen=tHat;
     candidate.pairedElementIDs=patchRows;
     candidate.exteriorElementIDs=exteriorRows;
-    candidate.primarySupportElementIDs=support;
-    candidate.skipConstantSupportElementIDs=supportSkipConstant;
+    candidate.primarySupportElementIDs=primarySupport;
+    candidate.literalPrimarySupportElementIDs=literalSupport;
+    candidate.skipConstantSupportElementIDs=primarySupport;
     candidate.pairedNodeIDs=pairedIDs;
     candidate.pairedMirrorLocal=mirrorMap;
     candidate.structuredDesign=design;
@@ -680,6 +686,7 @@ function F = qualify_incremental_crack_candidate(pathGlobal,varargin)
         'rCore_m',rp, ...
         'expectedCoreT3',expectedCoreT3, ...
         'expectedEDISupport',expectedSupport, ...
+        'literalSupportCount',numel(literalSupport), ...
         'expectedNativeSamples',expectedNative);
     candidate.exteriorDesign=ext;
     candidate.exteriorMeshControls=struct( ...
