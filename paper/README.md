@@ -31,6 +31,11 @@ The reversal is the central result in the abstract and discussion.
 - `data/`: audited CSV/JSON, exact compact MAT snapshot, original accepted
   Stage-I source, derived metrics, and source SHA256 manifest.
 - `export_pilot_evidence.m`: read-only manuscript data extraction/audit.
+- `plot_existing_manuscript_figures.m`: redraws Figures 1--4 and S1 in
+  MATLAB as separate vector panels for LaTeX subcaptions; no FE solve or
+  extraction replay is performed.
+- `verification/crack_path/plot_m1_vs_reference_publication.m`: generates
+  the separate vector panels for the M1 exterior-mesh sensitivity figure.
 - `sync_manuscript_data.py`: updates only embedded tables, coordinates, and
   numerical macros in the TeX source from the audited data snapshot.
 
@@ -41,12 +46,22 @@ The conclusion concerns a fixed 4-mm sequence; no path-convergence claim is made
 
 ## Build and review
 
-The TeX is standalone: plots and data are embedded, so there are no external
-image or table inputs. `references.bib` is intentionally inactive until
-entries have been verified. The source can be opened in the built-in editor.
+The manuscript uses external vector PDF panels under `paper/figures/`, with
+panel letters and panel captions supplied by LaTeX `subcaption`. The plotted
+numerical evidence remains in `paper/data/`. `references.bib` is intentionally
+inactive until entries have been verified. Before compiling after a clean
+checkout, generate the MATLAB panels from the saved evidence archives.
 
-For a regular TeX installation, compile `main.tex` twice with pdfLaTeX or
-XeLaTeX. Alternatively:
+From the repository root, generate the figure panels first:
+
+```matlab
+addpath(genpath(pwd));
+plot_existing_manuscript_figures();
+plot_m1_vs_reference_publication();
+```
+
+Then, from `paper/`, compile `main.tex` twice with pdfLaTeX or XeLaTeX.
+Alternatively:
 
 ```text
 tectonic -X compile main.tex
