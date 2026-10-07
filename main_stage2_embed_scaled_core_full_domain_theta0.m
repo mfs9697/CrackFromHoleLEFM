@@ -46,6 +46,14 @@ function F = main_stage2_embed_scaled_core_full_domain_theta0(varargin)
     addParameter(ip,'StateFile','',@(x)ischar(x)||isstring(x));
     addParameter(ip,'NArc',480,@(x)isnumeric(x)&&isscalar(x)&&isfinite(x)&&x>=32&&x==round(x));
     addParameter(ip,'ExteriorVerbose',true,@(x)islogical(x)&&isscalar(x));
+    % Exterior-only sensitivity controls. Defaults reproduce the accepted
+    % Stage-II reference mesh exactly; the paired core and EDI radii stay fixed.
+    addParameter(ip,'ExteriorFarCapOverA0',0.625, ...
+        @(x)isnumeric(x)&&isscalar(x)&&isfinite(x)&&x>0);
+    addParameter(ip,'ExteriorTransitionOverA0',1.0, ...
+        @(x)isnumeric(x)&&isscalar(x)&&isfinite(x)&&x>0);
+    addParameter(ip,'ExteriorCalibration',struct(), ...
+        @(x)isstruct(x)&&isscalar(x));
     addParameter(ip,'SaveCandidate',true,@(x)islogical(x)&&isscalar(x));
     addParameter(ip,'CandidateFile','',@(x)ischar(x)||isstring(x));
     addParameter(ip,'SaveCompact',true,@(x)islogical(x)&&isscalar(x));
@@ -131,9 +139,15 @@ function F = main_stage2_embed_scaled_core_full_domain_theta0(varargin)
     rp=Core.rCore;
     design=Core.design;
     design.rCore_m=rp;
-    design.transitionLength_m=1.0*a0;
-    design.farCap_m=0.625*a0;
-    design.exteriorCalibration=struct('verbose',opt.ExteriorVerbose);
+    design.transitionLength_m=opt.ExteriorTransitionOverA0*a0;
+    design.farCap_m=opt.ExteriorFarCapOverA0*a0;
+    design.exteriorCalibration=opt.ExteriorCalibration;
+    design.exteriorCalibration.verbose=opt.ExteriorVerbose;
+
+    exteriorIsReference = ...
+        abs(opt.ExteriorTransitionOverA0-1.0)<=10*eps && ...
+        abs(opt.ExteriorFarCapOverA0-0.625)<=10*eps && ...
+        isempty(fieldnames(opt.ExteriorCalibration));
 
     ri=.10*a0;
     ro=.65*a0;
@@ -496,6 +510,11 @@ function F = main_stage2_embed_scaled_core_full_domain_theta0(varargin)
     candidate.pairedMirrorLocal=mirrorMap;
     candidate.structuredDesign=design;
     candidate.exteriorDesign=ext;
+    candidate.exteriorMeshControls=struct( ...
+        'farCapOverA0',opt.ExteriorFarCapOverA0, ...
+        'transitionOverA0',opt.ExteriorTransitionOverA0, ...
+        'calibrationOverride',opt.ExteriorCalibration, ...
+        'isReferenceProductionExterior',exteriorIsReference);
     candidate.gates=gates;
     candidate.synthetic=Synthetic;
     candidate.syntheticGates=syntheticGates;
@@ -513,6 +532,7 @@ function F = main_stage2_embed_scaled_core_full_domain_theta0(varargin)
     F.crackLocal=cr;
     F.Core=Core;
     F.exteriorDesign=ext;
+    F.exteriorMeshControls=candidate.exteriorMeshControls;
     F.sampleCounts=table(windows(:,1),windows(:,2),sampleN, ...
         'VariableNames',{'lower_r_over_a0','upper_r_over_a0','nativePoints'});
     F.pass=pass;

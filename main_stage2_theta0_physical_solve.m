@@ -44,11 +44,17 @@ function R = main_stage2_theta0_physical_solve(varargin)
     addParameter(ip,'CandidateFile','',@(x)ischar(x)||isstring(x));
     addParameter(ip,'CheckpointFile','',@(x)ischar(x)||isstring(x));
     addParameter(ip,'SaveFile','',@(x)ischar(x)||isstring(x));
+    % Explicit escape hatch for a separately qualified nonreference exterior
+    % mesh. Default behavior retains the historical branch/count fingerprints.
+    addParameter(ip,'AlternativeQualifiedCandidate',false, ...
+        @(x)islogical(x)&&isscalar(x));
     parse(ip,varargin{:});
     opt=ip.Results;
 
     root=fileparts(mfilename('fullpath'));
-    local_assert_branch(root);
+    if ~opt.AlternativeQualifiedCandidate
+        local_assert_branch(root);
+    end
     outDir=fullfile(root,'verification','crack_path');
     if exist(outDir,'dir')~=7,mkdir(outDir);end
 
@@ -116,9 +122,18 @@ function R = main_stage2_theta0_physical_solve(varargin)
     T=candidate.t;
     crack=candidate.crack;
 
-    assert(size(P,1)==24389 && size(T,1)==47828, ...
-        'stage2phys:CandidateT3Fingerprint', ...
-        'Qualified theta0 T3 count fingerprint changed.');
+    if ~opt.AlternativeQualifiedCandidate
+        assert(size(P,1)==24389 && size(T,1)==47828, ...
+            'stage2phys:CandidateT3Fingerprint', ...
+            'Qualified theta0 T3 count fingerprint changed.');
+    else
+        assert(isfield(candidate,'exteriorMeshControls') && ...
+            isstruct(candidate.exteriorMeshControls) && ...
+            isfield(candidate.exteriorMeshControls,'isReferenceProductionExterior') && ...
+            ~logical(candidate.exteriorMeshControls.isReferenceProductionExterior), ...
+            'stage2phys:AlternativeCandidateProvenance', ...
+            'AlternativeQualifiedCandidate requires explicit nonreference exterior provenance.');
+    end
     assert(abs(candidate.a0-a0)<=1e-14 && candidate.theta1==0, ...
         'stage2phys:CandidateCrackParameter', ...
         'Candidate a0/theta1 differs from qualified theta0 problem.');
@@ -132,8 +147,10 @@ function R = main_stage2_theta0_physical_solve(varargin)
         'stage2phys:SupportFingerprint','Qualified EDI support count changed.');
 
     [P6,T6]=T3toT6_fast(P,T);
-    assert(size(P6,1)==96606, ...
-        'stage2phys:T6Fingerprint','Qualified theta0 T6 node count changed.');
+    if ~opt.AlternativeQualifiedCandidate
+        assert(size(P6,1)==96606, ...
+            'stage2phys:T6Fingerprint','Qualified theta0 T6 node count changed.');
+    end
 
     mesh=struct('coord3',P,'connect3',T,'coord',P6,'connect',T6);
 
@@ -223,7 +240,7 @@ function R = main_stage2_theta0_physical_solve(varargin)
 
     if exist(cp,'file')==2
         s0=load(cp,'meta','mesh','U','mat','crack','a0','solverInfo');
-        local_validate_checkpoint(s0,mesh,crack,a0,ndof);
+        local_validate_checkpoint(s0,mesh,crack,a0,ndof,opt.AlternativeQualifiedCandidate);
         fprintf('\nPHASE 1: valid physical checkpoint found; NO new solve.\n');
     else
         if ~opt.AllowSolve
@@ -378,7 +395,8 @@ function R = main_stage2_theta0_physical_solve(varargin)
             'pcgTol',pcgTol,'preconditioner',preconditionerName, ...
             'postprocessingPerformedBeforeCheckpoint',false, ...
             'singlePhysicalAngleOnly',true, ...
-            'noAngleSweep',true);
+            'noAngleSweep',true, ...
+            'alternativeQualifiedCandidate',logical(opt.AlternativeQualifiedCandidate));
 
         tmp=[cp '.incomplete.mat'];
         if exist(tmp,'file')==2
@@ -405,7 +423,7 @@ function R = main_stage2_theta0_physical_solve(varargin)
     % ------------------------------------------------------------------
     fprintf('\nPHASE 2: POSTPROCESS SAVED PHYSICAL FIELD\n');
     s=load(cp,'mesh','U','mat','crack','a0','meta','solverInfo');
-    local_validate_checkpoint(s,mesh,crack,a0,ndof);
+    local_validate_checkpoint(s,mesh,crack,a0,ndof,opt.AlternativeQualifiedCandidate);
 
     [r,app,face]=native_COD_audit( ...
         s.mesh,s.U,s.mat,s.crack,8);
@@ -540,6 +558,10 @@ function R = main_stage2_theta0_physical_solve(varargin)
     R.checkpointPath=cp;
     R.candidateSource=candidateSource;
     R.frozenSource=frozenSource;
+    R.alternativeQualifiedCandidate=logical(opt.AlternativeQualifiedCandidate);
+    if isfield(candidate,'exteriorMeshControls')
+        R.exteriorMeshControls=candidate.exteriorMeshControls;
+    end
     R.interpretation=[ ...
         'One qualified theta_1=0 physical LEFM solve. ', ...
         'The primary first-segment direction observable is signed KII(0). ', ...
@@ -626,7 +648,7 @@ function mat=local_material_with_D(mat0,C)
     mat.Dmat=D;
 end
 
-function local_validate_checkpoint(s,mesh,crack,a0,ndof)
+function local_validate_checkpoint(s,mesh,crack,a0,ndof,alternativeQualifiedCandidate)
     req={'meta','mesh','U','mat','crack','a0','solverInfo'};
     for k=1:numel(req)
         if ~isfield(s,req{k})
@@ -635,15 +657,26 @@ function local_validate_checkpoint(s,mesh,crack,a0,ndof)
         end
     end
 
-    if ~strcmp(s.meta.stage,'stage2_theta0_physical_solved') || ...
-            s.meta.nT3Nodes~=24389 || s.meta.nT3~=47828 || ...
-            s.meta.nT6Nodes~=96606 || s.meta.ndof~=ndof || ...
+    commonMismatch = ...
+            ~strcmp(s.meta.stage,'stage2_theta0_physical_solved') || ...
+            s.meta.ndof~=ndof || ...
             abs(s.a0-a0)>1e-14 || s.meta.theta1~=0 || ...
             ~strcmp(s.meta.solver,'pcg_free_dof_spd_sgs') || ...
             ~isequal(s.mesh.connect3,mesh.connect3) || ...
             max(abs(s.mesh.coord3(:)-mesh.coord3(:)))>1e-12 || ...
             numel(s.U)~=ndof || any(~isfinite(s.U)) || ...
-            norm(s.crack.Pmid-crack.Pmid,'fro')>2e-12
+            norm(s.crack.Pmid-crack.Pmid,'fro')>2e-12;
+
+    if alternativeQualifiedCandidate
+        countMismatch = s.meta.nT3Nodes~=size(mesh.coord3,1) || ...
+            s.meta.nT3~=size(mesh.connect3,1) || ...
+            s.meta.nT6Nodes~=size(mesh.coord,1);
+    else
+        countMismatch = s.meta.nT3Nodes~=24389 || s.meta.nT3~=47828 || ...
+            s.meta.nT6Nodes~=96606;
+    end
+
+    if commonMismatch || countMismatch
         error('stage2phys:CheckpointMismatch', ...
             'Existing physical checkpoint is not the exact current theta0 candidate.');
     end
