@@ -147,3 +147,11 @@ physical curve
 \]
 
 and search for the first-segment local-symmetry root.
+
+
+## Near-tip h/2 refinement
+
+The controlled fixed-geometry L0/L1 near-tip refinement protocol is documented
+in [TIP_REFINEMENT_H2.md](TIP_REFINEMENT_H2.md). It halves the structured tip
+scale while keeping the accepted crack geometry, EDI radii, paired-core radius,
+reference exterior law, physics, and solver gates fixed.
