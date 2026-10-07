@@ -191,7 +191,7 @@ function S = plot_m1_vs_reference_publication(varargin)
     plot(ax2,a_mm,dy_um,'-o','Color',blue,'LineWidth',1.15, ...
         'MarkerSize',3,'MarkerFaceColor','w');
     yline(ax2,0,':','Color',gray,'HandleVisibility','off');
-    xlabel(ax2,'crack length a [mm]');
+    xlabel(ax2,'Crack length a [mm]');
     ylabel(ax2,'y_{M1}-y_{ref} [\mum]');
     % No title/panel label here: LaTeX supplies the subcaption.
 
@@ -202,7 +202,7 @@ function S = plot_m1_vs_reference_publication(varargin)
     plot(ax3,a_mm,dtheta_mdeg,'-o','Color',purple,'LineWidth',1.15, ...
         'MarkerSize',3,'MarkerFaceColor','w');
     yline(ax3,0,':','Color',gray,'HandleVisibility','off');
-    xlabel(ax3,'crack length a [mm]');
+    xlabel(ax3,'Crack length a [mm]');
     ylabel(ax3,'\theta_{M1}-\theta_{ref} [mdeg]');
     % No title/panel label here: LaTeX supplies the subcaption.
 
@@ -219,7 +219,7 @@ function S = plot_m1_vs_reference_publication(varargin)
         xline(ax4,aLSr_mm,'--','Color',green,'LineWidth',0.9, ...
             'HandleVisibility','off');
     end
-    xlabel(ax4,'crack length a [mm]');
+    xlabel(ax4,'Crack length a [mm]');
     ylabel(ax4,'K_{II}/K_I');
     % No title/panel label here: LaTeX supplies the subcaption.
     legend(ax4,'Location','southwest','Box','off');
