@@ -170,6 +170,23 @@ $P_{21}$ & 84 & 0.966310 & $7.8602\times10^{-5}$ & $8.1343\times10^{-5}$ & -3.63
 $P_{22}$ & 88 & 1.066724 & $-2.2845\times10^{-3}$ & $-2.1416\times10^{-3}$ & -3.645964 & +0.245406 \\
 $P_{23}$ & 92 & 1.244360 & $-6.7803\times10^{-3}$ & $-5.4488\times10^{-3}$ & -3.400558 & +0.624347 \\}
 % END AUDITED DATA
+
+% BEGIN SYMMETRIC STABILITY BENCHMARK DATA
+% Physical run: symmetric-path-stability @ 6945371, 2026-10-07.
+\pgfplotstableread[col sep=space]{
+theta2 q theta3
+-0.10 -0.000972279434555997 0.0114147704606671
+-0.05 -0.000486142505499450 0.00570779689417101
+ 0.00  0.00000000622351746186701 -0.000000713162568971250
+ 0.05  0.000486144582029343 -0.00570803484657518
+ 0.10  0.000972285048051394 -0.0114154137155996
+}\symstabdata
+\newcommand{\SymStabMultiplier}{-0.1141524}
+\newcommand{\SymStabPairSmall}{-0.1141583}
+\newcommand{\SymStabPairLarge}{-0.1141509}
+\newcommand{\SymStabStraightRatio}{6.22\times10^{-9}}
+\newcommand{\SymStabStraightAngle}{-7.13\times10^{-7}}
+% END SYMMETRIC STABILITY BENCHMARK DATA
 \title{Incremental LEFM Prediction of a Crack Trajectory\\from a Circular Hole}
 \author{}
 \date{Pilot manuscript}
@@ -191,6 +208,9 @@ reaches a maximum at 68 mm and changes sign between the solved 84- and
 the absolute crack direction remains negatively inclined. Reflection-paired
 tip meshes, prescribed-field controls, strict residual checks, and
 crack-opening-displacement comparisons support the numerical interpretation.
+A centered-hole perturbation control independently recovers the straight
+symmetric fixed path and gives a restoring one-step directional multiplier
+of approximately $-0.114$.
 The late redirection is consistent with increasing free-boundary influence
 rather than unloading, although this single trajectory does not isolate
 boundary effects from accumulated curvature. The next geometry is qualified
@@ -474,6 +494,46 @@ the other compared scientific quantities agree exactly. The maximum
 accepted true residual is $\MaxTrueResidual$, and iteration counts range
 from 2442 to 3011. Supporting diagnostics are given in Fig.~\ref{fig:quality}.
 
+
+\subsection{Centered-hole symmetry and local-stability control}
+A separate full-domain control problem tests whether the same current-tip
+EDI/MTS update introduces a directional bias near exact symmetry. The hole
+is centered at $(150,0)$ mm, its rightmost point is used as the crack mouth,
+and the first 4-mm segment lies exactly on the symmetry axis. A second
+4-mm segment is prescribed at
+$\theta_2\in\{-0.10^\circ,-0.05^\circ,0,0.05^\circ,0.10^\circ\}$.
+Each fixed geometry is independently meshed, qualified, and solved once;
+MTS predicts $\theta_3$, but no third segment is generated.
+
+For the straight control, $K_{II}/K_I=\SymStabStraightRatio$ and
+$\theta_3=\SymStabStraightAngle^\circ$, which defines the numerical
+symmetry floor. The paired perturbations recover even $K_I$ and odd
+$K_{II}/K_I$ and $\theta_3$ to within the observed numerical asymmetry.
+With the one-step map
+\begin{equation}
+ F(\theta_2)=\theta_3 ,
+ \qquad
+ F'(0)\simeq\SymStabMultiplier ,
+ \label{eq:symstabmap}
+\end{equation}
+the pairwise finite-difference multipliers are
+$\SymStabPairSmall$ at $|\theta_2|=0.05^\circ$ and
+$\SymStabPairLarge$ at $|\theta_2|=0.10^\circ$.
+Thus the implemented update is locally restoring and sign alternating in
+this control: a small angular perturbation is reduced to about 11.4\% of
+its magnitude after one update and changes sign.
+
+The result also closes consistently with the small-mode-mixity form of the
+implemented MTS rule. The fitted control relation
+$K_{II}/K_I\simeq0.00972283\,\theta_2$ when $\theta_2$ is expressed in
+degrees becomes $K_{II}/K_I\simeq0.557077\,\theta_2$ in radians. Hence
+$\Delta\theta_3\simeq-2K_{II}/K_I$ predicts
+$F'(0)\simeq1-2(0.557077)=-0.114154$, consistent with
+Eq.~\eqref{eq:symstabmap}. Figure~\ref{fig:symstab} shows the two measured
+linear relations. This is a symmetry/sign-convention and local-update
+control; it is not an increment-size convergence study for the asymmetric
+trajectory.
+
 \section{Crack-trajectory results}
 \subsection{Accepted path and direction history}
 Figure~\ref{fig:trajectory} distinguishes the accepted $P_0$--$P_{23}$
@@ -678,6 +738,14 @@ isolate that influence. The result supports a mode-mixity explanation of
 the computed redirection; it does not prove that the boundary is its sole
 cause.
 
+
+The centered-hole control provides a complementary algorithmic check:
+near exact local symmetry the same EDI/MTS machinery is restoring rather
+than directionally biased. It therefore gives no evidence that the late
+sign change in the asymmetric run is produced by an intrinsic preference
+of the update rule. This control does not, however, isolate the free
+boundary as the cause of that sign change.
+
 \subsection{Discretization and boundary proximity}
 The directions are selected from the field before adding a finite straight
 segment. A 4-mm step therefore samples a continuously changing boundary-value
@@ -723,10 +791,14 @@ negative absolute inclination late in the history.
 The sign reversal is shared by all stored COD fitting definitions, although
 their late-path differences show finite extraction sensitivity. Paired-core,
 synthetic, solver, and archive checks establish a reproducible numerical
-sequence within the chosen discretization. The qualified unsolved extension
-must remain separate from the physical results. Increment-size convergence,
-late-tip mesh/domain checks, and a controlled boundary comparison are the
-next requirements for stronger predictive and causal claims.
+sequence within the chosen discretization. A centered-hole perturbation
+control independently recovers the straight symmetric fixed path and a
+restoring one-step multiplier $F'(0)\simeq\SymStabMultiplier$, supporting
+the symmetry consistency of the current-tip EDI/MTS update. The qualified
+unsolved extension must remain separate from the physical results.
+Increment-size convergence, late-tip mesh/domain checks, and a controlled
+boundary comparison are the next requirements for stronger predictive and
+causal claims.
 
 \section*{References}
 \noindent\emph{Pilot status: verified literature entries have not yet been
@@ -766,5 +838,35 @@ true-residual gate of one. The separately enforced reported-PCG tolerance
 is $10^{-10}$; the true-residual acceptance denominator is
 $5\times10^{-10}$. No failed $P_{24}$ solve is plotted.}
 \label{fig:quality}
+\end{figure}
+
+\begin{figure}[htbp]\centering
+\begin{tikzpicture}
+\begin{groupplot}[group style={group size=2 by 1,horizontal sep=20mm},
+ pilot,width=58mm,height=42mm,xmin=-0.105,xmax=0.105,
+ xtick={-0.10,-0.05,0,0.05,0.10}]
+\nextgroupplot[
+ xlabel={Prescribed $\theta_2$ [deg]},
+ ylabel={$10^3 K_{II}/K_I$},
+ title={(a) Mode-mixity response}]
+\addplot[pathblue,mark=*] table[x=theta2,y expr={1000*\thisrow{q}}] {\symstabdata};
+\addplot[black,dashed,thin] coordinates {(-0.105,0) (0.105,0)};
+\nextgroupplot[
+ xlabel={Prescribed $\theta_2$ [deg]},
+ ylabel={Predicted $\theta_3$ [deg]},
+ title={(b) One-step map $F(\theta_2)$}]
+\addplot[pathblue,mark=*] table[x=theta2,y=theta3] {\symstabdata};
+\addplot[fitgreen,dashed,domain=-0.105:0.105,samples=2]
+  {(\SymStabMultiplier)*x};
+\addplot[black,thin] coordinates {(-0.105,0) (0.105,0)};
+\end{groupplot}
+\end{tikzpicture}
+\caption{Centered-hole symmetry control using five independently generated
+full-domain meshes. Panel (a) shows the odd mode-mixity response to the
+prescribed second-segment perturbation. Panel (b) shows the MTS-predicted
+next absolute direction and the origin-constrained fit
+$F(\theta_2)=\SymStabMultiplier\,\theta_2$. The straight-control residual
+is visible only numerically and is many orders below the perturbed signals.}
+\label{fig:symstab}
 \end{figure}
 \end{document}

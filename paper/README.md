@@ -26,7 +26,8 @@ The reversal is the central result in the abstract and discussion.
 - `EVIDENCE_AND_PROVENANCE.md`: numerical claim-to-source mapping and limits.
 - `REMAINING_WORK.md`: actual gaps before journal submission.
 - `data/`: audited CSV/JSON, exact compact MAT snapshot, original accepted
-  Stage-I source, derived metrics, and source SHA256 manifest.
+  Stage-I source, derived metrics, source SHA256 manifest, and a separately
+  provenance-tracked centered-hole symmetry benchmark.
 - `export_pilot_evidence.m`: read-only manuscript data extraction/audit.
 - `sync_manuscript_data.py`: updates only embedded tables, coordinates, and
   numerical macros in the TeX source from the audited data snapshot.
@@ -82,7 +83,10 @@ on archive/state disagreement rather than silently reconciling it.
 3. **Likeliest reviewer scrutiny:** the location/robustness of the local-
    symmetry crossing and the causal attribution to the free boundary.
    The 84.15-mm value is interpolation; boundary distance and curvature
-   co-evolve without a separating control.
+   co-evolve without a separating control. A separate centered-hole
+   perturbation benchmark now verifies that the EDI/MTS update is
+   symmetry-consistent and locally restoring, but it does not isolate the
+   free-boundary mechanism.
 4. **Most valuable next calculation:** a matched physical 4/2/1-mm
    increment study, with independently controlled mesh/extraction resolution
    and comparison at common crack lengths. Do not couple every numerical
