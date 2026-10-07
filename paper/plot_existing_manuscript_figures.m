@@ -158,7 +158,7 @@ function S = plot_existing_manuscript_figures(varargin)
     plot(ax,a,T.theta_deg,'-o','Color',C.blue,'LineWidth',1.2, ...
         'MarkerSize',3.1,'MarkerFaceColor','w');
     xlim(ax,[4 92]); xticks(ax,[4 20 36 52 68 84 92]);
-    xlabel(ax,'Crack length a [mm]'); ylabel(ax,'\\theta_k [deg]');
+    xlabel(ax,'Crack length a [mm]'); ylabel(ax,'\theta_k [deg]');
     local_style_axis(ax);
     S.files{end+1}=local_export_axis(ax,out,'theta'); %#ok<AGROW>
 
@@ -185,7 +185,7 @@ function S = plot_existing_manuscript_figures(varargin)
     yline(ax,0,'--','Color',C.gray,'HandleVisibility','off');
     xline(ax,aLS,':','Color',C.purple,'LineWidth',1.0,'HandleVisibility','off');
     xlim(ax,[60 92]); xticks(ax,[60 68 76 84 88 92]);
-    xlabel(ax,'Crack length a [mm]'); ylabel(ax,'\\Delta\\theta_{k+1} [deg]');
+    xlabel(ax,'Crack length a [mm]'); ylabel(ax,'\Delta\theta_{k+1} [deg]');
     local_style_axis(ax);
     S.files{end+1}=local_export_axis(ax,out,'turn'); %#ok<AGROW>
 
@@ -308,5 +308,5 @@ end
 function tf=local_is_absolute_path(p)
     p=char(p);
     tf=startsWith(p,filesep)|| ...
-        ~isempty(regexp(p,'^[A-Za-z]:[\\/ ]','once'))||startsWith(p,'\\');
+        ~isempty(regexp(p,'^[A-Za-z]:[\\/]','once'))||startsWith(p,'\\');
 end
