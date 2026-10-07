@@ -841,6 +841,7 @@ $5\times10^{-10}$. No failed $P_{24}$ solve is plotted.}
 \end{figure}
 
 \begin{figure}[htbp]\centering
+\begin{tikzpicture}
 \begin{groupplot}[group style={group size=2 by 1,horizontal sep=20mm},
  pilot,width=58mm,height=42mm,xmin=-0.105,xmax=0.105,
  xtick={-0.10,-0.05,0,0.05,0.10}]
@@ -859,7 +860,7 @@ $5\times10^{-10}$. No failed $P_{24}$ solve is plotted.}
   {(\SymStabMultiplier)*x};
 \addplot[black,thin] coordinates {(-0.105,0) (0.105,0)};
 \end{groupplot}
-\end{figure}
+\end{tikzpicture}
 \caption{Centered-hole symmetry control using five independently generated
 full-domain meshes. Panel (a) shows the odd mode-mixity response to the
 prescribed second-segment perturbation. Panel (b) shows the MTS-predicted
