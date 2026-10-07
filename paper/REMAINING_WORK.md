@@ -5,6 +5,8 @@
    controlling mesh and extraction resolution independently. Report changes
    in tip coordinates, absolute directions, SIFs, and the sign-change bracket.
    Historical straight 8-mm mesh convergence does not answer this question.
+   The centered-hole local-stability benchmark also does not replace this
+   asymmetric-trajectory increment study.
 
 2. **Check the late-tip extraction and mesh.** At least P17, P21, P22, and
    P23 need physically matched mesh refinement and EDI-domain sensitivity.
