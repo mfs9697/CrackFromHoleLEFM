@@ -516,46 +516,8 @@ inclination at $P_{23}$ (Fig.~\ref{fig:intensities}). A positive late turn
 does not imply an upward-moving tip: the accepted segments remain
 negatively inclined and their global $y$ coordinates continue to decrease.
 
-\begin{figure}[tbp]
-\centering
-\begin{tikzpicture}
-\begin{axis}[pilot,width=138mm,height=56.53mm,axis equal image,
- xmin=136,xmax=302,ymin=-54,ymax=14,xlabel={$x$ [mm]},ylabel={$y$ [mm]},
- title={(a) Hole and accepted trajectory},legend pos=north east]
-\addplot[black,thin,domain=0:360,samples=481,forget plot]
- ({\HoleCxMM+\HoleRMM*cos(x)},{\HoleCyMM+\HoleRMM*sin(x)});
-\addplot[black,thin,forget plot] coordinates {(\PlateAMM,-54) (\PlateAMM,14)};
-\addplot[pathblue,mark=*,mark size=.8pt] coordinates {\AcceptedPath};
-\addlegendentry{Accepted $P_0$--$P_{23}$}
-\addplot[diagorange,dashed,mark=x,mark size=2pt] coordinates {\UnsolvedPath};
-\addlegendentry{Qualified, unsolved extension}
-\addplot[black,only marks,mark=square*,mark size=2pt,forget plot]
- coordinates {(\LastXMM,\LastYMM)};
-\end{axis}
-\end{tikzpicture}\par\vspace{4mm}
-\begin{tikzpicture}
-\begin{axis}[pilot,width=138mm,height=18.82mm,axis equal image,
- xmin=258,xmax=302,ymin=-27.3,ymax=-21.3,xlabel={$x$ [mm]},ylabel={$y$ [mm]},
- title={(b) Late-path detail; equal spatial scales}]
-\addplot[pathblue,mark=*,mark size=1pt] coordinates {\LateAcceptedPath};
-\addplot[diagorange,dashed,mark=x,mark size=2pt] coordinates {\UnsolvedPath};
-\addplot[black,thin] coordinates {(\PlateAMM,-27.3) (\PlateAMM,-21.3)};
-\addplot[fitgreen,only marks,mark=o,mark size=2.5pt] coordinates {(\PeakXMM,\PeakYMM)};
-\addplot[fitpurple,only marks,mark=diamond,mark size=2.5pt] coordinates {(\LSXMM,\LSYMM)};
-\addplot[black,only marks,mark=square*,mark size=2pt] coordinates {(\LastXMM,\LastYMM)};
-\node[font=\scriptsize,above] at (axis cs:\PeakXMM,\PeakYMM) {$P_{17}$};
-\node[font=\scriptsize,above] at (axis cs:\LSXMM,\LSYMM) {linear $\qmix=0$ estimate};
-\node[font=\scriptsize,above left] at (axis cs:\LastXMM,\LastYMM) {$P_{23}$};
-\node[font=\scriptsize,below right,text=diagorange] at (axis cs:\NextXMM,\NextYMM) {$P_{24}$: unsolved};
-\end{axis}
-\end{tikzpicture}
-\caption{Hole-initiated trajectory and late detail. Both spatial panels
-use equal $x$ and $y$ scales within the panel. The circle gives geometric
-context; the numerical hole is polygonally discretized. Solid segments are
-accepted geometry through $P_{23}$. The dashed extension is qualified
-geometry only and has no accepted physical SIFs. The diamond is a linear
-interpolation marker, not a solved tip.}\label{fig:trajectory}
-\end{figure}
+\input{figures/trajectory/figure}
+
 
 \subsection{Mode intensities and the positive maximum}
 Figure~\ref{fig:intensities} shows monotonically increasing $K_I$, from
@@ -571,25 +533,8 @@ Accordingly the negative incremental MTS turn becomes smaller in
 magnitude (Fig.~\ref{fig:late}). This change in turning response accompanies
 an increasing opening-mode intensity, not unloading.
 
-\begin{figure}[tbp]\centering
-\begin{tikzpicture}
-\begin{groupplot}[group style={group size=1 by 3,vertical sep=10mm},
- pilot,width=135mm,height=31mm,xmin=4,xmax=92,xtick={4,20,36,52,68,84,92}]
-\nextgroupplot[ylabel={$K_I$ [MPa$\sqrt{\mathrm m}$]},title={(a) Opening mode}]
-\addplot[pathblue,mark=*] table[x=a,y=KI] {\historydata};
-\nextgroupplot[ylabel={$K_{II}$ [MPa$\sqrt{\mathrm m}$]},title={(b) Sliding mode}]
-\addplot[pathblue,mark=*] table[x=a,y=KII] {\historydata};
-\addplot[black,dashed,thin] coordinates {(4,0) (92,0)};
-\nextgroupplot[ylabel={$\theta_k$ [deg]},xlabel={Crack length $a$ [mm]},
- title={(c) Absolute direction in the frozen initiation frame}]
-\addplot[pathblue,mark=*] table[x=a,y=theta] {\historydata};
-\end{groupplot}
-\end{tikzpicture}
-\caption{Accepted intensities and absolute direction. Intensities correspond
-to unit remote traction. The direction minimum occurs at $P_{22}$;
-positive turning there produces the less negative $P_{23}$ direction.
-No physical curve includes $P_{24}$.}\label{fig:intensities}
-\end{figure}
+\input{figures/intensities/figure}
+
 
 \subsection{Local-symmetry crossing and late turning reversal}
 At $P_{21}$ ($a=84$ mm), $\qmix=+8.134267\times10^{-5}$; at $P_{22}$
@@ -621,27 +566,8 @@ Interpolated & \LSLengthMM & --- & --- & $0$ & --- & ---\\
 \bottomrule\end{tabular}\label{tab:states}
 \end{table}
 
-\begin{figure}[tbp]\centering
-\begin{tikzpicture}
-\begin{groupplot}[group style={group size=1 by 2,vertical sep=12mm},
- pilot,width=138mm,height=37mm,xmin=60,xmax=92,xtick={60,68,76,84,88,92}]
-\nextgroupplot[ylabel={$10^3K_{II}/K_I$},title={(a) Late mode mixity}]
-\addplot[pathblue,mark=*] table[x=a,y expr={1000*\thisrow{q}}] {\historydata};
-\addplot[black,dashed,thin] coordinates {(60,0) (92,0)};
-\addplot[fitpurple,densely dotted,thin] coordinates {(\LSPlotMM,-5.8) (\LSPlotMM,3.5)};
-\nextgroupplot[ylabel={$\Delta\theta_{k+1}$ [deg]},xlabel={Crack length $a$ [mm]},
- title={(b) Incremental turn relative to the current segment}]
-\addplot[pathblue,mark=*] table[x=a,y=turn] {\historydata};
-\addplot[black,dashed,thin] coordinates {(60,0) (92,0)};
-\addplot[fitpurple,densely dotted,thin] coordinates {(\LSPlotMM,-.42) (\LSPlotMM,.67)};
-\end{groupplot}
-\end{tikzpicture}
-\caption{Mode-mixity sign reversal and opposite-signed MTS turning.
-Each marker is an accepted current-tip state; its turn predicts the next
-segment. The vertical dotted line is the interpolated $\qmix=0$ location.
-The positive turn reported at $a=92$ mm belongs to the $P_{23}$ solution
-and predicts the unsolved next geometry.}\label{fig:late}
-\end{figure}
+\input{figures/late/figure}
+
 
 \subsection{COD comparison and extraction sensitivity}
 All eight stored COD fit definitions retain positive mode mixity at $P_{21}$
@@ -662,30 +588,8 @@ The late fitting sensitivity is a postprocessing limitation to investigate,
 not an error bar on the physical path. Both routes also share any error in
 the underlying elastic solution.
 
-\begin{figure}[tbp]\centering
-\begin{tikzpicture}
-\begin{groupplot}[group style={group size=2 by 2,horizontal sep=19mm,vertical sep=15mm},
- pilot,width=58mm,height=38mm,xmin=60,xmax=92,xtick={60,76,92}]
-\nextgroupplot[ylabel={COD--EDI turn [deg]},title={(a) Linear fits}]
-\CODTurnPlotsOne
-\nextgroupplot[title={(b) Quadratic fits}]
-\CODTurnPlotsTwo
-\nextgroupplot[ylabel={$10^5$ (COD--EDI mode mixity)},xlabel={$a$ [mm]}]
-\CODRatioPlotsOne
-\nextgroupplot[xlabel={$a$ [mm]},legend style={at={(-.16,-.38)},anchor=north,
- legend columns=2,font=\scriptsize}]
-\CODRatioPlotsTwoLegend
-\end{groupplot}
-\end{tikzpicture}\vspace{9mm}
-\caption{Late-path extraction differences for all four native COD windows
-and both polynomial degrees. Window bounds are multiples of $\Delta a$.
-Zero is equality with EDI, not a known exact solution. The upper panels
-show differences in the MTS turns computed from the two sets of SIFs;
-the lower panels show differences in mode mixity. The largest observed
-difference occurs at the last accepted tip; individual difference curves
-need not vary monotonically.}
-\label{fig:cod}
-\end{figure}
+\input{figures/cod/figure}
+
 
 \subsection{Sensitivity to exterior-mesh density}
 The fixed-geometry M1 checks establish that the coarser exterior mesh does
@@ -820,29 +724,6 @@ accompanying bibliography file; no unverified citation is supplied.}
 The accepted solver and mesh checks are summarized in Fig.~\ref{fig:quality}.
 They provide reproducibility and acceptance diagnostics, rather than an
 estimate of the discretization error in the trajectory.
-\begin{figure}[htbp]\centering
-\begin{tikzpicture}
-\begin{groupplot}[group style={group size=2 by 2,horizontal sep=19mm,vertical sep=15mm},
- pilot,width=58mm,height=36mm,xmin=8,xmax=92,xtick={8,36,64,92}]
-\nextgroupplot[ylabel={Minimum angle [deg]},ymin=19,ymax=27,title={(a) Mesh-angle check}]
-\addplot[pathblue,mark=*] table[x=a,y=angle] {\qualitydata};
-\addplot[diagorange,dashed] coordinates {(8,20) (92,20)};
-\nextgroupplot[ylabel={Adjacent size ratio},ymin=1.78,ymax=1.804,title={(b) Grading check}]
-\addplot[pathblue,mark=*] table[x=a,y=ratio] {\qualitydata};
-\addplot[diagorange,dashed] coordinates {(8,1.8) (92,1.8)};
-\nextgroupplot[ylabel={PCG iterations},xlabel={$a$ [mm]},title={(c) Accepted solves}]
-\addplot[pathblue,mark=*] table[x=a,y=iter] {\qualitydata};
-\nextgroupplot[ylabel={True residual / gate},xlabel={$a$ [mm]},ymin=0,ymax=1.1,
- title={(d) Residual check}]
-\addplot[pathblue,mark=*] table[x=a,y expr={\thisrow{res}/5e-10}] {\qualitydata};
-\addplot[diagorange,dashed] coordinates {(8,1) (92,1)};
-\end{groupplot}
-\end{tikzpicture}
-\caption{Diagnostics for accepted $P_2$--$P_{23}$ states. Dashed lines are
-the $20^\circ$ minimum-angle gate, 1.8 adjacent-size-ratio gate, and normalized
-true-residual gate of one. The separately enforced reported-PCG tolerance
-is $10^{-10}$; the true-residual acceptance denominator is
-$5\times10^{-10}$. No failed $P_{24}$ solve is plotted.}
-\label{fig:quality}
-\end{figure}
+\input{figures/quality/figure}
+
 \end{document}
