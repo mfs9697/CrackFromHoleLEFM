@@ -25,7 +25,7 @@ function D = main_fixed_geometry_tip_refinement_diagnostic(varargin)
         all(isfinite(x))&&all(x==round(x))&&all(x>=2));
     addParameter(ip,'CoreScale',0.5,@(x)isnumeric(x)&&isscalar(x)&& ...
         isfinite(x)&&abs(x-.5)<=1e-14);
-    addParameter(ip,'RunDir','',@(x)ischar(x)||isstring(x));
+    addParameter(ip,'ReferenceEvidenceFile','',@(x)ischar(x)||isstring(x));
     addParameter(ip,'FrozenStateFile','',@(x)ischar(x)||isstring(x));
     addParameter(ip,'OutputDir','',@(x)ischar(x)||isstring(x));
     addParameter(ip,'AllowPhysicalSolves',false,@(x)islogical(x)&&isscalar(x));
@@ -39,11 +39,11 @@ function D = main_fixed_geometry_tip_refinement_diagnostic(varargin)
     root=fileparts(fileparts(fileparts(mfilename('fullpath'))));
     addpath(genpath(root));
 
-    runDir=char(opt.RunDir);
-    if isempty(runDir)
-        runDir=fullfile(root,'verification','crack_path','final_clean_run');
-    elseif ~local_is_absolute_path(runDir)
-        runDir=fullfile(root,runDir);
+    evidenceFile=char(opt.ReferenceEvidenceFile);
+    if isempty(evidenceFile)
+        evidenceFile=fullfile(root,'paper','data','evidence_exact.mat');
+    elseif ~local_is_absolute_path(evidenceFile)
+        evidenceFile=fullfile(root,evidenceFile);
     end
 
     frozenFile=char(opt.FrozenStateFile);
@@ -68,28 +68,42 @@ function D = main_fixed_geometry_tip_refinement_diagnostic(varargin)
     end
     if exist(outDir,'dir')~=7,mkdir(outDir);end
 
-    stateFile=fullfile(runDir,'path_run_state.mat');
-    assert(exist(stateFile,'file')==2,'tipref:MissingState', ...
-        'Authoritative state not found: %s',stateFile);
+    assert(exist(evidenceFile,'file')==2,'tipref:MissingEvidence', ...
+        'Committed audited evidence not found: %s',evidenceFile);
     assert(exist(frozenFile,'file')==2,'tipref:MissingFrozen', ...
         'Frozen Stage-I state not found: %s',frozenFile);
 
-    s=load(stateFile,'State');
-    assert(isfield(s,'State')&&isstruct(s.State), ...
-        'tipref:BadState','path_run_state.mat must contain State.');
-    State=s.State;
-    assert(State.completedPhysicalSegments>=max(opt.Segments), ...
-        'tipref:IncompleteState','Requested state is not physically accepted.');
+    ev=load(evidenceFile,'E','T','Q');
+    assert(isfield(ev,'E')&&isstruct(ev.E)&& ...
+        isfield(ev,'T')&&istable(ev.T)&& ...
+        isfield(ev,'Q')&&istable(ev.Q), ...
+        'tipref:BadEvidence', ...
+        'evidence_exact.mat must contain E, T, and Q.');
+    Eref=ev.E;
+    Ref=ev.T;
+    RefQual=ev.Q;
+    assert(height(Ref)==23 && isequal(Ref.segment,(1:23)'), ...
+        'tipref:ReferenceRows','Expected accepted reference rows P1--P23.');
+    assert(size(Eref.vertices_m,1)==25 && size(Eref.vertices_m,2)==2, ...
+        'tipref:ReferenceVertices', ...
+        'Expected audited vertices P0--P24 in committed evidence.');
+    assert(Eref.audit.completedPhysicalSegments==23 && ...
+        Eref.audit.qualifiedUnsolvedSegment==24, ...
+        'tipref:ReferenceClassification', ...
+        'Committed evidence no longer has the accepted P23/P24 classification.');
+    assert(all(ismember(opt.Segments,Ref.segment)), ...
+        'tipref:IncompleteEvidence','Requested state is not physically accepted.');
 
     d=load(frozenFile,'R0');
     assert(isfield(d,'R0')&&isstruct(d.R0)&&d.R0.stage1Pass, ...
         'tipref:BadFrozen','Frozen MAT must contain passed R0.');
     R0=d.R0;
 
-    rowNames=cellstr(string(State.rowVariableNames));
-    Ref=array2table(State.rowsThroughCompleted,'VariableNames',rowNames);
-    assert(isequal(Ref.segment,(1:height(Ref))'), ...
-        'tipref:RowOrder','State rows are not segment ordered.');
+    mouthRef=Eref.vertices_m(1,:);
+    mouthFrozen=[R0.summary.x_star_m,R0.summary.y_star_m];
+    assert(norm(mouthRef-mouthFrozen)<=2e-12, ...
+        'tipref:FrozenEvidenceMismatch', ...
+        'Committed path evidence and frozen Stage-I mouth differ.');
 
     segments=unique(opt.Segments(:).','stable');
 
@@ -97,7 +111,7 @@ function D = main_fixed_geometry_tip_refinement_diagnostic(varargin)
     fprintf('FIXED-GEOMETRY NEAR-TIP h/2 DIAGNOSTIC\n');
     fprintf('============================================================\n');
     fprintf('  states                 = %s\n',mat2str(segments));
-    fprintf('  reference path         = %s\n',stateFile);
+    fprintf('  reference evidence     = %s\n',evidenceFile);
     fprintf('  frozen Stage I         = %s\n',frozenFile);
     fprintf('  physical solves        = %d\n',logical(opt.AllowPhysicalSolves));
     fprintf('  core scale L0 -> L1    = 1 -> %.3f\n',opt.CoreScale);
@@ -114,21 +128,14 @@ function D = main_fixed_geometry_tip_refinement_diagnostic(varargin)
 
     for ii=1:numel(segments)
         k=segments(ii);
-        path=State.vertices(1:k+1,:);
+        path=Eref.vertices_m(1:k+1,:);
 
-        refQFile=fullfile(runDir,sprintf('step_%03d_qualification_small.mat',k));
-        refPFile=fullfile(runDir,sprintf('step_%03d_physical_small.mat',k));
-        assert(exist(refQFile,'file')==2,'tipref:MissingReferenceQ', ...
-            'Missing reference qualification: %s',refQFile);
-        assert(exist(refPFile,'file')==2,'tipref:MissingReferenceP', ...
-            'Missing reference physical result: %s',refPFile);
-
-        rq=load(refQFile,'Small'); refSmall=rq.Small;
-        rp=load(refPFile,'R'); refR=rp.R;
-        assert(refSmall.pass&&refR.pass,'tipref:BadReference', ...
-            'Reference P%d did not pass.',k);
-        assert(norm(refR.pathFixed-path,'fro')<=2e-12, ...
-            'tipref:ReferencePath','Reference P%d path mismatch.',k);
+        refState=Ref(Ref.segment==k,:);
+        refQS=RefQual(RefQual.segment==k,:);
+        assert(height(refState)==1 && height(refQS)==1 && logical(refQS.pass), ...
+            'tipref:BadReference','Committed reference P%d is incomplete.',k);
+        assert(abs(refState.crack_length_mm-4*k)<=2e-10, ...
+            'tipref:ReferenceLength','Reference P%d crack length changed.',k);
 
         fprintf('\n------------------------------------------------------------\n');
         fprintf('P%d: SAME accepted crack geometry, L1 h/2 tip core\n',k);
@@ -165,7 +172,6 @@ function D = main_fixed_geometry_tip_refinement_diagnostic(varargin)
             end
         end
 
-        refQS=refSmall.summary;
         altQS=Q.summary;
         sc=Q.sampleCounts.nativePoints;
         qRows(end+1,:)=[ ...
@@ -197,10 +203,10 @@ function D = main_fixed_geometry_tip_refinement_diagnostic(varargin)
             'L1 physical result failed at P%d.',k);
         Rcell{ii}=R;
 
-        refKI=refR.EDI.KI_unit;
-        refKII=refR.EDI.KII_unit;
-        refQmix=refR.EDI.KII_over_KI;
-        refTurn=refR.deltaThetaNextDeg;
+        refKI=refState.KI_unit;
+        refKII=refState.KII_unit;
+        refQmix=refState.KII_over_KI;
+        refTurn=refState.delta_theta_next_deg;
 
         altKI=R.EDI.KI_unit;
         altKII=R.EDI.KII_unit;
@@ -213,7 +219,7 @@ function D = main_fixed_geometry_tip_refinement_diagnostic(varargin)
             refKII,altKII,100*(altKII/refKII-1), ...
             refQmix,altQmix,altQmix-refQmix,100*(altQmix/refQmix-1), ...
             refTurn,altTurn,altTurn-refTurn, ...
-            refR.solverInfo.iter,R.solverInfo.iter, ...
+            refState.PCG_iterations,R.solverInfo.iter, ...
             R.solverInfo.relres,R.solverInfo.trueRelResidual]; %#ok<AGROW>
     end
 
@@ -249,7 +255,8 @@ function D = main_fixed_geometry_tip_refinement_diagnostic(varargin)
 
     D=struct();
     D.profile='L1_tip_h2_fixed_geometry';
-    D.referenceRunDir=runDir;
+    D.referenceEvidenceFile=evidenceFile;
+    D.referenceSourceCommit=Eref.sourceCommit;
     D.frozenStateFile=frozenFile;
     D.outputDir=outDir;
     D.segments=segments;
