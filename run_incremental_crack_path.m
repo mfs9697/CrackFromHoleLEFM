@@ -38,6 +38,10 @@ function Path = run_incremental_crack_path(varargin)
     addParameter(ip,'AllowPhysicalSolves',false,@(x)islogical(x)&&isscalar(x));
     addParameter(ip,'RunSynthetic',true,@(x)islogical(x)&&isscalar(x));
     addParameter(ip,'FastEDI',false,@(x)islogical(x)&&isscalar(x));
+    % Structured near-tip family scale. Scale 1 is the production h0 core;
+    % scale 2 is the separately qualified 2*h0 coarse core.
+    addParameter(ip,'CoreScale',1,@(x)isnumeric(x)&&isscalar(x)&&isfinite(x)&& ...
+        any(abs(x-[1 2])<=1e-14));
     % Exterior-only controls. Defaults reproduce the accepted production
     % family; nondefault values define an alternative propagated mesh family.
     addParameter(ip,'ExteriorFarCapOverIncrement',0.625, ...
@@ -64,6 +68,7 @@ function Path = run_incremental_crack_path(varargin)
     opt=ip.Results;
 
     meshControls=struct( ...
+        'coreScale',opt.CoreScale, ...
         'farCapOverIncrement',opt.ExteriorFarCapOverIncrement, ...
         'transitionOverIncrement',opt.ExteriorTransitionOverIncrement, ...
         'calibrationOverride',opt.ExteriorCalibration, ...
@@ -181,6 +186,7 @@ function Path = run_incremental_crack_path(varargin)
     fprintf('  theta_2           = %+.12g deg (MTS from P1)\n',theta2Deg);
     fprintf('  physical solves   = %d\n',logical(opt.AllowPhysicalSolves));
     fprintf('  mesh family       = %s\n',meshControls.label);
+    fprintf('  core scale        = %.6g * h0\n',meshControls.coreScale);
     fprintf('  exterior far cap  = %.6g * DeltaA\n',meshControls.farCapOverIncrement);
     if ~isempty(fieldnames(meshControls.calibrationOverride))
         fprintf('  exterior override = enabled\n');
@@ -251,6 +257,7 @@ function Path = run_incremental_crack_path(varargin)
         if ~useSaved
             Q=qualify_incremental_crack_candidate(pathNow, ...
                 'FrozenState',R0, ...
+                'CoreScale',opt.CoreScale, ...
                 'RunSynthetic',opt.RunSynthetic, ...
                 'FastEDI',opt.FastEDI, ...
                 'ExteriorFarCapOverIncrement',opt.ExteriorFarCapOverIncrement, ...
@@ -388,6 +395,7 @@ function Path = run_incremental_crack_path(varargin)
     Path.outputDir=outDir;
     Path.fastEDI=opt.FastEDI;
     Path.exteriorMeshControls=meshControls;
+    Path.coreScale=meshControls.coreScale;
     Path.meshFamilyLabel=meshControls.label;
     Path.resumed=resumed;
     Path.resumeStateSource=resumeLabel;
@@ -561,9 +569,10 @@ function [vertices,thetaDeg,rows,stepResults,regression,kDone,startK,historyMode
             error('pathrun:ResumeMeshFamily', ...
                 'Resume State was created with different exterior mesh controls.');
         end
-    elseif ~meshControls.isReferenceProductionExterior
+    elseif ~meshControls.isReferenceProductionExterior || ...
+            abs(meshControls.coreScale-1)>1e-14
         error('pathrun:ResumeMeshFamilyMissing', ...
-            'Alternative mesh-family resume requires stored exteriorMeshControls.');
+            'Alternative mesh-family resume requires stored mesh controls.');
     end
 
     vertices=State.vertices;
@@ -886,13 +895,31 @@ end
 
 function tf=local_candidate_mesh_controls_match(candidate,requested)
     tf=false;
+
+    % Exterior controls.
     if ~isfield(candidate,'exteriorMeshControls') || ...
             ~isstruct(candidate.exteriorMeshControls)
         % Historical reference candidates predate explicit control metadata.
-        tf=requested.isReferenceProductionExterior;
-        return
+        exteriorOK=requested.isReferenceProductionExterior;
+    else
+        exteriorOK=local_mesh_controls_equal(candidate.exteriorMeshControls,requested);
     end
-    tf=local_mesh_controls_equal(candidate.exteriorMeshControls,requested);
+    if ~exteriorOK,return,end
+
+    % Structured tip-core scale. Historical candidates are production h0.
+    if isfield(candidate,'coreMeshControls') && ...
+            isstruct(candidate.coreMeshControls) && ...
+            isfield(candidate.coreMeshControls,'scale')
+        candidateScale=candidate.coreMeshControls.scale;
+    else
+        candidateScale=1;
+    end
+    if isfield(requested,'coreScale')
+        requestedScale=requested.coreScale;
+    else
+        requestedScale=1;
+    end
+    tf=abs(candidateScale-requestedScale)<=1e-14;
 end
 
 function tf=local_mesh_controls_equal(a,b)
@@ -920,6 +947,12 @@ function tf=local_mesh_controls_equal(a,b)
 
     if abs(fa-b.farCapOverIncrement)>1e-14 || ...
             abs(ta-b.transitionOverIncrement)>1e-14
+        return
+    end
+
+    if isfield(a,'coreScale'),csa=a.coreScale;else,csa=1;end
+    if isfield(b,'coreScale'),csb=b.coreScale;else,csb=1;end
+    if abs(csa-csb)>1e-14
         return
     end
 
