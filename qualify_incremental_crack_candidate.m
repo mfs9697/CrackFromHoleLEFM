@@ -20,11 +20,13 @@ function F = qualify_incremental_crack_candidate(pathGlobal,varargin)
     addParameter(ip,'StateFile','',@(x)ischar(x)||isstring(x));
     addParameter(ip,'NArc',480,@(x)isnumeric(x)&&isscalar(x)&&isfinite(x)&&x>=32&&x==round(x));
     addParameter(ip,'ExteriorVerbose',true,@(x)islogical(x)&&isscalar(x));
-    % Controlled near-tip mesh-family scale. At this stage only the audited
-    % reference scale 1 and the previously qualified h/2 Level-1 scale 0.5
-    % are admitted; rInner, rOuter, and rCore remain unchanged.
+    % Controlled near-tip mesh-family scale. Admitted members are:
+    %   0.5 : previously qualified h/2 refinement;
+    %   1.0 : production reference;
+    %   2.0 : first coarse H1 candidate (2*hTip).
+    % rInner, rOuter, and rCore remain unchanged.
     addParameter(ip,'CoreScale',1,@(x)isnumeric(x)&&isscalar(x)&&isfinite(x)&& ...
-        any(abs(x-[1 0.5])<=1e-14));
+        any(abs(x-[0.5 1 2])<=1e-14));
     % Optional exterior-only mesh controls. Defaults reproduce the accepted
     % production mesh exactly. The paired tip core and EDI radii are not
     % changed by these options.
@@ -181,8 +183,9 @@ function F = qualify_incremental_crack_candidate(pathGlobal,varargin)
     end
 
     % ------------------------------------------------------------------
-    % Exact audited structured-core family. Scale 1 is the production
-    % reference; scale 0.5 is the previously qualified Level-1 h/2 family.
+    % Exact deterministic structured-core family. Scale 1 is production,
+    % scale 0.5 is the qualified h/2 refinement, and scale 2 is the first
+    % coarse H1 candidate to be qualified on fixed accepted geometries.
     % ------------------------------------------------------------------
     incremental_profile_clock('phase','qualification','structured_core');
     Core=build_stage2_scaled_audited_core([0 0],[1 0],increment, ...
@@ -216,7 +219,7 @@ function F = qualify_incremental_crack_candidate(pathGlobal,varargin)
     if abs(opt.CoreScale-1)<=1e-14
         expectedCoreT3=12678;
         expectedEDIElements=11316;
-        expectedOptimizedSupport=11316;
+        expectedOptimizedSupport=10278;
         expectedNative=[38;55;44;34];
         coreFamilyLabel='L0';
     elseif abs(opt.CoreScale-.5)<=1e-14
@@ -225,8 +228,14 @@ function F = qualify_incremental_crack_candidate(pathGlobal,varargin)
         expectedOptimizedSupport=40146;
         expectedNative=[74;108;86;67];
         coreFamilyLabel='L1_h2';
+    elseif abs(opt.CoreScale-2)<=1e-14
+        expectedCoreT3=3318;
+        expectedEDIElements=2976;
+        expectedOptimizedSupport=2700;
+        expectedNative=[19;28;23;18];
+        coreFamilyLabel='H1_x2_candidate';
     else
-        error('pathqual:UnsupportedCoreScale','Unsupported audited core scale.');
+        error('pathqual:UnsupportedCoreScale','Unsupported structured-core scale.');
     end
 
     % Physical-boundary clearance in the actual carrier geometry.
