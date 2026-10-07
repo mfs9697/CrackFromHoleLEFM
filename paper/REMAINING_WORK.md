@@ -6,12 +6,16 @@
    in tip coordinates, absolute directions, SIFs, and the sign-change bracket.
    Historical straight 8-mm mesh convergence does not answer this question.
 
-2. **Check the late-tip extraction and mesh.** At least P17, P21, P22, and
-   P23 need physically matched mesh refinement and EDI-domain sensitivity.
-   The COD differences are real: the largest turning difference is about
-   0.01024 degrees at P23; near P21 a rear-window linear COD ratio is 26.3%
-   above EDI despite a small absolute difference. All eight fits agree on
-   the sign-change bracket, but that is not a precision bound on its location.
+2. **Complete the local tip/EDI sensitivity study.** Exterior-mesh
+   sensitivity is now addressed by the independently propagated M1 run:
+   substantial exterior coarsening leaves the trajectory and P21--P22
+   sign-change bracket essentially unchanged. What remains is a controlled
+   variation of the local tip-core resolution and EDI-domain radii, especially
+   at P17, P21, P22, and P23. The COD differences are real: the largest
+   turning difference is about 0.01024 degrees at P23; near P21 a rear-window
+   linear COD ratio is 26.3% above EDI despite a small absolute difference.
+   All eight fits agree on the sign-change bracket, but that is not a precision
+   bound on its location.
 
 3. **Test the boundary interpretation.** Move the right boundary farther
    away in a controlled comparison, or compare matched fixed crack
