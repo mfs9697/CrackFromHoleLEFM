@@ -27,7 +27,7 @@ function Core = build_stage2_scaled_audited_core(xTip, e1, a0, varargin)
 %
 % Name-value
 % ----------
-%   'Scale'        family scale s (default 1)
+%   'Scale'        family scale s (default 1; current qualified/test range <=2)
 %   'HTipOverA0'   audited base hTip/a0 (default 0.00675308135)
 %   'RCoreOverA0'  audited paired-core radius/a0 (default 0.75)
 %
@@ -42,7 +42,7 @@ function Core = build_stage2_scaled_audited_core(xTip, e1, a0, varargin)
 %   Core.mirror                  T3/T6 reflection maps for the upper half
 
     ip = inputParser;
-    addParameter(ip,'Scale',1,@(x)isnumeric(x)&&isscalar(x)&&isfinite(x)&&x>0&&x<=1);
+    addParameter(ip,'Scale',1,@(x)isnumeric(x)&&isscalar(x)&&isfinite(x)&&x>0&&x<=2);
     addParameter(ip,'HTipOverA0',0.00675308135,@(x)isnumeric(x)&&isscalar(x)&&isfinite(x)&&x>0);
     addParameter(ip,'RCoreOverA0',0.75,@(x)isnumeric(x)&&isscalar(x)&&isfinite(x)&&x>0);
     parse(ip,varargin{:});
