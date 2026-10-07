@@ -333,13 +333,10 @@ function R = solve_incremental_crack_tip(candidate,varargin)
         solveSeconds=toc(tSolve);
 
         incremental_profile_clock('phase','physical','residual_gates');
-        if flag~=0 || ~isfinite(relres) || relres>pcgTol || ...
-                any(~isfinite(xp))
-            error('pathsolve:PCGFailed', ...
-                'PCG failed: flag=%d relres=%.3e iter=%d.', ...
-                flag,relres,iter);
-        end
 
+        % Always reconstruct the returned iterate and evaluate the true
+        % free-system residual before accepting OR rejecting PCG. This is
+        % diagnostic only: the established acceptance gates are unchanged.
         uf=zeros(numel(free),1);
         uf(p)=xp;
         U=zeros(ndof,1);
@@ -349,6 +346,21 @@ function R = solve_incremental_crack_tip(candidate,varargin)
         trueRelResidual=norm(K(free,:)*U-Fload(free))/ ...
             max(norm(Fload(free)),eps);
         constraintInf=max(abs(U(fixvar)));
+
+        if flag~=0 || ~isfinite(relres) || relres>pcgTol || ...
+                any(~isfinite(xp))
+            tailCount=min(8,numel(resvec));
+            tail=resvec(end-tailCount+1:end)/max(norm(bp),eps);
+            fprintf('  PCG REJECTED before postprocessing.\n');
+            fprintf('    flag / iter          = %d / %d\n',flag,iter);
+            fprintf('    reported relres      = %.16e\n',relres);
+            fprintf('    recomputed true rel  = %.16e\n',trueRelResidual);
+            fprintf('    final residual tail  = %s\n',mat2str(tail(:).',8));
+            error('pathsolve:PCGFailed', ...
+                ['PCG failed unchanged acceptance gates: flag=%d, ', ...
+                 'relres=%.3e, trueRel=%.3e, iter=%d.'], ...
+                flag,relres,trueRelResidual,iter);
+        end
 
         if trueRelResidual>5e-10 || constraintInf>1e-14
             error('pathsolve:ResidualGate', ...
