@@ -29,7 +29,8 @@ Refined L1:
 - core scale = 0.5;
 - hTip = 0.0135061627 mm;
 - paired core T3 = 49,518;
-- primary FE-nodal EDI support = 40,146 elements;
+- literal radial-support diagnostic = 44,130 elements;
+- primary FE-nodal EDI support (skip constant-q) = 40,146 elements;
 - native COD counts = 74/108/86/67.
 
 The following remain unchanged:
@@ -69,7 +70,8 @@ No physical FEM solve is performed by default.
 
 Required outcomes include:
 
-- exact L1 core/support/native-sampling fingerprints;
+- exact L1 core/primary-support/native-sampling fingerprints;
+- literal support contains the primary support and remains inside the paired core;
 - complete T3/T6 reflection pairing;
 - EDI support wholly inside the paired core;
 - exterior excluded from the EDI support;
