@@ -193,7 +193,12 @@ reaches a maximum at 68 mm and changes sign between the solved 84- and
 the absolute crack direction remains negatively inclined. Reflection-paired
 tip meshes, prescribed-field controls, strict residual checks, and
 crack-opening-displacement comparisons support the numerical interpretation.
-The late redirection is consistent with increasing free-boundary influence
+A second trajectory, propagated independently with a substantially coarser
+exterior mesh while retaining the same paired tip core and interaction-domain
+region, preserves the $P_{17}$ mode-mixity maximum and the $P_{21}$--$P_{22}$
+sign-change bracket; the maximum separation of corresponding accepted tips
+is only $0.0674~\mu$m. The late redirection is consistent with increasing
+free-boundary influence
 rather than unloading, although this single trajectory does not isolate
 boundary effects from accumulated curvature. The next geometry is qualified
 but physically unsolved. The findings establish a verified fixed-increment
@@ -228,12 +233,15 @@ factors determine its direction.
 The central result is a change in the sign of mode II while mode I continues
 to increase. Positive mode mixity first grows, reaches a maximum, and then
 decreases through zero. The resulting change in turning sense occurs as
-the tip approaches the right free boundary. The calculation provides
-evidence for this evolution within one qualified discretization; it does
-not by itself establish a causal boundary-effect decomposition or
-convergence of the predicted trajectory. Numerical verification is used to
-separate this physical interpretation from extraction artifacts and from
-the eventual linear-solver limit.
+the tip approaches the right free boundary. In addition to the reference
+calculation, an independently propagated trajectory with a substantially
+coarser exterior mesh is used to test whether this sequence is sensitive
+to the exterior discretization. The comparison preserves the characteristic
+states and produces only submicrometer differences between corresponding
+accepted tips. It does not, however, establish increment-size convergence,
+local tip-mesh convergence, or a causal boundary-effect decomposition.
+Numerical verification is used to separate the physical interpretation from
+extraction artifacts and from the eventual linear-solver limit.
 % TODO: interaction/domain integral and COD extraction references.
 
 \section{Problem formulation}
@@ -398,6 +406,18 @@ crack faces, shared intact ligament, conforming seams, positive element
 areas and T6 Jacobians. The mesh-angle and adjacent longest-edge-ratio
 gates are $20^\circ$ and 1.8, respectively. These checks establish
 discretization integrity, not mesh-independent physical predictions.
+
+For an exterior-mesh sensitivity test, a second mesh family, denoted M1,
+retains the same paired tip core, $h_{\mathrm{tip}}$, $r_i$, $r_o$, and
+$r_c$, together with the same 4-mm transition length and all qualification
+gates. Only the exterior size law is relaxed: the far-field size cap is
+increased from 2.5 to 5.0 mm, the far-field grading slope from 0.10 to
+0.15, and the boundary-metric growth parameter from 0.25 to 0.35. On the
+fixed $P_{17}$ and $P_{22}$ geometries this reduces the total T3 count by
+about 31--33\% and the exterior-element count by about 40--43\%, while
+leaving the 12678-element paired core and the 11316-element interaction-
+domain support unchanged. These fixed-geometry checks were used only to
+qualify M1 for a subsequent independent trajectory calculation.
 
 \subsection{Interaction/domain integral}
 For actual field $(\bm\sigma,\bm\varepsilon,\bm u)$ and a unit auxiliary
@@ -667,6 +687,48 @@ need not vary monotonically.}
 \label{fig:cod}
 \end{figure}
 
+\subsection{Sensitivity to exterior-mesh density}
+The fixed-geometry M1 checks establish that the coarser exterior mesh does
+not materially perturb the extracted current-tip quantities when the crack
+polyline is held fixed. To test accumulated trajectory sensitivity, however,
+the M1 path was regenerated independently rather than evaluated on the
+reference vertices. The prescribed first segment $P_0P_1$ is common to both
+calculations, but the $P_1$ elastic problem is resolved on M1, its own
+$K_I^{(1)}$ and $K_{II}^{(1)}$ determine $\theta_2$, and every subsequent
+vertex follows recursively from the preceding M1 solution. Thus no
+reference-path vertex after $P_1$ is imposed.
+
+Figure~\ref{fig:m1-mesh-sensitivity} compares the two complete accepted
+histories through $P_{23}$. At specimen scale the trajectories are visually
+indistinguishable [Fig.~\ref{fig:m1mesh-trajectory}]. The accumulated
+difference is resolved by plotting the coordinate and direction differences
+directly. Over all common accepted states, the maximum vertical-coordinate
+difference is $0.06734~\mu$m, the maximum Euclidean separation of
+corresponding tips is $0.06742~\mu$m, and the maximum absolute direction
+difference is $0.07304$ millidegrees, or $7.30\times10^{-5}$ degrees
+[Figs.~\ref{fig:m1mesh-dy} and \ref{fig:m1mesh-dtheta}].
+
+The mechanical history is equally stable. Both calculations place the
+positive maximum of $K_{II}/K_I$ at $P_{17}$ ($a=68$ mm), and both retain
+positive mode mixity at $P_{21}$ and negative mode mixity at $P_{22}$
+[Fig.~\ref{fig:m1mesh-q}]. The maximum absolute difference in
+$K_{II}/K_I$ over the accepted histories is $2.89\times10^{-7}$. Linear
+interpolation of the two respective $P_{21}$--$P_{22}$ brackets gives
+$a_{\mathrm{LS}}=84.146369912$ mm for the reference trajectory and
+$84.146048176$ mm for M1, a difference of $0.000322$ mm
+($0.322~\mu$m). This sub-increment difference is reported only as a
+sensitivity diagnostic; neither interpolated value has physical precision
+at the micrometer scale.
+
+The result therefore supports robustness of the reported mode-mixity
+maximum, sign reversal, and late turning response with respect to a
+substantial coarsening of the \emph{exterior} mesh. It is deliberately
+narrower than a general mesh-independence claim: the paired tip core and
+interaction-domain radii are held fixed, so local tip-resolution and
+interaction-domain sensitivity remain separate questions.
+
+\input{figures/m1_mesh_sensitivity/figure}
+
 \section{Discussion}
 \subsection{Interpretation of late redirection}
 The accepted sequence shows reorientation under increasing $K_I$.
@@ -686,14 +748,22 @@ segment. A 4-mm step therefore samples a continuously changing boundary-value
 problem at discrete geometries. No increment-size study is available for
 this path. The interpolated zero in Eq.~\eqref{eq:zeroestimate} should be
 read against the 4-mm spacing of its bracketing states, not as a highly
-resolved physical crack length. A smaller-increment family and independent
-mesh/EDI-domain checks at the late tips are needed to assess path uncertainty.
+resolved physical crack length.
+
+The independent M1 calculation addresses one part of the discretization
+question: substantial coarsening of the exterior mesh has negligible effect
+on the accepted path when the audited local tip construction is retained.
+It does not vary the tip-core resolution or the interaction-domain radii,
+and therefore cannot bound those contributions to path uncertainty.
+A smaller-increment family, together with controlled local tip-mesh and
+interaction-domain variations, is still required.
 
 Local reflection pairing and synthetic recovery suppress known extraction
-leakage mechanisms, but do not bound the physical discretization error.
-Similarly, residual and element-quality gates measure numerical acceptance,
-not fracture-mechanics convergence. The historical 8-mm verification cannot
-be transferred into a mesh-independence claim for this evolving polyline.
+leakage mechanisms, but do not by themselves bound the physical
+discretization error. Similarly, residual and element-quality gates measure
+numerical acceptance, not fracture-mechanics convergence. The historical
+8-mm verification cannot be transferred into a general mesh-independence
+claim for this evolving polyline.
 
 \subsection{Last accepted state and model scope}
 The geometry ending at $P_{24}$, with total polyline length 96 mm, passes
@@ -723,12 +793,18 @@ increase. This changes the sign of the incremental turn and reduces the
 negative absolute inclination late in the history.
 
 The sign reversal is shared by all stored COD fitting definitions, although
-their late-path differences show finite extraction sensitivity. Paired-core,
+their late-path differences show finite extraction sensitivity. An
+independently propagated calculation with a substantially coarser exterior
+mesh reproduces the $P_{17}$ mode-mixity maximum, the $P_{21}$--$P_{22}$
+sign-change bracket, and the accepted trajectory through $P_{23}$; the
+maximum separation of corresponding tips is only $0.0674~\mu$m. This
+supports robustness with respect to exterior-mesh density while leaving
+local tip-mesh and interaction-domain sensitivity unresolved. Paired-core,
 synthetic, solver, and archive checks establish a reproducible numerical
 sequence within the chosen discretization. The qualified unsolved extension
 must remain separate from the physical results. Increment-size convergence,
-late-tip mesh/domain checks, and a controlled boundary comparison are the
-next requirements for stronger predictive and causal claims.
+controlled local tip/interaction-domain checks, and a boundary comparison
+are the next requirements for stronger predictive and causal claims.
 
 \section*{References}
 \noindent\emph{Pilot status: verified literature entries have not yet been
