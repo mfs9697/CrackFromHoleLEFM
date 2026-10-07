@@ -119,3 +119,79 @@ The principal comparisons are:
 
 A trajectory-level conclusion is warranted only after the independent M1
 history has been completed and audited.
+
+
+## MATLAB full-run result — PASS
+
+The independent M1 trajectory was completed through accepted physical
+segment P23 with `stopReason=max_segments_reached`.
+
+The run retained the prescribed Stage-I/P1 physical initialization, but P1
+was recomputed on M1 and no accepted reference trajectory vertex after P1
+was imposed.
+
+### Key trajectory events
+
+The M1 trajectory reproduces the same event sequence as the reference run:
+
+- the positive mode-mixity maximum remains at **P17 (68 mm)**;
+- at P17:
+  - `KI = 0.786789676082`;
+  - `KII = +0.00254832743269`;
+  - `KII/KI = +0.00323889281997`;
+  - next MTS turn `= -0.371140693296 deg`;
+- P21 (84 mm) remains slightly positive:
+  - `KII/KI = +8.11529313483e-05`;
+  - next MTS turn `= -0.00929944077984 deg`;
+- P22 (88 mm) is negative:
+  - `KII/KI = -0.00214148164742`;
+  - next MTS turn `= +0.245393094791 deg`;
+- therefore the mode-mixity sign change and turning-sense reversal remain
+  bracketed by **P21--P22**;
+- the linear visualization-only local-symmetry estimate from the M1
+  `q=KII/KI` values is
+  `a_LS = 84.1460481757 mm`;
+- P23 remains strongly negative in mode mixity and predicts a larger
+  positive next turn:
+  - `KI = 1.2443571689`;
+  - `KII = -0.00678037468375`;
+  - `KII/KI = -0.00544889751367`;
+  - next MTS turn `= +0.624354409785 deg`;
+  - predicted `theta_24 = -2.7761761404 deg`.
+
+### Comparison with the accepted reference trajectory
+
+At the most sensitive late states, the independently propagated M1 path is
+extremely close to the reference:
+
+| state | quantity | reference | M1 | M1-reference |
+|---|---:|---:|---:|---:|
+| P17 | theta (deg) | -2.44443486845 | -2.44441112407 | +2.374e-5 |
+| P17 | KII/KI | +0.003238930803 | +0.003238892820 | -3.798e-8 |
+| P21 | theta (deg) | -3.63664264573 | -3.63662420420 | +1.844e-5 |
+| P21 | KII/KI | +8.13426737e-5 | +8.11529313e-5 | -1.897e-7 |
+| P22 | theta (deg) | -3.64596382938 | -3.64592364498 | +4.018e-5 |
+| P22 | KII/KI | -0.002141591607 | -0.002141481647 | +1.100e-7 |
+| P23 | theta (deg) | -3.40055813454 | -3.40053055019 | +2.758e-5 |
+| P23 | KII/KI | -0.005448833169 | -0.005448897514 | -6.434e-8 |
+
+The M1 local-symmetry interpolation differs from the reference estimate
+`84.1463699119 mm` by only about **0.000322 mm**.  This is far below the
+4-mm propagation increment and is not interpreted as physical precision.
+
+### Scientific conclusion
+
+This is stronger than the fixed-geometry mesh test.  The alternative
+exterior mesh family was allowed to perturb the P1 SIFs, and those
+differences were then accumulated recursively through every MTS update.
+Nevertheless, the independent M1 calculation reproduces the reference
+trajectory, the P17 mode-mixity maximum, the P21--P22 sign-change bracket,
+and the onset of positive turning after P22.
+
+Accordingly, the main LEFM trajectory features are robust with respect to
+this substantial coarsening of the exterior mesh while the audited local
+tip core and EDI extraction region are held fixed.
+
+This result remains a **mesh-family sensitivity result**, not a
+crack-increment convergence result.  The next distinct numerical question is
+the trajectory obtained with `Delta a = 2 mm`.
