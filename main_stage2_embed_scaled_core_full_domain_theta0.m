@@ -46,6 +46,9 @@ function F = main_stage2_embed_scaled_core_full_domain_theta0(varargin)
     addParameter(ip,'StateFile','',@(x)ischar(x)||isstring(x));
     addParameter(ip,'NArc',480,@(x)isnumeric(x)&&isscalar(x)&&isfinite(x)&&x>=32&&x==round(x));
     addParameter(ip,'ExteriorVerbose',true,@(x)islogical(x)&&isscalar(x));
+    % Structured tip-core family: production h0 (1) or qualified 2*h0 (2).
+    addParameter(ip,'CoreScale',1,@(x)isnumeric(x)&&isscalar(x)&&isfinite(x)&& ...
+        any(abs(x-[1 2])<=1e-14));
     % Exterior-only sensitivity controls. Defaults reproduce the accepted
     % Stage-II reference mesh exactly; the paired core and EDI radii stay fixed.
     addParameter(ip,'ExteriorFarCapOverA0',0.625, ...
@@ -105,6 +108,7 @@ function F = main_stage2_embed_scaled_core_full_domain_theta0(varargin)
     fprintf('  hole carrier  = %d arc points (frozen Stage-I resolution)\n',opt.NArc);
     fprintf('  mouth         = [%.12g, %.12g] m\n',mouth(1),mouth(2));
     fprintf('  tip           = [%.12g, %.12g] m\n',tip(1),tip(2));
+    fprintf('  core scale    = %.6g * h0\n',opt.CoreScale);
 
     % ------------------------------------------------------------------
     % Source carrier: geometry only. No source triangle is retained later.
@@ -131,9 +135,9 @@ function F = main_stage2_embed_scaled_core_full_domain_theta0(varargin)
         'stage2full:CarrierOrientation','Carrier contains nonpositive T3 area.');
 
     % ------------------------------------------------------------------
-    % Exact already-qualified structured core at scale s=1.
+    % Exact deterministic structured core at the selected qualified scale.
     % ------------------------------------------------------------------
-    Core=build_stage2_scaled_audited_core([0 0],[1 0],a0,'Scale',1);
+    Core=build_stage2_scaled_audited_core([0 0],[1 0],a0,'Scale',opt.CoreScale);
     Zp=Core.local.coord3;
     Tp=Core.local.connect3;
     rp=Core.rCore;
@@ -152,7 +156,23 @@ function F = main_stage2_embed_scaled_core_full_domain_theta0(varargin)
     ri=.10*a0;
     ro=.65*a0;
 
-    assert(abs(Core.hTip/a0-0.00675308135)<1e-14, ...
+    if abs(opt.CoreScale-1)<=1e-14
+        expectedCoreT3=12678;
+        expectedEDIElements=11316;
+        expectedOptimizedSupport=10278;
+        expectedNative=[38;55;44;34];
+        coreFamilyLabel='h0';
+    elseif abs(opt.CoreScale-2)<=1e-14
+        expectedCoreT3=3318;
+        expectedEDIElements=2976;
+        expectedOptimizedSupport=2700;
+        expectedNative=[19;28;23;18];
+        coreFamilyLabel='2h0';
+    else
+        error('stage2full:UnsupportedCoreScale','Unsupported core scale.');
+    end
+
+    assert(abs(Core.hTip/a0-opt.CoreScale*0.00675308135)<1e-14, ...
         'stage2full:HTipScale','Unexpected core hTip/a0.');
     assert(abs(rp/a0-.75)<1e-14,'stage2full:CoreScale', ...
         'Unexpected core radius/a0.');
@@ -377,6 +397,11 @@ function F = main_stage2_embed_scaled_core_full_domain_theta0(varargin)
     gates.EDIInsideUntouchedCore=supportInside;
     gates.exteriorExcludedFromEDI=exteriorOutside;
     gates.nativeSamplingAdequate=all(sampleN>=12);
+    gates.coreFamilyElementFingerprint=numel(patchRows)==expectedCoreT3;
+    gates.EDISupportFingerprint=numel(support)==expectedEDIElements;
+    gates.optimizedSupportFingerprint= ...
+        numel(supportSkipConstant)==expectedOptimizedSupport;
+    gates.nativeSamplingExact=isequal(sampleN,expectedNative);
     gates.exteriorCrackLengthCorrect=abs(exteriorCrackLength-.25*a0)<=1e-14;
     gates.upperMouthAtZero=mouthUpper<=1e-12;
     gates.lowerMouthAtZero=mouthLower<=1e-12;
@@ -458,7 +483,8 @@ function F = main_stage2_embed_scaled_core_full_domain_theta0(varargin)
     superErr=norm(rows(3,3:4).'-M*[1;1e-4]);
 
     syntheticGates=struct();
-    syntheticGates.sameEDISupportCountAsCore=all(Synthetic.nElem_used==11316);
+    syntheticGates.sameEDISupportCountAsCore= ...
+        all(Synthetic.nElem_used==expectedEDIElements);
     syntheticGates.pureIRecovery=abs(rows(1,3)-1)<=2e-4;
     syntheticGates.pureICrossLeakage=abs(rows(1,4))<=1e-10;
     syntheticGates.pureIIRecovery=abs(rows(2,4)-1)<=2e-4;
@@ -509,6 +535,17 @@ function F = main_stage2_embed_scaled_core_full_domain_theta0(varargin)
     candidate.pairedNodeIDs=pairedIDs;
     candidate.pairedMirrorLocal=mirrorMap;
     candidate.structuredDesign=design;
+    candidate.coreMeshControls=struct( ...
+        'family',coreFamilyLabel, ...
+        'scale',opt.CoreScale, ...
+        'hTip_m',Core.hTip, ...
+        'rInner_m',ri, ...
+        'rOuter_m',ro, ...
+        'rCore_m',rp, ...
+        'expectedCoreT3',expectedCoreT3, ...
+        'expectedEDIElements',expectedEDIElements, ...
+        'expectedOptimizedSupport',expectedOptimizedSupport, ...
+        'expectedNativeSamples',expectedNative);
     candidate.exteriorDesign=ext;
     candidate.exteriorMeshControls=struct( ...
         'farCapOverA0',opt.ExteriorFarCapOverA0, ...
@@ -531,6 +568,7 @@ function F = main_stage2_embed_scaled_core_full_domain_theta0(varargin)
     F.localMesh=meshLocal;
     F.crackLocal=cr;
     F.Core=Core;
+    F.coreMeshControls=candidate.coreMeshControls;
     F.exteriorDesign=ext;
     F.exteriorMeshControls=candidate.exteriorMeshControls;
     F.sampleCounts=table(windows(:,1),windows(:,2),sampleN, ...
