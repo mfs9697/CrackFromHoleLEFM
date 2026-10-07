@@ -155,3 +155,8 @@ The controlled fixed-geometry L0/L1 near-tip refinement protocol is documented
 in [TIP_REFINEMENT_H2.md](TIP_REFINEMENT_H2.md). It halves the structured tip
 scale while keeping the accepted crack geometry, EDI radii, paired-core radius,
 reference exterior law, physics, and solver gates fixed.
+
+
+## Near-tip coarsening sensitivity
+
+See [TIP_COARSENING_H1.md](TIP_COARSENING_H1.md) for the guarded fixed-geometry H1 = 2 hTip qualification experiment around the P21--P22 local-symmetry bracket.
