@@ -92,13 +92,22 @@ verification/crack_path/fixed_geometry_tip_coarsening_H1/
 
 so the existing L1 h/2 refinement evidence is not overwritten.
 
-## Planned mesh figure
+## Three-level mesh figure
 
-After H1 is qualified, retain its saved mesh preview/candidate for the planned
-common-window comparison:
+The deterministic core builder now permits the mesh-only H2 scale:
 
-- H2: `hTip = 0.1080493016 mm` (future, not yet admitted);
-- H1: `hTip = 0.0540246508 mm`;
-- H0: `hTip = 0.0270123254 mm`.
+- H2: `hTip = 0.1080493016 mm`, `CoreScale = 4`;
+- H1: `hTip = 0.0540246508 mm`, `CoreScale = 2`;
+- H0: `hTip = 0.0270123254 mm`, `CoreScale = 1`.
 
-H2 must receive its own fingerprint and qualification step before use.
+Generate the publication-style common-window panels with:
+
+```matlab
+M = main_tip_core_mesh_level_comparison();
+disp(M.summary);
+```
+
+H2 is deliberately visualization-only at this stage. Its deterministic native
+COD counts are `10/15/12/9`, so it fails the established requirement of at
+least 12 points in every COD window. Neither the qualification gate nor the
+physical solver has been relaxed to admit H2.
