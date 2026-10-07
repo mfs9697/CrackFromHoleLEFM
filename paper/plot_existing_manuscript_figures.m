@@ -201,13 +201,13 @@ function S = plot_existing_manuscript_figures(varargin)
     marks={'o','s','^','d'};
 
     S.files{end+1}=local_plot_cod_panel(D,1,'turn_error_deg',1, ...
-        'COD-EDI turn [deg]','turn_linear',out,vis,windows,labels,cols,marks,false); %#ok<AGROW>
+        'COD-EDI turn [deg]','turn_linear',out,vis,windows,labels,cols,marks,false,false); %#ok<AGROW>
     S.files{end+1}=local_plot_cod_panel(D,2,'turn_error_deg',1, ...
-        'COD-EDI turn [deg]','turn_quadratic',out,vis,windows,labels,cols,marks,false); %#ok<AGROW>
+        'COD-EDI turn [deg]','turn_quadratic',out,vis,windows,labels,cols,marks,false,false); %#ok<AGROW>
     S.files{end+1}=local_plot_cod_panel(D,1,'ratio_error',1e5, ...
-        '10^5 (COD-EDI mode mixity)','mixity_linear',out,vis,windows,labels,cols,marks,false); %#ok<AGROW>
+        '10^5 (COD-EDI mode mixity)','mixity_linear',out,vis,windows,labels,cols,marks,false,true); %#ok<AGROW>
     S.files{end+1}=local_plot_cod_panel(D,2,'ratio_error',1e5, ...
-        '10^5 (COD-EDI mode mixity)','mixity_quadratic',out,vis,windows,labels,cols,marks,true); %#ok<AGROW>
+        '10^5 (COD-EDI mode mixity)','mixity_quadratic',out,vis,windows,labels,cols,marks,true,true); %#ok<AGROW>
 
     %% Figure S1: numerical quality
     out=fullfile(outRoot,'quality');
@@ -260,7 +260,7 @@ function S = plot_existing_manuscript_figures(varargin)
 end
 
 function out=local_plot_cod_panel(D,degree,varName,scale,yLab,fileName,outDir,vis, ...
-        windows,labels,cols,marks,showLegend)
+        windows,labels,cols,marks,showLegend,showXLabel)
     f=local_figure(vis,[7.5 5.2]); ax=axes(f); hold(ax,'on');
     for j=1:size(windows,1)
         use=D.degree==degree & ...
@@ -274,7 +274,10 @@ function out=local_plot_cod_panel(D,degree,varName,scale,yLab,fileName,outDir,vi
     end
     yline(ax,0,'--','Color',[0.45 0.45 0.45],'HandleVisibility','off');
     xlim(ax,[60 92]); xticks(ax,[60 76 92]);
-    xlabel(ax,'Crack length a [mm]'); ylabel(ax,yLab);
+    if showXLabel
+        xlabel(ax,'Crack length a [mm]');
+    end
+    ylabel(ax,yLab);
     if showLegend
         legend(ax,'Location','best','Box','off','FontSize',7.2,'Interpreter','tex');
     end
