@@ -67,22 +67,20 @@ function S = plot_m1_vs_reference_publication(varargin)
     end
     if exist(outDir,'dir')~=7,mkdir(outDir);end
 
-    assert(exist(refFile,'file')==2,'m1fig:MissingReference', ...
-        'Reference state not found: %s',refFile);
+    % The historical run-state MAT is convenient when present, but it is
+    % not required for a portable paper checkout.  The committed paper/data
+    % snapshot is the canonical fallback for the reference trajectory.
+    referenceMatAvailable=(exist(refFile,'file')==2);
     assert(exist(m1File,'file')==2,'m1fig:MissingM1', ...
         'M1 state not found: %s',m1File);
 
-    A=load(refFile,'State');
+    [Tr,VrAll,refCompleted,referenceSource]= ...
+        local_load_reference(root,refFile,referenceMatAvailable);
+
     B=load(m1File,'State');
-    assert(isfield(A,'State')&&isstruct(A.State),'m1fig:BadReference', ...
-        'Reference MAT must contain State.');
     assert(isfield(B,'State')&&isstruct(B.State),'m1fig:BadM1', ...
         'M1 MAT must contain State.');
-
-    R=A.State;
     M=B.State;
-
-    Tr=local_state_table(R);
     Tm=local_state_table(M);
 
     common=intersect(Tr.segment,Tm.segment,'stable');
@@ -94,8 +92,8 @@ function S = plot_m1_vs_reference_publication(varargin)
     assert(isequal(Tr.segment,Tm.segment),'m1fig:SegmentMismatch', ...
         'Reference and M1 common segment ordering differs.');
 
-    kmax=min([R.completedPhysicalSegments,M.completedPhysicalSegments,max(common)]);
-    Vr=R.vertices(1:kmax+1,:);
+    kmax=min([refCompleted,M.completedPhysicalSegments,max(common)]);
+    Vr=VrAll(1:kmax+1,:);
     Vm=M.vertices(1:kmax+1,:);
     assert(size(Vr,1)==size(Vm,1),'m1fig:VertexCount', ...
         'Reference and M1 accepted vertex counts differ through P%d.',kmax);
@@ -244,6 +242,7 @@ function S = plot_m1_vs_reference_publication(varargin)
         'q_ref','q_M1','dq'});
 
     S=struct();
+    S.referenceSource=referenceSource;
     S.referenceStateFile=refFile;
     S.M1StateFile=m1File;
     S.increment_mm=1e3*da;
@@ -264,6 +263,7 @@ function S = plot_m1_vs_reference_publication(varargin)
     fprintf('============================================================\n');
     fprintf('  common accepted states       : P1--P%d\n',kmax);
     fprintf('  inferred increment           : %.9f mm\n',S.increment_mm);
+    fprintf('  reference source             : %s\n',referenceSource);
     fprintf('  q maximum reference / M1     : P%d / P%d\n',kMaxR,kMaxM);
     fprintf('  local symmetry reference     : %.9f mm\n',aLSr_mm);
     fprintf('  local symmetry M1            : %.9f mm\n',aLSm_mm);
@@ -354,6 +354,49 @@ function local_close_if_valid(h)
     if ~isempty(h) && isgraphics(h)
         close(h);
     end
+end
+
+
+function [T,V,completed,source]=local_load_reference(root,refFile,matAvailable)
+% Load the accepted h0 reference from the historical run-state MAT when
+% available, otherwise from the committed publication evidence snapshot.
+
+    if matAvailable
+        A=load(refFile,'State');
+        assert(isfield(A,'State')&&isstruct(A.State), ...
+            'm1fig:BadReference','Reference MAT must contain State.');
+        R=A.State;
+        T=local_state_table(R);
+        assert(isfield(R,'vertices')&&size(R.vertices,2)==2, ...
+            'm1fig:ReferenceVertices','Reference State lacks vertices.');
+        V=R.vertices;
+        if isfield(R,'completedPhysicalSegments')
+            completed=R.completedPhysicalSegments;
+        else
+            completed=height(T);
+        end
+        source=refFile;
+        return
+    end
+
+    csvFile=fullfile(root,'paper','data','accepted_states.csv');
+    jsonFile=fullfile(root,'paper','data','evidence.json');
+    assert(exist(csvFile,'file')==2,'m1fig:MissingReferenceCSV', ...
+        'Committed reference table not found: %s',csvFile);
+    assert(exist(jsonFile,'file')==2,'m1fig:MissingReferenceJSON', ...
+        'Committed reference evidence not found: %s',jsonFile);
+
+    T=readtable(csvFile);
+    E=jsondecode(fileread(jsonFile));
+    assert(isfield(E,'vertices_m')&&size(E.vertices_m,2)==2, ...
+        'm1fig:ReferenceEvidenceVertices', ...
+        'paper/data/evidence.json lacks vertices_m.');
+    V=double(E.vertices_m);
+    completed=height(T);
+    assert(completed>=1 && size(V,1)>=completed+1, ...
+        'm1fig:ReferenceEvidenceLength', ...
+        'Committed reference table/vertices are inconsistent.');
+    source='paper/data/accepted_states.csv + evidence.json';
 end
 
 function T=local_state_table(S)
