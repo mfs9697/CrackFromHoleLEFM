@@ -165,3 +165,8 @@ See [TIP_COARSENING_H1.md](TIP_COARSENING_H1.md) for the guarded fixed-geometry 
 ## Independent local tip-resolution trajectory
 
 See [TIP_2H0_INDEPENDENT_TRAJECTORY.md](TIP_2H0_INDEPENDENT_TRAJECTORY.md) for the guarded independent `2h0` trajectory experiment with the reference exterior mesh law.
+
+
+## Symmetric path-stability control
+
+See [SYMMETRIC_PATH_STABILITY.md](SYMMETRIC_PATH_STABILITY.md) for the centered-hole five-probe one-step stability test of the EDI--MTS recurrence.
