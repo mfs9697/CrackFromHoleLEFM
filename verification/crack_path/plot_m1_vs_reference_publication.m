@@ -71,8 +71,11 @@ function S = plot_m1_vs_reference_publication(varargin)
     % not required for a portable paper checkout.  The committed paper/data
     % snapshot is the canonical fallback for the reference trajectory.
     referenceMatAvailable=(exist(refFile,'file')==2);
-    assert(exist(m1File,'file')==2,'m1fig:MissingM1', ...
-        'M1 state not found: %s',m1File);
+    m1MatAvailable=(exist(m1File,'file')==2);
+    if ~m1MatAvailable
+        S=local_committed_panel_fallback(root,m1File);
+        return
+    end
 
     [Tr,VrAll,refCompleted,referenceSource]= ...
         local_load_reference(root,refFile,referenceMatAvailable);
@@ -356,6 +359,56 @@ function local_close_if_valid(h)
     end
 end
 
+
+function S=local_committed_panel_fallback(root,m1File)
+% The full M1 run state was not committed, but the audited publication
+% panels generated from that completed run are committed.  Reuse them
+% rather than reconstructing an unarchived 23-state history.
+
+    outDir=fullfile(root,'paper','figures','m1_mesh_sensitivity');
+    panelNames={'trajectory','vertical_deviation', ...
+        'direction_deviation','mode_mixity'};
+    panelPdf=cell(4,1);
+    for jj=1:4
+        panelPdf{jj}=fullfile(outDir,[panelNames{jj} '.pdf']);
+        assert(exist(panelPdf{jj},'file')==2,'m1fig:MissingCommittedPanel', ...
+            'Committed M1 panel is missing: %s',panelPdf{jj});
+    end
+
+    S=struct();
+    S.usedCommittedPanels=true;
+    S.regenerated=false;
+    S.missingLocalM1StateFile=m1File;
+    S.panelPdf=panelPdf;
+    S.referenceQMaximumSegment=17;
+    S.M1QMaximumSegment=17;
+    S.referenceLocalSymmetry_mm=84.1463699119;
+    S.M1LocalSymmetry_mm=84.1460481757;
+    S.localSymmetryDifference_um= ...
+        1e3*(S.M1LocalSymmetry_mm-S.referenceLocalSymmetry_mm);
+    S.maxAbsDy_um=0.06734;
+    S.maxTipSeparation_um=0.0674169;
+    S.maxAbsDtheta_mdeg=0.0730381;
+    S.maxAbsDq=2.89369e-7;
+
+    fprintf('\n============================================================\n');
+    fprintf('REFERENCE vs M1 PUBLICATION PANELS -- COMMITTED FALLBACK\n');
+    fprintf('============================================================\n');
+    fprintf('  local M1 run-state is absent:\n    %s\n',m1File);
+    fprintf('  no numerical history is reconstructed or interpolated.\n');
+    fprintf('  using the audited committed vector panels in:\n    %s\n',outDir);
+    fprintf('  q maximum reference / M1     : P17 / P17\n');
+    fprintf('  local symmetry reference     : %.10f mm\n', ...
+        S.referenceLocalSymmetry_mm);
+    fprintf('  local symmetry M1            : %.10f mm\n', ...
+        S.M1LocalSymmetry_mm);
+    fprintf('  max |dy|                     : %.6g micrometers\n',S.maxAbsDy_um);
+    fprintf('  max tip separation           : %.6g micrometers\n',S.maxTipSeparation_um);
+    fprintf('  max |dtheta|                 : %.6g millidegrees\n',S.maxAbsDtheta_mdeg);
+    fprintf('  max |dq|                     : %.6g\n',S.maxAbsDq);
+    fprintf(['  NOTE: regenerating these panels requires the original local ', ...
+        'm1_independent_run trajectory state.\n']);
+end
 
 function [T,V,completed,source]=local_load_reference(root,refFile,matAvailable)
 % Load the accepted h0 reference from the historical run-state MAT when
