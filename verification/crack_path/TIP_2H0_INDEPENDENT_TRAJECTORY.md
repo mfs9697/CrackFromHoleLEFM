@@ -144,3 +144,16 @@ The vector panels and plotted-data CSV are written to:
 ```text
 paper/figures/tip_resolution_sensitivity/
 ```
+
+For a portable checkout, the accepted independently propagated trajectory
+has also been archived as
+
+```text
+paper/data/tip2h0_states.csv
+```
+
+The table contains the accepted P1--P23 tip coordinates, absolute directions,
+EDI SIFs, mode-mixity ratios, and MTS turns reconstructed from the audited
+completed-run log.  The publication plotter prefers the original local
+`path_run_state.mat` when available and otherwise uses this committed table;
+no FEM re-solve is required to regenerate the sensitivity figure.
