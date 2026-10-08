@@ -65,7 +65,11 @@ reaches a maximum at 68 mm and changes sign between the solved 84- and
 the absolute crack direction remains negatively inclined. Reflection-paired
 tip meshes, prescribed-field controls, strict residual checks, and
 crack-opening-displacement comparisons support the numerical interpretation.
-A second trajectory, propagated independently with a substantially coarser
+A centered-hole symmetric control further verifies the directional
+recurrence: the straight mode-I path is recovered as a fixed path, and the
+linearized one-step map from a small angular perturbation has multiplier
+$F'(0)=-0.11415$, indicating damped sign-alternating restoration toward the
+symmetry line. A second trajectory, propagated independently with a substantially coarser
 exterior mesh while retaining the same paired tip core and interaction-domain
 region, preserves the $P_{17}$ mode-mixity maximum and the $P_{21}$--$P_{22}$
 sign-change bracket; the maximum separation of corresponding accepted tips
@@ -119,11 +123,13 @@ accepted tips. Local tip-resolution sensitivity is examined in two
 complementary ways: fixed-geometry calculations isolate the effect on the
 extracted SIFs and MTS turn, while an independently propagated $2h_0$
 trajectory tests whether those local differences accumulate into a
-materially different crack path. The calculations still do not
-establish increment-size convergence, interaction-domain-radius sensitivity,
-or a causal boundary-effect decomposition. Numerical verification is used to
-separate the physical interpretation from extraction artifacts and from the
-eventual linear-solver limit.
+materially different crack path. A separate centered-hole control is used to test the sign and local
+stability properties of the same EDI--MTS recurrence under exact geometric
+symmetry. The calculations still do not establish increment-size
+convergence, interaction-domain-radius sensitivity, or a causal
+boundary-effect decomposition. Numerical verification is used to separate
+the physical interpretation from extraction artifacts and from the eventual
+linear-solver limit.
 % TODO: interaction/domain integral and COD extraction references.
 
 \section{Problem formulation}
@@ -422,6 +428,87 @@ the other compared scientific quantities agree exactly. The maximum
 accepted true residual is $\MaxTrueResidual$, and iteration counts range
 from 2442 to 3011. Supporting diagnostics are given in Fig.~\ref{fig:quality}.
 
+\subsection{Centered-hole symmetric control}
+A separate control problem tests the directional recurrence under exact
+reflection symmetry. The full plate dimensions and hole radius are unchanged,
+but the circular hole is centered at $(0.150,0)$ m. The crack starts from the
+rightmost point of the hole,
+\[
+ P_0=(0.180,0)\ \mathrm m,
+ \qquad
+ P_1=(0.184,0)\ \mathrm m,
+\]
+with the same increment $\Delta a=4$ mm. The straight configuration is
+therefore a nominally pure mode-I path. To test its local directional
+stability rather than merely verify $K_{II}=0$ at one geometry, five
+two-segment probes are prescribed,
+\[
+ \theta_2\in\{-0.10^\circ,-0.05^\circ,0,
+                 +0.05^\circ,+0.10^\circ\},
+\]
+and each probe is rebuilt and solved independently with the same paired-core,
+EDI, solver, and MTS machinery used for the asymmetric calculation. The
+resulting one-step map is
+\begin{equation}
+ F(\theta_2)=\theta_3
+ =\theta_2+
+ \alpha_{\rm MTS}\!\left(K_I(\theta_2),K_{II}(\theta_2)\right).
+ \label{eq:symmetric-map}
+\end{equation}
+
+At the straight state,
+\[
+ K_I(0)=0.425410776939\ \mathrm{MPa}\sqrt{\mathrm m},
+ \qquad
+ \frac{K_{II}(0)}{K_I(0)}=6.22\times10^{-9},
+\]
+and the predicted next direction is
+$F(0)=-7.13\times10^{-7}$ degrees, numerically indistinguishable from the
+symmetry line at the scale relevant here. The perturbed probes give the
+map summarized in Table~\ref{tab:symmetric-stability}.
+
+\begin{table}[tbp]
+\centering
+\small
+\caption{One-step directional map for the centered-hole symmetric control.
+Each row is an independently rebuilt and solved two-segment geometry.}
+\label{tab:symmetric-stability}
+\begin{tabular}{rr}
+\toprule
+$\theta_2$ [deg] & $F(\theta_2)=\theta_3$ [deg]\\
+\midrule
+$-0.10$ & $+0.011415$\\
+$-0.05$ & $+0.005708$\\
+$0$     & $-0.000000713$\\
+$+0.05$ & $-0.005708$\\
+$+0.10$ & $-0.011415$\\
+\bottomrule
+\end{tabular}
+\end{table}
+
+The recovered opening-mode intensity is even with respect to the imposed
+perturbation, whereas $K_{II}/K_I$ and $F(\theta_2)$ are antisymmetric to
+within numerical mismatches of order $10^{-9}$. The two symmetric
+finite-difference estimates are
+\[
+ \frac{F(+0.05^\circ)-F(-0.05^\circ)}{0.10^\circ}
+ =-0.1141583,
+ \qquad
+ \frac{F(+0.10^\circ)-F(-0.10^\circ)}{0.20^\circ}
+ =-0.1141509,
+\]
+and a least-squares fit constrained through the origin gives
+\begin{equation}
+ F'(0)=-0.1141524.
+ \label{eq:symmetric-multiplier}
+\end{equation}
+Because $|F'(0)|<1$, the straight symmetric path is a locally attracting
+fixed path for this one-step discrete recurrence. The negative multiplier
+means that a small angular perturbation changes sign after one update while
+its magnitude is reduced by almost an order of magnitude. This is a local
+stability statement for the chosen 4-mm recurrence, not a proof of global
+path stability or crack-increment convergence.
+
 \section{Crack-trajectory results}
 \subsection{Accepted path and direction history}
 Figure~\ref{fig:trajectory} distinguishes the accepted $P_0$--$P_{23}$
@@ -666,6 +753,15 @@ this path. The interpolated zero in Eq.~\eqref{eq:zeroestimate} should be
 read against the 4-mm spacing of its bracketing states, not as a highly
 resolved physical crack length.
 
+The centered-hole control provides a separate check on the directional
+logic itself. Exact reflection symmetry gives a nearly pure mode-I fixed
+path, while the measured multiplier $F'(0)=-0.11415$ shows that the
+implemented recurrence damps small angular perturbations rather than
+amplifying a numerical mode-II imbalance. This control is useful when
+interpreting the asymmetric trajectory: its gradual curvature and late
+turning reversal are not generic drift of the propagation algorithm away
+from a straight path.
+
 The independent M1 calculation addresses exterior-mesh density. Local tip
 resolution is tested separately in two complementary forms: the
 fixed-geometry $2h_0$--$h_0$--$h_0/2$ study isolates SIF/MTS extraction
@@ -764,8 +860,11 @@ maximum absolute direction difference is $0.255$ millidegrees. These results
 support robustness with respect to both exterior-mesh density and local tip
 resolution within the tested ranges.
 
-Paired-core, synthetic, solver, and archive checks establish a reproducible
-numerical sequence within the chosen discretization. The qualified unsolved
+A centered-hole control independently confirms that the straight symmetry
+line is a locally attracting fixed path of the implemented EDI--MTS
+recurrence, with one-step multiplier $-0.11415$. Paired-core, synthetic,
+solver, and archive checks establish a reproducible numerical sequence
+within the chosen discretization. The qualified unsolved
 extension must remain separate from the physical results. Increment-size
 convergence, interaction-domain-radius sensitivity, and a controlled
 boundary comparison remain the next requirements for stronger predictive
