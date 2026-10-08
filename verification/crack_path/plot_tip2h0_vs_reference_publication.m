@@ -123,6 +123,21 @@ function S = plot_tip2h0_vs_reference_publication(varargin)
     [crossR,aLSr_mm,xLSr_mm,yLSr_mm]=local_zero_crossing(Tr,Vr,da);
     [crossM,aLSm_mm,xLSm_mm,yLSm_mm]=local_zero_crossing(Tm,Vm,da);
 
+    % Publication-data guards for the completed two-trajectory experiment.
+    assert(kmax>=23,'tip2h0fig:IncompleteHistory', ...
+        'Publication comparison requires accepted histories through P23.');
+    assert(kMaxR==17 && kMaxM==17,'tip2h0fig:QMaximumMoved', ...
+        'Expected positive mode-mixity maximum at P17 in both histories.');
+    i21r=find(Tr.segment==21,1); i22r=find(Tr.segment==22,1);
+    i21m=find(Tm.segment==21,1); i22m=find(Tm.segment==22,1);
+    assert(~isempty(i21r)&&~isempty(i22r)&&~isempty(i21m)&&~isempty(i22m), ...
+        'tip2h0fig:LateStatesMissing','P21/P22 are required.');
+    assert(qr(i21r)>0 && qr(i22r)<0 && qm(i21m)>0 && qm(i22m)<0, ...
+        'tip2h0fig:SignBracketChanged', ...
+        'P21-P22 mode-mixity sign bracket must be preserved.');
+    assert(crossR && crossM,'tip2h0fig:NoZeroCrossing', ...
+        'Both histories must contain an interpolable mode-mixity zero crossing.');
+
     % Real accepted path coordinates in mm.
     Xr=1e3*Vr(:,1); Yr=1e3*Vr(:,2);
     Xm=1e3*Vm(:,1); Ym=1e3*Vm(:,2);
