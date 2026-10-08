@@ -20,7 +20,7 @@ function S = plot_tip2h0_vs_reference_publication(varargin)
 %   S = plot_tip2h0_vs_reference_publication('Export',false);
 %
 % Output files (default):
-%   paper/figures/m1_mesh_sensitivity/
+%   paper/figures/tip_resolution_sensitivity/
 %       trajectory.pdf / trajectory.png
 %       vertical_deviation.pdf / vertical_deviation.png
 %       direction_deviation.pdf / direction_deviation.png
@@ -56,7 +56,7 @@ function S = plot_tip2h0_vs_reference_publication(varargin)
     if isempty(tip2File)
         tip2File=fullfile(root,'verification','crack_path', ...
             'tip_2h0_independent_run','trajectory','path_run_state.mat');
-    elseif ~local_is_absolute_path(m1File)
+    elseif ~local_is_absolute_path(tip2File)
         tip2File=fullfile(root,tip2File);
     end
 
