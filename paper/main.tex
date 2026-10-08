@@ -675,6 +675,39 @@ $P_{17}$ mode-mixity maximum and the $P_{21}$--$P_{22}$ sign-change bracket,
 and both produce only submicrometer differences between corresponding
 accepted tips when propagated independently.
 
+Table~\ref{tab:independent-sensitivity} summarizes the two independent
+trajectory tests. Coarsening the local structured tip mesh produces the
+larger perturbation of the two, but even that case gives a maximum
+corresponding-tip separation of only $0.123~\mu\mathrm{m}$ and a maximum
+absolute direction difference of $0.255$ millidegrees. The same
+characteristic mode-mixity events are therefore retained when either the
+exterior discretization or the local tip resolution is changed within the
+tested ranges.
+
+\begin{table}[tbp]
+\centering
+\small
+\setlength{\tabcolsep}{4.2pt}
+\caption{Independent-trajectory sensitivity to two mesh changes. The
+reference trajectory is the production $h_0$ calculation with the reference
+exterior mesh. The local-symmetry differences are visualization-only linear
+interpolation diagnostics between $P_{21}$ and $P_{22}$.}
+\label{tab:independent-sensitivity}
+\begin{tabular}{lrrrrr}
+\toprule
+Perturbation &
+$\max|\Delta y|$ [$\mu$m] &
+$\max\Delta r$ [$\mu$m] &
+$\max|\Delta\theta|$ [mdeg] &
+$\max|\Delta q_K|$ &
+$\Delta a_{\rm LS}$ [$\mu$m]\\
+\midrule
+Coarser exterior M1 & 0.06734 & 0.06742 & 0.07304 & $2.89\times10^{-7}$ & $-0.322$\\
+Local tip $2h_0$    & 0.12257 & 0.12295 & 0.25475 & $6.72\times10^{-7}$ & $-0.459$\\
+\bottomrule
+\end{tabular}
+\end{table}
+
 These checks remain narrower than full trajectory convergence. The 4-mm
 increment is unchanged, and the interaction-domain radii are unchanged.
 Thus a smaller-increment family and controlled interaction-domain-radius
