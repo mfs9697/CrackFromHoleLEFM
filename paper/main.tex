@@ -69,10 +69,12 @@ A second trajectory, propagated independently with a substantially coarser
 exterior mesh while retaining the same paired tip core and interaction-domain
 region, preserves the $P_{17}$ mode-mixity maximum and the $P_{21}$--$P_{22}$
 sign-change bracket; the maximum separation of corresponding accepted tips
-is only $0.0674~\mu\mathrm{m}$. A complementary fixed-geometry tip-resolution
-study with $h_{\mathrm{tip}}=0.0540$, $0.0270$, and $0.0135$ mm also preserves
-the $P_{21}$--$P_{22}$ sign-change bracket and shifts the linearly interpolated
-local-symmetry location by only a few micrometers between successive levels.
+is only $0.0674~\mu\mathrm{m}$. A complementary local tip-resolution study
+combines fixed-geometry checks at $h_{\mathrm{tip}}=0.0540$, $0.0270$, and
+$0.0135$ mm with an independently propagated $0.0540$-mm trajectory. Doubling
+the production tip size changes the maximum corresponding-tip separation by
+only $0.123~\mu\mathrm{m}$ and preserves both the $P_{17}$ mode-mixity maximum
+and the $P_{21}$--$P_{22}$ sign-change bracket.
 The late redirection is consistent with increasing free-boundary influence
 rather than unloading, although these calculations do not isolate boundary
 effects from accumulated curvature. The next geometry is qualified but
@@ -113,9 +115,11 @@ calculation, an independently propagated trajectory with a substantially
 coarser exterior mesh is used to test whether this sequence is sensitive
 to the exterior discretization. The comparison preserves the characteristic
 states and produces only submicrometer differences between corresponding
-accepted tips. A separate fixed-geometry study varies the local tip resolution around the
-late mode-II sign change, so local tip-mesh sensitivity is addressed without
-mixing it with accumulated path divergence. The calculations still do not
+accepted tips. Local tip-resolution sensitivity is examined in two
+complementary ways: fixed-geometry calculations isolate the effect on the
+extracted SIFs and MTS turn, while an independently propagated $2h_0$
+trajectory tests whether those local differences accumulate into a
+materially different crack path. The calculations still do not
 establish increment-size convergence, interaction-domain-radius sensitivity,
 or a causal boundary-effect decomposition. Numerical verification is used to
 separate the physical interpretation from extraction artifacts and from the
@@ -314,6 +318,16 @@ $r_c=3$ mm and the EDI annulus remains $r_i=0.4$ mm to $r_o=2.6$ mm.
 The paired cores contain 3318, 12678, and 49518 T3 elements, respectively.
 The established four COD windows contain 19/28/23/18 native points at
 $2h_0$, 38/55/44/34 at $h_0$, and 74/108/86/67 at $h_0/2$.
+
+To test accumulated trajectory sensitivity without introducing a second
+discretization change, the $2h_0$ calculation is also propagated
+independently with the \emph{reference} exterior mesh law. The prescribed
+first segment $P_0P_1$ is common, but the $P_1$ elastic problem is recomputed
+with the $2h_0$ core; its own $K_I^{(1)}$ and $K_{II}^{(1)}$ determine
+$\theta_2$, and all later vertices follow recursively from the preceding
+$2h_0$ solution. No reference-path vertex after $P_1$ is imposed. The
+$h_0/2$ level is retained as fixed-geometry refinement evidence and is not
+propagated independently.
 
 For geometric illustration, Fig.~\ref{fig:mesh-levels} also includes a
 coarser $4h_0$ core with $h_{\mathrm{tip}}=0.1080493$ mm. It contains only
@@ -555,6 +569,39 @@ interpolated quantity. This numerical regularity should not be interpreted
 as micrometer-scale physical accuracy of $a_{\mathrm{LS}}$: the crossing is
 still inferred between two states separated by one full crack increment.
 
+The fixed-geometry comparison isolates the local extraction sensitivity, but
+does not show whether the resulting small direction changes accumulate along
+the path. For that purpose, the $2h_0$ trajectory was propagated independently
+through $P_{23}$ while retaining the reference exterior mesh law. Figure~
+\ref{fig:tip-resolution-sensitivity} uses the same four-panel comparison as
+the exterior-mesh study. The two trajectories are visually indistinguishable
+at specimen scale [Fig.~\ref{fig:tipres-trajectory}]. Over the full accepted
+history, the maximum vertical-coordinate difference is
+$0.12257~\mu\mathrm{m}$ and the maximum Euclidean separation of corresponding
+tips is $0.12295~\mu\mathrm{m}$, both at $P_{23}$. The maximum absolute
+direction difference is $0.25475$ millidegrees at $P_{22}$
+[Fig.~\ref{fig:tipres-dy} and Fig.~\ref{fig:tipres-dtheta}].
+
+The mechanical history is equally stable. Both resolutions place the
+positive maximum of $K_{II}/K_I$ at $P_{17}$ and retain positive mode mixity
+at $P_{21}$ and negative mode mixity at $P_{22}$
+[Fig.~\ref{fig:tipres-q}]. The maximum absolute difference in
+$K_{II}/K_I$ is $6.72\times10^{-7}$. Linear interpolation of the two
+independently propagated $P_{21}$--$P_{22}$ brackets gives
+$a_{\mathrm{LS}}=84.146369912$ mm for $h_0$ and
+$84.145910853$ mm for $2h_0$, a difference of
+$-0.000459$ mm ($-0.459~\mu\mathrm{m}$). As above, this is only a
+sub-increment sensitivity diagnostic, not a micrometer-accurate physical
+location of local symmetry.
+
+The independent-path result complements rather than replaces the
+fixed-geometry three-level check. The latter shows the local numerical trend
+under refinement at an unchanged crack geometry; the former shows that
+doubling the production tip size does not cause those local differences to
+grow into a materially different trajectory.
+
+\input{figures/tip_resolution_sensitivity/figure}
+
 \subsection{Sensitivity to exterior-mesh density}
 The fixed-geometry M1 checks establish that the coarser exterior mesh does
 not materially perturb the extracted current-tip quantities when the crack
@@ -619,14 +666,14 @@ this path. The interpolated zero in Eq.~\eqref{eq:zeroestimate} should be
 read against the 4-mm spacing of its bracketing states, not as a highly
 resolved physical crack length.
 
-The independent M1 calculation addresses exterior-mesh density, while the
-fixed-geometry $2h_0$--$h_0$--$h_0/2$ study separately addresses local tip
-resolution around the mode-II sign change. Together they show that the
-reported $P_{21}$--$P_{22}$ bracket is insensitive both to substantial
-exterior coarsening and to a factor-of-four range in local structured
-tip size. The local study is deliberately performed on fixed accepted
-geometries, so it does not introduce accumulated path divergence into the
-comparison.
+The independent M1 calculation addresses exterior-mesh density. Local tip
+resolution is tested separately in two complementary forms: the
+fixed-geometry $2h_0$--$h_0$--$h_0/2$ study isolates SIF/MTS extraction
+sensitivity, while the independent $2h_0$ trajectory tests accumulation of
+that sensitivity along the path. Both discretization changes preserve the
+$P_{17}$ mode-mixity maximum and the $P_{21}$--$P_{22}$ sign-change bracket,
+and both produce only submicrometer differences between corresponding
+accepted tips when propagated independently.
 
 These checks remain narrower than full trajectory convergence. The 4-mm
 increment is unchanged, and the interaction-domain radii are unchanged.
@@ -674,11 +721,14 @@ independently propagated calculation with a substantially coarser exterior
 mesh reproduces the $P_{17}$ mode-mixity maximum, the $P_{21}$--$P_{22}$
 sign-change bracket, and the accepted trajectory through $P_{23}$; the
 maximum separation of corresponding tips is only $0.0674~\mu\mathrm{m}$.
-A separate fixed-geometry $2h_0$--$h_0$--$h_0/2$ comparison spanning a factor
-of four in $h_{\mathrm{tip}}$ also preserves the $P_{21}$--$P_{22}$ sign bracket;
-the interpolated local-symmetry location changes by only $6.12$ and
-$3.15~\mu\mathrm{m}$ between successive levels. These results support
-robustness with respect to both exterior-mesh density and local tip
+A fixed-geometry $2h_0$--$h_0$--$h_0/2$ comparison spanning a factor of four
+in $h_{\mathrm{tip}}$ preserves the $P_{21}$--$P_{22}$ sign bracket and shows
+a regular refinement trend. In addition, an independently propagated
+$2h_0$ trajectory reproduces the $P_{17}$ mode-mixity maximum and the
+$P_{21}$--$P_{22}$ sign reversal through $P_{23}$; its maximum separation
+from the production trajectory is only $0.123~\mu\mathrm{m}$ and its
+maximum absolute direction difference is $0.255$ millidegrees. These results
+support robustness with respect to both exterior-mesh density and local tip
 resolution within the tested ranges.
 
 Paired-core, synthetic, solver, and archive checks establish a reproducible
