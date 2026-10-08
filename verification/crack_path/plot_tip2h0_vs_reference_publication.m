@@ -72,17 +72,11 @@ function S = plot_tip2h0_vs_reference_publication(varargin)
     % not required for a portable paper checkout.  The committed paper/data
     % snapshot is the canonical fallback for the reference trajectory.
     referenceMatAvailable=(exist(refFile,'file')==2);
-    assert(exist(tip2File,'file')==2,'tip2h0fig:Missing2h0', ...
-        '2h0 state not found: %s',tip2File);
 
     [Tr,VrAll,refCompleted,referenceSource]= ...
         local_load_reference(root,refFile,referenceMatAvailable);
-
-    B=load(tip2File,'State');
-    assert(isfield(B,'State')&&isstruct(B.State),'tip2h0fig:Bad2h0', ...
-        '2h0 MAT must contain State.');
-    M=B.State;
-    Tm=local_state_table(M);
+    [Tm,VmAll,tipCompleted,tipSource]= ...
+        local_load_tip2h0(root,tip2File,VrAll(1,:));
 
     common=intersect(Tr.segment,Tm.segment,'stable');
     assert(~isempty(common),'tip2h0fig:NoCommonStates','No common solved states.');
@@ -93,9 +87,9 @@ function S = plot_tip2h0_vs_reference_publication(varargin)
     assert(isequal(Tr.segment,Tm.segment),'tip2h0fig:SegmentMismatch', ...
         'h0 and 2h0 common segment ordering differs.');
 
-    kmax=min([refCompleted,M.completedPhysicalSegments,max(common)]);
+    kmax=min([refCompleted,tipCompleted,max(common)]);
     Vr=VrAll(1:kmax+1,:);
-    Vm=M.vertices(1:kmax+1,:);
+    Vm=VmAll(1:kmax+1,:);
     assert(size(Vr,1)==size(Vm,1),'tip2h0fig:VertexCount', ...
         'h0 and 2h0 accepted vertex counts differ through P%d.',kmax);
 
@@ -260,6 +254,7 @@ function S = plot_tip2h0_vs_reference_publication(varargin)
     S=struct();
     S.referenceSource=referenceSource;
     S.referenceStateFile=refFile;
+    S.Tip2h0Source=tipSource;
     S.Tip2h0StateFile=tip2File;
     S.increment_mm=1e3*da;
     S.maxCommonSegment=kmax;
@@ -280,6 +275,7 @@ function S = plot_tip2h0_vs_reference_publication(varargin)
     fprintf('  common accepted states       : P1--P%d\n',kmax);
     fprintf('  inferred increment           : %.9f mm\n',S.increment_mm);
     fprintf('  reference source             : %s\n',referenceSource);
+    fprintf('  2h0 source                   : %s\n',tipSource);
     fprintf('  q maximum h0 / 2h0     : P%d / P%d\n',kMaxR,kMaxM);
     fprintf('  local symmetry h0     : %.9f mm\n',aLSr_mm);
     fprintf('  local symmetry 2h0            : %.9f mm\n',aLSm_mm);
@@ -372,6 +368,48 @@ function local_close_if_valid(h)
     end
 end
 
+
+function [T,V,completed,source]=local_load_tip2h0(root,tip2File,p0)
+% Load the independent 2h0 trajectory from the original run-state MAT when
+% present; otherwise use the committed portable table reconstructed from the
+% accepted P1--P23 run log.  The CSV stores solved states and tip coordinates.
+
+    if exist(tip2File,'file')==2
+        B=load(tip2File,'State');
+        assert(isfield(B,'State')&&isstruct(B.State), ...
+            'tip2h0fig:Bad2h0','2h0 MAT must contain State.');
+        M=B.State;
+        T=local_state_table(M);
+        assert(isfield(M,'vertices')&&size(M.vertices,2)==2, ...
+            'tip2h0fig:2h0Vertices','2h0 State lacks vertices.');
+        V=M.vertices;
+        if isfield(M,'completedPhysicalSegments')
+            completed=M.completedPhysicalSegments;
+        else
+            completed=height(T);
+        end
+        source=tip2File;
+        return
+    end
+
+    csvFile=fullfile(root,'paper','data','tip2h0_states.csv');
+    assert(exist(csvFile,'file')==2,'tip2h0fig:Missing2h0CSV', ...
+        'Committed 2h0 trajectory table not found: %s',csvFile);
+    T=readtable(csvFile);
+    required={'segment','tip_x_m','tip_y_m','theta_deg', ...
+        'KI_unit','KII_unit','KII_over_KI','delta_theta_next_deg', ...
+        'theta_next_deg'};
+    assert(all(ismember(required,T.Properties.VariableNames)), ...
+        'tip2h0fig:2h0CSVColumns', ...
+        'Committed 2h0 trajectory table is missing required columns.');
+    T=sortrows(T,'segment');
+    completed=height(T);
+    assert(isequal(T.segment(:),(1:completed).'), ...
+        'tip2h0fig:2h0CSVSegments', ...
+        'Committed 2h0 trajectory table must contain consecutive P1--Pk states.');
+    V=[p0; T.tip_x_m T.tip_y_m];
+    source='paper/data/tip2h0_states.csv';
+end
 
 function [T,V,completed,source]=local_load_reference(root,refFile,matAvailable)
 % Load the accepted h0 reference from the historical run-state MAT when
