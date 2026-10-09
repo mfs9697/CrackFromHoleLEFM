@@ -56,4 +56,25 @@ Fresh invocations still require a new output directory. Explicit continuation up
 
 `test_stage2_native_fingerprint` checks the actual saved isolated P1, reversed face-node ordering, complete T3 node renumbering/T6 ID changes, paired T6 midside corruption, paired T3/core corruption, stored fingerprint corruption, the public solver's explicit no-solve guard, the historical 70-node coupled candidate and mismatched fixed-result cache controls. All eight actual accepted fixed-state caches are independently validated. `test_isolated_tip_resolution` is rerun to preserve scale/default and checkpoint incompatibility regressions.
 
-The saved P1 now passes the pre-solve fingerprint and reaches the explicit physical solve guard with `AllowSolve=false`. The authorized physical continuation is run separately. Its completion and retained-file hash evidence are recorded after the resumed run finishes.
+The saved P1 passes the pre-solve fingerprint and reaches the explicit physical solve guard with `AllowSolve=false`. Nine fingerprint/ordering/corruption/public-entry regressions and eight accepted fixed-cache checks passed. The existing scale-separation suite also passed all 32 portable and two archive checks. A fresh prescribed-field P1 qualification passed and emitted the new 80-node full-face / 60-node core fingerprint. MATLAB code analysis found no syntax or uninitialized-variable issues after the correction; existing unused-variable advisories remain.
+
+## Completed physical continuation
+
+The selected study completed through **P23**, with all eight fixed-state results and all 23 independent physical states passing their existing gates. The driver reused nine saved qualified candidates and retained all eight accepted fixed physical results without repeating either PCG or their postprocessing.
+
+P1 was solved once during the authorized continuation and its field was checkpointed. A missing COD-window variable introduced during this refactor stopped the first postprocessing attempt. Restoring `windows=nativeFP.windows` preserved the exact original windows. The subsequent attempt reused that field (`R.newSolve=false`) and passed every P1 physical gate; no P1 physical solve was repeated. P2–P23 each required one new physical solve and passed all qualification, solver, residual, EDI, COD and MTS checks.
+
+Read-only compact-result/state verification confirmed:
+
+| Completion evidence | Result |
+| --- | --- |
+| Atomic path state | `completedPhysicalSegments=23`; core scale 2 / exterior scale 1 |
+| Stop reason | `max_segments_reached` |
+| Total physical crack length | `92.00000000000003 mm` (floating-point representation of 92 mm) |
+| P1 native fingerprint | Full faces 80/80; core 60; windows `[19,28,23,18]` |
+| P2–P23 COD fit sample counts | Exact `[19,19,28,28,23,23,18,18]` for every state |
+| P2–P23 EDI support | 2,976 elements for every state |
+| Largest P2–P23 true relative residual | `9.987669875849209e-11` |
+| Original saved MAT files | SHA-256 unchanged for all 34: eight fixed candidates, eight qualifications, eight physical fields, eight compact physical results, plus the original P1 candidate and qualification |
+
+The completed study remains in `verification/crack_path/isolated_tip_resolution_study_20261009T163513088`. Its updated study MAT contains both fixed-state comparisons and the independent trajectory; the trajectory directory contains the accepted compact results, physical checkpoints and final atomic resume state. `independent_validation_summary.csv` records the read-only completion checks. No branch was merged, and no physical formula or acceptance tolerance was changed.
