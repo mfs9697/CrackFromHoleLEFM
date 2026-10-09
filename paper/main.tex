@@ -973,40 +973,54 @@ isolate that influence. The result supports a mode-mixity explanation of
 the computed redirection; it does not prove that the boundary is its sole
 cause.
 
-\subsection{Discretization and boundary proximity}
-The directions are selected from the field before adding a finite straight
-segment. A 4-mm step therefore samples a continuously changing boundary-value
-problem at discrete geometries. No increment-size study is available for
-this path. The interpolated zero in Eq.~\eqref{eq:zeroestimate} should be
-read against the 4-mm spacing of its bracketing states, not as a highly
-resolved physical crack length.
+\subsection{Discretization, increment size, and boundary proximity}
+The 4-mm reference trajectory samples a continuously changing boundary-value
+problem at discrete geometries, so the finite segment length is part of the
+numerical propagation rule. The three-level increment study now provides a
+direct measure of this effect. Successive halving from 4 to 2 to 1 mm
+reduces the maximum corresponding-tip separation from $35.47$ to
+$18.29~\mu\mathrm{m}$ and the maximum direction difference from
+$214.93$ to $127.39$ millidegrees. The local-symmetry estimate shifts by
+$0.599$ mm and then $0.282$ mm. These contractions support a stable limiting
+trajectory, although three levels are insufficient to establish a formal
+asymptotic convergence order.
+
+The mode-mixity history clarifies what converges. The raw positive maximum
+of $q_K$ approximately halves with $\Delta a$, whereas
+$q_{K,\max}/\Delta a$ changes by only about $0.71\%$ over the 4-to-1-mm
+range; the turning density at the same state is equally stable. This is
+consistent with the small-mixity MTS relation
+$\Delta\theta\simeq-2q_K$ and with a smooth limiting path whose curvature
+is sampled over a finite step. Thus raw $q_K$ should not be interpreted as
+an increment-independent physical observable of the path. The more robust
+quantities are the geometry, characteristic event locations, and
+increment-normalized corrective measures.
 
 The centered-hole control provides a separate check on the directional
 logic itself. Exact reflection symmetry gives a nearly pure mode-I fixed
 path, while the measured multiplier $F'(0)=-0.11415$ shows that the
 implemented recurrence damps small angular perturbations rather than
-amplifying a numerical mode-II imbalance. This control is useful when
-interpreting the asymmetric trajectory: its gradual curvature and late
-turning reversal are not generic drift of the propagation algorithm away
-from a straight path.
+amplifying a numerical mode-II imbalance. This local stability result is
+consistent with, but logically distinct from, the global increment-
+refinement evidence for the asymmetric trajectory.
 
-The independent M1 calculation addresses exterior-mesh density. Local tip
-resolution is tested separately in two complementary forms: the
-fixed-geometry $2h_0$--$h_0$--$h_0/2$ study isolates SIF/MTS extraction
-sensitivity, while the independent $2h_0$ trajectory tests accumulation of
-that sensitivity along the path. Both discretization changes preserve the
-$P_{17}$ mode-mixity maximum and the $P_{21}$--$P_{22}$ sign-change bracket,
-and both produce only submicrometer differences between corresponding
-accepted tips when propagated independently.
+Mesh sensitivity is addressed by two complementary perturbations. The M1
+calculation is a clean exterior-only change: it retains the paired tip core
+and EDI support while substantially reducing exterior resolution, and its
+independently propagated path remains within $0.0674~\mu\mathrm{m}$ of the
+reference tips. The $2h_0$--$h_0$--$h_0/2$ family changes the structured tip
+scale, but the repository audit showed that the same scale also enters the
+adjoining exterior size law. Its results therefore demonstrate robustness
+to a coupled tip-scaled mesh-family perturbation rather than a strictly
+local tip-only refinement. The independently propagated $2h_0$ path remains
+within $0.123~\mu\mathrm{m}$ of the reference path and preserves the same
+mode-mixity maximum and sign-change bracket.
 
-Table~\ref{tab:independent-sensitivity} summarizes the two independent
-trajectory tests. Coarsening the local structured tip mesh produces the
-larger perturbation of the two, but even that case gives a maximum
-corresponding-tip separation of only $0.123~\mu\mathrm{m}$ and a maximum
-absolute direction difference of $0.255$ millidegrees. The same
-characteristic mode-mixity events are therefore retained when either the
-exterior discretization or the local tip resolution is changed within the
-tested ranges.
+Table~\ref{tab:independent-sensitivity} summarizes these two independent
+mesh-family tests. Their submicrometer path differences are much smaller
+than the finite-increment differences quantified above, indicating that
+crack-increment error is the dominant tested numerical sensitivity at the
+scale of the reported trajectory.
 
 \begin{table}[tbp]
 \centering
@@ -1027,23 +1041,20 @@ $\max|\Delta q_K|$ &
 $\Delta a_{\rm LS}$ [$\mu$m]\\
 \midrule
 Coarser exterior M1 & 0.06734 & 0.06742 & 0.07304 & $2.89\times10^{-7}$ & $-0.322$\\
-Local tip $2h_0$    & 0.12257 & 0.12295 & 0.25475 & $6.72\times10^{-7}$ & $-0.459$\\
+Tip-scaled $2h_0$ family & 0.12257 & 0.12295 & 0.25475 & $6.72\times10^{-7}$ & $-0.459$\\
 \bottomrule
 \end{tabular}
 \end{table}
 
-These checks remain narrower than full trajectory convergence. The 4-mm
-increment is unchanged, and the interaction-domain radii are unchanged.
-Thus a smaller-increment family and controlled interaction-domain-radius
-variation are still required before claiming general path independence from
-the discretization and extraction scales.
-
-Local reflection pairing and synthetic recovery suppress known extraction
-leakage mechanisms, but do not by themselves bound every physical
-discretization error. Similarly, residual and element-quality gates measure
-numerical acceptance rather than fracture-mechanics convergence. The
-historical 8-mm verification cannot be transferred into a general
-mesh-independence claim for this evolving polyline.
+The remaining numerical questions are therefore narrower. A decoupled
+core-only refinement would be required to isolate structured-tip resolution
+from the exterior size law, and controlled interaction-domain-radius
+variation is still needed to quantify extraction-domain sensitivity.
+Likewise, local reflection pairing, synthetic recovery, residual gates, and
+element-quality gates establish numerical acceptance but do not by
+themselves bound every physical discretization error. The historical 8-mm
+verification remains a separate extraction test and is not used as a point
+in the trajectory-convergence sequence.
 
 \subsection{Last accepted state and model scope}
 The geometry ending at $P_{24}$, with total polyline length 96 mm, passes
