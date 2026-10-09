@@ -96,6 +96,9 @@ function S = plot_tip2h0_vs_reference_publication(varargin)
     % Crack length follows the imposed fixed increment. Infer it from the
     % first accepted segment rather than hard-coding 4 mm.
     da=norm(Vr(2,:)-Vr(1,:));
+    assert(max(abs(vecnorm(diff(Vr),2,2)-da))<=2e-12&& ...
+        max(abs(vecnorm(diff(Vm),2,2)-da))<=2e-12, ...
+        'tip2h0fig:IncrementMismatch','Segment-index comparison requires the same uniform increment.');
     a_mm=1e3*da*Tr.segment;
 
     dx_um=1e6*(Tm.tip_x_m-Tr.tip_x_m);

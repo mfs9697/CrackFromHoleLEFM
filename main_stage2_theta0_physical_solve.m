@@ -259,8 +259,8 @@ function R = main_stage2_theta0_physical_solve(varargin)
     newSolve=false;
 
     if exist(cp,'file')==2
-        s0=load(cp,'meta','mesh','U','mat','crack','a0','solverInfo');
-        local_validate_checkpoint(s0,mesh,crack,a0,ndof,opt.AlternativeQualifiedCandidate);
+        s0=load(cp,'meta','mesh','U','mat','crack','a0','solverInfo','C');
+        local_validate_checkpoint(s0,mesh,crack,a0,ndof,opt.AlternativeQualifiedCandidate,mat,C);
         fprintf('\nPHASE 1: valid physical checkpoint found; NO new solve.\n');
     else
         if ~opt.AllowSolve
@@ -481,8 +481,8 @@ function R = main_stage2_theta0_physical_solve(varargin)
     % Phase 2. Postprocess ONLY from the checkpoint.
     % ------------------------------------------------------------------
     fprintf('\nPHASE 2: POSTPROCESS SAVED PHYSICAL FIELD\n');
-    s=load(cp,'mesh','U','mat','crack','a0','meta','solverInfo');
-    local_validate_checkpoint(s,mesh,crack,a0,ndof,opt.AlternativeQualifiedCandidate);
+    s=load(cp,'mesh','U','mat','crack','a0','meta','solverInfo','C');
+    local_validate_checkpoint(s,mesh,crack,a0,ndof,opt.AlternativeQualifiedCandidate,mat,C);
 
     [r,app,face]=native_COD_audit( ...
         s.mesh,s.U,s.mat,s.crack,8);
@@ -624,6 +624,7 @@ function R = main_stage2_theta0_physical_solve(varargin)
         R.exteriorMeshControls=candidate.exteriorMeshControls;
     end
     R.coreMeshControls=coreFP;
+    R.frozenPhysics=crack_physics_signature(C);
     R.interpretation=[ ...
         'One qualified theta_1=0 physical LEFM solve. ', ...
         'The primary first-segment direction observable is signed KII(0). ', ...
@@ -762,7 +763,7 @@ function mat=local_material_with_D(mat0,C)
     mat.Dmat=D;
 end
 
-function local_validate_checkpoint(s,mesh,crack,a0,ndof,alternativeQualifiedCandidate)
+function local_validate_checkpoint(s,mesh,crack,a0,ndof,alternativeQualifiedCandidate,mat,C)
     req={'meta','mesh','U','mat','crack','a0','solverInfo'};
     for k=1:numel(req)
         if ~isfield(s,req{k})
@@ -771,12 +772,16 @@ function local_validate_checkpoint(s,mesh,crack,a0,ndof,alternativeQualifiedCand
         end
     end
 
+    assert_crack_checkpoint_physics(s,mat,C,'stage2phys:CheckpointMismatch');
     commonMismatch = ...
             ~strcmp(s.meta.stage,'stage2_theta0_physical_solved') || ...
             s.meta.ndof~=ndof || ...
             abs(s.a0-a0)>1e-14 || s.meta.theta1~=0 || ...
             ~strcmp(s.meta.solver,'pcg_free_dof_spd_sgs') || ...
             ~isequal(s.mesh.connect3,mesh.connect3) || ...
+            ~isequal(s.mesh.connect,mesh.connect) || ...
+            ~isequal(size(s.mesh.coord),size(mesh.coord)) || ...
+            max(abs(s.mesh.coord(:)-mesh.coord(:)))>1e-12 || ...
             max(abs(s.mesh.coord3(:)-mesh.coord3(:)))>1e-12 || ...
             numel(s.U)~=ndof || any(~isfinite(s.U)) || ...
             norm(s.crack.Pmid-crack.Pmid,'fro')>2e-12;

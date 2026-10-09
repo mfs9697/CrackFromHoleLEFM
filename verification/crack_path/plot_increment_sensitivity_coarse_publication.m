@@ -429,22 +429,7 @@ function runDir=local_resolve_run_dir(root,userValue,defaultTag)
 end
 
 function [T,V]=local_load_run(runDir,da_mm)
-    f=fullfile(runDir,'states.csv');
-    vf=fullfile(runDir,'vertices.csv');
-    assert(exist(f,'file')==2,'incfig:MissingStates', ...
-        '%.6g-mm states not found: %s',da_mm,f);
-    assert(exist(vf,'file')==2,'incfig:MissingVertices', ...
-        '%.6g-mm vertices not found: %s',da_mm,vf);
-
-    T=sortrows(readtable(f),'crack_length_mm');
-    V=sortrows(readtable(vf),'crack_length_mm');
-
-    req={'segment','tip_x_m','tip_y_m','theta_deg','KI_unit','KII_unit', ...
-        'KII_over_KI','delta_theta_next_deg','theta_next_deg','crack_length_mm'};
-    assert(all(ismember(req,T.Properties.VariableNames)), ...
-        'incfig:Columns','%.6g-mm state table lacks required columns.',da_mm);
-    assert(all(abs(T.crack_length_mm-da_mm*T.segment)<=1e-8), ...
-        'incfig:IncrementMismatch','%.6g-mm state table has inconsistent lengths.',da_mm);
+    [T,V]=load_increment_comparison_run(runDir,da_mm);
 end
 
 function P=local_pair_metrics(dy,dr,dtheta,dq)

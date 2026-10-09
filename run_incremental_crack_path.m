@@ -172,7 +172,7 @@ function Path = run_incremental_crack_path(varargin)
             local_promote_accepted_result( ...
                 resumeAcceptedResult,opt.MaxSegments,vertices,thetaDeg,rows, ...
                 stepResults,completedPhysicalSegments,startK,increment,nMat,tHat,C, ...
-                opt.StopAtCoreClearance);
+                opt.StopAtCoreClearance,meshControls);
     end
 
     fprintf('\n============================================================\n');
@@ -214,7 +214,7 @@ function Path = run_incremental_crack_path(varargin)
     if promotedAcceptedSegment>0 && startK>opt.MaxSegments
         State=local_make_resume_state(vertices,thetaDeg,completedPhysicalSegments, ...
             promotedNextThetaDeg,regression,'max_segments_reached', ...
-            rows,opt.FastEDI,outDir,meshControls);
+            rows,opt.FastEDI,outDir,meshControls,C);
         local_atomic_save_state(outDir,State);
     end
 
@@ -329,7 +329,7 @@ function Path = run_incremental_crack_path(varargin)
         % repeating this accepted physical solve.
         if k==opt.MaxSegments
             State=local_make_resume_state(vertices,thetaDeg,k,thetaNextDeg, ...
-                regression,'max_segments_reached',rows,opt.FastEDI,outDir,meshControls);
+                regression,'max_segments_reached',rows,opt.FastEDI,outDir,meshControls,C);
             local_atomic_save_state(outDir,State);
             clear stepProfileCleanup
             break
@@ -345,7 +345,7 @@ function Path = run_incremental_crack_path(varargin)
             stopReason='next_tip_outside_plate';
             fprintf('  STOP: proposed next tip is outside the plate.\n');
             State=local_make_resume_state(vertices,thetaDeg,k,thetaNextDeg, ...
-                regression,stopReason,rows,opt.FastEDI,outDir,meshControls);
+                regression,stopReason,rows,opt.FastEDI,outDir,meshControls,C);
             local_atomic_save_state(outDir,State);
             clear stepProfileCleanup
             break
@@ -359,7 +359,7 @@ function Path = run_incremental_crack_path(varargin)
                 fprintf('  STOP: proposed next tip clearance %.6f mm <= rCore %.6f mm.\n', ...
                     1e3*clearance,1e3*rCore);
                 State=local_make_resume_state(vertices,thetaDeg,k,thetaNextDeg, ...
-                    regression,stopReason,rows,opt.FastEDI,outDir,meshControls);
+                    regression,stopReason,rows,opt.FastEDI,outDir,meshControls,C);
                 local_atomic_save_state(outDir,State);
                 clear stepProfileCleanup
                 break
@@ -371,7 +371,7 @@ function Path = run_incremental_crack_path(varargin)
 
         % Atomic compact path-state checkpoint after each accepted append.
         State=local_make_resume_state(vertices,thetaDeg,k,thetaNextDeg, ...
-            regression,'running',rows,opt.FastEDI,outDir,meshControls);
+            regression,'running',rows,opt.FastEDI,outDir,meshControls,C);
         local_atomic_save_state(outDir,State);
         clear stepProfileCleanup
     end
@@ -496,7 +496,7 @@ end
 
 function [vertices,thetaDeg,rows,stepResults,kDone,startK,promotedK,nextThetaDeg]= ...
         local_promote_accepted_result(R,maxSegments,vertices,thetaDeg,rows, ...
-        stepResults,kDone,startK,increment,nMat,tHat,C,stopAtCoreClearance)
+        stepResults,kDone,startK,increment,nMat,tHat,C,stopAtCoreClearance,meshControls)
 
     promotedK=startK;
     if promotedK~=kDone+1
@@ -512,7 +512,7 @@ function [vertices,thetaDeg,rows,stepResults,kDone,startK,promotedK,nextThetaDeg
             'Resume path must contain exactly the promoted unsolved segment.');
     end
 
-    local_validate_resume_result(R,promotedK,vertices,thetaDeg);
+    local_validate_resume_result(R,promotedK,vertices,thetaDeg,meshControls,increment,C);
     rows(promotedK,:)=local_row_from_result(R,promotedK);
     stepResults{promotedK}=R;
     kDone=promotedK;
@@ -557,6 +557,14 @@ function [vertices,thetaDeg,rows,stepResults,regression,kDone,startK,historyMode
         regression,p0,p1,p2,theta2Deg,increment,nMat,tHat,C, ...
         regressionGates,stopAtCoreClearance,meshControls)
 
+    if isfield(State,'schemaVersion') && ...
+            (~local_finite_scalar(State.schemaVersion)||~ismember(State.schemaVersion,[1,2]))
+        error('pathrun:ResumeSchema','Unsupported historical State schema.');
+    end
+    if isfield(State,'rowVariableNames') && ...
+            ~isequal(cellstr(string(State.rowVariableNames(:))).',local_row_variable_names())
+        error('pathrun:ResumeSchema','Historical row names/order differ from the current schema.');
+    end
     req={'vertices','thetaDeg','completedPhysicalSegments','nextThetaDeg'};
     for j=1:numel(req)
         if ~isfield(State,req{j})||isempty(State.(req{j}))
@@ -564,6 +572,10 @@ function [vertices,thetaDeg,rows,stepResults,regression,kDone,startK,historyMode
         end
     end
 
+    if isfield(State,'frozenPhysics') && ...
+            ~isequaln(State.frozenPhysics,crack_physics_signature(C))
+        error('pathrun:ResumePhysics','Resume State uses different frozen physical data.');
+    end
     if isfield(State,'exteriorMeshControls')
         if ~local_mesh_controls_equal(State.exteriorMeshControls,meshControls)
             error('pathrun:ResumeMeshFamily', ...
@@ -666,7 +678,7 @@ function [vertices,thetaDeg,rows,stepResults,regression,kDone,startK,historyMode
                 error('pathrun:ResumeHistoryBad','%s does not contain struct R.',f);
             end
             R=d.R;
-            local_validate_resume_result(R,kk,vertices,thetaDeg);
+            local_validate_resume_result(R,kk,vertices,thetaDeg,meshControls,increment,C);
             rows(kk,:)=local_row_from_result(R,kk);
             stepResults{kk}=R;
             hydratedAny=true;
@@ -794,7 +806,7 @@ function local_validate_legacy_regression(State,current)
     end
 end
 
-function local_validate_resume_result(R,k,vertices,thetaDeg)
+function local_validate_resume_result(R,k,vertices,thetaDeg,meshControls,increment,C)
     req={'pass','nSegments','pathFixed','thetaCurrentDeg','EDI', ...
         'solverInfo','gates','newSolve','deltaThetaNextDeg','thetaNextDeg'};
     for j=1:numel(req)
@@ -803,13 +815,63 @@ function local_validate_resume_result(R,k,vertices,thetaDeg)
                 'Accepted compact result for segment %d is missing %s.',k,req{j});
         end
     end
+    if abs(meshControls.coreScale-2)<=1e-14
+        expectedSupport=2976;
+    else
+        expectedSupport=11316;
+    end
     if ~logical(R.pass)||R.nSegments~=k || ...
             norm(R.pathFixed-vertices(1:k+1,:),'fro')>2e-12 || ...
             abs(R.thetaCurrentDeg-thetaDeg(k))>1e-10 || ...
             ~all(structfun(@logical,R.gates)) || ...
-            R.EDI.EDI_elements(1)~=11316
+            R.EDI.EDI_elements(1)~=expectedSupport
         error('pathrun:ResumeResultMismatch', ...
             'Accepted compact physical result for segment %d does not match resume path.',k);
+    end
+    if isfield(R,'coreMeshControls')
+        fp=R.coreMeshControls;
+        for name={'scale','hTip_m','rInner_m','rOuter_m','rCore_m'}
+            assert(isfield(fp,name{1})&&local_finite_scalar(fp.(name{1})), ...
+                'pathrun:ResumeResultMismatch','Accepted core provenance is missing or nonfinite.');
+        end
+        if abs(fp.scale-meshControls.coreScale)>1e-14 || ...
+                abs(fp.hTip_m-fp.scale*.00675308135*increment)>1e-14 || ...
+                abs(fp.rInner_m-.10*increment)>1e-14 || ...
+                abs(fp.rOuter_m-.65*increment)>1e-14 || ...
+                abs(fp.rCore_m-.75*increment)>1e-14
+            error('pathrun:ResumeResultMismatch','Accepted result has different core/increment controls.');
+        end
+    elseif abs(meshControls.coreScale-1)>1e-14
+        error('pathrun:ResumeResultMismatch','Nonreference result lacks core-family provenance.');
+    end
+    if isfield(R,'exteriorMeshControls')&&isfield(R,'frozenPhysics')
+        wanted=rmfield(meshControls,'coreScale');
+        if ~local_mesh_controls_equal(R.exteriorMeshControls,wanted)|| ...
+                ~isequaln(R.frozenPhysics,crack_physics_signature(C))
+            error('pathrun:ResumeResultMismatch','Accepted result has different exterior/physical controls.');
+        end
+    else
+        % Legacy compacts did not record exterior/physics identity. Require
+        % their original candidate and field archive rather than infer a
+        % family from a directory label or an EDI count alone. No U is loaded.
+        assert(isfield(R,'checkpointPath')&&exist(R.checkpointPath,'file')==2, ...
+            'pathrun:ResumeResultProvenanceMissing','Legacy compact needs its source field/candidate archive.');
+        folder=fileparts(R.checkpointPath);
+        candidateFile=fullfile(folder,sprintf('step_%03d_candidate.mat',k));
+        assert(exist(candidateFile,'file')==2,'pathrun:ResumeResultProvenanceMissing', ...
+            'Legacy compact needs source candidate %s.',candidateFile);
+        d=load(candidateFile,'candidate');c=d.candidate;
+        assert(local_candidate_mesh_controls_match(c,meshControls), ...
+            'pathrun:ResumeResultMismatch','Legacy result source candidate has a different mesh family.');
+        s=load(R.checkpointPath,'mesh','mat','C','meta');
+        [p6,t6]=T3toT6_fast(c.p,c.t);
+        assert(isequal(s.mesh.connect3,c.t)&&isequal(size(s.mesh.coord3),size(c.p))&& ...
+            max(abs(s.mesh.coord3(:)-c.p(:)))<=1e-12&& ...
+            isequal(s.mesh.connect,t6)&&isequal(size(s.mesh.coord),size(p6))&& ...
+            max(abs(s.mesh.coord(:)-p6(:)))<=1e-12&& ...
+            norm(s.meta.path-R.pathFixed,'fro')<=2e-12, ...
+            'pathrun:ResumeResultMismatch','Legacy compact source field/candidate geometry differs.');
+        assert_crack_checkpoint_physics(s,c.mat,C,'pathrun:ResumeResultMismatch');
     end
 end
 
@@ -822,7 +884,7 @@ function row=local_row_from_result(R,k)
 end
 
 function State=local_make_resume_state(vertices,thetaDeg,kDone,nextThetaDeg, ...
-        regression,stopReason,rows,fastEDI,outDir,meshControls)
+        regression,stopReason,rows,fastEDI,outDir,meshControls,C)
     State=struct();
     State.schemaVersion=2;
     State.vertices=vertices;
@@ -843,6 +905,7 @@ function State=local_make_resume_state(vertices,thetaDeg,kDone,nextThetaDeg, ...
     State.sourceOutputDir=outDir;
     State.exteriorMeshControls=meshControls;
     State.meshFamilyLabel=meshControls.label;
+    State.frozenPhysics=crack_physics_signature(C);
 end
 
 function local_atomic_save_state(outDir,State)
@@ -952,6 +1015,11 @@ function tf=local_mesh_controls_equal(a,b)
         return
     end
 
+    if ~local_finite_scalar(fa)||~local_finite_scalar(ta)|| ...
+            ~local_finite_scalar(b.farCapOverIncrement)|| ...
+            ~local_finite_scalar(b.transitionOverIncrement)
+        return
+    end
     if abs(fa-b.farCapOverIncrement)>1e-14 || ...
             abs(ta-b.transitionOverIncrement)>1e-14
         return
@@ -959,7 +1027,7 @@ function tf=local_mesh_controls_equal(a,b)
 
     if isfield(a,'coreScale'),csa=a.coreScale;else,csa=1;end
     if isfield(b,'coreScale'),csb=b.coreScale;else,csb=1;end
-    if abs(csa-csb)>1e-14
+    if ~local_finite_scalar(csa)||~local_finite_scalar(csb)||abs(csa-csb)>1e-14
         return
     end
 
@@ -974,6 +1042,10 @@ function tf=local_mesh_controls_equal(a,b)
         cb=struct();
     end
     tf=isequaln(ca,cb);
+end
+
+function tf=local_finite_scalar(x)
+    tf=isnumeric(x)&&isscalar(x)&&isreal(x)&&isfinite(x);
 end
 
 function tf=local_is_absolute_path(p)

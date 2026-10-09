@@ -228,8 +228,8 @@ function R = solve_incremental_crack_tip(candidate,varargin)
 
     incremental_profile_clock('phase','physical','checkpoint_validation');
     if exist(cp,'file')==2
-        s0=load(cp,'meta','mesh','U','mat','crack','currentIncrement','solverInfo');
-        local_validate_checkpoint(s0,mesh,crack,currentIncrement,ndof,path,thetaSegmentsDeg);
+        s0=load(cp,'meta','mesh','U','mat','crack','currentIncrement','solverInfo','C');
+        local_validate_checkpoint(s0,mesh,crack,currentIncrement,ndof,path,thetaSegmentsDeg,mat,C);
         fprintf('\nPHASE 1: valid physical checkpoint found; NO new solve.\n');
     else
         if ~opt.AllowSolve
@@ -484,8 +484,8 @@ function R = solve_incremental_crack_tip(candidate,varargin)
     % ------------------------------------------------------------------
     fprintf('\nPHASE 2: POSTPROCESS SAVED PHYSICAL FIELD\n');
     incremental_profile_clock('phase','physical','checkpoint_reload');
-    s=load(cp,'mesh','U','mat','crack','currentIncrement','meta','solverInfo');
-    local_validate_checkpoint(s,mesh,crack,currentIncrement,ndof,path,thetaSegmentsDeg);
+    s=load(cp,'mesh','U','mat','crack','currentIncrement','meta','solverInfo','C');
+    local_validate_checkpoint(s,mesh,crack,currentIncrement,ndof,path,thetaSegmentsDeg,mat,C);
 
     incremental_profile_clock('phase','physical','native_cod');
     [r,app,face]=native_COD_polyline_audit( ...
@@ -657,6 +657,10 @@ function R = solve_incremental_crack_tip(candidate,varargin)
     R=struct();
     R.summary=Summary;
     R.coreMeshControls=coreFP;
+    if isfield(candidate,'exteriorMeshControls')
+        R.exteriorMeshControls=candidate.exteriorMeshControls;
+    end
+    R.frozenPhysics=crack_physics_signature(C);
     R.fitTable=fitTable;
     R.EDI=EDI;
     R.prediction=Prediction;
@@ -816,7 +820,7 @@ function mat=local_material_with_D(mat0,C)
     mat.Dmat=D;
 end
 
-function local_validate_checkpoint(s,mesh,crack,currentIncrement,ndof,path,thetaSegmentsDeg)
+function local_validate_checkpoint(s,mesh,crack,currentIncrement,ndof,path,thetaSegmentsDeg,mat,C)
     req={'meta','mesh','U','mat','crack','currentIncrement','solverInfo'};
     for k=1:numel(req)
         if ~isfield(s,req{k})
@@ -825,6 +829,7 @@ function local_validate_checkpoint(s,mesh,crack,currentIncrement,ndof,path,theta
         end
     end
 
+    assert_crack_checkpoint_physics(s,mat,C,'pathsolve:CheckpointMismatch');
     if ~strcmp(s.meta.stage,'incremental_crack_tip_physical_solved') || ...
             s.meta.nT3Nodes~=size(mesh.coord3,1) || ...
             s.meta.nT3~=size(mesh.connect3,1) || ...
@@ -839,6 +844,9 @@ function local_validate_checkpoint(s,mesh,crack,currentIncrement,ndof,path,theta
             ~logical(s.meta.noAngleSweep) || ...
             ~strcmp(s.meta.solver,'pcg_free_dof_spd_sgs') || ...
             ~isequal(s.mesh.connect3,mesh.connect3) || ...
+            ~isequal(s.mesh.connect,mesh.connect) || ...
+            ~isequal(size(s.mesh.coord),size(mesh.coord)) || ...
+            max(abs(s.mesh.coord(:)-mesh.coord(:)))>1e-12 || ...
             max(abs(s.mesh.coord3(:)-mesh.coord3(:)))>1e-12 || ...
             numel(s.U)~=ndof || any(~isfinite(s.U)) || ...
             norm(s.crack.Pmid-crack.Pmid,'fro')>2e-12 || ...

@@ -73,6 +73,9 @@ function S = plot_m1_vs_reference_publication(varargin)
     referenceMatAvailable=(exist(refFile,'file')==2);
     m1MatAvailable=(exist(m1File,'file')==2);
     if ~m1MatAvailable
+        assert(isempty(char(opt.M1StateFile))&&isempty(char(opt.ReferenceStateFile)), ...
+            'm1fig:MissingRequestedHistory', ...
+            'Committed canonical panels cannot represent explicitly requested missing/custom histories.');
         S=local_committed_panel_fallback(root,m1File);
         return
     end
@@ -104,6 +107,9 @@ function S = plot_m1_vs_reference_publication(varargin)
     % Crack length follows the imposed fixed increment. Infer it from the
     % first accepted segment rather than hard-coding 4 mm.
     da=norm(Vr(2,:)-Vr(1,:));
+    assert(max(abs(vecnorm(diff(Vr),2,2)-da))<=2e-12&& ...
+        max(abs(vecnorm(diff(Vm),2,2)-da))<=2e-12, ...
+        'm1fig:IncrementMismatch','Segment-index comparison requires the same uniform increment.');
     a_mm=1e3*da*Tr.segment;
 
     dx_um=1e6*(Tm.tip_x_m-Tr.tip_x_m);

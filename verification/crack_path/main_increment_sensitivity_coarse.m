@@ -71,6 +71,8 @@ function M = main_increment_sensitivity_coarse(varargin)
     assert(abs(nSeg-round(nSeg))<=1e-12,'incstudy:TargetNotDivisible', ...
         'TargetLengthMM must be an integer multiple of IncrementMM.');
     nSeg=round(nSeg);
+    assert(nSeg>=2,'incstudy:TargetTooShort', ...
+        'TargetLengthMM must contain at least two increments for the trajectory driver.');
 
     frozenFile=fullfile(root,'paper','data','accepted_stage1_source.mat');
     assert(exist(frozenFile,'file')==2,'incstudy:MissingFrozen', ...
@@ -203,13 +205,12 @@ function M = main_increment_sensitivity_coarse(varargin)
     reuseP1=false;
     if opt.Resume && exist(p1Small,'file')==2
         z=load(p1Small,'R');
-        if isfield(z,'R')&&isstruct(z.R)&&isfield(z.R,'pass')&&z.R.pass && ...
-                isfield(z.R,'coreMeshControls') && ...
-                abs(z.R.coreMeshControls.scale-coreScale)<=1e-14
-            R1=z.R;
-            reuseP1=true;
-            fprintf('\nReusing accepted P1 physical seed: %s\n',p1Small);
-        end
+        assert(isfield(z,'R')&&isstruct(z.R),'incstudy:P1ReuseMismatch', ...
+            'Cached P1 file does not contain an accepted R.');
+        validate_increment_study_p1_cache(z.R,F1.candidate,R0,p1Checkpoint);
+        R1=z.R;
+        reuseP1=true;
+        fprintf('\nReusing accepted compatible P1 physical seed: %s\n',p1Small);
     end
 
     if ~reuseP1
