@@ -91,46 +91,113 @@ fracture mechanics; maximum tangential stress; mode mixity; interaction
 integral; crack-opening displacement.
 
 \section{Introduction}
-Stress concentrations around holes identify possible crack-initiation
-sites, but an initiation site alone does not determine the subsequent
-trajectory. Once a finite crack exists, its direction depends on the
-mixed-mode field at its current tip and on the entire existing crack
-geometry. A direction-selection calculation must therefore update the
-elastic problem as the crack advances, rather than assign the complete
-trajectory at initiation.
-% TODO: verified literature on crack initiation and trajectories from holes/notches.
+Circular holes are among the classical stress concentrators of fracture
+mechanics.  Once a crack is prescribed at a hole boundary, its stress-
+intensity factors have been studied analytically for radial and inclined
+configurations since the early work of Bowie~\cite{Bowie1956}; mixed-mode
+solutions for cracks emanating from circular holes were subsequently
+developed for finite plates~\cite{WooWangCheung1989}, and modern
+weight-function formulations provide efficient mixed-mode SIF and
+crack-opening-displacement estimates for hole-edge cracks~\cite{XuEtAl2018}.
+The onset problem is related but distinct.  Finite-fracture-mechanics
+studies have examined crack initiation from an initially uncracked circular
+hole, including the competition between symmetric and asymmetric
+initiation~\cite{SaporaEtAl2018} and the stability of subsequent growth
+under biaxial loading~\cite{SaporaCornetti2018}.  These results emphasize
+a basic distinction that is central here: identification of an initiation
+site does not by itself determine the trajectory of the finite crack that
+subsequently develops.
 
-The present pilot considers a single crack growing from a circular hole in
-a finite, asymmetric plate. The scientific question is how its direction
-evolves when each new segment is determined only by the current-tip
-opening- and sliding-mode stress-intensity factors. The maximum tangential
-stress (MTS) rule supplies a local turn; accumulating that turn updates the
-absolute direction in a fixed initiation frame. The imposed finite
-increment specifies the geometric advance, while the stress-intensity
-factors determine its direction.
-% TODO: classic MTS references, with the exact convention verified.
-% TODO: numerical LEFM crack-path methods and finite-increment limitations.
+Once a finite crack exists, its direction depends on the mixed-mode field
+at its current tip and therefore on the complete crack geometry accumulated
+up to that state.  The maximum tangential stress (MTS) criterion of Erdogan
+and Sih~\cite{ErdoganSih1963} provides a classical local direction rule in
+terms of $K_I$ and $K_{II}$.  Numerical crack-growth frameworks have long
+combined such local criteria with repeated updating or remeshing of the
+geometry; for example, Bouchard et al.~\cite{BouchardEtAl2003} compared
+several mixed-mode direction criteria within an automatic finite-element
+propagation procedure.  At a different modeling scale, cohesive-zone
+formulations replace the singular-tip idealization by a finite fracture
+process zone.  Recent potential-based cohesive calculations in a near-LEFM
+regime show that the selected kink direction can remain close to the
+classical elastic prediction even when the critical load is more sensitive
+to the cohesive-zone description~\cite{BogdanovSelivanov2026}.  The
+present work deliberately remains within LEFM in order to isolate the
+trajectory-selection problem itself.
 
-The central result is a change in the sign of mode II while mode I continues
-to increase. Positive mode mixity first grows, reaches a maximum, and then
-decreases through zero. The resulting change in turning sense occurs as
-the tip approaches the right free boundary. In addition to the reference
-calculation, an independently propagated trajectory with a substantially
-coarser exterior mesh is used to test whether this sequence is sensitive
-to the exterior discretization. The comparison preserves the characteristic
-states and produces only submicrometer differences between corresponding
-accepted tips. Local tip-resolution sensitivity is examined in two
-complementary ways: fixed-geometry calculations isolate the effect on the
-extracted SIFs and MTS turn, while an independently propagated $2h_0$
-trajectory tests whether those local differences accumulate into a
-materially different crack path. A separate centered-hole control is used to test the sign and local
-stability properties of the same EDI--MTS recurrence under exact geometric
-symmetry. The calculations still do not establish increment-size
-convergence, interaction-domain-radius sensitivity, or a causal
-boundary-effect decomposition. Numerical verification is used to separate
-the physical interpretation from extraction artifacts and from the eventual
-linear-solver limit.
-% TODO: interaction/domain integral and COD extraction references.
+Crack trajectories influenced by holes have been predicted using several
+different numerical and semi-analytical technologies.  Wang et
+al.~\cite{WangMeguidPapanikos1999} treated curved cracks emanating from
+adjacent holes and compared predicted paths with fatigue experiments.
+Boundary-element propagation has been used for multiple cracks in perforated
+domains~\cite{LiuLiXie2017}, while Fang et al.~\cite{FangEtAl2020}
+combined adaptive extended isogeometric analysis with an interaction
+integral and the maximum circumferential-stress criterion for cracks
+interacting with arbitrary holes and voids.  Their study also compared two
+prescribed crack-growth increments and found similar trajectories, with the
+smaller increment producing the smoother path.  Yang et
+al.~\cite{YangEtAl2020} used incremental remeshing to study cracks
+emanating from circular blasting holes and showed that, in mixed-mode
+configurations, the sign and magnitude of $K_{II}$ govern the direction of
+curving.  Related perforated-plate problems have been studied with a
+boundary-cracklet formulation~\cite{AhmedEtAl2021}, and commercial
+adaptive remeshing has been used to reproduce hole-induced crack deflection
+and arrest~\cite{AlshoaibiFageehi2022}.  Taken together, these studies
+establish both the strong physical influence of holes on crack paths and
+the ability of several numerical technologies to reproduce such
+interactions.
+
+For an incremental trajectory calculation, however, the stress-intensity
+factors are not merely postprocessed outputs.  They determine the next
+segment and thereby perturb every later boundary-value problem.  Numerical
+SIF extraction therefore enters the propagation algorithm recursively.
+The mixed-mode interaction-integral construction provides a natural
+energetic route to separating $K_I$ and $K_{II}$~\cite{YauWangCorten1980}.
+Independent accuracy studies have shown that near-tip discretization and
+postprocessing choices can materially affect extracted SIFs:
+displacement-extrapolation estimates depend on element size, shape, and
+mesh arrangement~\cite{GuineaPlanasElices2000}; energetic/domain-integral
+approaches are generally less dependent on detailed near-tip field fitting
+and are attractive for stepwise crack-growth calculations
+\cite{CourtinEtAl2005}; and comparative studies report their best
+finite-element SIF accuracy when domain integrals are combined with
+appropriately refined meshes~\cite{QianEtAl2016}.  Ghafoori Ahangar and
+Verreman~\cite{GhafooriAhangarVerreman2019} further demonstrated the
+relative robustness of the interaction-integral method with respect to
+angular discretization, element size, local refinement, crack length, and
+mixed-mode extraction.  These results motivate treating verification of the
+SIF calculation as part of the crack-path problem rather than as an
+independent implementation detail.
+
+The studies above provide extensive evidence for individual components of
+incremental LEFM propagation, but comparatively less attention has been
+given to the trajectory as a recursively generated numerical object whose
+characteristic events should remain stable under controlled perturbations
+of the numerical procedure.  The purpose of the present study is therefore
+not to introduce a new mixed-mode fracture criterion or a new remeshing
+technology.  Instead, we construct a single crack trajectory from a circular
+stress concentrator and ask which features of that trajectory can be
+regarded as robust consequences of the evolving elastic field.  The
+uncracked-hole solution selects the initiation point and a material-side
+normal; only the first crack segment is prescribed along that normal.
+Every subsequent direction is obtained from the current-tip $K_I$ and
+$K_{II}$ values through the MTS rule after solving the complete current
+crack geometry.
+
+The verification program is organized to separate several possible sources
+of numerical drift.  The interaction/domain-integral extraction is checked
+against prescribed asymptotic fields and independent crack-opening-
+displacement estimates.  A centered-hole control tests whether the same
+EDI--MTS recurrence preserves and restores the exact straight symmetry
+path.  Exterior-mesh density and local tip resolution are then perturbed
+separately in independently propagated trajectories, rather than evaluated
+only on a fixed reference path.  Finally, crack-increment sensitivity is
+examined through independently generated paths at progressively reduced
+increments.  Particular attention is paid to the evolution of the mode
+mixity $K_{II}/K_I$, the location of its positive maximum and sign reversal,
+and the corresponding change in turning sense.  This structure is intended
+to distinguish a physically interpretable trajectory from one that is only
+visually plausible within a particular discretization.
 
 \section{Problem formulation}
 \subsection{Geometry, material, and loading}
@@ -870,10 +937,8 @@ convergence, interaction-domain-radius sensitivity, and a controlled
 boundary comparison remain the next requirements for stronger predictive
 and causal claims.
 
-\section*{References}
-\noindent\emph{Pilot status: verified literature entries have not yet been
-assembled. Explicit literature TODOs are retained in the source and in the
-accompanying bibliography file; no unverified citation is supplied.}
+\bibliographystyle{unsrt}
+\bibliography{references}
 
 \clearpage
 \appendix
