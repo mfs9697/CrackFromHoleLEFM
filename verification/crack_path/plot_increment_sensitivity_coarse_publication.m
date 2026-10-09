@@ -1,6 +1,6 @@
 function S = plot_increment_sensitivity_coarse_publication(varargin)
 %PLOT_INCREMENT_SENSITIVITY_COARSE_PUBLICATION
-% Three-level crack-increment comparison for Delta a = 4, 2, and 1 mm.
+% Crack-increment comparison. Uses completed 4/2-mm data immediately and\n% automatically switches to the full 4/2/1-mm study when 1-mm data exist.
 %
 % All trajectories must come from main_increment_sensitivity_coarse and use
 % the same dimensionless M1-exterior + CoreScale=2 numerical family.
@@ -204,6 +204,7 @@ function S = plot_increment_sensitivity_coarse_publication(varargin)
     Native.turn_density_deg_per_mm=[kappa4;kappa2;kappa1];
 
     S=struct();
+    S.has1mm=true;
     S.run4Dir=run4; S.run2Dir=run2; S.run1Dir=run1;
     S.maxCommonCrackLength_mm=maxCommon;
     S.metrics=Metrics;
