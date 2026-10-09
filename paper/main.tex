@@ -55,36 +55,36 @@ The incremental direction of a hole-initiated crack is examined in an
 asymmetric elastic plate using linear elastic fracture mechanics and the
 maximum tangential stress criterion. A stress-selected point on the circular
 hole defines the initiation location and a frozen material-side normal.
-Only the first crack segment is prescribed along that normal. Subsequent
-directions follow from the current-tip stress-intensity factors after one
-elastic solution of each fixed, complete crack geometry. A constant 4-mm
-increment produces an accepted history from 4 to 92 mm. The opening-mode
-intensity increases throughout this history, whereas positive mode mixity
-reaches a maximum at 68 mm and changes sign between the solved 84- and
-88-mm states. This change reverses the sign of the incremental turn while
-the absolute crack direction remains negatively inclined. Reflection-paired
-tip meshes, prescribed-field controls, strict residual checks, and
-crack-opening-displacement comparisons support the numerical interpretation.
-A centered-hole symmetric control further verifies the directional
-recurrence: the straight mode-I path is recovered as a fixed path, and the
-linearized one-step map from a small angular perturbation has multiplier
-$F'(0)=-0.11415$, indicating damped sign-alternating restoration toward the
-symmetry line. A second trajectory, propagated independently with a substantially coarser
-exterior mesh while retaining the same paired tip core and interaction-domain
-region, preserves the $P_{17}$ mode-mixity maximum and the $P_{21}$--$P_{22}$
-sign-change bracket; the maximum separation of corresponding accepted tips
-is only $0.0674~\mu\mathrm{m}$. A complementary local tip-resolution study
-combines fixed-geometry checks at $h_{\mathrm{tip}}=0.0540$, $0.0270$, and
-$0.0135$ mm with an independently propagated $0.0540$-mm trajectory. Doubling
-the production tip size changes the maximum corresponding-tip separation by
-only $0.123~\mu\mathrm{m}$ and preserves both the $P_{17}$ mode-mixity maximum
-and the $P_{21}$--$P_{22}$ sign-change bracket.
-The late redirection is consistent with increasing free-boundary influence
-rather than unloading, although these calculations do not isolate boundary
-effects from accumulated curvature. The next geometry is qualified but
-physically unsolved. The findings establish a verified fixed-increment
-pilot sequence, not increment-size convergence or a prediction of arrest,
-branching, or boundary intersection.
+Only the first crack segment is prescribed along that normal; subsequent
+directions follow recursively from current-tip stress-intensity factors after
+one elastic solution of each fixed crack geometry. The 4-mm reference path
+reaches 92 mm. Its positive mode mixity reaches a maximum at 68 mm and
+changes sign between the solved 84- and 88-mm states, reversing the sign of
+the incremental turn while $K_I$ continues to increase. Reflection-paired
+tip meshes, prescribed-field controls, residual checks, crack-opening-
+displacement comparisons, and a centered-hole stability control support the
+numerical interpretation. An independently propagated trajectory with a
+substantially coarser exterior mesh preserves the characteristic mode-mixity
+events and differs from the reference path by at most
+$0.0674~\mu\mathrm{m}$ at corresponding accepted tips.
+
+Crack-increment sensitivity is then examined by independently propagating
+4-, 2-, and 1-mm paths to the same 92-mm length using one dimensionless
+coarse numerical family. Successive halving of the increment reduces the
+maximum corresponding-tip separation from $35.47$ to
+$18.29~\mu\mathrm{m}$ and the maximum direction discrepancy from
+$214.93$ to $127.39$ millidegrees. The peak residual mode mixity decreases
+approximately in proportion to the increment, whereas
+$q_{K,\max}/\Delta a$ varies only from
+$8.098\times10^{-4}$ to $8.041\times10^{-4}$ mm$^{-1}$ and the associated
+turning density from $-0.09280$ to $-0.09214$ deg/mm. The interpolated
+local-symmetry location shifts from 84.149 to 83.550 to 83.268 mm, with
+successive changes of 0.599 and 0.282 mm. These results are consistent with
+a stable continuous-path limit in which the raw corrective mode-II component
+and discrete MTS turn are first-order finite-increment quantities, while
+their increment-normalized measures remain finite. The study establishes
+trajectory convergence evidence within the tested dimensionless family; it
+does not address crack arrest, branching, plasticity, or dynamic growth.
 \end{abstract}
 \noindent\textbf{Keywords:} crack trajectory; circular hole; linear elastic
 fracture mechanics; maximum tangential stress; mode mixity; interaction
