@@ -1075,39 +1075,51 @@ the results.
 
 \section{Conclusions}
 A stress-selected circular-hole point and one prescribed normal segment
-provide the initial state for an incremental trajectory whose later
-directions are determined by current-tip EDI SIFs and the implemented MTS
-rule. The accepted fixed-increment history reaches 92 mm at $P_{23}$.
-Positive mode mixity peaks at $P_{17}$, crosses zero between $P_{21}$ and
-$P_{22}$, and becomes negative while opening-mode intensity continues to
-increase. This changes the sign of the incremental turn and reduces the
-negative absolute inclination late in the history.
+provide the initial state for an incremental LEFM trajectory whose later
+directions are determined by current-tip interaction-integral SIFs and the
+MTS rule. The 4-mm reference history reaches 92 mm. Positive mode mixity
+peaks near the middle of the path, later crosses zero, and becomes negative
+while $K_I$ continues to increase. The sign change reverses the incremental
+turn and produces the observed late reduction of the negative crack
+inclination.
 
-The sign reversal is shared by all stored COD fitting definitions, although
-their late-path differences show finite extraction sensitivity. An
-independently propagated calculation with a substantially coarser exterior
-mesh reproduces the $P_{17}$ mode-mixity maximum, the $P_{21}$--$P_{22}$
-sign-change bracket, and the accepted trajectory through $P_{23}$; the
-maximum separation of corresponding tips is only $0.0674~\mu\mathrm{m}$.
-A fixed-geometry $2h_0$--$h_0$--$h_0/2$ comparison spanning a factor of four
-in $h_{\mathrm{tip}}$ preserves the $P_{21}$--$P_{22}$ sign bracket and shows
-a regular refinement trend. In addition, an independently propagated
-$2h_0$ trajectory reproduces the $P_{17}$ mode-mixity maximum and the
-$P_{21}$--$P_{22}$ sign reversal through $P_{23}$; its maximum separation
-from the production trajectory is only $0.123~\mu\mathrm{m}$ and its
-maximum absolute direction difference is $0.255$ millidegrees. These results
-support robustness with respect to both exterior-mesh density and local tip
-resolution within the tested ranges.
+The numerical evidence separates several aspects of this recursive path
+construction. A centered-hole control shows that the exact straight path is
+a locally attracting fixed path of the implemented EDI--MTS recurrence,
+with one-step multiplier $-0.11415$. An independently propagated exterior-
+mesh perturbation preserves the characteristic mode-mixity events and
+differs from the reference path by at most $0.0674~\mu\mathrm{m}$ at
+corresponding tips. A separate tip-scaled mesh-family perturbation likewise
+preserves the mode-mixity maximum and sign reversal; its independent
+$2h_0$ path differs by at most $0.123~\mu\mathrm{m}$. Because the
+structured-core scale also enters the adjoining exterior size law, the
+latter result is interpreted as a coupled mesh-family sensitivity rather
+than a pure local-tip refinement.
 
-A centered-hole control independently confirms that the straight symmetry
-line is a locally attracting fixed path of the implemented EDI--MTS
-recurrence, with one-step multiplier $-0.11415$. Paired-core, synthetic,
-solver, and archive checks establish a reproducible numerical sequence
-within the chosen discretization. The qualified unsolved
-extension must remain separate from the physical results. Increment-size
-convergence, interaction-domain-radius sensitivity, and a controlled
-boundary comparison remain the next requirements for stronger predictive
-and causal claims.
+The crack-increment study provides the strongest trajectory-convergence
+evidence. Independent 4-, 2-, and 1-mm paths were generated to the same
+92-mm length using one dimensionless coarse numerical family. Successive
+halving of the increment reduces the maximum corresponding-tip separation
+from $35.47$ to $18.29~\mu\mathrm{m}$ and the maximum direction difference
+from $214.93$ to $127.39$ millidegrees. The interpolated local-symmetry
+location moves from 84.149 to 83.550 to 83.268 mm, with successive shifts
+of 0.599 and 0.282 mm. At the same time, the peak raw mode mixity decreases
+almost linearly with the increment, whereas $q_{K,\max}/\Delta a$ and the
+associated turning density vary by less than 1\% across the 4-to-1-mm
+refinement. The data are therefore consistent with a stable continuous-path
+limit in which the residual mode-II correction and discrete MTS turn are
+$O(\Delta a)$ quantities.
+
+These findings support interpretation of the computed trajectory as a
+robust consequence of the evolving elastic field rather than a particular
+mesh or finite-step artifact within the tested ranges. The conclusions
+remain limited to quasi-static LEFM direction selection. The qualified
+unsolved extension is kept separate from the accepted physical history, and
+no claims are made about arrest, branching, plasticity, dynamic instability,
+or subsequent competing crack initiation. Further numerical work should
+decouple tip and exterior refinement and examine interaction-domain-radius
+sensitivity; a controlled boundary-distance study would be needed to isolate
+the physical cause of the late redirection.
 
 \bibliographystyle{unsrt}
 \bibliography{references}
