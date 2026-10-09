@@ -45,6 +45,18 @@ function S = plot_increment_sensitivity_coarse_publication(varargin)
 
     [T4,V4]=local_load_run(run4,4);
     [T2,V2]=local_load_run(run2,2);
+
+    oneStates=fullfile(run1,'states.csv');
+    oneVertices=fullfile(run1,'vertices.csv');
+    has1mm=(exist(oneStates,'file')==2) && (exist(oneVertices,'file')==2);
+
+    if ~has1mm
+        fprintf('\n1-mm run is not present. Showing completed 4-mm / 2-mm comparison.\n');
+        fprintf('The same command will switch automatically to 4/2/1 mm after the 1-mm run exists.\n');
+        S=local_plot_two_level(T4,V4,T2,V2,outDir,opt);
+        return
+    end
+
     [T1,V1]=local_load_run(run1,1);
 
     maxCommon=min([max(T4.crack_length_mm), ...
@@ -252,6 +264,155 @@ function S = plot_increment_sensitivity_coarse_publication(varargin)
             exportgraphics(fig,combinedPng,'Resolution',600);
             S.combinedPdf=combinedPdf;
             S.combinedPng=combinedPng;
+        end
+    end
+end
+
+function S=local_plot_two_level(T4,V4,T2,V2,outDir,opt)
+% Completed-data view before the 1-mm refinement exists.
+
+    maxCommon=min(max(T4.crack_length_mm),max(T2.crack_length_mm));
+    T4=T4(T4.crack_length_mm<=maxCommon+1e-9,:);
+    T2=T2(T2.crack_length_mm<=maxCommon+1e-9,:);
+    V4=V4(V4.crack_length_mm<=maxCommon+1e-9,:);
+    V2=V2(V2.crack_length_mm<=maxCommon+1e-9,:);
+
+    common=T4.crack_length_mm;
+    common=common(ismembertol(common,T2.crack_length_mm,1e-10,'DataScale',1));
+    assert(~isempty(common),'incfig:NoCommonLengths','No exact common crack lengths.');
+    A4=local_rows_at_lengths(T4,common);
+    A2=local_rows_at_lengths(T2,common);
+
+    dx_um=1e6*(A2.tip_x_m-A4.tip_x_m);
+    dy_um=1e6*(A2.tip_y_m-A4.tip_y_m);
+    dr_um=hypot(dx_um,dy_um);
+    dtheta_mdeg=1e3*(A2.theta_deg-A4.theta_deg);
+    dq=A2.KII_over_KI-A4.KII_over_KI;
+
+    kappa4=T4.delta_theta_next_deg/4;
+    kappa2=T2.delta_theta_next_deg/2;
+
+    D4=local_q_diagnostics(T4,4);
+    D2=local_q_diagnostics(T2,2);
+
+    X4=1e3*V4.x_m; Y4=1e3*V4.y_m;
+    X2=1e3*V2.x_m; Y2=1e3*V2.y_m;
+
+    holeCenter=[170,-20]; holeRadius=30;
+    ang=linspace(0,2*pi,361);
+    hx=holeCenter(1)+holeRadius*cos(ang);
+    hy=holeCenter(2)+holeRadius*sin(ang);
+
+    blue=[0.0000 0.4470 0.7410];
+    orange=[0.8500 0.3250 0.0980];
+    gray=[0.45 0.45 0.45];
+
+    fig=figure('Color','w','Units','centimeters','Position',[2 2 18.2 18.0]);
+    tl=tiledlayout(fig,2,3,'TileSpacing','compact','Padding','compact');
+
+    ax1=nexttile(tl,[1 3]); hold(ax1,'on');
+    plot(ax1,hx,hy,'-','Color',gray,'LineWidth',.75,'HandleVisibility','off');
+    plot(ax1,X4,Y4,'-o','Color',blue,'LineWidth',1.0,'MarkerSize',3.1, ...
+        'MarkerFaceColor','w','DisplayName','$\Delta a=4$ mm');
+    plot(ax1,X2,Y2,'-s','Color',orange,'LineWidth',1.0,'MarkerSize',2.6, ...
+        'MarkerIndices',1:2:numel(X2),'MarkerFaceColor','w', ...
+        'DisplayName','$\Delta a=2$ mm');
+    xlabel(ax1,'$x$ [mm]','Interpreter','latex');
+    ylabel(ax1,'$y$ [mm]','Interpreter','latex');
+    axis(ax1,'equal'); box(ax1,'on');
+    legend(ax1,'Location','northwest','NumColumns',2,'Box','off','Interpreter','latex');
+
+    ax2=nexttile(tl); hold(ax2,'on');
+    yline(ax2,0,'-','Color',[.7 .7 .7],'LineWidth',.6,'HandleVisibility','off');
+    plot(ax2,common,dy_um,'-o','Color',orange,'LineWidth',1.0,'MarkerSize',3);
+    xlabel(ax2,'Crack length $a$ [mm]','Interpreter','latex');
+    ylabel(ax2,'$y_{2\mathrm{mm}}-y_{4\mathrm{mm}}$ [$\mu$m]','Interpreter','latex');
+    box(ax2,'on');
+
+    ax3=nexttile(tl); hold(ax3,'on');
+    yline(ax3,0,'-','Color',[.7 .7 .7],'LineWidth',.6,'HandleVisibility','off');
+    plot(ax3,common,dtheta_mdeg,'-o','Color',orange,'LineWidth',1.0,'MarkerSize',3);
+    xlabel(ax3,'Crack length $a$ [mm]','Interpreter','latex');
+    ylabel(ax3,'$\theta_{2\mathrm{mm}}-\theta_{4\mathrm{mm}}$ [mdeg]','Interpreter','latex');
+    box(ax3,'on');
+
+    ax4=nexttile(tl); hold(ax4,'on');
+    yline(ax4,0,'-','Color',[.7 .7 .7],'LineWidth',.6,'HandleVisibility','off');
+    plot(ax4,T4.crack_length_mm,kappa4,'-o','Color',blue, ...
+        'LineWidth',1.0,'MarkerSize',3.0,'DisplayName','$\Delta a=4$ mm');
+    plot(ax4,T2.crack_length_mm,kappa2,'-s','Color',orange, ...
+        'LineWidth',1.0,'MarkerSize',2.4,'DisplayName','$\Delta a=2$ mm');
+    xlabel(ax4,'Crack length $a$ [mm]','Interpreter','latex');
+    ylabel(ax4,'$(\Delta\theta/\Delta a)$ [deg/mm]','Interpreter','latex');
+    box(ax4,'on');
+    legend(ax4,'Location','southwest','Box','off','Interpreter','latex');
+
+    for ax=[ax1 ax2 ax3 ax4]
+        set(ax,'FontName','Times New Roman','FontSize',8.5, ...
+            'LineWidth',.75,'TickDir','out');
+        grid(ax,'off');
+    end
+
+    Metrics=table(common, ...
+        1e3*A4.tip_x_m,1e3*A4.tip_y_m, ...
+        1e3*A2.tip_x_m,1e3*A2.tip_y_m, ...
+        dx_um,dy_um,dr_um,dtheta_mdeg, ...
+        A4.KII_over_KI,A2.KII_over_KI,dq, ...
+        'VariableNames',{'crack_length_mm', ...
+        'x_4mm_mm','y_4mm_mm','x_2mm_mm','y_2mm_mm', ...
+        'dx_um','dy_um','dr_um','dtheta_mdeg','q_4mm','q_2mm','dq'});
+
+    Native=table();
+    Native.increment_mm=[4*ones(height(T4),1);2*ones(height(T2),1)];
+    Native.crack_length_mm=[T4.crack_length_mm;T2.crack_length_mm];
+    Native.q=[T4.KII_over_KI;T2.KII_over_KI];
+    Native.q_over_da=[T4.KII_over_KI/4;T2.KII_over_KI/2];
+    Native.turn_density_deg_per_mm=[kappa4;kappa2];
+
+    S=struct();
+    S.has1mm=false;
+    S.maxCommonCrackLength_mm=maxCommon;
+    S.metrics=Metrics;
+    S.native=Native;
+    S.twoMinusFour=local_pair_metrics(dy_um,dr_um,dtheta_mdeg,dq);
+    S.oneMinusTwo=[];
+    S.level4mm=D4;
+    S.level2mm=D2;
+    S.level1mm=[];
+
+    fprintf('\n============================================================\n');
+    fprintf('CRACK-INCREMENT SENSITIVITY: COMPLETED 4 mm / 2 mm VIEW\n');
+    fprintf('============================================================\n');
+    fprintf('  exact common range       : %.6f--%.6f mm\n',min(common),max(common));
+    local_print_pair('2mm - 4mm',S.twoMinusFour);
+    local_print_level('4 mm',D4);
+    local_print_level('2 mm',D2);
+    if D4.crossingExists && D2.crossingExists
+        fprintf('  local-symmetry shift 2-4 : %+.9f mm\n', ...
+            D2.localSymmetry_mm-D4.localSymmetry_mm);
+    end
+
+    if opt.Export
+        names={'trajectory','vertical_deviation','direction_deviation','turn_density'};
+        axesList={ax1,ax2,ax3,ax4};
+        panelPdf=cell(4,1); panelPng=cell(4,1);
+        for jj=1:4
+            panelPdf{jj}=fullfile(outDir,[names{jj} '.pdf']);
+            panelPng{jj}=fullfile(outDir,[names{jj} '.png']);
+            local_export_axis(axesList{jj},panelPdf{jj},panelPng{jj},names{jj});
+        end
+        metricsCsv=fullfile(outDir,'figure_increment_sensitivity_metrics.csv');
+        nativeCsv=fullfile(outDir,'figure_increment_sensitivity_native.csv');
+        writetable(Metrics,metricsCsv);
+        writetable(Native,nativeCsv);
+        S.panelPdf=panelPdf; S.panelPng=panelPng;
+        S.metricsCsv=metricsCsv; S.nativeCsv=nativeCsv;
+
+        if opt.ExportCombined
+            S.combinedPdf=fullfile(outDir,'combined_preview.pdf');
+            S.combinedPng=fullfile(outDir,'combined_preview.png');
+            exportgraphics(fig,S.combinedPdf,'ContentType','vector');
+            exportgraphics(fig,S.combinedPng,'Resolution',600);
         end
     end
 end
