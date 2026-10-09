@@ -1,5 +1,15 @@
 # Pilot manuscript: crack trajectory from a circular hole
 
+Current correction (2026-10-09): the manuscript retains its existing structure
+and now uses the completed isolated-core tip-resolution study. See
+[ISOLATED_TIP_REPLACEMENT.md](ISOLATED_TIP_REPLACEMENT.md) for portable reproduction
+and [FIGURE_CONSISTENCY_AUDIT.md](FIGURE_CONSISTENCY_AUDIT.md) for all Figures 1--8
+and S1. Run `python paper/verify_isolated_tip_correction.py` for the current
+portable data/table/figure checks. The older `verify_manuscript.py` is a
+historical full-local-archive audit with obsolete pilot layout assumptions;
+its reference manifests are preserved, not overwritten by this correction.
+The historical pilot notes below are retained as development history.
+
 Manuscript layer prepared on `paper-pilot-crack-trajectory`, based on the
 current plotting/development snapshot
 `cfdf0f110010d688a4e3c48f6d88a00fd17dc698` (2026-10-06).

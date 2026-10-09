@@ -1,0 +1,40 @@
+{
+  "pass": true,
+  "baselineFiles": 1468,
+  "unchangedBaselineFiles": 1449,
+  "changedBaselineFiles": [
+    "paper/main.pdf",
+    "paper/main.tex",
+    "paper/figures/increment_sensitivity/direction_deviation.pdf",
+    "paper/figures/increment_sensitivity/direction_deviation.png",
+    "paper/figures/increment_sensitivity/trajectory.pdf",
+    "paper/figures/increment_sensitivity/trajectory.png",
+    "paper/figures/m1_mesh_sensitivity/figure.tex",
+    "paper/figures/tip_resolution_sensitivity/direction_deviation.pdf",
+    "paper/figures/tip_resolution_sensitivity/direction_deviation.png",
+    "paper/figures/tip_resolution_sensitivity/figure.tex",
+    "paper/figures/tip_resolution_sensitivity/figure_tip2h0_vs_reference_publication_metrics.csv",
+    "paper/figures/tip_resolution_sensitivity/mode_mixity.pdf",
+    "paper/figures/tip_resolution_sensitivity/mode_mixity.png",
+    "paper/figures/tip_resolution_sensitivity/trajectory.pdf",
+    "paper/figures/tip_resolution_sensitivity/trajectory.png",
+    "paper/figures/tip_resolution_sensitivity/vertical_deviation.pdf",
+    "paper/figures/tip_resolution_sensitivity/vertical_deviation.png",
+    "verification/crack_path/plot_increment_sensitivity_coarse_publication.m",
+    "verification/crack_path/plot_tip2h0_vs_reference_publication.m"
+  ],
+  "unexpectedChanges": 0,
+  "labelsUnchanged": true,
+  "figureOrderUnchanged": true,
+  "referenceMacroBlockUnchanged": true,
+  "m1NumericalResultsTextUnchanged": true,
+  "incrementResultsTextUnchanged": true,
+  "pdfPages": 24,
+  "allFigureReferencesResolved": true,
+  "overfullBoxes": 0,
+  "visualReview": "24 pages and 30 panels inspected",
+  "limitations": [
+    "M1 raw history unavailable",
+    "mesh hierarchy coordinates/connectivity unavailable"
+  ]
+}

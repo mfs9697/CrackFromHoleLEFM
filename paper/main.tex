@@ -149,7 +149,7 @@ interactions.
 
 For an incremental trajectory calculation, however, the stress-intensity
 factors are not merely postprocessed outputs.  They determine the next
-segment and thereby perturb every later boundary-value problem.  Numerical
+segment, perturbing each later boundary-value problem.  Numerical
 SIF extraction therefore enters the propagation algorithm recursively.
 The mixed-mode interaction-integral construction provides a natural
 energetic route to separating $K_I$ and $K_{II}$~\cite{YauWangCorten1980}.
@@ -190,8 +190,8 @@ against prescribed asymptotic fields and independent crack-opening-
 displacement estimates.  A centered-hole control tests whether the same
 EDI--MTS recurrence preserves and restores the exact straight symmetry
 path.  Exterior-mesh density is perturbed independently, while a separate
-structured-tip mesh-family study varies the near-tip scale together with its
-coupled exterior size law.  Finally, crack-increment sensitivity is examined through independently
+structured-tip resolution study varies the near-tip scale while holding the
+requested exterior sizing law fixed.  Finally, crack-increment sensitivity is examined through independently
 generated 4-, 2-, and 1-mm paths using one dimensionless numerical family.
 Particular attention is paid to the evolution of the mode mixity
 $K_{II}/K_I$, the location of its positive maximum and sign reversal, the
@@ -378,7 +378,7 @@ leaving the 12678-element paired core and the 11316-element interaction-
 domain support unchanged. These fixed-geometry checks were used only to
 qualify M1 for a subsequent independent trajectory calculation.
 
-\subsection{Structured-tip mesh-family sensitivity}
+\subsection{Structured-tip resolution sensitivity}
 A separate fixed-geometry study varies the structured near-tip scale while
 keeping the accepted crack polyline, material, loading, interaction-domain
 radii, far-field cap, transition length, and MTS formulation unchanged.
@@ -397,17 +397,17 @@ $r_i=0.4$ mm to $r_o=2.6$ mm. The paired cores contain 3318, 12678, and
 19/28/23/18 native points at $2h_0$, 38/55/44/34 at $h_0$, and
 74/108/86/67 at $h_0/2$.
 
-A repository-wide reproducibility audit showed that the same scale factor
-also enters the adjoining exterior target-size law used by the mesh
-generator. Consequently, this experiment is not interpreted as a strictly
-tip-only refinement: changing $h_{\rm tip}$ also changes part of the
-connected exterior sizing while leaving the physical boundary, EDI radii,
-far-field cap, and transition length fixed. The results below therefore
-measure sensitivity to a \emph{tip-scaled mesh family}. The independent M1
-study, in which the paired tip core is held fixed while only the exterior
-law is relaxed, supplies the complementary exterior-only perturbation.
+The core scale is set by \texttt{CoreScale}; \texttt{ExteriorScale}
+controls the requested exterior sizing. For this comparison,
+\texttt{CoreScale} takes the values $2$, $1$, and $1/2$, while
+\texttt{ExteriorScale}=1 preserves the requested reference exterior sizing
+law. The exterior is remeshed to conform to each core interface, so its
+connectivity need not be identical across resolutions. The physical
+boundary, EDI radii, far-field cap, and transition length remain fixed.
+The independent M1 study supplies the complementary exterior-only
+perturbation with the paired tip core held fixed.
 
-To test accumulation of this mesh-family perturbation, the $2h_0$ level is
+To test accumulation of this structured-tip resolution change, the $2h_0$ level is
 also propagated independently through the accepted 92-mm path. The
 prescribed first segment $P_0P_1$ is common, but the $P_1$ elastic problem
 is recomputed with the $2h_0$ family; its own $K_I^{(1)}$ and
@@ -489,7 +489,7 @@ postprocessing.
 Prescribed nodal pure-I, pure-II, and tiny-mixed $(K_I,K_{II})=(1,10^{-4})$
 fields test modal recovery and leakage on each qualified mesh. Recovery
 and tiny-mixed relative-error gates are $2\times10^{-4}$; the pure-mode
-cross-leakage and superposition gates are $10^{-10}$. The observed maximum
+cross-leakage and superposition gates are $10^{-10}$. On the reference meshes, the observed maximum
 tiny-mixed relative error is $\SyntheticRelativeError$. These controls
 qualify extraction capability and topology rather than the global physical
 finite-element error.
@@ -724,15 +724,14 @@ the underlying elastic solution.
 \input{figures/cod/figure}
 
 
-\subsection{Sensitivity to the tip-scaled mesh family}
-The fixed-geometry three-level comparison changes the structured tip scale
-together with the coupled near-exterior sizing described above. It should
-therefore be read as a mesh-family sensitivity study rather than a pure
-local-tip refinement. At $P_{17}$, halving the production tip size from
-$0.0270123$ to $0.0135062$ mm changes $K_I$ by $0.00141\%$,
-$K_{II}/K_I$ by $1.11\times10^{-6}$ in absolute value, and the MTS turn by
-only $-1.27\times10^{-4}$ degrees. Thus the positive mode-mixity maximum is
-stable under this refinement of the tip-scaled family.
+\subsection{Sensitivity to structured-tip resolution}
+The fixed-geometry three-level comparison changes the structured-tip
+resolution with the requested exterior sizing law held at its reference
+value. At $P_{17}$, halving the production tip size from
+$0.0270123$ to $0.0135062$ mm changes $K_I$ by $0.00134\%$,
+$K_{II}/K_I$ by $1.05\times10^{-6}$ in absolute value, and the MTS turn by
+only $-1.20\times10^{-4}$ degrees. Thus the positive mode-mixity maximum is
+stable under this structured-tip refinement at fixed requested exterior sizing.
 
 The more discriminating comparison is the $P_{21}$--$P_{22}$ bracket, where
 $K_{II}$ changes sign. Table~\ref{tab:tipmesh} shows three physically
@@ -745,10 +744,11 @@ are unchanged.
 \centering
 \small
 \setlength{\tabcolsep}{2.8pt}
-\caption{Fixed-geometry sensitivity to the tip-scaled mesh family. The crack
+\caption{Fixed-geometry sensitivity to structured-tip resolution. The crack
 geometries at $P_{21}$ and $P_{22}$, material, loading, EDI radii, far-field
 cap, transition length, and MTS formulation are unchanged; the structured
-tip scale and the coupled near-exterior sizing change together. The final
+tip scale changes while \texttt{ExteriorScale}=1 fixes the requested
+exterior sizing law. Exterior connectivity need not be identical. The final
 column is a linear interpolation between solved mode-mixity values, not an
 independently solved crack state.}
 \label{tab:tipmesh}
@@ -759,25 +759,25 @@ $q_K(P_{21})$ & $\Delta\theta_{22}$ [deg] &
 $q_K(P_{22})$ & $\Delta\theta_{23}$ [deg] &
 $a_{\rm LS}$ [mm]\\
 \midrule
-$2h_0$ & 0.0540247 & $+7.79244\times10^{-5}$ & $-0.00892948$ &
-$-2.14457\times10^{-3}$ & $+0.24574713$ & 84.140247\\
+$2h_0$ & 0.0540247 & $+7.79573\times10^{-5}$ & $-0.00893325$ &
+$-2.14508\times10^{-3}$ & $+0.24580511$ & 84.140272\\
 $h_0$ & 0.0270123 & $+8.13427\times10^{-5}$ & $-0.00932118$ &
 $-2.14159\times10^{-3}$ & $+0.24540569$ & 84.146370\\
-$h_0/2$ & 0.0135062 & $+8.30887\times10^{-5}$ & $-0.00952126$ &
-$-2.13979\times10^{-3}$ & $+0.24519944$ & 84.149515\\
+$h_0/2$ & 0.0135062 & $+8.30305\times10^{-5}$ & $-0.00951460$ &
+$-2.13985\times10^{-3}$ & $+0.24520656$ & 84.149410\\
 \bottomrule
 \end{tabular}
 \end{table}
 
-The interpolated crossing moves from $84.140247$ mm at $2h_0$ to
-$84.146370$ mm at $h_0$ and $84.149515$ mm at $h_0/2$. The successive
-changes, $6.12~\mu\mathrm{m}$ and $3.15~\mu\mathrm{m}$, are tiny relative
+The interpolated crossing moves from $84.140272$ mm at $2h_0$ to
+$84.146370$ mm at $h_0$ and $84.149410$ mm at $h_0/2$. The successive
+changes, $6.10~\mu\mathrm{m}$ and $3.04~\mu\mathrm{m}$, are tiny relative
 to the 4-mm crack increment. Taken only as a three-level diagnostic, their
-ratio corresponds to an observed order of approximately $0.96$ for this
-interpolated quantity. Because the mesh change is coupled and the crossing
-is inferred between states separated by one full crack increment, this
-regularity is not interpreted as either a pure local-discretization order
-or micrometer-scale physical accuracy.
+ratio corresponds to an observed order of approximately $1.00$ for this
+interpolated quantity. The exterior is remeshed to conform to each core and the crossing
+is inferred between states separated by one full crack increment. This
+three-level regularity is therefore not treated as a formal convergence
+order or as micrometer-scale physical accuracy.
 
 The independent $2h_0$ trajectory tests whether these small fixed-geometry
 differences accumulate along the path. Figure~
@@ -785,28 +785,28 @@ differences accumulate along the path. Figure~
 the exterior-mesh study. The trajectories are visually indistinguishable
 at specimen scale [Fig.~\ref{fig:tipres-trajectory}]. Over the full accepted
 history, the maximum vertical-coordinate difference is
-$0.12257~\mu\mathrm{m}$ and the maximum Euclidean separation of
-corresponding tips is $0.12295~\mu\mathrm{m}$, both at $P_{23}$. The
-maximum absolute direction difference is $0.25475$ millidegrees at
+$0.12760~\mu\mathrm{m}$ and the maximum Euclidean separation of
+corresponding tips is $0.12800~\mu\mathrm{m}$, both at $P_{23}$. The
+maximum absolute direction difference is $0.24539$ millidegrees at
 $P_{22}$ [Figs.~\ref{fig:tipres-dy} and \ref{fig:tipres-dtheta}].
 
 The mechanical history is equally stable. Both mesh families place the
 positive maximum of $K_{II}/K_I$ at $P_{17}$ and retain positive mode
 mixity at $P_{21}$ and negative mode mixity at $P_{22}$
 [Fig.~\ref{fig:tipres-q}]. The maximum absolute difference in
-$K_{II}/K_I$ is $6.72\times10^{-7}$. Linear interpolation of the two
+$K_{II}/K_I$ is $2.65\times10^{-7}$. Linear interpolation of the two
 independently propagated $P_{21}$--$P_{22}$ brackets gives
 $a_{\mathrm{LS}}=84.146369912$ mm for $h_0$ and
-$84.145910853$ mm for $2h_0$, a difference of
-$-0.000459$ mm ($-0.459~\mu\mathrm{m}$). As above, this is only a
+$84.146276379$ mm for $2h_0$, a difference of
+$-0.000094$ mm ($-0.094~\mu\mathrm{m}$). As above, this is only a
 sub-increment sensitivity diagnostic, not a micrometer-accurate physical
 location of local symmetry.
 
 The fixed-geometry and independent-path results therefore show that the
-reported characteristic events are insensitive to a substantial change of
-this tip-scaled mesh family. They do not by themselves isolate the effect of
-the structured core from the coupled exterior sizing; an explicitly
-decoupled core-only test would be required for that narrower claim.
+reported characteristic events are insensitive to the tested structured-tip
+resolution changes with the requested exterior sizing law fixed. This
+parameter isolation does not imply identical exterior connectivity or bound
+every discretization error.
 
 \input{figures/tip_resolution_sensitivity/figure}
 
@@ -1027,13 +1027,12 @@ Mesh sensitivity is addressed by two complementary perturbations. The M1
 calculation is a clean exterior-only change: it retains the paired tip core
 and EDI support while substantially reducing exterior resolution, and its
 independently propagated path remains within $0.0674~\mu\mathrm{m}$ of the
-reference tips. The $2h_0$--$h_0$--$h_0/2$ family changes the structured tip
-scale, but the repository audit showed that the same scale also enters the
-adjoining exterior size law. Its results therefore demonstrate robustness
-to a coupled tip-scaled mesh-family perturbation rather than a strictly
-local tip-only refinement. The independently propagated $2h_0$ path remains
-within $0.123~\mu\mathrm{m}$ of the reference path and preserves the same
-mode-mixity maximum and sign-change bracket.
+reference tips. The $2h_0$--$h_0$--$h_0/2$ comparison changes structured-tip resolution
+with \texttt{ExteriorScale}=1, holding the requested exterior sizing law
+fixed while allowing conforming exterior remeshing. The independently
+propagated $2h_0$ path remains within $0.128~\mu\mathrm{m}$ of the
+reference path and preserves the mode-mixity maximum and sign-change
+bracket.
 
 Table~\ref{tab:independent-sensitivity} summarizes these two independent
 mesh-family tests. Their submicrometer path differences are much smaller
@@ -1060,15 +1059,14 @@ $\max|\Delta q_K|$ &
 $\Delta a_{\rm LS}$ [$\mu$m]\\
 \midrule
 Coarser exterior M1 & 0.06734 & 0.06742 & 0.07304 & $2.89\times10^{-7}$ & $-0.322$\\
-Tip-scaled $2h_0$ family & 0.12257 & 0.12295 & 0.25475 & $6.72\times10^{-7}$ & $-0.459$\\
+Isolated-core $2h_0$ & 0.12760 & 0.12800 & 0.24539 & $2.65\times10^{-7}$ & $-0.094$\\
 \bottomrule
 \end{tabular}
 \end{table}
 
-The remaining numerical questions are therefore narrower. A decoupled
-core-only refinement would be required to isolate structured-tip resolution
-from the exterior size law, and controlled interaction-domain-radius
-variation is still needed to quantify extraction-domain sensitivity.
+The remaining numerical questions are therefore narrower. Controlled
+interaction-domain-radius variation is still needed to quantify
+extraction-domain sensitivity.
 Likewise, local reflection pairing, synthetic recovery, residual gates, and
 element-quality gates establish numerical acceptance but do not by
 themselves bound every physical discretization error. The historical 8-mm
@@ -1095,8 +1093,8 @@ the results.
 \section{Conclusions}
 A stress-selected circular-hole point and one prescribed normal segment
 provide the initial state for an incremental LEFM trajectory whose later
-directions are determined by current-tip interaction-integral SIFs and the
-MTS rule. The 4-mm reference history reaches 92 mm. Positive mode mixity
+directions are determined by interaction-integral SIFs at the current tip
+and the MTS rule. The 4-mm reference history reaches 92 mm. Positive mode mixity
 peaks near the middle of the path, later crosses zero, and becomes negative
 while $K_I$ continues to increase. The sign change reverses the incremental
 turn and produces the observed late reduction of the negative crack
@@ -1108,12 +1106,12 @@ a locally attracting fixed path of the implemented EDI--MTS recurrence,
 with one-step multiplier $-0.11415$. An independently propagated exterior-
 mesh perturbation preserves the characteristic mode-mixity events and
 differs from the reference path by at most $0.0674~\mu\mathrm{m}$ at
-corresponding tips. A separate tip-scaled mesh-family perturbation likewise
+corresponding tips. A separate structured-tip resolution study likewise
 preserves the mode-mixity maximum and sign reversal; its independent
-$2h_0$ path differs by at most $0.123~\mu\mathrm{m}$. Because the
-structured-core scale also enters the adjoining exterior size law, the
-latter result is interpreted as a coupled mesh-family sensitivity rather
-than a pure local-tip refinement.
+$2h_0$ path differs by at most $0.128~\mu\mathrm{m}$. Here
+\texttt{ExteriorScale}=1 fixes the requested exterior sizing law while
+structured-tip resolution changes; conforming exterior connectivity is
+not required to remain identical.
 
 The crack-increment study provides the strongest trajectory-convergence
 evidence. Independent 4-, 2-, and 1-mm paths were generated to the same
@@ -1135,8 +1133,7 @@ mesh or finite-step artifact within the tested ranges. The conclusions
 remain limited to quasi-static LEFM direction selection. The qualified
 unsolved extension is kept separate from the accepted physical history, and
 no claims are made about arrest, branching, plasticity, dynamic instability,
-or subsequent competing crack initiation. Further numerical work should
-decouple tip and exterior refinement and examine interaction-domain-radius
+or subsequent competing crack initiation. Further numerical work should examine interaction-domain-radius
 sensitivity; a controlled boundary-distance study would be needed to isolate
 the physical cause of the late redirection.
 

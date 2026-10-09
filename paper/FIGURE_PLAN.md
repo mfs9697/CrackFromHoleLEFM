@@ -1,5 +1,12 @@
 # Proposed compact figure set
 
+This is the historical pilot selection below. The current manuscript includes
+Figures 1--8 and S1 (30 panels). Its authoritative source/action map and
+reproduction limitations are in [FIGURE_CONSISTENCY_AUDIT.md](FIGURE_CONSISTENCY_AUDIT.md).
+The corrected isolated-core figure uses the portable dataset documented in
+[ISOLATED_TIP_REPLACEMENT.md](ISOLATED_TIP_REPLACEMENT.md); the historical coupled
+tip-resolution CSV is not a publication fallback.
+
 Figures 1--4 and S1 are redrawn in MATLAB from the audited manuscript snapshot and exported as separate vector PDF panels. Figure 5 is generated independently from the saved reference and M1 trajectory archives. LaTeX assembles all panels with `subcaption`; panel letters and panel titles are not embedded in the graphics. Figure generation does not alter the scientific records or run the numerical solver.
 Existing plot identifiers below name their scientific source, not a claim
 that every original plot image is currently present on disk.
