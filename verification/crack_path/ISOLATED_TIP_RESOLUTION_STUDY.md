@@ -28,7 +28,7 @@ D = main_isolated_tip_resolution_study(); % qualification only
 D = main_isolated_tip_resolution_study('AllowPhysicalSolves',true);
 ```
 
-Each invocation creates a timestamped directory under `verification/crack_path/isolated_tip_resolution_study_*`. An explicit `OutputDir` must not already exist. Historical output directories and archives are never selected by this driver.
+Each fresh invocation creates a timestamped directory under `verification/crack_path/isolated_tip_resolution_study_*`. An explicit `OutputDir` must not already exist. To continue a particular interrupted study, pass its directory as `ResumeStudyDir` instead of `OutputDir`. That explicit continuation validates and reuses its saved qualified candidates and accepted compact/field results. See [the native-face fingerprint fix and resume trace](ISOLATED_NATIVE_FINGERPRINT_FIX.md). Historical output directories and archives are never selected automatically.
 
 The driver reads the exact committed Stage-I state and accepted reference vertices. It verifies that the requested P17/P21/P22/P23 states are accepted and have segment lengths compatible with the frozen increment. It then:
 
@@ -57,4 +57,4 @@ MATLAB R2023a checks performed without physical solves:
 
 The portable suite verifies the historical size-law arithmetic, exact omitted-versus-explicit mesh equality, changed core fingerprints with unchanged reference requested exterior law, candidate-cache mismatch rejection, new and legacy checkpoint mismatch rejection, new and legacy resume mismatch rejection, P1 compact-cache mismatch rejection and the study's output-overwrite guard. The archive checks exercise scale rejection through both public physical solver entry points with solves disabled.
 
-The complete eight-state physical study and independent physical trajectory have **not** been executed. Representative prescribed-field qualifications establish mesh and synthetic eligibility, not physical convergence results.
+These verification results describe the original scale-separation implementation. Representative prescribed-field qualifications establish mesh and synthetic eligibility, not physical convergence results. The later physical study, interrupted P1 fingerprint diagnosis, and continuation evidence are recorded in [ISOLATED_NATIVE_FINGERPRINT_FIX.md](ISOLATED_NATIVE_FINGERPRINT_FIX.md).

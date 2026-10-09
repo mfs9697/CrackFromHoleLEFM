@@ -568,6 +568,8 @@ function F = main_stage2_embed_scaled_core_full_domain_theta0(varargin)
     candidate.syntheticGates=syntheticGates;
     candidate.scientificallyReadyForOnePhysicalSolve=pass;
     candidate.source=sourceLabel;
+    candidate.nativeSamplingFingerprint=stage2_native_sampling_fingerprint( ...
+        candidate,meshGlobal,mat,'stage2full:NativeSampling');
 
     F=struct();
     F.summary=Summary;
@@ -580,6 +582,7 @@ function F = main_stage2_embed_scaled_core_full_domain_theta0(varargin)
     F.crackLocal=cr;
     F.Core=Core;
     F.coreMeshControls=candidate.coreMeshControls;
+    F.nativeSamplingFingerprint=candidate.nativeSamplingFingerprint;
     F.exteriorDesign=ext;
     F.exteriorMeshControls=candidate.exteriorMeshControls;
     F.sampleCounts=table(windows(:,1),windows(:,2),sampleN, ...

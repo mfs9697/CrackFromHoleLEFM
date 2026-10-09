@@ -193,21 +193,11 @@ function R = main_stage2_theta0_physical_solve(varargin)
         'stage2phys:PhysicalConfig', ...
         'Expected frozen unit remote-y loading with minimal anchoring.');
 
-    % Pre-solve native sampling fingerprint.
-    zeroU=zeros(2*size(P6,1),1);
-    [rZero,~,face0]=native_COD_audit(mesh,zeroU,mat,crack,8);
-    rrZero=rZero/a0;
-    windows=[.04 .20;.04 .30;.08 .30;.12 .30];
-    sampleN=zeros(4,1);
-    for k=1:4
-        sampleN(k)=nnz(rrZero>=windows(k,1)&rrZero<=windows(k,2));
-    end
-    if face0.nUpper~=coreFP.expectedFaceNodes || ...
-            face0.nLower~=coreFP.expectedFaceNodes || ...
-            face0.gridMismatch>1e-12 || any(sampleN~=coreFP.expectedNative)
-        error('stage2phys:NativeSampling', ...
-            'Exact qualified native sampling/core-face fingerprint changed.');
-    end
+    % Separate the canonical core from the complete qualified crack face.
+    fingerprintCandidate=candidate;
+    fingerprintCandidate.coreMeshControls=coreFP;
+    nativeFP=stage2_native_sampling_fingerprint(fingerprintCandidate,mesh,mat);
+    windows=nativeFP.windows;
 
     % Plate geometry and minimal anchors.
     xmin=min(P(:,1));xmax=max(P(:,1));
@@ -460,6 +450,7 @@ function R = main_stage2_theta0_physical_solve(varargin)
             'alternativeQualifiedCandidate',logical(opt.AlternativeQualifiedCandidate));
 
         meta.coreScale=coreFP.scale;
+        meta.nativeSamplingFingerprint=nativeFP;
         meta.exteriorMeshControls=crack_candidate_exterior_identity(candidate);
         tmp=[cp '.incomplete.mat'];
         if exist(tmp,'file')==2
@@ -552,8 +543,8 @@ function R = main_stage2_theta0_physical_solve(varargin)
         abs(s.solverInfo.bottomResultant+A)<=1e-12 && ...
         abs(s.solverInfo.rawNetVerticalResultant)<=1e-12;
     gates.nativeFacePairing= ...
-        face.nUpper==coreFP.expectedFaceNodes && ...
-        face.nLower==coreFP.expectedFaceNodes && ...
+        face.nUpper==nativeFP.nUpper && ...
+        face.nLower==nativeFP.nLower && ...
         face.gridMismatch<=1e-12;
     expectedFitNative=reshape([coreFP.expectedNative.';coreFP.expectedNative.'],[],1);
     gates.nativeSamplingExact=isequal(fitTable.n_native,expectedFitNative);
@@ -633,6 +624,7 @@ function R = main_stage2_theta0_physical_solve(varargin)
         R.exteriorMeshControls=candidate.exteriorMeshControls;
     end
     R.coreMeshControls=coreFP;
+    R.nativeSamplingFingerprint=nativeFP;
     R.frozenPhysics=crack_physics_signature(C);
     R.interpretation=[ ...
         'One qualified theta_1=0 physical LEFM solve. ', ...
@@ -700,11 +692,9 @@ function fp=local_stage2_core_fingerprint(candidate,a0)
     if abs(fp.scale-1)<=1e-14
         expected=[12678,11316,10278];
         native=[38;55;44;34];
-        faceNodes=138;
     elseif abs(fp.scale-2)<=1e-14
         expected=[3318,2976,2700];
         native=[19;28;23;18];
-        faceNodes=70;
     else
         error('stage2phys:CoreScale', ...
             'Unsupported theta0 structured-core scale %.16g.',fp.scale);
@@ -732,7 +722,6 @@ function fp=local_stage2_core_fingerprint(candidate,a0)
             'Candidate theta0 core fingerprint metadata changed.');
     end
     fp.expectedNative=fp.expectedNativeSamples;
-    fp.expectedFaceNodes=faceNodes;
 end
 
 function local_require_candidate(c)
