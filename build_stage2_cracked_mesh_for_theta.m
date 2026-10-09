@@ -5,20 +5,33 @@ function [G2, D, M, Mc] = build_stage2_cracked_mesh_for_theta(C, I, theta, varar
 % theta is measured from the material-side normal to the hole boundary.
 %
 % Optional NArc (default 160): number of retained circular-hole arc points
-% in the temporary appended-hole polygon. Existing callers are unchanged.
+% in the temporary appended-hole polygon.
+%
+% Optional A0Override: explicit short-crack length for the temporary Stage-II
+% carrier. When empty, geom_hole_shortcrack retains its historical C.a0
+% default. This keeps existing callers unchanged while allowing controlled
+% crack-increment studies to override the reserved Stage-II increment without
+% mutating the accepted Stage-I configuration struct.
 
     ip = inputParser;
     addParameter(ip, 'PlotGeom', false, @(x)islogical(x) || isnumeric(x));
     addParameter(ip, 'PlotMesh', false, @(x)islogical(x) || isnumeric(x));
     addParameter(ip, 'PlotCollapsed', false, @(x)islogical(x) || isnumeric(x));
     addParameter(ip, 'NArc', 160, @(x)isnumeric(x) && isscalar(x) && isfinite(x) && x>=16 && x==round(x));
+    addParameter(ip, 'A0Override', [], @(x)isempty(x) || ...
+        (isnumeric(x) && isscalar(x) && isfinite(x) && x>0));
     parse(ip, varargin{:});
 
     plotGeom      = logical(ip.Results.PlotGeom);
     plotMesh      = logical(ip.Results.PlotMesh);
     plotCollapsed = logical(ip.Results.PlotCollapsed);
 
-    G2 = geom_hole_shortcrack(C, I, theta);
+    if isempty(ip.Results.A0Override)
+        G2 = geom_hole_shortcrack(C, I, theta);
+    else
+        G2 = geom_hole_shortcrack(C, I, theta, ...
+            'a0', ip.Results.A0Override);
+    end
 
     D = build_domain_hole_pencil_polyline( ...
         G2.crack.polyline, ...
