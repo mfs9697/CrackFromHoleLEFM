@@ -721,31 +721,33 @@ the underlying elastic solution.
 \input{figures/cod/figure}
 
 
-\subsection{Sensitivity to local tip resolution}
-The controlled local-resolution test holds the crack geometry fixed, so the
-differences below isolate near-tip discretization sensitivity rather than
-accumulated path divergence. At $P_{17}$, halving the production tip size
-from $0.0270123$ to $0.0135062$ mm changes $K_I$ by $0.00141\%$,
+\subsection{Sensitivity to the tip-scaled mesh family}
+The fixed-geometry three-level comparison changes the structured tip scale
+together with the coupled near-exterior sizing described above. It should
+therefore be read as a mesh-family sensitivity study rather than a pure
+local-tip refinement. At $P_{17}$, halving the production tip size from
+$0.0270123$ to $0.0135062$ mm changes $K_I$ by $0.00141\%$,
 $K_{II}/K_I$ by $1.11\times10^{-6}$ in absolute value, and the MTS turn by
 only $-1.27\times10^{-4}$ degrees. Thus the positive mode-mixity maximum is
-stable under local refinement.
+stable under this refinement of the tip-scaled family.
 
 The more discriminating comparison is the $P_{21}$--$P_{22}$ bracket, where
 $K_{II}$ changes sign. Table~\ref{tab:tipmesh} shows three physically
-qualified tip resolutions spanning a factor of four in $h_{\mathrm{tip}}$.
-Every level keeps $K_{II}/K_I>0$ at $P_{21}$ and $K_{II}/K_I<0$ at $P_{22}$,
-so the local-symmetry bracket and the associated reversal of MTS turning
-sense are unchanged.
+qualified levels spanning a factor of four in $h_{\mathrm{tip}}$. Every
+level keeps $K_{II}/K_I>0$ at $P_{21}$ and $K_{II}/K_I<0$ at $P_{22}$, so
+the local-symmetry bracket and the associated reversal of MTS turning sense
+are unchanged.
 
 \begin{table}[tbp]
 \centering
 \small
 \setlength{\tabcolsep}{2.8pt}
-\caption{Fixed-geometry sensitivity to structured near-tip resolution.
-The crack geometries at $P_{21}$ and $P_{22}$, exterior mesh law, EDI radii,
-loading, and MTS formulation are unchanged. The final column is the linear
-interpolation of the two solved mode-mixity values and is not an independently
-solved crack state.}
+\caption{Fixed-geometry sensitivity to the tip-scaled mesh family. The crack
+geometries at $P_{21}$ and $P_{22}$, material, loading, EDI radii, far-field
+cap, transition length, and MTS formulation are unchanged; the structured
+tip scale and the coupled near-exterior sizing change together. The final
+column is a linear interpolation between solved mode-mixity values, not an
+independently solved crack state.}
 \label{tab:tipmesh}
 \begin{tabular}{lrrrrrr}
 \toprule
@@ -764,31 +766,30 @@ $-2.13979\times10^{-3}$ & $+0.24519944$ & 84.149515\\
 \end{tabular}
 \end{table}
 
-The interpolated crossing therefore moves from $84.140247$ mm at $2h_0$ to
-$84.146370$ mm at $h_0$ and $84.149515$ mm at $h_0/2$. The successive changes,
-$6.12~\mu\mathrm{m}$ and $3.15~\mu\mathrm{m}$, are tiny relative to the
-4-mm crack increment. Taken only as a three-level diagnostic, their ratio
-corresponds to an observed order of approximately $0.96$ for this
-interpolated quantity. This numerical regularity should not be interpreted
-as micrometer-scale physical accuracy of $a_{\mathrm{LS}}$: the crossing is
-still inferred between two states separated by one full crack increment.
+The interpolated crossing moves from $84.140247$ mm at $2h_0$ to
+$84.146370$ mm at $h_0$ and $84.149515$ mm at $h_0/2$. The successive
+changes, $6.12~\mu\mathrm{m}$ and $3.15~\mu\mathrm{m}$, are tiny relative
+to the 4-mm crack increment. Taken only as a three-level diagnostic, their
+ratio corresponds to an observed order of approximately $0.96$ for this
+interpolated quantity. Because the mesh change is coupled and the crossing
+is inferred between states separated by one full crack increment, this
+regularity is not interpreted as either a pure local-discretization order
+or micrometer-scale physical accuracy.
 
-The fixed-geometry comparison isolates the local extraction sensitivity, but
-does not show whether the resulting small direction changes accumulate along
-the path. For that purpose, the $2h_0$ trajectory was propagated independently
-through $P_{23}$ while retaining the reference exterior mesh law. Figure~
+The independent $2h_0$ trajectory tests whether these small fixed-geometry
+differences accumulate along the path. Figure~
 \ref{fig:tip-resolution-sensitivity} uses the same four-panel comparison as
-the exterior-mesh study. The two trajectories are visually indistinguishable
+the exterior-mesh study. The trajectories are visually indistinguishable
 at specimen scale [Fig.~\ref{fig:tipres-trajectory}]. Over the full accepted
 history, the maximum vertical-coordinate difference is
-$0.12257~\mu\mathrm{m}$ and the maximum Euclidean separation of corresponding
-tips is $0.12295~\mu\mathrm{m}$, both at $P_{23}$. The maximum absolute
-direction difference is $0.25475$ millidegrees at $P_{22}$
-[Fig.~\ref{fig:tipres-dy} and Fig.~\ref{fig:tipres-dtheta}].
+$0.12257~\mu\mathrm{m}$ and the maximum Euclidean separation of
+corresponding tips is $0.12295~\mu\mathrm{m}$, both at $P_{23}$. The
+maximum absolute direction difference is $0.25475$ millidegrees at
+$P_{22}$ [Figs.~\ref{fig:tipres-dy} and \ref{fig:tipres-dtheta}].
 
-The mechanical history is equally stable. Both resolutions place the
-positive maximum of $K_{II}/K_I$ at $P_{17}$ and retain positive mode mixity
-at $P_{21}$ and negative mode mixity at $P_{22}$
+The mechanical history is equally stable. Both mesh families place the
+positive maximum of $K_{II}/K_I$ at $P_{17}$ and retain positive mode
+mixity at $P_{21}$ and negative mode mixity at $P_{22}$
 [Fig.~\ref{fig:tipres-q}]. The maximum absolute difference in
 $K_{II}/K_I$ is $6.72\times10^{-7}$. Linear interpolation of the two
 independently propagated $P_{21}$--$P_{22}$ brackets gives
@@ -798,11 +799,11 @@ $-0.000459$ mm ($-0.459~\mu\mathrm{m}$). As above, this is only a
 sub-increment sensitivity diagnostic, not a micrometer-accurate physical
 location of local symmetry.
 
-The independent-path result complements rather than replaces the
-fixed-geometry three-level check. The latter shows the local numerical trend
-under refinement at an unchanged crack geometry; the former shows that
-doubling the production tip size does not cause those local differences to
-grow into a materially different trajectory.
+The fixed-geometry and independent-path results therefore show that the
+reported characteristic events are insensitive to a substantial change of
+this tip-scaled mesh family. They do not by themselves isolate the effect of
+the structured core from the coupled exterior sizing; an explicitly
+decoupled core-only test would be required for that narrower claim.
 
 \input{figures/tip_resolution_sensitivity/figure}
 
