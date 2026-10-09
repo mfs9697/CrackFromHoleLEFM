@@ -174,4 +174,4 @@ See [SYMMETRIC_PATH_STABILITY.md](SYMMETRIC_PATH_STABILITY.md) for the centered-
 
 ## Crack-increment sensitivity
 
-See [CRACK_INCREMENT_SENSITIVITY_COARSE.md](CRACK_INCREMENT_SENSITIVITY_COARSE.md) for the guarded 4-mm versus 2-mm trajectory comparison on the common M1 exterior + `CoreScale=2` dimensionless coarse family.
+See [CRACK_INCREMENT_SENSITIVITY_COARSE.md](CRACK_INCREMENT_SENSITIVITY_COARSE.md) for the guarded 4/2/1-mm trajectory convergence study on the common M1 exterior + `CoreScale=2` dimensionless coarse family.
