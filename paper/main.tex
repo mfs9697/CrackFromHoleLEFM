@@ -375,10 +375,11 @@ leaving the 12678-element paired core and the 11316-element interaction-
 domain support unchanged. These fixed-geometry checks were used only to
 qualify M1 for a subsequent independent trajectory calculation.
 
-\subsection{Controlled local tip-resolution family}
-A separate fixed-geometry study varies only the structured near-tip scale
-while keeping the accepted crack polyline, exterior grading law, material,
-loading, interaction-domain radii, and MTS formulation unchanged. The production tip size is denoted by $h_0=0.0270123$ mm. The three
+\subsection{Structured-tip mesh-family sensitivity}
+A separate fixed-geometry study varies the structured near-tip scale while
+keeping the accepted crack polyline, material, loading, interaction-domain
+radii, far-field cap, transition length, and MTS formulation unchanged.
+The production tip size is denoted by $h_0=0.0270123$ mm. The three
 physically compared resolutions are
 \begin{equation}
  2h_0=0.0540247\ \mathrm{mm},\qquad
@@ -387,21 +388,30 @@ physically compared resolutions are
  \label{eq:tiplevels}
 \end{equation}
 These correspond to structured-core scale factors $2$, $1$, and $1/2$.
-The paired-core radius remains
-$r_c=3$ mm and the EDI annulus remains $r_i=0.4$ mm to $r_o=2.6$ mm.
-The paired cores contain 3318, 12678, and 49518 T3 elements, respectively.
-The established four COD windows contain 19/28/23/18 native points at
-$2h_0$, 38/55/44/34 at $h_0$, and 74/108/86/67 at $h_0/2$.
+The paired-core radius remains $r_c=3$ mm and the EDI annulus remains
+$r_i=0.4$ mm to $r_o=2.6$ mm. The paired cores contain 3318, 12678, and
+49518 T3 elements, respectively. The established four COD windows contain
+19/28/23/18 native points at $2h_0$, 38/55/44/34 at $h_0$, and
+74/108/86/67 at $h_0/2$.
 
-To test accumulated trajectory sensitivity without introducing a second
-discretization change, the $2h_0$ calculation is also propagated
-independently with the \emph{reference} exterior mesh law. The prescribed
-first segment $P_0P_1$ is common, but the $P_1$ elastic problem is recomputed
-with the $2h_0$ core; its own $K_I^{(1)}$ and $K_{II}^{(1)}$ determine
-$\theta_2$, and all later vertices follow recursively from the preceding
-$2h_0$ solution. No reference-path vertex after $P_1$ is imposed. The
-$h_0/2$ level is retained as fixed-geometry refinement evidence and is not
-propagated independently.
+A repository-wide reproducibility audit showed that the same scale factor
+also enters the adjoining exterior target-size law used by the mesh
+generator. Consequently, this experiment is not interpreted as a strictly
+tip-only refinement: changing $h_{\rm tip}$ also changes part of the
+connected exterior sizing while leaving the physical boundary, EDI radii,
+far-field cap, and transition length fixed. The results below therefore
+measure sensitivity to a \emph{tip-scaled mesh family}. The independent M1
+study, in which the paired tip core is held fixed while only the exterior
+law is relaxed, supplies the complementary exterior-only perturbation.
+
+To test accumulation of this mesh-family perturbation, the $2h_0$ level is
+also propagated independently through the accepted 92-mm path. The
+prescribed first segment $P_0P_1$ is common, but the $P_1$ elastic problem
+is recomputed with the $2h_0$ family; its own $K_I^{(1)}$ and
+$K_{II}^{(1)}$ determine $\theta_2$, and all later vertices follow
+recursively from the preceding $2h_0$ solution. No reference-path vertex
+after $P_1$ is imposed. The $h_0/2$ level is retained as fixed-geometry
+refinement evidence and is not propagated independently.
 
 For geometric illustration, Fig.~\ref{fig:mesh-levels} also includes a
 coarser $4h_0$ core with $h_{\mathrm{tip}}=0.1080493$ mm. It contains only
