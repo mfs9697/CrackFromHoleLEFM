@@ -2,18 +2,15 @@
 
 ## Scientific question
 
-The remaining discretization question is whether the accepted crack trajectory
-changes materially when the fixed propagation increment is reduced from
+The crack-increment study uses the three-level family
 
 ```text
-Delta a = 4 mm
+Delta a = 4 mm, 2 mm, 1 mm.
 ```
 
-to
-
-```text
-Delta a = 2 mm.
-```
+The 4-mm and 2-mm trajectories are completed. The 1-mm level is the final
+refinement used to test whether the trajectory, turning density, and late
+curvature-reversal location approach stable limits.
 
 The comparison should not use the expensive production meshes.  Instead, both
 increments use the same **dimensionless coarse family**, combining the two
@@ -26,7 +23,7 @@ This is a convergence-family test of the whole fixed-increment algorithm.
 
 ## Dimensionless numerical family
 
-For both increments,
+For all three increments,
 
 ```text
 hTip / Delta a = 2 * 0.00675308135
@@ -42,14 +39,14 @@ M1 boundary growth      = 0.35
 
 Therefore the absolute scales are:
 
-| quantity | Delta a = 4 mm | Delta a = 2 mm |
-|---|---:|---:|
-| hTip | 0.0540247 mm | 0.0270123 mm |
-| r_i | 0.4 mm | 0.2 mm |
-| r_o | 2.6 mm | 1.3 mm |
-| r_c | 3.0 mm | 1.5 mm |
-| M1 far cap | 5.0 mm | 2.5 mm |
-| M1 transition | 4.0 mm | 2.0 mm |
+| quantity | Delta a = 4 mm | Delta a = 2 mm | Delta a = 1 mm |
+|---|---:|---:|---:|
+| hTip | 0.0540247 mm | 0.0270123 mm | 0.0135062 mm |
+| r_i | 0.4 mm | 0.2 mm | 0.1 mm |
+| r_o | 2.6 mm | 1.3 mm | 0.65 mm |
+| r_c | 3.0 mm | 1.5 mm | 0.75 mm |
+| M1 far cap | 5.0 mm | 2.5 mm | 1.25 mm |
+| M1 transition | 4.0 mm | 2.0 mm | 1.0 mm |
 
 The same nondimensional COD windows and qualification gates are retained.
 
@@ -73,7 +70,8 @@ For each increment:
 4. propagate recursively with no reference-path vertices imposed;
 5. target 92 mm total crack length:
    - 23 segments for 4 mm;
-   - 46 segments for 2 mm.
+   - 46 segments for 2 mm;
+   - 92 segments for 1 mm.
 
 ## Guarded workflow
 
@@ -85,9 +83,11 @@ close all
 
 Q4 = main_increment_sensitivity_coarse('IncrementMM',4);
 Q2 = main_increment_sensitivity_coarse('IncrementMM',2);
+Q1 = main_increment_sensitivity_coarse('IncrementMM',1);
 
 disp(Q4.P1Qualification);
 disp(Q2.P1Qualification);
+disp(Q1.P1Qualification);
 ```
 
 After both P1 preflights pass, run the 4-mm coarse trajectory:
@@ -108,6 +108,18 @@ M2 = main_increment_sensitivity_coarse( ...
     'AllowPhysicalSolves',true);
 ```
 
+The final refinement is:
+
+```matlab
+M1 = main_increment_sensitivity_coarse( ...
+    'IncrementMM',1, ...
+    'TargetLengthMM',92, ...
+    'AllowPhysicalSolves',true);
+```
+
+The 1-mm run uses its own output directory and supports resume from the
+saved `path_run_state.mat`.
+
 The driver supports resume from its saved `path_run_state.mat`.
 
 ## Comparison
@@ -125,9 +137,11 @@ The comparison uses exact common crack lengths
 4, 8, 12, ..., 92 mm
 ```
 
-for the coordinate and direction differences.  No trajectory interpolation is
-used there.  The native `q_K=KII/KI` histories are plotted at all solved
-states, so the 2-mm path retains its extra resolution.
+for the coordinate and direction differences. No trajectory interpolation is
+used there. The publication convergence panel uses the native turning density
+`Delta theta / Delta a` for all three levels. Raw `q_K=KII/KI` is retained as
+a diagnostic, together with `q_K/Delta a`, its positive maximum, and its
+linearly interpolated zero crossing.
 
 The publication diagnostics are:
 
@@ -141,9 +155,11 @@ The publication diagnostics are:
 
 ## Interpretation rule
 
-A close 4-mm / 2-mm comparison would support increment-size robustness of the
-reported trajectory features **within this scaled coarse numerical family**.
+The three-level 4/2/1-mm family is intended to test whether successive path
+differences contract and whether the turning-density and curvature-reversal
+observables approach stable limits **within this scaled coarse numerical
+family**.
 
-It would not establish a formal asymptotic convergence rate from only two
-increments, and it would not replace the already separate tests of exterior
-mesh density and local tip resolution.
+Even three levels should be interpreted as a numerical convergence study,
+not as proof of a formal asymptotic order. It complements, rather than
+replaces, the separate exterior-mesh and local-tip-resolution tests.
