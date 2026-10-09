@@ -856,13 +856,22 @@ remains unresolved.
 \subsection{Crack-increment sensitivity}
 The three-level increment study compares independently generated
 $\Delta a=4$, 2, and 1 mm trajectories over the exact common range
-4--92 mm. Table~\ref{tab:increment-pairwise} summarizes the successive
-path differences. Halving the increment from 4 to 2 mm gives a maximum
-corresponding-tip separation of $35.472~\mu\mathrm{m}$; halving it again
-to 1 mm reduces that maximum to $18.291~\mu\mathrm{m}$. The corresponding
-maximum vertical-coordinate differences are $35.418$ and
-$18.263~\mu\mathrm{m}$. The maximum absolute direction difference likewise
-falls from $214.931$ to $127.391$ millidegrees.
+4--92 mm. Figure~\ref{fig:increment-sensitivity} shows the three actual
+paths together with the successive vertical and directional differences and
+the turning density. At specimen scale the trajectories nearly overlap
+[Fig.~\ref{fig:inc-trajectory}], whereas the difference panels resolve a
+systematic reduction of the accumulated path error when the increment is
+halved [Figs.~\ref{fig:inc-dy} and \ref{fig:inc-dtheta}].
+
+\input{figures/increment_sensitivity/figure}
+
+Table~\ref{tab:increment-pairwise} quantifies these successive differences.
+Halving the increment from 4 to 2 mm gives a maximum corresponding-tip
+separation of $35.472~\mu\mathrm{m}$; halving it again to 1 mm reduces that
+maximum to $18.291~\mu\mathrm{m}$. The corresponding maximum
+vertical-coordinate differences are $35.418$ and $18.263~\mu\mathrm{m}$.
+The maximum absolute direction difference likewise falls from $214.931$ to
+$127.391$ millidegrees.
 
 \begin{table}[tbp]
 \centering
@@ -903,9 +912,11 @@ $q_K=K_{II}/K_I$ for each level. The raw maximum decreases almost in direct
 proportion to $\Delta a$: from $3.23937\times10^{-3}$ at 4 mm to
 $1.61266\times10^{-3}$ at 2 mm and $8.04068\times10^{-4}$ at 1 mm.
 In contrast, the normalized quantity $q_{K,\max}/\Delta a$ changes by only
-about $0.71\%$ over the entire 4-to-1-mm refinement. The MTS turning density
-at the same characteristic state is similarly stable, varying from
-$-0.092799$ to $-0.092139$ deg/mm.
+about $0.71\%$ over the entire 4-to-1-mm refinement. The MTS turning density at the same characteristic state is similarly
+stable, varying from $-0.092799$ to $-0.092139$ deg/mm. The complete
+turning-density histories in Fig.~\ref{fig:inc-turn-density} show that this
+agreement is not confined to a single state: refinement primarily resolves
+the same smooth variation on progressively finer crack-length grids.
 
 \begin{table}[tbp]
 \centering
@@ -956,9 +967,10 @@ the 1-mm path, but it remains an interpolated quantity rather than an
 independently solved zero-$K_{II}$ state.
 
 The combined result is stronger than visual path overlap alone. The
-geometrical trajectory and characteristic event locations contract under
-increment refinement, while the raw mode-II correction becomes smaller in
-proportion to the discrete step. This distinction is important when
+trajectory panel establishes the common macroscopic path, while the
+successive-difference panels show that the remaining geometric and
+directional discrepancies contract under refinement. At the same time, the
+raw mode-II correction becomes smaller in proportion to the discrete step. This distinction is important when
 interpreting $q_K$: its absolute value along a finite-step MTS path is a
 step-dependent corrective quantity, whereas its increment-normalized form
 has the more stable continuous-path interpretation.
