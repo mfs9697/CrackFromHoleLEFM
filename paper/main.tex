@@ -262,14 +262,17 @@ The frozen basis is
 The normal points radially out of the hole and into the material; $\bm t$
 is its counterclockwise rotation. All absolute crack angles $\theta_k$
 below are measured relative to this frozen normal, not to the global
-$x$ axis. The first segment is prescribed by
+$x$ axis. For the reference trajectory, the first segment is prescribed by
 \begin{equation}
  \Delta a=4\ \mathrm{mm},\qquad \theta_1=0,\qquad
  P_1=P_0+\Delta a\,\bm n_{\mathrm{mat}}.\label{eq:first}
 \end{equation}
-An earlier first-angle sweep was an independent verification exercise and
-does not determine $\theta_1$ in this formulation. The study retains one
-active crack; subsequent competing initiation sites are not modeled.
+The same frozen initiation point and frame are retained in the increment-
+refinement family, for which the Stage-II segment length is changed to 2 and
+1 mm and the first tip is rebuilt and solved independently. An earlier
+first-angle sweep was an independent verification exercise and does not
+determine $\theta_1$ in this formulation. The study retains one active
+crack; subsequent competing initiation sites are not modeled.
 
 \section{Incremental crack-path formulation}
 \subsection{Current-tip frame and stress-intensity factors}
@@ -622,9 +625,9 @@ and a least-squares fit constrained through the origin gives
 Because $|F'(0)|<1$, the straight symmetric path is a locally attracting
 fixed path for this one-step discrete recurrence. The negative multiplier
 means that a small angular perturbation changes sign after one update while
-its magnitude is reduced by almost an order of magnitude. This is a local
-stability statement for the chosen 4-mm recurrence, not a proof of global
-path stability or crack-increment convergence.
+its magnitude is reduced by almost an order of magnitude. This is a local stability statement for the chosen 4-mm recurrence, not a
+proof of global path stability. Crack-increment dependence is assessed
+independently by the three-level refinement family described above.
 
 \section{Crack-trajectory results}
 \subsection{Accepted path and direction history}
