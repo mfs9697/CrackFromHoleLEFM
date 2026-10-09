@@ -51,13 +51,17 @@ function S = plot_increment_sensitivity_coarse_publication(varargin)
     has1mm=(exist(oneStates,'file')==2) && (exist(oneVertices,'file')==2);
 
     if ~has1mm
-        fprintf('\n1-mm run is not present. Showing completed 4-mm / 2-mm comparison.\n');
-        fprintf('The same command will switch automatically to 4/2/1 mm after the 1-mm run exists.\n');
-        S=local_plot_two_level(T4,V4,T2,V2,outDir,opt);
-        return
+        error('incfig:Missing1mmPublicationData', ...
+            'The manuscript figure requires the complete 4/2/1-mm histories; no two-level substitution is permitted.');
     end
 
     [T1,V1]=local_load_run(run1,1);
+    for pair={run4,T4;run2,T2;run1,T1}.'
+        z=load(fullfile(pair{1},'increment_study_summary.mat'),'M');
+        assert(z.M.targetLength_mm==92&&height(pair{2})==z.M.targetSegments&& ...
+            abs(pair{2}.crack_length_mm(end)-z.M.targetLength_mm)<=1e-8, ...
+            'incfig:IncompletePublicationHistory','The manuscript requires all three accepted histories through 92 mm.');
+    end
 
     maxCommon=min([max(T4.crack_length_mm), ...
                    max(T2.crack_length_mm), ...
@@ -159,7 +163,7 @@ function S = plot_increment_sensitivity_coarse_publication(varargin)
     plot(ax3,common,dtheta12_mdeg,'-^','Color',yellow,'LineWidth',1.0, ...
         'MarkerSize',3,'DisplayName','$1-2$ mm');
     xlabel(ax3,'Crack length $a$ [mm]','Interpreter','latex');
-    ylabel(ax3,'Successive $\Delta\theta$ [mdeg]','Interpreter','latex');
+    ylabel(ax3,'Successive direction difference [mdeg]','Interpreter','latex');
     legend(ax3,'Location','best','Box','off','Interpreter','latex');
     box(ax3,'on');
 
@@ -503,7 +507,9 @@ end
 
 function local_export_axis(srcAx,pdfFile,pngFile,panelName)
     if strcmp(panelName,'trajectory')
-        sz=[17.0 6.7]; pos=[0.09 0.17 0.87 0.77];
+        % This manuscript uses a half-width trajectory panel. Match its
+        % physical export size so labels are not shrunk or pushed outside.
+        sz=[6.6 5.2]; pos=[0.18 0.19 0.77 0.75];
     else
         sz=[6.6 5.2]; pos=[0.18 0.19 0.77 0.75];
     end
@@ -512,7 +518,13 @@ function local_export_axis(srcAx,pdfFile,pngFile,panelName)
     c=onCleanup(@()local_close_if_valid(f)); %#ok<NASGU>
     ax=copyobj(srcAx,f);
     set(ax,'Units','normalized','Position',pos);
-    if any(strcmp(panelName,{'trajectory','vertical_deviation', ...
+    if strcmp(panelName,'trajectory')
+        % Freeze the original spatial limits/ticks before resizing axes.
+        xlim(ax,srcAx.XLim);ylim(ax,srcAx.YLim);
+        ax.XTick=srcAx.XTick;ax.YTick=srcAx.YTick;
+        legend(ax,'show','Location','northeast','NumColumns',1, ...
+            'Box','off','Interpreter','latex');
+    elseif any(strcmp(panelName,{'vertical_deviation', ...
             'direction_deviation','turn_density'}))
         legend(ax,'show','Location','best','Box','off','Interpreter','latex');
     end

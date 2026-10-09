@@ -1,7 +1,8 @@
 function S = plot_tip2h0_vs_reference_publication(varargin)
 %PLOT_TIP2H0_VS_REFERENCE_PUBLICATION
 % Publication figure from the ACTUAL saved h0 reference and independently
-% propagated 2h0 local-tip-resolution run.
+% propagated CoreScale=2, ExteriorScale=1 isolated-core run.
+% Portable JSON plus manifest is required. Historical coupled inputs are rejected.
 %
 % The figure contains:
 %   (a) h0 and 2h0 crack trajectories;
@@ -32,7 +33,8 @@ function S = plot_tip2h0_vs_reference_publication(varargin)
 
     ip=inputParser;
     addParameter(ip,'ReferenceStateFile','',@(x)ischar(x)||isstring(x));
-    addParameter(ip,'Tip2h0StateFile','',@(x)ischar(x)||isstring(x));
+    addParameter(ip,'Tip2h0StateFile','',@(x)ischar(x)||isstring(x)); % obsolete: rejected
+    addParameter(ip,'IsolatedDatasetFile','',@(x)ischar(x)||isstring(x));
     addParameter(ip,'OutputDir','',@(x)ischar(x)||isstring(x));
     addParameter(ip,'Export',true,@(x)islogical(x)&&isscalar(x));
     addParameter(ip,'ExportCombined',false,@(x)islogical(x)&&isscalar(x));
@@ -44,22 +46,20 @@ function S = plot_tip2h0_vs_reference_publication(varargin)
     here=fileparts(mfilename('fullpath'));
     root=fileparts(fileparts(here));
 
-    refFile=char(opt.ReferenceStateFile);
-    if isempty(refFile)
-        refFile=fullfile(root,'verification','crack_path', ...
-            'final_clean_run','path_run_state.mat');
-    elseif ~local_is_absolute_path(refFile)
-        refFile=fullfile(root,refFile);
-    end
-
-    tip2File=char(opt.Tip2h0StateFile);
+    assert(isempty(char(opt.ReferenceStateFile)),'tip2h0fig:ReferenceArchiveInputRejected', ...
+        'The reference is the committed exact manuscript snapshot; custom archive substitution is disabled.');
+    refFile=fullfile(root,'paper','data','evidence_exact.mat');
+    assert(isempty(char(opt.Tip2h0StateFile)),'tip2h0fig:HistoricalInputRejected', ...
+        'Use IsolatedDatasetFile; historical/custom trajectory MAT and CSV inputs cannot certify isolated-core data.');
+    tip2File=char(opt.IsolatedDatasetFile);
     if isempty(tip2File)
-        tip2File=fullfile(root,'verification','crack_path', ...
-            'tip_2h0_independent_run','trajectory','path_run_state.mat');
+        tip2File=fullfile(root,'paper','data','isolated_tip_resolution.json');
     elseif ~local_is_absolute_path(tip2File)
         tip2File=fullfile(root,tip2File);
     end
-
+    [Dataset,Tm,~]=load_isolated_tip_publication_data(tip2File);
+    assert(isempty(char(opt.ReferenceStateFile))||exist(refFile,'file')==2, ...
+        'tip2h0fig:MissingRequestedReference','Requested reference is missing.');
     outDir=char(opt.OutputDir);
     if isempty(outDir)
         outDir=fullfile(root,'paper','figures','tip_resolution_sensitivity');
@@ -68,15 +68,13 @@ function S = plot_tip2h0_vs_reference_publication(varargin)
     end
     if exist(outDir,'dir')~=7,mkdir(outDir);end
 
-    % The historical run-state MAT is convenient when present, but it is
-    % not required for a portable paper checkout.  The committed paper/data
-    % snapshot is the canonical fallback for the reference trajectory.
-    referenceMatAvailable=(exist(refFile,'file')==2);
-
-    [Tr,VrAll,refCompleted,referenceSource]= ...
-        local_load_reference(root,refFile,referenceMatAvailable);
-    [Tm,VmAll,tipCompleted,tipSource]= ...
-        local_load_tip2h0(root,tip2File,VrAll(1,:));
+    A=load(refFile,'E','T');Tr=A.T;VrAll=A.E.vertices_m;
+    assert(height(Tr)==23&&isequal(Tr.segment,(1:23)'), ...
+        'tip2h0fig:BadReference','Canonical accepted reference must end at P23.');
+    refCompleted=23;referenceSource=refFile;
+    VmAll=[Dataset.mouth_m(:).';Tm.tip_x_m,Tm.tip_y_m];
+    tipCompleted=Dataset.independentPhysicalStates;tipSource=tip2File;
+    Summary=isolated_tip_publication_metrics(Dataset,Tr,VrAll);
 
     common=intersect(Tr.segment,Tm.segment,'stable');
     assert(~isempty(common),'tip2h0fig:NoCommonStates','No common solved states.');
@@ -309,6 +307,10 @@ function S = plot_tip2h0_vs_reference_publication(varargin)
         S.panelPdf=panelPdf;
         S.panelPng=panelPng;
         S.metricsCsv=csvFile;
+        summaryFile=fullfile(outDir,'isolated_tip_resolution_metrics.json');
+        fid=fopen(summaryFile,'w','n','UTF-8');assert(fid>=0);
+        fprintf(fid,'%s\n',jsonencode(Summary));fclose(fid);
+        S.summaryMetricsFile=summaryFile;
 
         fprintf('  separate vector panels       : %s\n',outDir);
         for jj=1:4
@@ -371,100 +373,6 @@ function local_close_if_valid(h)
     end
 end
 
-
-function [T,V,completed,source]=local_load_tip2h0(root,tip2File,p0)
-% Load the independent 2h0 trajectory from the original run-state MAT when
-% present; otherwise use the committed portable table reconstructed from the
-% accepted P1--P23 run log.  The CSV stores solved states and tip coordinates.
-
-    if exist(tip2File,'file')==2
-        B=load(tip2File,'State');
-        assert(isfield(B,'State')&&isstruct(B.State), ...
-            'tip2h0fig:Bad2h0','2h0 MAT must contain State.');
-        M=B.State;
-        T=local_state_table(M);
-        assert(isfield(M,'vertices')&&size(M.vertices,2)==2, ...
-            'tip2h0fig:2h0Vertices','2h0 State lacks vertices.');
-        V=M.vertices;
-        if isfield(M,'completedPhysicalSegments')
-            completed=M.completedPhysicalSegments;
-        else
-            completed=height(T);
-        end
-        source=tip2File;
-        return
-    end
-
-    csvFile=fullfile(root,'paper','data','tip2h0_states.csv');
-    assert(exist(csvFile,'file')==2,'tip2h0fig:Missing2h0CSV', ...
-        'Committed 2h0 trajectory table not found: %s',csvFile);
-    T=readtable(csvFile);
-    required={'segment','tip_x_m','tip_y_m','theta_deg', ...
-        'KI_unit','KII_unit','KII_over_KI','delta_theta_next_deg', ...
-        'theta_next_deg'};
-    assert(all(ismember(required,T.Properties.VariableNames)), ...
-        'tip2h0fig:2h0CSVColumns', ...
-        'Committed 2h0 trajectory table is missing required columns.');
-    T=sortrows(T,'segment');
-    completed=height(T);
-    assert(isequal(T.segment(:),(1:completed).'), ...
-        'tip2h0fig:2h0CSVSegments', ...
-        'Committed 2h0 trajectory table must contain consecutive P1--Pk states.');
-    V=[p0; T.tip_x_m T.tip_y_m];
-    source='paper/data/tip2h0_states.csv';
-end
-
-function [T,V,completed,source]=local_load_reference(root,refFile,matAvailable)
-% Load the accepted h0 reference from the historical run-state MAT when
-% available, otherwise from the committed publication evidence snapshot.
-
-    if matAvailable
-        A=load(refFile,'State');
-        assert(isfield(A,'State')&&isstruct(A.State), ...
-            'tip2h0fig:BadReference','Reference MAT must contain State.');
-        R=A.State;
-        T=local_state_table(R);
-        assert(isfield(R,'vertices')&&size(R.vertices,2)==2, ...
-            'tip2h0fig:ReferenceVertices','Reference State lacks vertices.');
-        V=R.vertices;
-        if isfield(R,'completedPhysicalSegments')
-            completed=R.completedPhysicalSegments;
-        else
-            completed=height(T);
-        end
-        source=refFile;
-        return
-    end
-
-    csvFile=fullfile(root,'paper','data','accepted_states.csv');
-    jsonFile=fullfile(root,'paper','data','evidence.json');
-    assert(exist(csvFile,'file')==2,'tip2h0fig:MissingReferenceCSV', ...
-        'Committed reference table not found: %s',csvFile);
-    assert(exist(jsonFile,'file')==2,'tip2h0fig:MissingReferenceJSON', ...
-        'Committed reference evidence not found: %s',jsonFile);
-
-    T=readtable(csvFile);
-    E=jsondecode(fileread(jsonFile));
-    assert(isfield(E,'vertices_m')&&size(E.vertices_m,2)==2, ...
-        'tip2h0fig:ReferenceEvidenceVertices', ...
-        'paper/data/evidence.json lacks vertices_m.');
-    V=double(E.vertices_m);
-    completed=height(T);
-    assert(completed>=1 && size(V,1)>=completed+1, ...
-        'tip2h0fig:ReferenceEvidenceLength', ...
-        'Committed reference table/vertices are inconsistent.');
-    source='paper/data/accepted_states.csv + evidence.json';
-end
-
-function T=local_state_table(S)
-    assert(isfield(S,'rowsThroughCompleted')&&isfield(S,'rowVariableNames'), ...
-        'tip2h0fig:BadState','State lacks embedded physical-history rows.');
-    names=cellstr(string(S.rowVariableNames));
-    T=array2table(S.rowsThroughCompleted,'VariableNames',names);
-    if isfield(S,'completedPhysicalSegments')
-        T=T(1:S.completedPhysicalSegments,:);
-    end
-end
 
 function [ok,aLS_mm,xLS_mm,yLS_mm]=local_zero_crossing(T,V,da)
     q=T.KII_over_KI;
