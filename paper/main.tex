@@ -506,6 +506,45 @@ the other compared scientific quantities agree exactly. The maximum
 accepted true residual is $\MaxTrueResidual$, and iteration counts range
 from 2442 to 3011. Supporting diagnostics are given in Fig.~\ref{fig:quality}.
 
+\subsection{Crack-increment refinement family}
+The finite-step recurrence is assessed with three independently propagated
+paths using
+\[
+ \Delta a\in\{4,2,1\}\ \mathrm{mm}.
+\]
+All three use the same dimensionless coarse numerical family rather than
+the production $h_0$ family. The structured core uses scale factor 2, so that
+\begin{equation}
+ \frac{h_{\rm tip}}{\Delta a}
+ =2(0.00675308135),\qquad
+ \frac{r_i}{\Delta a}=0.10,\qquad
+ \frac{r_o}{\Delta a}=0.65,\qquad
+ \frac{r_c}{\Delta a}=0.75.
+ \label{eq:increment-family}
+\end{equation}
+The exterior uses the M1 dimensionless controls
+\[
+ \frac{h_{\rm far}}{\Delta a}=1.25,\qquad
+ \frac{L_{\rm tr}}{\Delta a}=1.00,
+\]
+with far-field grading slope 0.15 and boundary-metric growth 0.35.
+Therefore halving $\Delta a$ halves the absolute core, EDI, transition,
+and exterior length scales while retaining the same numerical family.
+This is a refinement study of the complete fixed-increment algorithm in
+dimensionless form; it is not an experiment in which $\Delta a$ alone is
+changed while an absolute mesh is held fixed.
+
+The accepted Stage-I initiation point and frozen frame are identical for all
+three levels. The reserved first-segment length is changed only for Stage II,
+$P_1$ is rebuilt and solved independently, and every later vertex is
+generated from that path's own SIF/MTS history. Each trajectory is continued
+to a common total crack length of 92 mm. Pairwise geometric and direction
+differences are evaluated only at exact common crack lengths, using the
+4-mm grid as the common set; no path interpolation is used for those
+comparisons. The location of local symmetry is reported separately by
+linear interpolation between the two solved states that bracket
+$q_K=K_{II}/K_I=0$ and is therefore used only as a sub-increment diagnostic.
+
 \subsection{Centered-hole symmetric control}
 A separate control problem tests the directional recurrence under exact
 reflection symmetry. The full plate dimensions and hole radius are unchanged,
