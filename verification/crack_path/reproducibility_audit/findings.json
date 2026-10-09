@@ -1,0 +1,282 @@
+[
+  {
+    "id": "F01",
+    "severity": "critical",
+    "status": "open",
+    "finding": "CoreScale is also an exterior-sizing parameter; tip-only attribution is not isolated.",
+    "references": "build_stage3c_polyline_exterior.m:77; build_stage3c_polyline_exterior.m:308; build_stage2_scaled_audited_exterior.m:39; build_stage2_scaled_audited_exterior.m:224",
+    "action": "No mesh-law or interpretation change permitted; see the nonphysical scale probe."
+  },
+  {
+    "id": "F02",
+    "severity": "critical",
+    "status": "fixed",
+    "finding": "P1 compact reuse accepted a 2-mm seed for a 4-mm request because it checked only pass and scale=2.",
+    "references": "verification/crack_path/main_increment_sensitivity_coarse.m:206; verification/crack_path/validate_increment_study_p1_cache.m:8",
+    "action": "Validate absolute core/radius fingerprints, exterior controls, source mesh, increment, and frozen physical data before reuse."
+  },
+  {
+    "id": "F03",
+    "severity": "critical",
+    "status": "fixed",
+    "finding": "Full field checkpoints could reuse another material/load/physical configuration or changed T6 ordering/coordinates while T3 still matched.",
+    "references": "solve_incremental_crack_tip.m:823; main_stage2_theta0_physical_solve.m:766; assert_crack_checkpoint_physics.m:1",
+    "action": "Compare saved material/C and full T6 geometry with the same existing coordinate tolerance."
+  },
+  {
+    "id": "F04",
+    "severity": "critical",
+    "status": "fixed",
+    "finding": "Compact accepted-result promotion checked path and 11316 elements, but not its exterior/physical source identity.",
+    "references": "run_incremental_crack_path.m:805; run_incremental_crack_path.m:847; solve_incremental_crack_tip.m:660",
+    "action": "New result metadata records exterior/physics; legacy compacts require source candidate/field evidence."
+  },
+  {
+    "id": "F05",
+    "severity": "important",
+    "status": "fixed",
+    "finding": "CoreScale=2 compact promotion/hydration was rejected by the unconditional reference EDI count 11316.",
+    "references": "run_incremental_crack_path.m:818; run_incremental_crack_path.m:827",
+    "action": "Dispatch the existing fingerprint: 11316 for scale 1, 2976 for scale 2; do not permit arbitrary counts."
+  },
+  {
+    "id": "F06",
+    "severity": "important",
+    "status": "fixed",
+    "finding": "State row names and declared schema were stored but not validated before positional history parsing.",
+    "references": "run_incremental_crack_path.m:560; run_incremental_crack_path.m:648",
+    "action": "Reject unsupported declared schemas and reordered/renamed columns before geometry/solve work."
+  },
+  {
+    "id": "F07",
+    "severity": "important",
+    "status": "fixed",
+    "finding": "NaN family numbers could compare as equal because abs(NaN-x)>tol is false.",
+    "references": "run_incremental_crack_path.m:1018; run_incremental_crack_path.m:1030",
+    "action": "Reject nonfinite scalar family/core identity values; tolerance values unchanged."
+  },
+  {
+    "id": "F08",
+    "severity": "critical",
+    "status": "fixed",
+    "finding": "The 4/2/1 publication loader trusted CSV names/lengths without checking the advertised M1+2h0 family or its authoritative summary.",
+    "references": "verification/crack_path/plot_increment_sensitivity_coarse_publication.m:431; verification/crack_path/load_increment_comparison_run.m:6",
+    "action": "Require study/family provenance, unambiguous grids, vertex agreement and summary concordance."
+  },
+  {
+    "id": "F09",
+    "severity": "important",
+    "status": "fixed",
+    "finding": "M1/reference and 2h0/reference comparison paired equal segment indices without confirming equal increments.",
+    "references": "verification/crack_path/plot_m1_vs_reference_publication.m:108; verification/crack_path/plot_tip2h0_vs_reference_publication.m:98",
+    "action": "Reject mismatched/nonuniform increments using the existing driver geometry tolerance."
+  },
+  {
+    "id": "F10",
+    "severity": "important",
+    "status": "fixed",
+    "finding": "Missing explicitly requested M1 history could silently return canonical committed panels instead of the requested experiment.",
+    "references": "verification/crack_path/plot_m1_vs_reference_publication.m:74; verification/crack_path/plot_m1_vs_reference_publication.m:370",
+    "action": "Canonical fallback retained only for canonical default requests."
+  },
+  {
+    "id": "F11",
+    "severity": "important",
+    "status": "fixed",
+    "finding": "An integer target shorter than two increments could reach P1 work before MaxSegments rejected it.",
+    "references": "verification/crack_path/main_increment_sensitivity_coarse.m:68; verification/crack_path/main_increment_sensitivity_coarse.m:74",
+    "action": "Reject the unsupported target before reading/building/saving/solving."
+  },
+  {
+    "id": "F12",
+    "severity": "important",
+    "status": "open",
+    "finding": "Older fully embedded State histories lack a frozen physical signature; their rows remain a trusted atomic archive, not independently requalified evidence.",
+    "references": "run_incremental_crack_path.m:575; run_incremental_crack_path.m:648; run_incremental_crack_path.m:908",
+    "action": "New states are keyed; do not silently manufacture missing historical provenance."
+  },
+  {
+    "id": "F13",
+    "severity": "important",
+    "status": "open",
+    "finding": "Metadata-free historical candidates are inferred to be reference exterior/core=1 when reference controls are requested.",
+    "references": "run_incremental_crack_path.m:959; run_incremental_crack_path.m:982",
+    "action": "Legacy compatibility assumption remains explicit. Known source archives are required for legacy compact promotion."
+  },
+  {
+    "id": "F14",
+    "severity": "important",
+    "status": "open",
+    "finding": "Shared output names can overwrite candidate/qualification files before an incompatible field checkpoint is rejected.",
+    "references": "run_incremental_crack_path.m:99; run_incremental_crack_path.m:238; verification/crack_path/main_increment_sensitivity_coarse.m:139",
+    "action": "Use one isolated directory per increment/core/exterior/frozen source. This audit does not redesign archive transactions."
+  },
+  {
+    "id": "F15",
+    "severity": "important",
+    "status": "open",
+    "finding": "Direct generic runs keep the accepted reference 4-mm P1 SIF defaults even if increment/core controls are changed.",
+    "references": "run_incremental_crack_path.m:65; run_incremental_crack_path.m:114; verification/crack_path/main_increment_sensitivity_coarse.m:227",
+    "action": "Use an independently qualified/solved seed. Named sensitivity drivers supply their own P1; the generic API cannot infer one."
+  },
+  {
+    "id": "F16",
+    "severity": "important",
+    "status": "open",
+    "finding": "An absolute calibration transitionLength_m overrides the dimensionless transition option; summary transition fields describe the nominal design.",
+    "references": "build_stage3c_polyline_exterior.m:287; build_stage3c_polyline_exterior.m:297; qualify_incremental_crack_candidate.m:198; main_stage2_embed_scaled_core_full_domain_theta0.m:147",
+    "action": "Named M1 protocol overrides slopes only. Custom callers must inspect effective calibration, not only requested ratios."
+  },
+  {
+    "id": "F17",
+    "severity": "confirmed safe",
+    "status": "verified",
+    "finding": "92 mm is a default target, not a hidden segment count: N=target/increment with explicit divisibility.",
+    "references": "verification/crack_path/main_increment_sensitivity_coarse.m:51; verification/crack_path/main_increment_sensitivity_coarse.m:68",
+    "action": "4/2/1 mm gives 23/46/92 segments. Nondivisible targets fail; no shortening or floor conversion."
+  },
+  {
+    "id": "F18",
+    "severity": "confirmed safe",
+    "status": "verified",
+    "finding": "Accepted Stage-I geometry/material/load/frame stay unchanged; only the in-memory reserved Stage-II increment changes.",
+    "references": "verification/crack_path/main_increment_sensitivity_coarse.m:78; verification/crack_path/main_increment_sensitivity_coarse.m:93; crack_physics_signature.m:1",
+    "action": "Full R0 restores bitwise after resetting that one summary cell in the tests."
+  },
+  {
+    "id": "F19",
+    "severity": "confirmed safe",
+    "status": "verified",
+    "finding": "Historical C.a0=4 mm does not leak into the active P1 carrier: A0Override explicitly forwards the selected reservation.",
+    "references": "main_stage2_embed_scaled_core_full_domain_theta0.m:87; main_stage2_embed_scaled_core_full_domain_theta0.m:118; build_stage2_cracked_mesh_for_theta.m:34; geom_hole_shortcrack.m:52",
+    "action": "Do not mutate accepted C merely to remove a seemingly stale literal."
+  },
+  {
+    "id": "F20",
+    "severity": "confirmed safe",
+    "status": "verified",
+    "finding": "Tip size, annulus and core radii use the selected increment; CoreScale changes tip size, not physical core/EDI radii.",
+    "references": "build_stage2_scaled_audited_core.m:65; build_stage2_scaled_audited_core.m:118; qualify_incremental_crack_candidate.m:192; qualify_incremental_crack_candidate.m:210",
+    "action": "Coarse 1/2/4-mm core element and COD sampling invariance verified without a PDE/physical solve."
+  },
+  {
+    "id": "F21",
+    "severity": "confirmed safe",
+    "status": "verified",
+    "finding": "4/2/1 runs intentionally couple increment and absolute core/exterior mesh scales; they are not fixed-absolute-mesh experiments.",
+    "references": "verification/crack_path/main_increment_sensitivity_coarse.m:5; verification/crack_path/main_increment_sensitivity_coarse.m:25; verification/crack_path/main_increment_sensitivity_coarse.m:96",
+    "action": "Keep this existing interpretation; compare the same dimensionless coarse family."
+  },
+  {
+    "id": "F22",
+    "severity": "important",
+    "status": "open",
+    "finding": "Source-carrier Hmin/Hmax/Hgrad, mouth width, and physical hole polygon are inherited absolute quantities, not globally rescaled with Delta a.",
+    "references": "qualify_incremental_crack_candidate.m:133; qualify_incremental_crack_candidate.m:138; build_stage2_cracked_mesh_for_theta.m:39; build_stage3c_polyline_exterior.m:324",
+    "action": "Core/exterior laws scale; the full plate/carrier/boundary seed problem is not a homothetic mesh family."
+  },
+  {
+    "id": "F23",
+    "severity": "important",
+    "status": "open",
+    "finding": "Qualified fingerprints are duplicated in qualifier, P1 solver, tip solver, study guards and tests.",
+    "references": "qualify_incremental_crack_candidate.m:219; main_stage2_embed_scaled_core_full_domain_theta0.m:160; solve_incremental_crack_tip.m:720; main_stage2_theta0_physical_solve.m:677",
+    "action": "Current values agree. A new qualified family requires coordinated updates, not replacement of only one count."
+  },
+  {
+    "id": "F24",
+    "severity": "confirmed safe",
+    "status": "verified",
+    "finding": "CoreScale API limits are explicit: propagation supports 1/2; fixed-geometry qualifier/solver also support 0.5; display-only scale 4 is not physically admitted.",
+    "references": "run_incremental_crack_path.m:43; qualify_incremental_crack_candidate.m:28; solve_incremental_crack_tip.m:752; verification/crack_path/main_tip_core_mesh_level_comparison.m:13",
+    "action": "No silent fallback to scale 1. Do not treat visualization H2 as a physically qualified propagation level."
+  },
+  {
+    "id": "F25",
+    "severity": "cosmetic",
+    "status": "open",
+    "finding": "H2 names mean scale 4 in mesh-level illustration, but h/2 refinement documentation uses another naming convention.",
+    "references": "verification/crack_path/main_tip_core_mesh_level_comparison.m:6; verification/crack_path/main_fixed_geometry_tip_refinement_diagnostic.m:117; verification/crack_path/TIP_REFINEMENT_H2.md:1",
+    "action": "Use numeric CoreScale and hTip, not level names, as identity."
+  },
+  {
+    "id": "F26",
+    "severity": "cosmetic",
+    "status": "open",
+    "finding": "MeshFamilyLabel and output-directory tags are display/organization labels; the generic default can still say reference for nonreference numerical controls.",
+    "references": "run_incremental_crack_path.m:53; run_incremental_crack_path.m:397; verification/crack_path/main_increment_sensitivity_coarse.m:103",
+    "action": "Compatibility uses numerical controls, not labels. Do not infer provenance from filenames."
+  },
+  {
+    "id": "F27",
+    "severity": "confirmed safe",
+    "status": "verified",
+    "finding": "P17/P21/P22/P23, 23 rows and 92 mm in canonical paper generators are deliberately tied to the audited 4-mm reference snapshot.",
+    "references": "paper/export_pilot_evidence.m:12; paper/export_pilot_evidence.m:20; paper/sync_manuscript_data.py:16; paper/plot_existing_manuscript_figures.m:62; paper/verify_manuscript.py:16",
+    "action": "Snapshot guards must not be weakened to accept 2/1-mm histories. These are not generic comparison tools."
+  },
+  {
+    "id": "F28",
+    "severity": "important",
+    "status": "open",
+    "finding": "Fixed-geometry diagnostics pin reference indices 17/22 and 4*k lengths; custom source files are not a generic physical-length selector.",
+    "references": "verification/crack_path/main_fixed_geometry_tip_refinement_diagnostic.m:24; verification/crack_path/main_fixed_geometry_tip_refinement_diagnostic.m:139; verification/crack_path/main_fixed_geometry_tip_coarsening_diagnostic.m:141; verification/crack_path/main_fixed_geometry_coarse_exterior_diagnostic.m:28",
+    "action": "For another increment derive the desired physical length/event from that history. Do not reuse these reference-index defaults."
+  },
+  {
+    "id": "F29",
+    "severity": "confirmed safe",
+    "status": "verified",
+    "finding": "The 4/2/1 workflow matches common physical lengths rather than equal segment indices and does not interpolate paths.",
+    "references": "verification/crack_path/plot_increment_sensitivity_coarse_publication.m:75; verification/crack_path/plot_increment_sensitivity_coarse_publication.m:478",
+    "action": "Intersection uses absolute 1e-10 mm; nearest-row check retains 1e-8 mm. Ambiguous duplicate grids now reject."
+  },
+  {
+    "id": "F30",
+    "severity": "confirmed safe",
+    "status": "verified",
+    "finding": "The partial-level publication path uses 4/2 data until both 1-mm CSVs exist; a live atomic state is not treated as an exported complete study.",
+    "references": "verification/crack_path/plot_increment_sensitivity_coarse_publication.m:45; verification/crack_path/main_increment_sensitivity_coarse.m:273",
+    "action": "Two- and three-level branches tested with explicit synthetic fixtures; no physical results fabricated."
+  },
+  {
+    "id": "F31",
+    "severity": "important",
+    "status": "open",
+    "finding": "Resume is continuation, not an idempotent completed-run load: default Resume=true rejects an already completed unchanged target.",
+    "references": "run_incremental_crack_path.m:608; verification/crack_path/main_increment_sensitivity_coarse.m:259",
+    "action": "No silent extra solve occurs. Changing this continuation contract is outside the mechanical audit fixes."
+  },
+  {
+    "id": "F32",
+    "severity": "important",
+    "status": "open",
+    "finding": "Assembly depends on a BN_local helper resolved from MATLAB path outside this checkout.",
+    "references": "stif_assem.m:44",
+    "action": "Record/pin MATLAB/PDE/runtime/path dependencies. No dependency or solver implementation changed here."
+  },
+  {
+    "id": "F33",
+    "severity": "confirmed safe",
+    "status": "verified",
+    "finding": "Canonical benchmark/staged reference fingerprints are explicitly reference-only, with an alternative-candidate branch for other qualified families.",
+    "references": "verification/crack_path/main_incremental_path_profile.m:20; verification/crack_path/main_incremental_path_profile.m:69; main_stage2_theta0_physical_solve.m:125; main_stage2_theta0_physical_solve.m:789",
+    "action": "Do not use reference benchmark/regression entry points as generic increment tests."
+  },
+  {
+    "id": "F34",
+    "severity": "cosmetic",
+    "status": "open",
+    "finding": "Reference manuscript availability wording is not synchronized with the investigator-local exported 4/2-mm comparison.",
+    "references": "paper/main.tex:818; verification/crack_path/plot_increment_sensitivity_coarse_publication.m:45",
+    "action": "Author review must distinguish partial/coupled 4/2 data from a complete or isolated increment study. No manuscript interpretation was edited."
+  },
+  {
+    "id": "F35",
+    "severity": "confirmed safe",
+    "status": "verified",
+    "finding": "Historical 8-mm audit constants and fixed Stage-I-source hashes are validation/snapshot identities, not production increment substitutions.",
+    "references": "build_stage2_scaled_audited_core.m:10; paper/audit_stage1_source_provenance.py:24; verification/sif_audit/AUDIT_CLOSURE.md:1",
+    "action": "No historical data were injected into another increment's seed or trajectory by this audit."
+  }
+]

@@ -1,0 +1,218 @@
+[Warning: Name is nonexistent or not a directory: C:\Users\Mikhailo\Google Drive\Projects\8 - CohZonFEM\czm_project\CrackPath\CrackFromHoleLEFM\cfh]
+[Warning: Name is nonexistent or not a directory: C:\Users\Mikhailo\Google Drive\Projects\8 - CohZonFEM\Asphalt\remmers2003]
+[Warning: Directory already exists.]
+[> In test_crack_reproducibility (line 4)
+In run_checks (line 2)
+In run (line 91)]
+  COD new mesh: native nodes upper/lower=60/60; abscissa mismatch 0.00000e+00 m
+  COD new mesh: native nodes upper/lower=60/60; abscissa mismatch 0.00000e+00 m
+  COD new mesh: native nodes upper/lower=60/60; abscissa mismatch 0.00000e+00 m
+
+============================================================
+GENERAL INCREMENTAL CRACK-PATH DRIVER
+============================================================
+  max segments      = 3
+  increment         = 2.000000000 mm
+  theta_1           = +0 deg (prescribed)
+  accepted P1 KI    = 0.289025004665 MPa*sqrt(m)
+  accepted P1 KII   = +8.85253471598e-07 MPa*sqrt(m)
+  theta_2           = -0.000350982004342 deg (MTS from P1)
+  physical solves   = 0
+  mesh family       = reference
+  core scale        = 2 * h0
+  exterior far cap  = 1.25 * DeltaA
+  exterior override = enabled
+  output directory  = C:\Users\Mikhailo\Documents\Codex\2026-10-04\files-pasted-by-the-user-you\work\reproducibility-audit\checks\promote_2
+  resume mode       = 1
+  resume state      = <in-memory ResumeState>
+  completed physical= 3 segments
+  first resumed step= 4
+  resume history    = complete
+  promoted result   = P3 from <in-memory accepted physical result>
+  first new step    = none (target already accepted)
+
+============================================================
+INCREMENTAL PATH RUN COMPLETE
+============================================================
+  segments represented = 3
+  stop reason          = max_segments_reached
+  last solved theta    = -0.00125183973485 deg
+  last KI/KII          = 0.409671189343 / +1.26726130658e-05
+  next predicted theta = -0.00479657151652 deg
+
+============================================================
+GENERAL INCREMENTAL CRACK-PATH DRIVER
+============================================================
+  max segments      = 3
+  increment         = 4.000000000 mm
+  theta_1           = +0 deg (prescribed)
+  accepted P1 KI    = 0.366438495416 MPa*sqrt(m)
+  accepted P1 KII   = +4.16223128079e-06 MPa*sqrt(m)
+  theta_2           = -0.00130160061598 deg (MTS from P1)
+  physical solves   = 0
+  mesh family       = reference
+  core scale        = 2 * h0
+  exterior far cap  = 1.25 * DeltaA
+  exterior override = enabled
+  output directory  = C:\Users\Mikhailo\Documents\Codex\2026-10-04\files-pasted-by-the-user-you\work\reproducibility-audit\checks\promote_4
+  resume mode       = 1
+  resume state      = <in-memory ResumeState>
+  completed physical= 3 segments
+  first resumed step= 4
+  resume history    = complete
+  promoted result   = P3 from <in-memory accepted physical result>
+  first new step    = none (target already accepted)
+
+============================================================
+INCREMENTAL PATH RUN COMPLETE
+============================================================
+  segments represented = 3
+  stop reason          = max_segments_reached
+  last solved theta    = -0.0119719251257 deg
+  last KI/KII          = 0.474318151181 / +0.000109892161207
+  next predicted theta = -0.0385210092561 deg
+  COD new mesh: native nodes upper/lower=70/70; abscissa mismatch 0.00000e+00 m
+
+============================================================
+INCREMENTAL PATH: PHYSICAL SOLVE AT CURRENT TIP
+============================================================
+  Frozen source    : <in-memory FrozenState>
+  Candidate source : <in-memory qualified incremental candidate>
+  first leg        : 4.000000000 mm, theta_1=+0 deg
+  segments         : 3
+  current angle    : -0.0119719251257 deg (PRESCRIBED GEOMETRY)
+  total crack      : 12.000000000 mm
+  current increment: 4.000000000 mm
+  T3               : 7979 nodes / 15190 elements
+  T6               : 31148 nodes / 15190 elements
+  DOF/free DOF     : 62296 / 62293
+  load             : unit remote-y traction
+  solver           : PCG + parameter-free SGS
+  PCG tol/maxit    : 1.0e-10 / 5000
+  EDI annulus      : [0.400000, 2.600000] mm
+  COD new mesh: native nodes upper/lower=70/70; abscissa mismatch 0.00000e+00 m
+
+============================================================
+INCREMENTAL PATH: PHYSICAL SOLVE AT CURRENT TIP
+============================================================
+  Frozen source    : <in-memory FrozenState>
+  Candidate source : <in-memory qualified incremental candidate>
+  first leg        : 4.000000000 mm, theta_1=+0 deg
+  segments         : 3
+  current angle    : -0.0119719251257 deg (PRESCRIBED GEOMETRY)
+  total crack      : 12.000000000 mm
+  current increment: 4.000000000 mm
+  T3               : 7979 nodes / 15190 elements
+  T6               : 31148 nodes / 15190 elements
+  DOF/free DOF     : 62296 / 62293
+  load             : unit remote-y traction
+  solver           : PCG + parameter-free SGS
+  PCG tol/maxit    : 1.0e-10 / 5000
+  EDI annulus      : [0.400000, 2.600000] mm
+[Warning: Directory already exists.]
+[> In test_crack_reproducibility (line 119)
+In run_checks (line 2)
+In run (line 91)]
+[Warning: Directory already exists.]
+[> In test_crack_reproducibility (line 141)
+In run_checks (line 2)
+In run (line 91)]
+[Warning: Directory already exists.]
+[> In test_crack_reproducibility (line 141)
+In run_checks (line 2)
+In run (line 91)]
+[Warning: Directory already exists.]
+[> In test_crack_reproducibility (line 141)
+In run_checks (line 2)
+In run (line 91)]
+
+1-mm run is not present. Showing completed 4-mm / 2-mm comparison.
+The same command will switch automatically to 4/2/1 mm after the 1-mm run exists.
+
+============================================================
+CRACK-INCREMENT SENSITIVITY: COMPLETED 4 mm / 2 mm VIEW
+============================================================
+  exact common range       : 4.000000--12.000000 mm
+
+  2mm - 4mm
+    max |dy|           : 0 micrometers
+    max separation     : 0 micrometers
+    max |dtheta|       : 0 millidegrees
+    max |dq|           : 0
+
+  Delta a = 4 mm
+    q maximum          : a=8.000000 mm, q=+0.000989358247
+    q_max / Delta a    : +0.000247339562 1/mm
+    turn density there : +0.02 deg/mm
+    local symmetry     : 5.733637636 mm
+
+  Delta a = 2 mm
+    q maximum          : a=8.000000 mm, q=+0.000989358247
+    q_max / Delta a    : +0.000494679123 1/mm
+    turn density there : +0.02 deg/mm
+    local symmetry     : 3.091528083 mm
+  local-symmetry shift 2-4 : -2.642109554 mm
+
+============================================================
+CRACK-INCREMENT SENSITIVITY: 4 mm / 2 mm / 1 mm
+============================================================
+  exact common range       : 4.000000--12.000000 mm
+
+  2mm - 4mm
+    max |dy|           : 0 micrometers
+    max separation     : 0 micrometers
+    max |dtheta|       : 0 millidegrees
+    max |dq|           : 0
+
+  1mm - 2mm
+    max |dy|           : 0 micrometers
+    max separation     : 0 micrometers
+    max |dtheta|       : 0 millidegrees
+    max |dq|           : 0
+
+  Delta a = 4 mm
+    q maximum          : a=8.000000 mm, q=+0.000989358247
+    q_max / Delta a    : +0.000247339562 1/mm
+    turn density there : +0.02 deg/mm
+    local symmetry     : 5.733637636 mm
+
+  Delta a = 2 mm
+    q maximum          : a=8.000000 mm, q=+0.000989358247
+    q_max / Delta a    : +0.000494679123 1/mm
+    turn density there : +0.02 deg/mm
+    local symmetry     : 3.091528083 mm
+
+  Delta a = 1 mm
+    q maximum          : a=8.000000 mm, q=+0.000989358247
+    q_max / Delta a    : +0.000989358247 1/mm
+    turn density there : +0.02 deg/mm
+    local symmetry     : 3.157162792 mm
+  ratio max separation (2-4)/(1-2) : 0
+  ratio max direction  (2-4)/(1-2) : 0
+    increment_mm    hTip_mm     rInner_mm    rOuter_mm    rCore_mm    transition_mm    farCap_mm
+    ____________    ________    _________    _________    ________    _____________    _________
+
+         1          0.013506       0.1         0.65         0.75            1            1.25
+         2          0.027012       0.2          1.3          1.5            2             2.5
+         4          0.054025       0.4          2.6            3            4               5
+
+REPRODUCIBILITY CHECKS PASS: 15 portable, 22 archive checks; no solve.
+         id: 'FNDSB'
+    message: 'For array or cell array, performance can be improved using logical indexing instead of 'find'.'
+        fix: 1
+       line: 380
+     column: [32 35]
+
+  2x1 struct array with fields:
+
+    id
+    message
+    fix
+    line
+    column
+
+         id: 'MSNU'
+    message: 'A Code Analyzer message was once suppressed here, but the message is no longer generated.'
+        fix: 1
+       line: 261
+     column: [84 94]

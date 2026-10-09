@@ -1,0 +1,33 @@
+{
+  "base_commit": "79c2a9edb3542d5bbe22eba6cb82e704e75aa22a",
+  "files": 297,
+  "lines": 72211,
+  "hits": 2262,
+  "by_extension": {
+    ".bat": 0,
+    ".bib": 1,
+    ".cmd": 0,
+    ".js": 0,
+    ".json": 9,
+    ".m": 219,
+    ".md": 55,
+    ".mjs": 0,
+    ".ps1": 0,
+    ".py": 3,
+    ".sh": 0,
+    ".tex": 10,
+    ".toml": 0,
+    ".yaml": 0,
+    ".yml": 0
+  },
+  "by_category": {
+    "increment_4mm": 179,
+    "core_scale": 111,
+    "fixed_states_lengths": 313,
+    "reference_fingerprints": 159,
+    "reference_paths": 92,
+    "length_grid": 278,
+    "parameter_flow": 450,
+    "reuse_provenance": 731
+  }
+}

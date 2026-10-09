@@ -1,0 +1,25 @@
+{
+  "increment_mm": 4,
+  "rCore_mm": 3,
+  "transition_mm": 4,
+  "farCap_mm": 2.5,
+  "evaluated_radius_mm": 12,
+  "physical_solve": false,
+  "rows": [
+    {
+      "CoreScale": 0.5,
+      "h_at_core_boundary_mm": 0.0555061627,
+      "h_at_r12mm_mm": 0.40487547317666517
+    },
+    {
+      "CoreScale": 1,
+      "h_at_core_boundary_mm": 0.1110123254,
+      "h_at_r12mm_mm": 0.7949096268504792
+    },
+    {
+      "CoreScale": 2,
+      "h_at_core_boundary_mm": 0.2220246508,
+      "h_at_r12mm_mm": 1.4738318920900086
+    }
+  ]
+}

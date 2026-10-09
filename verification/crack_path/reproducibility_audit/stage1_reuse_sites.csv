@@ -1,0 +1,367 @@
+path,line,text
+main_stage2_embed_scaled_core_full_domain.m,35,"%       'FrozenState',R0,'Theta1Deg',-0.01);"
+main_stage2_embed_scaled_core_full_domain.m,46,"    addParameter(ip,'FrozenState',[],@(x)isempty(x)||isstruct(x));"
+main_stage2_embed_scaled_core_full_domain.m,60,"    [R0,sourceLabel]=local_load_frozen_state(root,opt.FrozenState,char(opt.StateFile));"
+main_stage2_embed_scaled_core_full_domain.m,62,"    assert(isfield(R0,'summary')&&istable(R0.summary)&&height(R0.summary)==1, ..."
+main_stage2_embed_scaled_core_full_domain.m,63,"        'stage2full:FrozenSummary','Frozen R0.summary is required.');"
+main_stage2_embed_scaled_core_full_domain.m,64,"    assert(isfield(R0,'C')&&isstruct(R0.C), ..."
+main_stage2_embed_scaled_core_full_domain.m,65,"        'stage2full:FrozenConfig','Frozen R0.C is required.');"
+main_stage2_embed_scaled_core_full_domain.m,67,    S0=R0.summary;
+main_stage2_embed_scaled_core_full_domain.m,68,"    req={'a0_reserved_m','x_star_m','y_star_m', ..."
+main_stage2_embed_scaled_core_full_domain.m,82,    C=R0.C;
+main_stage2_embed_scaled_core_full_domain.m,83,    a0=row.a0_reserved_m;
+main_stage2_embed_scaled_core_full_domain.m,599,"function [R0,label]=local_load_frozen_state(root,Rin,stateFile)"
+main_stage2_embed_scaled_core_full_domain.m,601,        R0=Rin;label='<in-memory FrozenState>';return
+main_stage2_embed_scaled_core_full_domain.m,604,"        stateFile=fullfile(root,'verification','crack_path','stage1_starting_state.mat');"
+main_stage2_embed_scaled_core_full_domain.m,609,"        error('stage2full:MissingFrozenState', ..."
+main_stage2_embed_scaled_core_full_domain.m,610,"            'Frozen Stage-I MAT not found; pass ''FrozenState'',R0.');"
+main_stage2_embed_scaled_core_full_domain.m,612,"    d=load(stateFile);assert(isfield(d,'R0')&&isstruct(d.R0));"
+main_stage2_embed_scaled_core_full_domain.m,613,    R0=d.R0;label=stateFile;
+main_stage2_embed_scaled_core_full_domain_theta0.m,34,"%       'FrozenState',R0);"
+main_stage2_embed_scaled_core_full_domain_theta0.m,45,"    addParameter(ip,'FrozenState',[],@(x)isempty(x)||isstruct(x));"
+main_stage2_embed_scaled_core_full_domain_theta0.m,69,"    [R0,sourceLabel]=local_load_frozen_state(root,opt.FrozenState,char(opt.StateFile));"
+main_stage2_embed_scaled_core_full_domain_theta0.m,71,"    assert(isfield(R0,'summary')&&istable(R0.summary)&&height(R0.summary)==1, ..."
+main_stage2_embed_scaled_core_full_domain_theta0.m,72,"        'stage2full:FrozenSummary','Frozen R0.summary is required.');"
+main_stage2_embed_scaled_core_full_domain_theta0.m,73,"    assert(isfield(R0,'C')&&isstruct(R0.C), ..."
+main_stage2_embed_scaled_core_full_domain_theta0.m,74,"        'stage2full:FrozenConfig','Frozen R0.C is required.');"
+main_stage2_embed_scaled_core_full_domain_theta0.m,76,    S0=R0.summary;
+main_stage2_embed_scaled_core_full_domain_theta0.m,77,"    req={'a0_reserved_m','x_star_m','y_star_m', ..."
+main_stage2_embed_scaled_core_full_domain_theta0.m,86,    C=R0.C;
+main_stage2_embed_scaled_core_full_domain_theta0.m,87,    a0=row.a0_reserved_m;
+main_stage2_embed_scaled_core_full_domain_theta0.m,626,"function [R0,label]=local_load_frozen_state(root,Rin,stateFile)"
+main_stage2_embed_scaled_core_full_domain_theta0.m,628,        R0=Rin;label='<in-memory FrozenState>';return
+main_stage2_embed_scaled_core_full_domain_theta0.m,631,"        stateFile=fullfile(root,'verification','crack_path','stage1_starting_state.mat');"
+main_stage2_embed_scaled_core_full_domain_theta0.m,636,"        error('stage2full:MissingFrozenState', ..."
+main_stage2_embed_scaled_core_full_domain_theta0.m,637,"            'Frozen Stage-I MAT not found; pass ''FrozenState'',R0.');"
+main_stage2_embed_scaled_core_full_domain_theta0.m,639,"    d=load(stateFile);assert(isfield(d,'R0')&&isstruct(d.R0));"
+main_stage2_embed_scaled_core_full_domain_theta0.m,640,    R0=d.R0;label=stateFile;
+main_stage2_qualify_scaled_audited_core_theta0.m,35,"%       'FrozenState', R0);"
+main_stage2_qualify_scaled_audited_core_theta0.m,40,"    addParameter(ip,'FrozenState',[],@(x)isempty(x)||isstruct(x));"
+main_stage2_qualify_scaled_audited_core_theta0.m,50,"    [R0,sourceLabel,stateFile] = local_load_frozen_state( ..."
+main_stage2_qualify_scaled_audited_core_theta0.m,51,"        repoRoot,opt.FrozenState,char(opt.StateFile));"
+main_stage2_qualify_scaled_audited_core_theta0.m,53,"    assert(isfield(R0,'summary')&&istable(R0.summary)&&height(R0.summary)==1, ..."
+main_stage2_qualify_scaled_audited_core_theta0.m,54,"        'stage2core:FrozenSummary','Frozen R0.summary is required.');"
+main_stage2_qualify_scaled_audited_core_theta0.m,55,"    assert(isfield(R0,'C')&&isstruct(R0.C), ..."
+main_stage2_qualify_scaled_audited_core_theta0.m,56,"        'stage2core:FrozenConfig','Frozen R0.C is required.');"
+main_stage2_qualify_scaled_audited_core_theta0.m,58,    T0 = R0.summary;
+main_stage2_qualify_scaled_audited_core_theta0.m,59,"    req = {'a0_reserved_m','x_star_m','y_star_m', ..."
+main_stage2_qualify_scaled_audited_core_theta0.m,67,    C = R0.C;
+main_stage2_qualify_scaled_audited_core_theta0.m,68,    a0 = row.a0_reserved_m;
+main_stage2_qualify_scaled_audited_core_theta0.m,375,"function [R0,sourceLabel,stateFile] = local_load_frozen_state(repoRoot,Rin,stateFileIn)"
+main_stage2_qualify_scaled_audited_core_theta0.m,379,        R0 = Rin;
+main_stage2_qualify_scaled_audited_core_theta0.m,380,        sourceLabel = '<in-memory FrozenState>';
+main_stage2_qualify_scaled_audited_core_theta0.m,386,            'stage1_starting_state.mat');
+main_stage2_qualify_scaled_audited_core_theta0.m,396,"        error('stage2core:MissingFrozenState', ..."
+main_stage2_qualify_scaled_audited_core_theta0.m,398,"             'Pass ''FrozenState'',R0 if the accepted struct is in memory.'], ..."
+main_stage2_qualify_scaled_audited_core_theta0.m,403,"    assert(isfield(S,'R0')&&isstruct(S.R0), ..."
+main_stage2_qualify_scaled_audited_core_theta0.m,404,"        'stage2core:BadFrozenMAT','MAT file must contain R0.');"
+main_stage2_qualify_scaled_audited_core_theta0.m,405,    R0 = S.R0;
+main_stage2_reference_pencil_mesh.m,13,%   a0      = the frozen a0_reserved_m value (currently 4 mm)
+main_stage2_reference_pencil_mesh.m,16,%   1) loads verification/crack_path/stage1_starting_state.mat;
+main_stage2_reference_pencil_mesh.m,35,%   'FrozenState'    in-memory frozen R0 struct; preferred when available
+main_stage2_reference_pencil_mesh.m,36,%   'StateFile'      frozen Stage-I MAT file (used when FrozenState is empty)
+main_stage2_reference_pencil_mesh.m,61,"    addParameter(ip, 'FrozenState', [], ..."
+main_stage2_reference_pencil_mesh.m,79,    frozenState  = ip.Results.FrozenState;
+main_stage2_reference_pencil_mesh.m,90,    % Stage II to continue directly from accepted R0 without repeating the
+main_stage2_reference_pencil_mesh.m,97,"        S = struct('R0', frozenState);"
+main_stage2_reference_pencil_mesh.m,98,        sourceLabel = '<in-memory FrozenState>';
+main_stage2_reference_pencil_mesh.m,102,"                'verification', 'crack_path', 'stage1_starting_state.mat');"
+main_stage2_reference_pencil_mesh.m,115,"                'verification', 'crack_path', 'stage1_starting_state.mat');"
+main_stage2_reference_pencil_mesh.m,122,"                 'If R0 is still in the MATLAB workspace, pass ', ..."
+main_stage2_reference_pencil_mesh.m,123,"                 '''FrozenState'',R0. Otherwise rerun the Stage-I freeze once.'], ..."
+main_stage2_reference_pencil_mesh.m,149,"        'a0_reserved_m', ..."
+main_stage2_reference_pencil_mesh.m,160,    % Prefer the exact frozen R0.C when available. Fall back to the canonical
+main_stage2_reference_pencil_mesh.m,161,    % project configuration only for legacy checkpoints lacking R0.C.
+main_stage2_reference_pencil_mesh.m,163,"    if isfield(S, 'R0') && isstruct(S.R0) && ..."
+main_stage2_reference_pencil_mesh.m,164,"            isfield(S.R0, 'C') && isstruct(S.R0.C)"
+main_stage2_reference_pencil_mesh.m,165,        C = S.R0.C;
+main_stage2_reference_pencil_mesh.m,179,    C.a0 = row.a0_reserved_m;
+main_stage2_reference_pencil_mesh.m,446,"    if isfield(S, 'R0') && isstruct(S.R0) && ..."
+main_stage2_reference_pencil_mesh.m,447,"            isfield(S.R0, 'summary') && istable(S.R0.summary)"
+main_stage2_reference_pencil_mesh.m,448,        T = S.R0.summary;
+main_stage2_reference_pencil_mesh.m,468,"         'Expected R0.summary, summary, or a struct containing .summary.']);"
+main_stage2_supplied_angle_physical_solve.m,31,% Recommended call while R0 and F from Stage II-C remain in memory:
+main_stage2_supplied_angle_physical_solve.m,34,"%       'FrozenState',R0, ..."
+main_stage2_supplied_angle_physical_solve.m,44,"    addParameter(ip,'FrozenState',[],@(x)isempty(x)||isstruct(x));"
+main_stage2_supplied_angle_physical_solve.m,80,"    [R0,frozenSource]=local_load_frozen(root,opt.FrozenState);"
+main_stage2_supplied_angle_physical_solve.m,94,"    assert(isfield(R0,'summary')&&istable(R0.summary)&&height(R0.summary)==1, ..."
+main_stage2_supplied_angle_physical_solve.m,95,"        'stage2phys:FrozenSummary','Frozen R0.summary is required.');"
+main_stage2_supplied_angle_physical_solve.m,96,"    assert(isfield(R0,'C')&&isstruct(R0.C), ..."
+main_stage2_supplied_angle_physical_solve.m,97,"        'stage2phys:FrozenConfig','Frozen R0.C is required.');"
+main_stage2_supplied_angle_physical_solve.m,99,    T0=R0.summary;
+main_stage2_supplied_angle_physical_solve.m,100,"    req={'a0_reserved_m','x_star_m','y_star_m', ..."
+main_stage2_supplied_angle_physical_solve.m,107,    C=R0.C;
+main_stage2_supplied_angle_physical_solve.m,108,    a0=row.a0_reserved_m;
+main_stage2_supplied_angle_physical_solve.m,566,"function [R0,label]=local_load_frozen(root,Rin)"
+main_stage2_supplied_angle_physical_solve.m,568,        R0=Rin;
+main_stage2_supplied_angle_physical_solve.m,569,        label='<in-memory FrozenState>';
+main_stage2_supplied_angle_physical_solve.m,573,"    f=fullfile(root,'verification','crack_path','stage1_starting_state.mat');"
+main_stage2_supplied_angle_physical_solve.m,575,"        error('stage2phys:MissingFrozenState', ..."
+main_stage2_supplied_angle_physical_solve.m,576,"            ['Frozen Stage-I MAT not found. Pass ''FrozenState'',R0 ', ..."
+main_stage2_supplied_angle_physical_solve.m,580,"    assert(isfield(d,'R0')&&isstruct(d.R0), ..."
+main_stage2_supplied_angle_physical_solve.m,581,"        'stage2phys:BadFrozenState','Frozen MAT must contain R0.');"
+main_stage2_supplied_angle_physical_solve.m,582,    R0=d.R0;
+main_stage2_supplied_angle_probe.m,9,"%       'FrozenState',R0, ..."
+main_stage2_supplied_angle_probe.m,25,"    addParameter(ip,'FrozenState',[],@(x)isempty(x)||isstruct(x));"
+main_stage2_supplied_angle_probe.m,50,"        'FrozenState',opt.FrozenState, ..."
+main_stage2_supplied_angle_probe.m,69,"        'FrozenState',opt.FrozenState, ..."
+main_stage2_theta0_physical_solve.m,31,% Recommended call while R0 and F from Stage II-C remain in memory:
+main_stage2_theta0_physical_solve.m,34,"%       'FrozenState',R0, ..."
+main_stage2_theta0_physical_solve.m,42,"    addParameter(ip,'FrozenState',[],@(x)isempty(x)||isstruct(x));"
+main_stage2_theta0_physical_solve.m,77,"    [R0,frozenSource]=local_load_frozen(root,opt.FrozenState);"
+main_stage2_theta0_physical_solve.m,91,"    assert(isfield(R0,'summary')&&istable(R0.summary)&&height(R0.summary)==1, ..."
+main_stage2_theta0_physical_solve.m,92,"        'stage2phys:FrozenSummary','Frozen R0.summary is required.');"
+main_stage2_theta0_physical_solve.m,93,"    assert(isfield(R0,'C')&&isstruct(R0.C), ..."
+main_stage2_theta0_physical_solve.m,94,"        'stage2phys:FrozenConfig','Frozen R0.C is required.');"
+main_stage2_theta0_physical_solve.m,96,    T0=R0.summary;
+main_stage2_theta0_physical_solve.m,97,"    req={'a0_reserved_m','x_star_m','y_star_m', ..."
+main_stage2_theta0_physical_solve.m,104,    C=R0.C;
+main_stage2_theta0_physical_solve.m,105,    a0=row.a0_reserved_m;
+main_stage2_theta0_physical_solve.m,639,"function [R0,label]=local_load_frozen(root,Rin)"
+main_stage2_theta0_physical_solve.m,641,        R0=Rin;
+main_stage2_theta0_physical_solve.m,642,        label='<in-memory FrozenState>';
+main_stage2_theta0_physical_solve.m,646,"    f=fullfile(root,'verification','crack_path','stage1_starting_state.mat');"
+main_stage2_theta0_physical_solve.m,648,"        error('stage2phys:MissingFrozenState', ..."
+main_stage2_theta0_physical_solve.m,649,"            ['Frozen Stage-I MAT not found. Pass ''FrozenState'',R0 ', ..."
+main_stage2_theta0_physical_solve.m,653,"    assert(isfield(d,'R0')&&isstruct(d.R0), ..."
+main_stage2_theta0_physical_solve.m,654,"        'stage2phys:BadFrozenState','Frozen MAT must contain R0.');"
+main_stage2_theta0_physical_solve.m,655,    R0=d.R0;
+main_stage3a_two_leg_tip_core_qualification.m,38,"%       'FrozenState',R0,'SecondLegLength',0.004,'DeltaTheta2Deg',0);"
+main_stage3a_two_leg_tip_core_qualification.m,49,"    addParameter(ip,'FrozenState',[],@(x)isempty(x)||isstruct(x));"
+main_stage3a_two_leg_tip_core_qualification.m,65,"    [R0,sourceLabel]=local_load_frozen_state(root,opt.FrozenState,char(opt.StateFile));"
+main_stage3a_two_leg_tip_core_qualification.m,67,"    assert(isfield(R0,'summary')&&istable(R0.summary)&&height(R0.summary)==1, ..."
+main_stage3a_two_leg_tip_core_qualification.m,68,"        'stage3a:FrozenSummary','Frozen R0.summary is required.');"
+main_stage3a_two_leg_tip_core_qualification.m,69,"    assert(isfield(R0,'C')&&isstruct(R0.C), ..."
+main_stage3a_two_leg_tip_core_qualification.m,70,"        'stage3a:FrozenConfig','Frozen R0.C is required.');"
+main_stage3a_two_leg_tip_core_qualification.m,72,    S0=R0.summary;
+main_stage3a_two_leg_tip_core_qualification.m,73,"    req={'a0_reserved_m','x_star_m','y_star_m', ..."
+main_stage3a_two_leg_tip_core_qualification.m,82,    C=R0.C;
+main_stage3a_two_leg_tip_core_qualification.m,83,    a1=row.a0_reserved_m;
+main_stage3a_two_leg_tip_core_qualification.m,660,"function [R0,label]=local_load_frozen_state(root,Rin,stateFile)"
+main_stage3a_two_leg_tip_core_qualification.m,662,        R0=Rin;label='<in-memory FrozenState>';return
+main_stage3a_two_leg_tip_core_qualification.m,665,"        stateFile=fullfile(root,'verification','crack_path','stage1_starting_state.mat');"
+main_stage3a_two_leg_tip_core_qualification.m,670,"        error('stage3a:MissingFrozenState', ..."
+main_stage3a_two_leg_tip_core_qualification.m,671,"            'Frozen Stage-I MAT not found; pass ''FrozenState'',R0.');"
+main_stage3a_two_leg_tip_core_qualification.m,673,"    d=load(stateFile);assert(isfield(d,'R0')&&isstruct(d.R0));"
+main_stage3a_two_leg_tip_core_qualification.m,674,    R0=d.R0;label=stateFile;
+main_stage3b_two_leg_physical_solve.m,33,% Recommended call while R0 and F from Stage II-C remain in memory:
+main_stage3b_two_leg_physical_solve.m,36,"%       'FrozenState',R0, ..."
+main_stage3b_two_leg_physical_solve.m,44,"    addParameter(ip,'FrozenState',[],@(x)isempty(x)||isstruct(x));"
+main_stage3b_two_leg_physical_solve.m,71,"    [R0,frozenSource]=local_load_frozen(root,opt.FrozenState);"
+main_stage3b_two_leg_physical_solve.m,85,"    assert(isfield(R0,'summary')&&istable(R0.summary)&&height(R0.summary)==1, ..."
+main_stage3b_two_leg_physical_solve.m,86,"        'stage3b:FrozenSummary','Frozen R0.summary is required.');"
+main_stage3b_two_leg_physical_solve.m,87,"    assert(isfield(R0,'C')&&isstruct(R0.C), ..."
+main_stage3b_two_leg_physical_solve.m,88,"        'stage3b:FrozenConfig','Frozen R0.C is required.');"
+main_stage3b_two_leg_physical_solve.m,90,    T0=R0.summary;
+main_stage3b_two_leg_physical_solve.m,91,"    req={'a0_reserved_m','x_star_m','y_star_m', ..."
+main_stage3b_two_leg_physical_solve.m,98,    C=R0.C;
+main_stage3b_two_leg_physical_solve.m,99,    a1=row.a0_reserved_m;
+main_stage3b_two_leg_physical_solve.m,631,"function [R0,label]=local_load_frozen(root,Rin)"
+main_stage3b_two_leg_physical_solve.m,633,        R0=Rin;
+main_stage3b_two_leg_physical_solve.m,634,        label='<in-memory FrozenState>';
+main_stage3b_two_leg_physical_solve.m,638,"    f=fullfile(root,'verification','crack_path','stage1_starting_state.mat');"
+main_stage3b_two_leg_physical_solve.m,640,"        error('stage3b:MissingFrozenState', ..."
+main_stage3b_two_leg_physical_solve.m,641,"            ['Frozen Stage-I MAT not found. Pass ''FrozenState'',R0 ', ..."
+main_stage3b_two_leg_physical_solve.m,645,"    assert(isfield(d,'R0')&&isstruct(d.R0), ..."
+main_stage3b_two_leg_physical_solve.m,646,"        'stage3b:BadFrozenState','Frozen MAT must contain R0.');"
+main_stage3b_two_leg_physical_solve.m,647,    R0=d.R0;
+main_stage3c_kinked_two_leg_qualification.m,37,"%       'FrozenState',R0,'SecondLegLength',0.004,'Theta2Deg',-5);"
+main_stage3c_kinked_two_leg_qualification.m,48,"    addParameter(ip,'FrozenState',[],@(x)isempty(x)||isstruct(x));"
+main_stage3c_kinked_two_leg_qualification.m,64,"    [R0,sourceLabel]=local_load_frozen_state(root,opt.FrozenState,char(opt.StateFile));"
+main_stage3c_kinked_two_leg_qualification.m,66,"    assert(isfield(R0,'summary')&&istable(R0.summary)&&height(R0.summary)==1, ..."
+main_stage3c_kinked_two_leg_qualification.m,67,"        'stage3c:FrozenSummary','Frozen R0.summary is required.');"
+main_stage3c_kinked_two_leg_qualification.m,68,"    assert(isfield(R0,'C')&&isstruct(R0.C), ..."
+main_stage3c_kinked_two_leg_qualification.m,69,"        'stage3c:FrozenConfig','Frozen R0.C is required.');"
+main_stage3c_kinked_two_leg_qualification.m,71,    S0=R0.summary;
+main_stage3c_kinked_two_leg_qualification.m,72,"    req={'a0_reserved_m','x_star_m','y_star_m', ..."
+main_stage3c_kinked_two_leg_qualification.m,81,    C=R0.C;
+main_stage3c_kinked_two_leg_qualification.m,82,    a1=row.a0_reserved_m;
+main_stage3c_kinked_two_leg_qualification.m,698,"function [R0,label]=local_load_frozen_state(root,Rin,stateFile)"
+main_stage3c_kinked_two_leg_qualification.m,700,        R0=Rin;label='<in-memory FrozenState>';return
+main_stage3c_kinked_two_leg_qualification.m,703,"        stateFile=fullfile(root,'verification','crack_path','stage1_starting_state.mat');"
+main_stage3c_kinked_two_leg_qualification.m,708,"        error('stage3c:MissingFrozenState', ..."
+main_stage3c_kinked_two_leg_qualification.m,709,"            'Frozen Stage-I MAT not found; pass ''FrozenState'',R0.');"
+main_stage3c_kinked_two_leg_qualification.m,711,"    d=load(stateFile);assert(isfield(d,'R0')&&isstruct(d.R0));"
+main_stage3c_kinked_two_leg_qualification.m,712,    R0=d.R0;label=stateFile;
+main_stage3d_kinked_two_leg_physical_solve.m,46,"%       'FrozenState',R0, ..."
+main_stage3d_kinked_two_leg_physical_solve.m,54,"    addParameter(ip,'FrozenState',[],@(x)isempty(x)||isstruct(x));"
+main_stage3d_kinked_two_leg_physical_solve.m,81,"    [R0,frozenSource]=local_load_frozen(root,opt.FrozenState);"
+main_stage3d_kinked_two_leg_physical_solve.m,95,"    assert(isfield(R0,'summary')&&istable(R0.summary)&&height(R0.summary)==1, ..."
+main_stage3d_kinked_two_leg_physical_solve.m,96,"        'stage3d:FrozenSummary','Frozen R0.summary is required.');"
+main_stage3d_kinked_two_leg_physical_solve.m,97,"    assert(isfield(R0,'C')&&isstruct(R0.C), ..."
+main_stage3d_kinked_two_leg_physical_solve.m,98,"        'stage3d:FrozenConfig','Frozen R0.C is required.');"
+main_stage3d_kinked_two_leg_physical_solve.m,100,    T0=R0.summary;
+main_stage3d_kinked_two_leg_physical_solve.m,101,"    req={'a0_reserved_m','x_star_m','y_star_m', ..."
+main_stage3d_kinked_two_leg_physical_solve.m,108,    C=R0.C;
+main_stage3d_kinked_two_leg_physical_solve.m,109,    a1=row.a0_reserved_m;
+main_stage3d_kinked_two_leg_physical_solve.m,663,"function [R0,label]=local_load_frozen(root,Rin)"
+main_stage3d_kinked_two_leg_physical_solve.m,665,        R0=Rin;
+main_stage3d_kinked_two_leg_physical_solve.m,666,        label='<in-memory FrozenState>';
+main_stage3d_kinked_two_leg_physical_solve.m,670,"    f=fullfile(root,'verification','crack_path','stage1_starting_state.mat');"
+main_stage3d_kinked_two_leg_physical_solve.m,672,"        error('stage3d:MissingFrozenState', ..."
+main_stage3d_kinked_two_leg_physical_solve.m,673,"            ['Frozen Stage-I MAT not found. Pass ''FrozenState'',R0 ', ..."
+main_stage3d_kinked_two_leg_physical_solve.m,677,"    assert(isfield(d,'R0')&&isstruct(d.R0), ..."
+main_stage3d_kinked_two_leg_physical_solve.m,678,"        'stage3d:BadFrozenState','Frozen MAT must contain R0.');"
+main_stage3d_kinked_two_leg_physical_solve.m,679,    R0=d.R0;
+paper/export_pilot_evidence.m,5,"addParameter(ip,'FrozenStateFile','',@(x)ischar(x)||isstring(x));"
+paper/export_pilot_evidence.m,88,frozen=char(o.FrozenStateFile);
+paper/export_pilot_evidence.m,90,"    d=load(frozen,'R0');r=d.R0;"
+paper/export_pilot_evidence.m,96,"    E.stage1Source='Investigator-saved accepted_R0.mat, saved for the preceding profiling task';"
+plot_final_clean_run_results.m,4,"%   Out = plot_final_clean_run_results('FrozenState',R0)"
+plot_final_clean_run_results.m,30,%   'FrozenState'     : accepted Stage-I R0 struct (preferred).
+plot_final_clean_run_results.m,31,"%   'StateFile'       : Stage-I MAT containing R0, used if FrozenState empty."
+plot_final_clean_run_results.m,57,"    addParameter(ip,'FrozenState',[],@(x)isempty(x)||(isstruct(x)&&isscalar(x)));"
+plot_final_clean_run_results.m,76,"    R0=local_load_frozen_state(root,opt.FrozenState,char(opt.StateFile));"
+plot_final_clean_run_results.m,127,    S0=R0.summary;
+plot_final_clean_run_results.m,129,"            ~ismember('a0_reserved_m',S0.Properties.VariableNames)"
+plot_final_clean_run_results.m,130,"        error('cleanplot:FrozenSummary','Frozen R0.summary with a0_reserved_m is required.');"
+plot_final_clean_run_results.m,132,    da=S0.a0_reserved_m;
+plot_final_clean_run_results.m,179,    C=R0.C;
+plot_final_clean_run_results.m,408,"function R0=local_load_frozen_state(root,Rin,stateFile)"
+plot_final_clean_run_results.m,410,        R0=Rin;
+plot_final_clean_run_results.m,414,"        stateFile=fullfile(root,'verification','crack_path','stage1_starting_state.mat');"
+plot_final_clean_run_results.m,419,"        error('cleanplot:MissingFrozenState', ..."
+plot_final_clean_run_results.m,420,"            'Frozen Stage-I state not found; pass ''FrozenState'',R0.');"
+plot_final_clean_run_results.m,422,"    d=load(stateFile,'R0');"
+plot_final_clean_run_results.m,423,"    if ~isfield(d,'R0')||~isstruct(d.R0)"
+plot_final_clean_run_results.m,424,"        error('cleanplot:BadFrozenState','StateFile must contain struct R0.');"
+plot_final_clean_run_results.m,426,    R0=d.R0;
+qualify_incremental_crack_candidate.m,19,"    addParameter(ip,'FrozenState',[],@(x)isempty(x)||isstruct(x));"
+qualify_incremental_crack_candidate.m,52,"    [R0,sourceLabel]=local_load_frozen_state(root,opt.FrozenState,char(opt.StateFile));"
+qualify_incremental_crack_candidate.m,54,"    assert(isfield(R0,'summary')&&istable(R0.summary)&&height(R0.summary)==1, ..."
+qualify_incremental_crack_candidate.m,55,"        'pathqual:FrozenSummary','Frozen R0.summary is required.');"
+qualify_incremental_crack_candidate.m,56,"    assert(isfield(R0,'C')&&isstruct(R0.C), ..."
+qualify_incremental_crack_candidate.m,57,"        'pathqual:FrozenConfig','Frozen R0.C is required.');"
+qualify_incremental_crack_candidate.m,59,    S0=R0.summary;
+qualify_incremental_crack_candidate.m,60,"    req={'a0_reserved_m','x_star_m','y_star_m', ..."
+qualify_incremental_crack_candidate.m,69,    C=R0.C;
+qualify_incremental_crack_candidate.m,70,    increment=row.a0_reserved_m;
+qualify_incremental_crack_candidate.m,791,"function [R0,label]=local_load_frozen_state(root,Rin,stateFile)"
+qualify_incremental_crack_candidate.m,793,        R0=Rin;label='<in-memory FrozenState>';return
+qualify_incremental_crack_candidate.m,796,"        stateFile=fullfile(root,'verification','crack_path','stage1_starting_state.mat');"
+qualify_incremental_crack_candidate.m,801,"        error('pathqual:MissingFrozenState', ..."
+qualify_incremental_crack_candidate.m,802,"            'Frozen Stage-I MAT not found; pass ''FrozenState'',R0.');"
+qualify_incremental_crack_candidate.m,804,"    d=load(stateFile);assert(isfield(d,'R0')&&isstruct(d.R0));"
+qualify_incremental_crack_candidate.m,805,    R0=d.R0;label=stateFile;
+run_incremental_crack_path.m,36,"    addParameter(ip,'FrozenState',[],@(x)isempty(x)||isstruct(x));"
+run_incremental_crack_path.m,84,"    R0=local_load_frozen(root,opt.FrozenState);"
+run_incremental_crack_path.m,85,    C=R0.C;
+run_incremental_crack_path.m,86,"    S0=R0.summary(1,:);"
+run_incremental_crack_path.m,88,"    req={'a0_reserved_m','x_star_m','y_star_m', ..."
+run_incremental_crack_path.m,94,    increment=S0.a0_reserved_m;
+run_incremental_crack_path.m,259,"                'FrozenState',R0, ..."
+run_incremental_crack_path.m,284,"            'FrozenState',R0, ..."
+run_incremental_crack_path.m,926,"function R0=local_load_frozen(root,Rin)"
+run_incremental_crack_path.m,927,"    if ~isempty(Rin),R0=Rin;return,end"
+run_incremental_crack_path.m,928,"    f=fullfile(root,'verification','crack_path','stage1_starting_state.mat');"
+run_incremental_crack_path.m,930,"        error('pathrun:MissingFrozenState', ..."
+run_incremental_crack_path.m,931,"            'Frozen Stage-I state is missing; pass ''FrozenState'',R0.');"
+run_incremental_crack_path.m,934,"    assert(isfield(d,'R0')&&isstruct(d.R0),'pathrun:BadFrozenState');"
+run_incremental_crack_path.m,935,    R0=d.R0;
+solve_incremental_crack_tip.m,20,"    addParameter(ip,'FrozenState',[],@(x)isempty(x)||isstruct(x));"
+solve_incremental_crack_tip.m,32,"    [R0,frozenSource]=local_load_frozen(root,opt.FrozenState);"
+solve_incremental_crack_tip.m,56,"    assert(isfield(R0,'summary')&&istable(R0.summary)&&height(R0.summary)==1, ..."
+solve_incremental_crack_tip.m,57,"        'pathsolve:FrozenSummary','Frozen R0.summary is required.');"
+solve_incremental_crack_tip.m,58,"    assert(isfield(R0,'C')&&isstruct(R0.C), ..."
+solve_incremental_crack_tip.m,59,"        'pathsolve:FrozenConfig','Frozen R0.C is required.');"
+solve_incremental_crack_tip.m,61,    T0=R0.summary;
+solve_incremental_crack_tip.m,62,"    req={'a0_reserved_m','x_star_m','y_star_m', ..."
+solve_incremental_crack_tip.m,69,    C=R0.C;
+solve_incremental_crack_tip.m,70,    increment=row.a0_reserved_m;
+solve_incremental_crack_tip.m,700,"function [R0,label]=local_load_frozen(root,Rin)"
+solve_incremental_crack_tip.m,702,        R0=Rin;
+solve_incremental_crack_tip.m,703,        label='<in-memory FrozenState>';
+solve_incremental_crack_tip.m,707,"    f=fullfile(root,'verification','crack_path','stage1_starting_state.mat');"
+solve_incremental_crack_tip.m,709,"        error('pathsolve:MissingFrozenState', ..."
+solve_incremental_crack_tip.m,710,"            ['Frozen Stage-I MAT not found. Pass ''FrozenState'',R0 ', ..."
+solve_incremental_crack_tip.m,714,"    assert(isfield(d,'R0')&&isstruct(d.R0), ..."
+solve_incremental_crack_tip.m,715,"        'pathsolve:BadFrozenState','Frozen MAT must contain R0.');"
+solve_incremental_crack_tip.m,716,    R0=d.R0;
+verification/crack_path/main_fixed_geometry_coarse_exterior_diagnostic.m,31,"    addParameter(ip,'FrozenStateFile','',@(x)ischar(x)||isstring(x));"
+verification/crack_path/main_fixed_geometry_coarse_exterior_diagnostic.m,62,    frozenFile=char(opt.FrozenStateFile);
+verification/crack_path/main_fixed_geometry_coarse_exterior_diagnostic.m,64,"        paperCopy=fullfile(root,'paper','data','accepted_stage1_source.mat');"
+verification/crack_path/main_fixed_geometry_coarse_exterior_diagnostic.m,65,"        standardCopy=fullfile(root,'verification','crack_path','stage1_starting_state.mat');"
+verification/crack_path/main_fixed_geometry_coarse_exterior_diagnostic.m,97,"    d=load(frozenFile,'R0');"
+verification/crack_path/main_fixed_geometry_coarse_exterior_diagnostic.m,98,"    assert(isfield(d,'R0')&&isstruct(d.R0)&&d.R0.stage1Pass, ..."
+verification/crack_path/main_fixed_geometry_coarse_exterior_diagnostic.m,99,"        'coarsemesh:BadFrozen','Frozen MAT must contain passed R0.');"
+verification/crack_path/main_fixed_geometry_coarse_exterior_diagnostic.m,100,    R0=d.R0;
+verification/crack_path/main_fixed_geometry_coarse_exterior_diagnostic.m,158,"            'FrozenState',R0, ..."
+verification/crack_path/main_fixed_geometry_coarse_exterior_diagnostic.m,209,"            'FrozenState',R0, ..."
+verification/crack_path/main_fixed_geometry_tip_coarsening_diagnostic.m,33,"    addParameter(ip,'FrozenStateFile','',@(x)ischar(x)||isstring(x));"
+verification/crack_path/main_fixed_geometry_tip_coarsening_diagnostic.m,53,    frozenFile=char(opt.FrozenStateFile);
+verification/crack_path/main_fixed_geometry_tip_coarsening_diagnostic.m,55,"        paperCopy=fullfile(root,'paper','data','accepted_stage1_source.mat');"
+verification/crack_path/main_fixed_geometry_tip_coarsening_diagnostic.m,56,"        standardCopy=fullfile(root,'verification','crack_path','stage1_starting_state.mat');"
+verification/crack_path/main_fixed_geometry_tip_coarsening_diagnostic.m,101,"    d=load(frozenFile,'R0');"
+verification/crack_path/main_fixed_geometry_tip_coarsening_diagnostic.m,102,"    assert(isfield(d,'R0')&&isstruct(d.R0)&&d.R0.stage1Pass, ..."
+verification/crack_path/main_fixed_geometry_tip_coarsening_diagnostic.m,103,"        'tipcoarse:BadFrozen','Frozen MAT must contain passed R0.');"
+verification/crack_path/main_fixed_geometry_tip_coarsening_diagnostic.m,104,    R0=d.R0;
+verification/crack_path/main_fixed_geometry_tip_coarsening_diagnostic.m,107,"    mouthFrozen=[R0.summary.x_star_m,R0.summary.y_star_m];"
+verification/crack_path/main_fixed_geometry_tip_coarsening_diagnostic.m,152,"            'FrozenState',R0, ..."
+verification/crack_path/main_fixed_geometry_tip_coarsening_diagnostic.m,201,"            'FrozenState',R0, ..."
+verification/crack_path/main_fixed_geometry_tip_refinement_diagnostic.m,29,"    addParameter(ip,'FrozenStateFile','',@(x)ischar(x)||isstring(x));"
+verification/crack_path/main_fixed_geometry_tip_refinement_diagnostic.m,49,    frozenFile=char(opt.FrozenStateFile);
+verification/crack_path/main_fixed_geometry_tip_refinement_diagnostic.m,51,"        paperCopy=fullfile(root,'paper','data','accepted_stage1_source.mat');"
+verification/crack_path/main_fixed_geometry_tip_refinement_diagnostic.m,52,"        standardCopy=fullfile(root,'verification','crack_path','stage1_starting_state.mat');"
+verification/crack_path/main_fixed_geometry_tip_refinement_diagnostic.m,97,"    d=load(frozenFile,'R0');"
+verification/crack_path/main_fixed_geometry_tip_refinement_diagnostic.m,98,"    assert(isfield(d,'R0')&&isstruct(d.R0)&&d.R0.stage1Pass, ..."
+verification/crack_path/main_fixed_geometry_tip_refinement_diagnostic.m,99,"        'tipref:BadFrozen','Frozen MAT must contain passed R0.');"
+verification/crack_path/main_fixed_geometry_tip_refinement_diagnostic.m,100,    R0=d.R0;
+verification/crack_path/main_fixed_geometry_tip_refinement_diagnostic.m,103,"    mouthFrozen=[R0.summary.x_star_m,R0.summary.y_star_m];"
+verification/crack_path/main_fixed_geometry_tip_refinement_diagnostic.m,148,"            'FrozenState',R0, ..."
+verification/crack_path/main_fixed_geometry_tip_refinement_diagnostic.m,197,"            'FrozenState',R0, ..."
+verification/crack_path/main_increment_sensitivity_coarse.m,77,"    frozenFile=fullfile(root,'paper','data','accepted_stage1_source.mat');"
+verification/crack_path/main_increment_sensitivity_coarse.m,80,"    d=load(frozenFile,'R0');"
+verification/crack_path/main_increment_sensitivity_coarse.m,81,"    assert(isfield(d,'R0')&&isstruct(d.R0)&&d.R0.stage1Pass, ..."
+verification/crack_path/main_increment_sensitivity_coarse.m,82,"        'incstudy:BadFrozen','Expected a passed accepted Stage-I R0.');"
+verification/crack_path/main_increment_sensitivity_coarse.m,83,    R0=d.R0;
+verification/crack_path/main_increment_sensitivity_coarse.m,88,"    assert(isfield(R0,'summary')&&istable(R0.summary)&&height(R0.summary)==1, ..."
+verification/crack_path/main_increment_sensitivity_coarse.m,89,"        'incstudy:FrozenSummary','Frozen R0.summary is required.');"
+verification/crack_path/main_increment_sensitivity_coarse.m,90,"    assert(ismember('a0_reserved_m',R0.summary.Properties.VariableNames), ..."
+verification/crack_path/main_increment_sensitivity_coarse.m,91,"        'incstudy:IncrementField','Frozen summary lacks a0_reserved_m.');"
+verification/crack_path/main_increment_sensitivity_coarse.m,92,    originalReserved=R0.summary.a0_reserved_m;
+verification/crack_path/main_increment_sensitivity_coarse.m,93,    R0.summary.a0_reserved_m=da;
+verification/crack_path/main_increment_sensitivity_coarse.m,143,"        'FrozenState',R0, ..."
+verification/crack_path/main_increment_sensitivity_coarse.m,210,"        validate_increment_study_p1_cache(z.R,F1.candidate,R0,p1Checkpoint);"
+verification/crack_path/main_increment_sensitivity_coarse.m,218,"            'FrozenState',R0, ..."
+verification/crack_path/main_increment_sensitivity_coarse.m,241,"        'FrozenState',R0, ..."
+verification/crack_path/main_incremental_path_profile.m,8,"addParameter(ip,'FrozenState',[],@(x)isstruct(x)&&isscalar(x));"
+verification/crack_path/main_incremental_path_profile.m,14,"assert(~isempty(opt.FrozenState),'pathprofile:FrozenState','Pass the exact accepted R0.');"
+verification/crack_path/main_incremental_path_profile.m,36,"        Path=main_incremental_path_regression('FrozenState',opt.FrozenState, ..."
+verification/crack_path/main_incremental_path_profile.m,39,"        Path=run_incremental_crack_path('FrozenState',opt.FrozenState, ..."
+verification/crack_path/main_incremental_path_regression.m,17,"%       'FrozenState',R0,'AllowSolve',true);"
+verification/crack_path/main_incremental_path_regression.m,20,"    addParameter(ip,'FrozenState',[],@(x)isempty(x)||isstruct(x));"
+verification/crack_path/main_incremental_path_regression.m,29,"        'FrozenState',opt.FrozenState, ..."
+verification/crack_path/main_m1_independent_trajectory.m,45,"    frozenFile=fullfile(root,'paper','data','accepted_stage1_source.mat');"
+verification/crack_path/main_m1_independent_trajectory.m,48,"    d=load(frozenFile,'R0');"
+verification/crack_path/main_m1_independent_trajectory.m,49,"    assert(isfield(d,'R0')&&isstruct(d.R0)&&d.R0.stage1Pass, ..."
+verification/crack_path/main_m1_independent_trajectory.m,50,"        'm1path:BadFrozen','Expected a passed R0 in the recovered Stage-I source.');"
+verification/crack_path/main_m1_independent_trajectory.m,51,    R0=d.R0;
+verification/crack_path/main_m1_independent_trajectory.m,91,"        'FrozenState',R0, ..."
+verification/crack_path/main_m1_independent_trajectory.m,132,"        'FrozenState',R0, ..."
+verification/crack_path/main_m1_independent_trajectory.m,158,"        'FrozenState',R0, ..."
+verification/crack_path/main_stage1_freeze_starting_state.m,1,function R0=main_stage1_freeze_starting_state(varargin)
+verification/crack_path/main_stage1_freeze_starting_state.m,27,"    fullfile(root,'verification','crack_path','stage1_starting_state.mat'), ..."
+verification/crack_path/main_stage1_freeze_starting_state.m,30,"    fullfile(root,'verification','crack_path','stage1_starting_state.csv'), ..."
+verification/crack_path/main_stage1_freeze_starting_state.m,135,"    'a0_reserved_m','hmin_m','hmax_m','hgrad', ..."
+verification/crack_path/main_stage1_freeze_starting_state.m,180,R0=struct();
+verification/crack_path/main_stage1_freeze_starting_state.m,181,R0.C=C;
+verification/crack_path/main_stage1_freeze_starting_state.m,182,R0.I=I;
+verification/crack_path/main_stage1_freeze_starting_state.m,183,R0.summary=Summary;
+verification/crack_path/main_stage1_freeze_starting_state.m,184,R0.boundary=Boundary;
+verification/crack_path/main_stage1_freeze_starting_state.m,185,R0.peaks=Peaks;
+verification/crack_path/main_stage1_freeze_starting_state.m,186,R0.gates=gates;
+verification/crack_path/main_stage1_freeze_starting_state.m,187,R0.stage1Pass=stage1Pass;
+verification/crack_path/main_stage1_freeze_starting_state.m,188,R0.auditReference=ref;
+verification/crack_path/main_stage1_freeze_starting_state.m,189,R0.method=S.method;
+verification/crack_path/main_stage1_freeze_starting_state.m,190,R0.interpretation=[ ...
+verification/crack_path/main_stage1_freeze_starting_state.m,194,"save(char(opt.SaveFile),'R0','-v7');"
+verification/crack_path/main_tip2h0_independent_trajectory.m,45,"    frozenFile=fullfile(root,'paper','data','accepted_stage1_source.mat');"
+verification/crack_path/main_tip2h0_independent_trajectory.m,48,"    d=load(frozenFile,'R0');"
+verification/crack_path/main_tip2h0_independent_trajectory.m,49,"    assert(isfield(d,'R0')&&isstruct(d.R0)&&d.R0.stage1Pass, ..."
+verification/crack_path/main_tip2h0_independent_trajectory.m,50,"        'tip2h0:BadFrozen','Expected a passed R0 in the accepted Stage-I source.');"
+verification/crack_path/main_tip2h0_independent_trajectory.m,51,    R0=d.R0;
+verification/crack_path/main_tip2h0_independent_trajectory.m,92,"        'FrozenState',R0, ..."
+verification/crack_path/main_tip2h0_independent_trajectory.m,141,"        'FrozenState',R0, ..."
+verification/crack_path/main_tip2h0_independent_trajectory.m,168,"        'FrozenState',R0, ..."
+verification/sif_audit/main_step4c_preview_literal_crack_cut.m,25,"    'parentR0',info.parent.r0,'parentR1',info.parent.r1, ..."
+verification/sif_audit/main_step4c_preview_literal_crack_cut.m,45,"    summary.parentNtheta,summary.parentNr,summary.parentR0, ..."

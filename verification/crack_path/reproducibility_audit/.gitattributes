@@ -1,0 +1,6 @@
+# Stable evidence bytes across Windows checkouts.
+*.csv text eol=lf
+*.json text eol=lf
+*.py text eol=lf
+*.log text eol=lf
+*.mat binary

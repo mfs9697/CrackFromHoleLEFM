@@ -1,0 +1,26 @@
+[Warning: Name is nonexistent or not a directory: C:\Users\Mikhailo\Google Drive\Projects\8 - CohZonFEM\czm_project\CrackPath\CrackFromHoleLEFM\cfh]
+[Warning: Name is nonexistent or not a directory: C:\Users\Mikhailo\Google Drive\Projects\8 - CohZonFEM\Asphalt\remmers2003]
+Old 4-mm P1 predicate accepts the 2-mm seed: 1; stored hTip 0.0270123254 mm vs required 0.0540246508 mm.
+Coarse accepted-result promotion before fix: pathrun:ResumeResultMismatch
+1 mm state: 51 solved; 52 geometry; controls:                         coreScale: 2
+              farCapOverIncrement: 1.2500
+          transitionOverIncrement: 1
+              calibrationOverride: [1x1 struct]
+                            label: 'increment_1mm_coarse_M1_2h0'
+    isReferenceProductionExterior: 0
+
+2 mm state: 46 solved; 46 geometry; controls:                         coreScale: 2
+              farCapOverIncrement: 1.2500
+          transitionOverIncrement: 1
+              calibrationOverride: [1x1 struct]
+                            label: 'increment_2mm_coarse_M1_2h0'
+    isReferenceProductionExterior: 0
+
+4 mm state: 23 solved; 23 geometry; controls:                         coreScale: 2
+              farCapOverIncrement: 1.2500
+          transitionOverIncrement: 1
+              calibrationOverride: [1x1 struct]
+                            label: 'increment_4mm_coarse_M1_2h0'
+    isReferenceProductionExterior: 0
+
+BASELINE FORENSIC CHECKS COMPLETE; no physical solve.
