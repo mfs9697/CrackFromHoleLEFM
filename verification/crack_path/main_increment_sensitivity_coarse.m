@@ -2,7 +2,7 @@ function M = main_increment_sensitivity_coarse(varargin)
 %MAIN_INCREMENT_SENSITIVITY_COARSE
 % Independent crack-path run for a controlled crack-increment study.
 %
-% The experiment compares Delta a = 4 mm and 2 mm using the SAME
+% The experiment compares Delta a = 4 mm, 2 mm, and 1 mm using the SAME
 % dimensionless coarse numerical family:
 %
 %   structured tip core : CoreScale = 2
@@ -32,6 +32,9 @@ function M = main_increment_sensitivity_coarse(varargin)
 % 2-mm preflight:
 %   M2q = main_increment_sensitivity_coarse('IncrementMM',2);
 %
+% 1-mm preflight:
+%   M1q = main_increment_sensitivity_coarse('IncrementMM',1);
+%
 % Full 4-mm trajectory through 92 mm:
 %   M4 = main_increment_sensitivity_coarse( ...
 %       'IncrementMM',4,'TargetLengthMM',92,'AllowPhysicalSolves',true);
@@ -39,10 +42,14 @@ function M = main_increment_sensitivity_coarse(varargin)
 % Full 2-mm trajectory through 92 mm:
 %   M2 = main_increment_sensitivity_coarse( ...
 %       'IncrementMM',2,'TargetLengthMM',92,'AllowPhysicalSolves',true);
+%
+% Full 1-mm trajectory through 92 mm:
+%   M1 = main_increment_sensitivity_coarse( ...
+%       'IncrementMM',1,'TargetLengthMM',92,'AllowPhysicalSolves',true);
 
     ip=inputParser;
     addParameter(ip,'IncrementMM',4,@(x)isnumeric(x)&&isscalar(x)&& ...
-        isfinite(x)&&any(abs(x-[2 4])<=1e-12));
+        isfinite(x)&&any(abs(x-[1 2 4])<=1e-12));
     addParameter(ip,'TargetLengthMM',92,@(x)isnumeric(x)&&isscalar(x)&& ...
         isfinite(x)&&x>0);
     addParameter(ip,'AllowPhysicalSolves',false,@(x)islogical(x)&&isscalar(x));
