@@ -55,36 +55,36 @@ The incremental direction of a hole-initiated crack is examined in an
 asymmetric elastic plate using linear elastic fracture mechanics and the
 maximum tangential stress criterion. A stress-selected point on the circular
 hole defines the initiation location and a frozen material-side normal.
-Only the first crack segment is prescribed along that normal. Subsequent
-directions follow from the current-tip stress-intensity factors after one
-elastic solution of each fixed, complete crack geometry. A constant 4-mm
-increment produces an accepted history from 4 to 92 mm. The opening-mode
-intensity increases throughout this history, whereas positive mode mixity
-reaches a maximum at 68 mm and changes sign between the solved 84- and
-88-mm states. This change reverses the sign of the incremental turn while
-the absolute crack direction remains negatively inclined. Reflection-paired
-tip meshes, prescribed-field controls, strict residual checks, and
-crack-opening-displacement comparisons support the numerical interpretation.
-A centered-hole symmetric control further verifies the directional
-recurrence: the straight mode-I path is recovered as a fixed path, and the
-linearized one-step map from a small angular perturbation has multiplier
-$F'(0)=-0.11415$, indicating damped sign-alternating restoration toward the
-symmetry line. A second trajectory, propagated independently with a substantially coarser
-exterior mesh while retaining the same paired tip core and interaction-domain
-region, preserves the $P_{17}$ mode-mixity maximum and the $P_{21}$--$P_{22}$
-sign-change bracket; the maximum separation of corresponding accepted tips
-is only $0.0674~\mu\mathrm{m}$. A complementary local tip-resolution study
-combines fixed-geometry checks at $h_{\mathrm{tip}}=0.0540$, $0.0270$, and
-$0.0135$ mm with an independently propagated $0.0540$-mm trajectory. Doubling
-the production tip size changes the maximum corresponding-tip separation by
-only $0.123~\mu\mathrm{m}$ and preserves both the $P_{17}$ mode-mixity maximum
-and the $P_{21}$--$P_{22}$ sign-change bracket.
-The late redirection is consistent with increasing free-boundary influence
-rather than unloading, although these calculations do not isolate boundary
-effects from accumulated curvature. The next geometry is qualified but
-physically unsolved. The findings establish a verified fixed-increment
-pilot sequence, not increment-size convergence or a prediction of arrest,
-branching, or boundary intersection.
+Only the first crack segment is prescribed along that normal; subsequent
+directions follow recursively from current-tip stress-intensity factors after
+one elastic solution of each fixed crack geometry. The 4-mm reference path
+reaches 92 mm. Its positive mode mixity reaches a maximum at 68 mm and
+changes sign between the solved 84- and 88-mm states, reversing the sign of
+the incremental turn while $K_I$ continues to increase. Reflection-paired
+tip meshes, prescribed-field controls, residual checks, crack-opening-
+displacement comparisons, and a centered-hole stability control support the
+numerical interpretation. An independently propagated trajectory with a
+substantially coarser exterior mesh preserves the characteristic mode-mixity
+events and differs from the reference path by at most
+$0.0674~\mu\mathrm{m}$ at corresponding accepted tips.
+
+Crack-increment sensitivity is then examined by independently propagating
+4-, 2-, and 1-mm paths to the same 92-mm length using one dimensionless
+coarse numerical family. Successive halving of the increment reduces the
+maximum corresponding-tip separation from $35.47$ to
+$18.29~\mu\mathrm{m}$ and the maximum direction discrepancy from
+$214.93$ to $127.39$ millidegrees. The peak residual mode mixity decreases
+approximately in proportion to the increment, whereas
+$q_{K,\max}/\Delta a$ varies only from
+$8.098\times10^{-4}$ to $8.041\times10^{-4}$ mm$^{-1}$ and the associated
+turning density from $-0.09280$ to $-0.09214$ deg/mm. The interpolated
+local-symmetry location shifts from 84.149 to 83.550 to 83.268 mm, with
+successive changes of 0.599 and 0.282 mm. These results are consistent with
+a stable continuous-path limit in which the raw corrective mode-II component
+and discrete MTS turn are first-order finite-increment quantities, while
+their increment-normalized measures remain finite. The study establishes
+trajectory convergence evidence within the tested dimensionless family; it
+does not address crack arrest, branching, plasticity, or dynamic growth.
 \end{abstract}
 \noindent\textbf{Keywords:} crack trajectory; circular hole; linear elastic
 fracture mechanics; maximum tangential stress; mode mixity; interaction
@@ -189,13 +189,14 @@ of numerical drift.  The interaction/domain-integral extraction is checked
 against prescribed asymptotic fields and independent crack-opening-
 displacement estimates.  A centered-hole control tests whether the same
 EDI--MTS recurrence preserves and restores the exact straight symmetry
-path.  Exterior-mesh density and local tip resolution are then perturbed
-separately in independently propagated trajectories, rather than evaluated
-only on a fixed reference path.  Finally, crack-increment sensitivity is
-examined through independently generated paths at progressively reduced
-increments.  Particular attention is paid to the evolution of the mode
-mixity $K_{II}/K_I$, the location of its positive maximum and sign reversal,
-and the corresponding change in turning sense.  This structure is intended
+path.  Exterior-mesh density is perturbed independently, while a separate
+structured-tip mesh-family study varies the near-tip scale together with its
+coupled exterior size law.  Finally, crack-increment sensitivity is examined through independently
+generated 4-, 2-, and 1-mm paths using one dimensionless numerical family.
+Particular attention is paid to the evolution of the mode mixity
+$K_{II}/K_I$, the location of its positive maximum and sign reversal, the
+corresponding change in turning sense, and the behavior of increment-
+normalized corrective quantities.  This structure is intended
 to distinguish a physically interpretable trajectory from one that is only
 visually plausible within a particular discretization.
 
@@ -261,14 +262,17 @@ The frozen basis is
 The normal points radially out of the hole and into the material; $\bm t$
 is its counterclockwise rotation. All absolute crack angles $\theta_k$
 below are measured relative to this frozen normal, not to the global
-$x$ axis. The first segment is prescribed by
+$x$ axis. For the reference trajectory, the first segment is prescribed by
 \begin{equation}
  \Delta a=4\ \mathrm{mm},\qquad \theta_1=0,\qquad
  P_1=P_0+\Delta a\,\bm n_{\mathrm{mat}}.\label{eq:first}
 \end{equation}
-An earlier first-angle sweep was an independent verification exercise and
-does not determine $\theta_1$ in this formulation. The study retains one
-active crack; subsequent competing initiation sites are not modeled.
+The same frozen initiation point and frame are retained in the increment-
+refinement family, for which the Stage-II segment length is changed to 2 and
+1 mm and the first tip is rebuilt and solved independently. An earlier
+first-angle sweep was an independent verification exercise and does not
+determine $\theta_1$ in this formulation. The study retains one active
+crack; subsequent competing initiation sites are not modeled.
 
 \section{Incremental crack-path formulation}
 \subsection{Current-tip frame and stress-intensity factors}
@@ -374,10 +378,11 @@ leaving the 12678-element paired core and the 11316-element interaction-
 domain support unchanged. These fixed-geometry checks were used only to
 qualify M1 for a subsequent independent trajectory calculation.
 
-\subsection{Controlled local tip-resolution family}
-A separate fixed-geometry study varies only the structured near-tip scale
-while keeping the accepted crack polyline, exterior grading law, material,
-loading, interaction-domain radii, and MTS formulation unchanged. The production tip size is denoted by $h_0=0.0270123$ mm. The three
+\subsection{Structured-tip mesh-family sensitivity}
+A separate fixed-geometry study varies the structured near-tip scale while
+keeping the accepted crack polyline, material, loading, interaction-domain
+radii, far-field cap, transition length, and MTS formulation unchanged.
+The production tip size is denoted by $h_0=0.0270123$ mm. The three
 physically compared resolutions are
 \begin{equation}
  2h_0=0.0540247\ \mathrm{mm},\qquad
@@ -386,21 +391,30 @@ physically compared resolutions are
  \label{eq:tiplevels}
 \end{equation}
 These correspond to structured-core scale factors $2$, $1$, and $1/2$.
-The paired-core radius remains
-$r_c=3$ mm and the EDI annulus remains $r_i=0.4$ mm to $r_o=2.6$ mm.
-The paired cores contain 3318, 12678, and 49518 T3 elements, respectively.
-The established four COD windows contain 19/28/23/18 native points at
-$2h_0$, 38/55/44/34 at $h_0$, and 74/108/86/67 at $h_0/2$.
+The paired-core radius remains $r_c=3$ mm and the EDI annulus remains
+$r_i=0.4$ mm to $r_o=2.6$ mm. The paired cores contain 3318, 12678, and
+49518 T3 elements, respectively. The established four COD windows contain
+19/28/23/18 native points at $2h_0$, 38/55/44/34 at $h_0$, and
+74/108/86/67 at $h_0/2$.
 
-To test accumulated trajectory sensitivity without introducing a second
-discretization change, the $2h_0$ calculation is also propagated
-independently with the \emph{reference} exterior mesh law. The prescribed
-first segment $P_0P_1$ is common, but the $P_1$ elastic problem is recomputed
-with the $2h_0$ core; its own $K_I^{(1)}$ and $K_{II}^{(1)}$ determine
-$\theta_2$, and all later vertices follow recursively from the preceding
-$2h_0$ solution. No reference-path vertex after $P_1$ is imposed. The
-$h_0/2$ level is retained as fixed-geometry refinement evidence and is not
-propagated independently.
+A repository-wide reproducibility audit showed that the same scale factor
+also enters the adjoining exterior target-size law used by the mesh
+generator. Consequently, this experiment is not interpreted as a strictly
+tip-only refinement: changing $h_{\rm tip}$ also changes part of the
+connected exterior sizing while leaving the physical boundary, EDI radii,
+far-field cap, and transition length fixed. The results below therefore
+measure sensitivity to a \emph{tip-scaled mesh family}. The independent M1
+study, in which the paired tip core is held fixed while only the exterior
+law is relaxed, supplies the complementary exterior-only perturbation.
+
+To test accumulation of this mesh-family perturbation, the $2h_0$ level is
+also propagated independently through the accepted 92-mm path. The
+prescribed first segment $P_0P_1$ is common, but the $P_1$ elastic problem
+is recomputed with the $2h_0$ family; its own $K_I^{(1)}$ and
+$K_{II}^{(1)}$ determine $\theta_2$, and all later vertices follow
+recursively from the preceding $2h_0$ solution. No reference-path vertex
+after $P_1$ is imposed. The $h_0/2$ level is retained as fixed-geometry
+refinement evidence and is not propagated independently.
 
 For geometric illustration, Fig.~\ref{fig:mesh-levels} also includes a
 coarser $4h_0$ core with $h_{\mathrm{tip}}=0.1080493$ mm. It contains only
@@ -495,6 +509,45 @@ the other compared scientific quantities agree exactly. The maximum
 accepted true residual is $\MaxTrueResidual$, and iteration counts range
 from 2442 to 3011. Supporting diagnostics are given in Fig.~\ref{fig:quality}.
 
+\subsection{Crack-increment refinement family}
+The finite-step recurrence is assessed with three independently propagated
+paths using
+\[
+ \Delta a\in\{4,2,1\}\ \mathrm{mm}.
+\]
+All three use the same dimensionless coarse numerical family rather than
+the production $h_0$ family. The structured core uses scale factor 2, so that
+\begin{equation}
+ \frac{h_{\rm tip}}{\Delta a}
+ =2(0.00675308135),\qquad
+ \frac{r_i}{\Delta a}=0.10,\qquad
+ \frac{r_o}{\Delta a}=0.65,\qquad
+ \frac{r_c}{\Delta a}=0.75.
+ \label{eq:increment-family}
+\end{equation}
+The exterior uses the M1 dimensionless controls
+\[
+ \frac{h_{\rm far}}{\Delta a}=1.25,\qquad
+ \frac{L_{\rm tr}}{\Delta a}=1.00,
+\]
+with far-field grading slope 0.15 and boundary-metric growth 0.35.
+Therefore halving $\Delta a$ halves the absolute core, EDI, transition,
+and exterior length scales while retaining the same numerical family.
+This is a refinement study of the complete fixed-increment algorithm in
+dimensionless form; it is not an experiment in which $\Delta a$ alone is
+changed while an absolute mesh is held fixed.
+
+The accepted Stage-I initiation point and frozen frame are identical for all
+three levels. The reserved first-segment length is changed only for Stage II,
+$P_1$ is rebuilt and solved independently, and every later vertex is
+generated from that path's own SIF/MTS history. Each trajectory is continued
+to a common total crack length of 92 mm. Pairwise geometric and direction
+differences are evaluated only at exact common crack lengths, using the
+4-mm grid as the common set; no path interpolation is used for those
+comparisons. The location of local symmetry is reported separately by
+linear interpolation between the two solved states that bracket
+$q_K=K_{II}/K_I=0$ and is therefore used only as a sub-increment diagnostic.
+
 \subsection{Centered-hole symmetric control}
 A separate control problem tests the directional recurrence under exact
 reflection symmetry. The full plate dimensions and hole radius are unchanged,
@@ -572,9 +625,9 @@ and a least-squares fit constrained through the origin gives
 Because $|F'(0)|<1$, the straight symmetric path is a locally attracting
 fixed path for this one-step discrete recurrence. The negative multiplier
 means that a small angular perturbation changes sign after one update while
-its magnitude is reduced by almost an order of magnitude. This is a local
-stability statement for the chosen 4-mm recurrence, not a proof of global
-path stability or crack-increment convergence.
+its magnitude is reduced by almost an order of magnitude. This is a local stability statement for the chosen 4-mm recurrence, not a
+proof of global path stability. Crack-increment dependence is assessed
+independently by the three-level refinement family described above.
 
 \section{Crack-trajectory results}
 \subsection{Accepted path and direction history}
@@ -671,31 +724,33 @@ the underlying elastic solution.
 \input{figures/cod/figure}
 
 
-\subsection{Sensitivity to local tip resolution}
-The controlled local-resolution test holds the crack geometry fixed, so the
-differences below isolate near-tip discretization sensitivity rather than
-accumulated path divergence. At $P_{17}$, halving the production tip size
-from $0.0270123$ to $0.0135062$ mm changes $K_I$ by $0.00141\%$,
+\subsection{Sensitivity to the tip-scaled mesh family}
+The fixed-geometry three-level comparison changes the structured tip scale
+together with the coupled near-exterior sizing described above. It should
+therefore be read as a mesh-family sensitivity study rather than a pure
+local-tip refinement. At $P_{17}$, halving the production tip size from
+$0.0270123$ to $0.0135062$ mm changes $K_I$ by $0.00141\%$,
 $K_{II}/K_I$ by $1.11\times10^{-6}$ in absolute value, and the MTS turn by
 only $-1.27\times10^{-4}$ degrees. Thus the positive mode-mixity maximum is
-stable under local refinement.
+stable under this refinement of the tip-scaled family.
 
 The more discriminating comparison is the $P_{21}$--$P_{22}$ bracket, where
 $K_{II}$ changes sign. Table~\ref{tab:tipmesh} shows three physically
-qualified tip resolutions spanning a factor of four in $h_{\mathrm{tip}}$.
-Every level keeps $K_{II}/K_I>0$ at $P_{21}$ and $K_{II}/K_I<0$ at $P_{22}$,
-so the local-symmetry bracket and the associated reversal of MTS turning
-sense are unchanged.
+qualified levels spanning a factor of four in $h_{\mathrm{tip}}$. Every
+level keeps $K_{II}/K_I>0$ at $P_{21}$ and $K_{II}/K_I<0$ at $P_{22}$, so
+the local-symmetry bracket and the associated reversal of MTS turning sense
+are unchanged.
 
 \begin{table}[tbp]
 \centering
 \small
 \setlength{\tabcolsep}{2.8pt}
-\caption{Fixed-geometry sensitivity to structured near-tip resolution.
-The crack geometries at $P_{21}$ and $P_{22}$, exterior mesh law, EDI radii,
-loading, and MTS formulation are unchanged. The final column is the linear
-interpolation of the two solved mode-mixity values and is not an independently
-solved crack state.}
+\caption{Fixed-geometry sensitivity to the tip-scaled mesh family. The crack
+geometries at $P_{21}$ and $P_{22}$, material, loading, EDI radii, far-field
+cap, transition length, and MTS formulation are unchanged; the structured
+tip scale and the coupled near-exterior sizing change together. The final
+column is a linear interpolation between solved mode-mixity values, not an
+independently solved crack state.}
 \label{tab:tipmesh}
 \begin{tabular}{lrrrrrr}
 \toprule
@@ -714,31 +769,30 @@ $-2.13979\times10^{-3}$ & $+0.24519944$ & 84.149515\\
 \end{tabular}
 \end{table}
 
-The interpolated crossing therefore moves from $84.140247$ mm at $2h_0$ to
-$84.146370$ mm at $h_0$ and $84.149515$ mm at $h_0/2$. The successive changes,
-$6.12~\mu\mathrm{m}$ and $3.15~\mu\mathrm{m}$, are tiny relative to the
-4-mm crack increment. Taken only as a three-level diagnostic, their ratio
-corresponds to an observed order of approximately $0.96$ for this
-interpolated quantity. This numerical regularity should not be interpreted
-as micrometer-scale physical accuracy of $a_{\mathrm{LS}}$: the crossing is
-still inferred between two states separated by one full crack increment.
+The interpolated crossing moves from $84.140247$ mm at $2h_0$ to
+$84.146370$ mm at $h_0$ and $84.149515$ mm at $h_0/2$. The successive
+changes, $6.12~\mu\mathrm{m}$ and $3.15~\mu\mathrm{m}$, are tiny relative
+to the 4-mm crack increment. Taken only as a three-level diagnostic, their
+ratio corresponds to an observed order of approximately $0.96$ for this
+interpolated quantity. Because the mesh change is coupled and the crossing
+is inferred between states separated by one full crack increment, this
+regularity is not interpreted as either a pure local-discretization order
+or micrometer-scale physical accuracy.
 
-The fixed-geometry comparison isolates the local extraction sensitivity, but
-does not show whether the resulting small direction changes accumulate along
-the path. For that purpose, the $2h_0$ trajectory was propagated independently
-through $P_{23}$ while retaining the reference exterior mesh law. Figure~
+The independent $2h_0$ trajectory tests whether these small fixed-geometry
+differences accumulate along the path. Figure~
 \ref{fig:tip-resolution-sensitivity} uses the same four-panel comparison as
-the exterior-mesh study. The two trajectories are visually indistinguishable
+the exterior-mesh study. The trajectories are visually indistinguishable
 at specimen scale [Fig.~\ref{fig:tipres-trajectory}]. Over the full accepted
 history, the maximum vertical-coordinate difference is
-$0.12257~\mu\mathrm{m}$ and the maximum Euclidean separation of corresponding
-tips is $0.12295~\mu\mathrm{m}$, both at $P_{23}$. The maximum absolute
-direction difference is $0.25475$ millidegrees at $P_{22}$
-[Fig.~\ref{fig:tipres-dy} and Fig.~\ref{fig:tipres-dtheta}].
+$0.12257~\mu\mathrm{m}$ and the maximum Euclidean separation of
+corresponding tips is $0.12295~\mu\mathrm{m}$, both at $P_{23}$. The
+maximum absolute direction difference is $0.25475$ millidegrees at
+$P_{22}$ [Figs.~\ref{fig:tipres-dy} and \ref{fig:tipres-dtheta}].
 
-The mechanical history is equally stable. Both resolutions place the
-positive maximum of $K_{II}/K_I$ at $P_{17}$ and retain positive mode mixity
-at $P_{21}$ and negative mode mixity at $P_{22}$
+The mechanical history is equally stable. Both mesh families place the
+positive maximum of $K_{II}/K_I$ at $P_{17}$ and retain positive mode
+mixity at $P_{21}$ and negative mode mixity at $P_{22}$
 [Fig.~\ref{fig:tipres-q}]. The maximum absolute difference in
 $K_{II}/K_I$ is $6.72\times10^{-7}$. Linear interpolation of the two
 independently propagated $P_{21}$--$P_{22}$ brackets gives
@@ -748,11 +802,11 @@ $-0.000459$ mm ($-0.459~\mu\mathrm{m}$). As above, this is only a
 sub-increment sensitivity diagnostic, not a micrometer-accurate physical
 location of local symmetry.
 
-The independent-path result complements rather than replaces the
-fixed-geometry three-level check. The latter shows the local numerical trend
-under refinement at an unchanged crack geometry; the former shows that
-doubling the production tip size does not cause those local differences to
-grow into a materially different trajectory.
+The fixed-geometry and independent-path results therefore show that the
+reported characteristic events are insensitive to a substantial change of
+this tip-scaled mesh family. They do not by themselves isolate the effect of
+the structured core from the coupled exterior sizing; an explicitly
+decoupled core-only test would be required for that narrower claim.
 
 \input{figures/tip_resolution_sensitivity/figure}
 
@@ -799,6 +853,116 @@ remains unresolved.
 
 \input{figures/m1_mesh_sensitivity/figure}
 
+\subsection{Crack-increment sensitivity}
+The three-level increment study compares independently generated
+$\Delta a=4$, 2, and 1 mm trajectories over the exact common range
+4--92 mm. Table~\ref{tab:increment-pairwise} summarizes the successive
+path differences. Halving the increment from 4 to 2 mm gives a maximum
+corresponding-tip separation of $35.472~\mu\mathrm{m}$; halving it again
+to 1 mm reduces that maximum to $18.291~\mu\mathrm{m}$. The corresponding
+maximum vertical-coordinate differences are $35.418$ and
+$18.263~\mu\mathrm{m}$. The maximum absolute direction difference likewise
+falls from $214.931$ to $127.391$ millidegrees.
+
+\begin{table}[tbp]
+\centering
+\small
+\setlength{\tabcolsep}{4.0pt}
+\caption{Successive differences between independently propagated paths in
+the dimensionless crack-increment refinement family. Comparisons use exact
+common crack lengths; no path interpolation is used.}
+\label{tab:increment-pairwise}
+\begin{tabular}{lrrrr}
+\toprule
+Comparison &
+$\max|\Delta y|$ [$\mu$m] &
+$\max\Delta r$ [$\mu$m] &
+$\max|\Delta\theta|$ [mdeg] &
+$\max|\Delta q_K|$\\
+\midrule
+2 mm $-$ 4 mm & 35.4181 & 35.4721 & 214.931 & $2.48578\times10^{-3}$\\
+1 mm $-$ 2 mm & 18.2629 & 18.2911 & 127.391 & $1.41618\times10^{-3}$\\
+\bottomrule
+\end{tabular}
+\end{table}
+
+The successive contraction ratios are 1.939 for the maximum tip separation
+and 1.687 for the maximum direction difference. If these ratios are
+converted only as diagnostics through
+$p=\log_2(e_{\Delta a}/e_{\Delta a/2})$, they correspond to
+$p\simeq0.96$ and $p\simeq0.75$, respectively. Because the trajectory is
+generated recursively and the reported quantities are maxima that need not
+occur at the same crack length, these values are not treated as formal
+Richardson orders. They do, however, show clear contraction of both the
+accumulated path and direction differences under successive halving of the
+increment.
+
+A more revealing pattern appears in the mode-mixity correction.
+Table~\ref{tab:increment-characteristic} lists the positive maximum of
+$q_K=K_{II}/K_I$ for each level. The raw maximum decreases almost in direct
+proportion to $\Delta a$: from $3.23937\times10^{-3}$ at 4 mm to
+$1.61266\times10^{-3}$ at 2 mm and $8.04068\times10^{-4}$ at 1 mm.
+In contrast, the normalized quantity $q_{K,\max}/\Delta a$ changes by only
+about $0.71\%$ over the entire 4-to-1-mm refinement. The MTS turning density
+at the same characteristic state is similarly stable, varying from
+$-0.092799$ to $-0.092139$ deg/mm.
+
+\begin{table}[tbp]
+\centering
+\small
+\setlength{\tabcolsep}{3.6pt}
+\caption{Characteristic quantities in the crack-increment refinement
+family. The local-symmetry location is obtained by linear interpolation
+between the two solved states bracketing $q_K=0$.}
+\label{tab:increment-characteristic}
+\begin{tabular}{rrrrrr}
+\toprule
+$\Delta a$ [mm] &
+$a(q_{K,\max})$ [mm] &
+$q_{K,\max}$ &
+$q_{K,\max}/\Delta a$ [mm$^{-1}$] &
+$(\Delta\theta/\Delta a)_{q_{\max}}$ [deg/mm] &
+$a_{\rm LS}$ [mm]\\
+\midrule
+4 & 68 & $3.2393682\times10^{-3}$ & $8.0984205\times10^{-4}$ &
+$-0.09279879$ & 84.148913\\
+2 & 66 & $1.6126578\times10^{-3}$ & $8.0632889\times10^{-4}$ &
+$-0.09239792$ & 83.550120\\
+1 & 66 & $8.0406752\times10^{-4}$ & $8.0406752\times10^{-4}$ &
+$-0.09213921$ & 83.268112\\
+\bottomrule
+\end{tabular}
+\end{table}
+
+This behavior is consistent with
+\begin{equation}
+ q_K=O(\Delta a),\qquad
+ \Delta\theta=O(\Delta a)
+ \label{eq:increment-scaling}
+\end{equation}
+along a smooth limiting trajectory, while $q_K/\Delta a$ and
+$\Delta\theta/\Delta a$ remain finite measures of the local corrective
+response and turning density. Equation~\eqref{eq:increment-scaling} is an
+interpretation of the observed three-level trend, not an independently
+proved asymptotic result.
+
+The local-symmetry crossing also contracts systematically. The interpolated
+locations are 84.148913, 83.550120, and 83.268112 mm for the 4-, 2-, and
+1-mm paths. The successive shifts are therefore $0.59879$ and $0.28201$ mm,
+whose ratio is 2.12. Interpreted only as a three-level diagnostic this gives
+an apparent order of about 1.09 for the interpolated event location. The
+crossing is directly bracketed between the solved 83- and 84-mm states on
+the 1-mm path, but it remains an interpolated quantity rather than an
+independently solved zero-$K_{II}$ state.
+
+The combined result is stronger than visual path overlap alone. The
+geometrical trajectory and characteristic event locations contract under
+increment refinement, while the raw mode-II correction becomes smaller in
+proportion to the discrete step. This distinction is important when
+interpreting $q_K$: its absolute value along a finite-step MTS path is a
+step-dependent corrective quantity, whereas its increment-normalized form
+has the more stable continuous-path interpretation.
+
 \section{Discussion}
 \subsection{Interpretation of late redirection}
 The accepted sequence shows reorientation under increasing $K_I$.
@@ -812,40 +976,58 @@ isolate that influence. The result supports a mode-mixity explanation of
 the computed redirection; it does not prove that the boundary is its sole
 cause.
 
-\subsection{Discretization and boundary proximity}
-The directions are selected from the field before adding a finite straight
-segment. A 4-mm step therefore samples a continuously changing boundary-value
-problem at discrete geometries. No increment-size study is available for
-this path. The interpolated zero in Eq.~\eqref{eq:zeroestimate} should be
-read against the 4-mm spacing of its bracketing states, not as a highly
-resolved physical crack length.
+\subsection{Discretization, increment size, and boundary proximity}
+The 4-mm reference trajectory samples a continuously changing boundary-value
+problem at discrete geometries, so the finite segment length is part of the
+numerical propagation rule. The three-level increment study now provides a
+direct measure of this effect. Successive halving from 4 to 2 to 1 mm
+reduces the maximum corresponding-tip separation from $35.47$ to
+$18.29~\mu\mathrm{m}$ and the maximum direction difference from
+$214.93$ to $127.39$ millidegrees. The local-symmetry estimate shifts by
+$0.599$ mm and then $0.282$ mm. These contractions support a stable limiting
+trajectory, although three levels are insufficient to establish a formal
+asymptotic convergence order. The result complements the two-increment
+comparison of Fang et al.~\cite{FangEtAl2020}, who observed similar but
+smoother crack paths at smaller prescribed increments: here the effect is
+quantified over three independently propagated levels and separated into
+geometric, directional, and mode-mixity measures.
+
+The mode-mixity history clarifies what converges. The raw positive maximum
+of $q_K$ approximately halves with $\Delta a$, whereas
+$q_{K,\max}/\Delta a$ changes by only about $0.71\%$ over the 4-to-1-mm
+range; the turning density at the same state is equally stable. This is
+consistent with the small-mixity MTS relation
+$\Delta\theta\simeq-2q_K$ and with a smooth limiting path whose curvature
+is sampled over a finite step. Thus raw $q_K$ should not be interpreted as
+an increment-independent physical observable of the path. The more robust
+quantities are the geometry, characteristic event locations, and
+increment-normalized corrective measures.
 
 The centered-hole control provides a separate check on the directional
 logic itself. Exact reflection symmetry gives a nearly pure mode-I fixed
 path, while the measured multiplier $F'(0)=-0.11415$ shows that the
 implemented recurrence damps small angular perturbations rather than
-amplifying a numerical mode-II imbalance. This control is useful when
-interpreting the asymmetric trajectory: its gradual curvature and late
-turning reversal are not generic drift of the propagation algorithm away
-from a straight path.
+amplifying a numerical mode-II imbalance. This local stability result is
+consistent with, but logically distinct from, the global increment-
+refinement evidence for the asymmetric trajectory.
 
-The independent M1 calculation addresses exterior-mesh density. Local tip
-resolution is tested separately in two complementary forms: the
-fixed-geometry $2h_0$--$h_0$--$h_0/2$ study isolates SIF/MTS extraction
-sensitivity, while the independent $2h_0$ trajectory tests accumulation of
-that sensitivity along the path. Both discretization changes preserve the
-$P_{17}$ mode-mixity maximum and the $P_{21}$--$P_{22}$ sign-change bracket,
-and both produce only submicrometer differences between corresponding
-accepted tips when propagated independently.
+Mesh sensitivity is addressed by two complementary perturbations. The M1
+calculation is a clean exterior-only change: it retains the paired tip core
+and EDI support while substantially reducing exterior resolution, and its
+independently propagated path remains within $0.0674~\mu\mathrm{m}$ of the
+reference tips. The $2h_0$--$h_0$--$h_0/2$ family changes the structured tip
+scale, but the repository audit showed that the same scale also enters the
+adjoining exterior size law. Its results therefore demonstrate robustness
+to a coupled tip-scaled mesh-family perturbation rather than a strictly
+local tip-only refinement. The independently propagated $2h_0$ path remains
+within $0.123~\mu\mathrm{m}$ of the reference path and preserves the same
+mode-mixity maximum and sign-change bracket.
 
-Table~\ref{tab:independent-sensitivity} summarizes the two independent
-trajectory tests. Coarsening the local structured tip mesh produces the
-larger perturbation of the two, but even that case gives a maximum
-corresponding-tip separation of only $0.123~\mu\mathrm{m}$ and a maximum
-absolute direction difference of $0.255$ millidegrees. The same
-characteristic mode-mixity events are therefore retained when either the
-exterior discretization or the local tip resolution is changed within the
-tested ranges.
+Table~\ref{tab:independent-sensitivity} summarizes these two independent
+mesh-family tests. Their submicrometer path differences are much smaller
+than the finite-increment differences quantified above, indicating that
+crack-increment error is the dominant tested numerical sensitivity at the
+scale of the reported trajectory.
 
 \begin{table}[tbp]
 \centering
@@ -866,23 +1048,20 @@ $\max|\Delta q_K|$ &
 $\Delta a_{\rm LS}$ [$\mu$m]\\
 \midrule
 Coarser exterior M1 & 0.06734 & 0.06742 & 0.07304 & $2.89\times10^{-7}$ & $-0.322$\\
-Local tip $2h_0$    & 0.12257 & 0.12295 & 0.25475 & $6.72\times10^{-7}$ & $-0.459$\\
+Tip-scaled $2h_0$ family & 0.12257 & 0.12295 & 0.25475 & $6.72\times10^{-7}$ & $-0.459$\\
 \bottomrule
 \end{tabular}
 \end{table}
 
-These checks remain narrower than full trajectory convergence. The 4-mm
-increment is unchanged, and the interaction-domain radii are unchanged.
-Thus a smaller-increment family and controlled interaction-domain-radius
-variation are still required before claiming general path independence from
-the discretization and extraction scales.
-
-Local reflection pairing and synthetic recovery suppress known extraction
-leakage mechanisms, but do not by themselves bound every physical
-discretization error. Similarly, residual and element-quality gates measure
-numerical acceptance rather than fracture-mechanics convergence. The
-historical 8-mm verification cannot be transferred into a general
-mesh-independence claim for this evolving polyline.
+The remaining numerical questions are therefore narrower. A decoupled
+core-only refinement would be required to isolate structured-tip resolution
+from the exterior size law, and controlled interaction-domain-radius
+variation is still needed to quantify extraction-domain sensitivity.
+Likewise, local reflection pairing, synthetic recovery, residual gates, and
+element-quality gates establish numerical acceptance but do not by
+themselves bound every physical discretization error. The historical 8-mm
+verification remains a separate extraction test and is not used as a point
+in the trajectory-convergence sequence.
 
 \subsection{Last accepted state and model scope}
 The geometry ending at $P_{24}$, with total polyline length 96 mm, passes
@@ -903,39 +1082,51 @@ the results.
 
 \section{Conclusions}
 A stress-selected circular-hole point and one prescribed normal segment
-provide the initial state for an incremental trajectory whose later
-directions are determined by current-tip EDI SIFs and the implemented MTS
-rule. The accepted fixed-increment history reaches 92 mm at $P_{23}$.
-Positive mode mixity peaks at $P_{17}$, crosses zero between $P_{21}$ and
-$P_{22}$, and becomes negative while opening-mode intensity continues to
-increase. This changes the sign of the incremental turn and reduces the
-negative absolute inclination late in the history.
+provide the initial state for an incremental LEFM trajectory whose later
+directions are determined by current-tip interaction-integral SIFs and the
+MTS rule. The 4-mm reference history reaches 92 mm. Positive mode mixity
+peaks near the middle of the path, later crosses zero, and becomes negative
+while $K_I$ continues to increase. The sign change reverses the incremental
+turn and produces the observed late reduction of the negative crack
+inclination.
 
-The sign reversal is shared by all stored COD fitting definitions, although
-their late-path differences show finite extraction sensitivity. An
-independently propagated calculation with a substantially coarser exterior
-mesh reproduces the $P_{17}$ mode-mixity maximum, the $P_{21}$--$P_{22}$
-sign-change bracket, and the accepted trajectory through $P_{23}$; the
-maximum separation of corresponding tips is only $0.0674~\mu\mathrm{m}$.
-A fixed-geometry $2h_0$--$h_0$--$h_0/2$ comparison spanning a factor of four
-in $h_{\mathrm{tip}}$ preserves the $P_{21}$--$P_{22}$ sign bracket and shows
-a regular refinement trend. In addition, an independently propagated
-$2h_0$ trajectory reproduces the $P_{17}$ mode-mixity maximum and the
-$P_{21}$--$P_{22}$ sign reversal through $P_{23}$; its maximum separation
-from the production trajectory is only $0.123~\mu\mathrm{m}$ and its
-maximum absolute direction difference is $0.255$ millidegrees. These results
-support robustness with respect to both exterior-mesh density and local tip
-resolution within the tested ranges.
+The numerical evidence separates several aspects of this recursive path
+construction. A centered-hole control shows that the exact straight path is
+a locally attracting fixed path of the implemented EDI--MTS recurrence,
+with one-step multiplier $-0.11415$. An independently propagated exterior-
+mesh perturbation preserves the characteristic mode-mixity events and
+differs from the reference path by at most $0.0674~\mu\mathrm{m}$ at
+corresponding tips. A separate tip-scaled mesh-family perturbation likewise
+preserves the mode-mixity maximum and sign reversal; its independent
+$2h_0$ path differs by at most $0.123~\mu\mathrm{m}$. Because the
+structured-core scale also enters the adjoining exterior size law, the
+latter result is interpreted as a coupled mesh-family sensitivity rather
+than a pure local-tip refinement.
 
-A centered-hole control independently confirms that the straight symmetry
-line is a locally attracting fixed path of the implemented EDI--MTS
-recurrence, with one-step multiplier $-0.11415$. Paired-core, synthetic,
-solver, and archive checks establish a reproducible numerical sequence
-within the chosen discretization. The qualified unsolved
-extension must remain separate from the physical results. Increment-size
-convergence, interaction-domain-radius sensitivity, and a controlled
-boundary comparison remain the next requirements for stronger predictive
-and causal claims.
+The crack-increment study provides the strongest trajectory-convergence
+evidence. Independent 4-, 2-, and 1-mm paths were generated to the same
+92-mm length using one dimensionless coarse numerical family. Successive
+halving of the increment reduces the maximum corresponding-tip separation
+from $35.47$ to $18.29~\mu\mathrm{m}$ and the maximum direction difference
+from $214.93$ to $127.39$ millidegrees. The interpolated local-symmetry
+location moves from 84.149 to 83.550 to 83.268 mm, with successive shifts
+of 0.599 and 0.282 mm. At the same time, the peak raw mode mixity decreases
+almost linearly with the increment, whereas $q_{K,\max}/\Delta a$ and the
+associated turning density vary by less than 1\% across the 4-to-1-mm
+refinement. The data are therefore consistent with a stable continuous-path
+limit in which the residual mode-II correction and discrete MTS turn are
+$O(\Delta a)$ quantities.
+
+These findings support interpretation of the computed trajectory as a
+robust consequence of the evolving elastic field rather than a particular
+mesh or finite-step artifact within the tested ranges. The conclusions
+remain limited to quasi-static LEFM direction selection. The qualified
+unsolved extension is kept separate from the accepted physical history, and
+no claims are made about arrest, branching, plasticity, dynamic instability,
+or subsequent competing crack initiation. Further numerical work should
+decouple tip and exterior refinement and examine interaction-domain-radius
+sensitivity; a controlled boundary-distance study would be needed to isolate
+the physical cause of the late redirection.
 
 \bibliographystyle{unsrt}
 \bibliography{references}
