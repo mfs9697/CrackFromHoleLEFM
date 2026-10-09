@@ -850,6 +850,116 @@ remains unresolved.
 
 \input{figures/m1_mesh_sensitivity/figure}
 
+\subsection{Crack-increment sensitivity}
+The three-level increment study compares independently generated
+$\Delta a=4$, 2, and 1 mm trajectories over the exact common range
+4--92 mm. Table~\ref{tab:increment-pairwise} summarizes the successive
+path differences. Halving the increment from 4 to 2 mm gives a maximum
+corresponding-tip separation of $35.472~\mu\mathrm{m}$; halving it again
+to 1 mm reduces that maximum to $18.291~\mu\mathrm{m}$. The corresponding
+maximum vertical-coordinate differences are $35.418$ and
+$18.263~\mu\mathrm{m}$. The maximum absolute direction difference likewise
+falls from $214.931$ to $127.391$ millidegrees.
+
+\begin{table}[tbp]
+\centering
+\small
+\setlength{\tabcolsep}{4.0pt}
+\caption{Successive differences between independently propagated paths in
+the dimensionless crack-increment refinement family. Comparisons use exact
+common crack lengths; no path interpolation is used.}
+\label{tab:increment-pairwise}
+\begin{tabular}{lrrrr}
+\toprule
+Comparison &
+$\max|\Delta y|$ [$\mu$m] &
+$\max\Delta r$ [$\mu$m] &
+$\max|\Delta\theta|$ [mdeg] &
+$\max|\Delta q_K|$\\
+\midrule
+2 mm $-$ 4 mm & 35.4181 & 35.4721 & 214.931 & $2.48578\times10^{-3}$\\
+1 mm $-$ 2 mm & 18.2629 & 18.2911 & 127.391 & $1.41618\times10^{-3}$\\
+\bottomrule
+\end{tabular}
+\end{table}
+
+The successive contraction ratios are 1.939 for the maximum tip separation
+and 1.687 for the maximum direction difference. If these ratios are
+converted only as diagnostics through
+$p=\log_2(e_{\Delta a}/e_{\Delta a/2})$, they correspond to
+$p\simeq0.96$ and $p\simeq0.75$, respectively. Because the trajectory is
+generated recursively and the reported quantities are maxima that need not
+occur at the same crack length, these values are not treated as formal
+Richardson orders. They do, however, show clear contraction of both the
+accumulated path and direction differences under successive halving of the
+increment.
+
+A more revealing pattern appears in the mode-mixity correction.
+Table~\ref{tab:increment-characteristic} lists the positive maximum of
+$q_K=K_{II}/K_I$ for each level. The raw maximum decreases almost in direct
+proportion to $\Delta a$: from $3.23937\times10^{-3}$ at 4 mm to
+$1.61266\times10^{-3}$ at 2 mm and $8.04068\times10^{-4}$ at 1 mm.
+In contrast, the normalized quantity $q_{K,\max}/\Delta a$ changes by only
+about $0.71\%$ over the entire 4-to-1-mm refinement. The MTS turning density
+at the same characteristic state is similarly stable, varying from
+$-0.092799$ to $-0.092139$ deg/mm.
+
+\begin{table}[tbp]
+\centering
+\small
+\setlength{\tabcolsep}{3.6pt}
+\caption{Characteristic quantities in the crack-increment refinement
+family. The local-symmetry location is obtained by linear interpolation
+between the two solved states bracketing $q_K=0$.}
+\label{tab:increment-characteristic}
+\begin{tabular}{rrrrrr}
+\toprule
+$\Delta a$ [mm] &
+$a(q_{K,\max})$ [mm] &
+$q_{K,\max}$ &
+$q_{K,\max}/\Delta a$ [mm$^{-1}$] &
+$(\Delta\theta/\Delta a)_{q_{\max}}$ [deg/mm] &
+$a_{\rm LS}$ [mm]\\
+\midrule
+4 & 68 & $3.2393682\times10^{-3}$ & $8.0984205\times10^{-4}$ &
+$-0.09279879$ & 84.148913\\
+2 & 66 & $1.6126578\times10^{-3}$ & $8.0632889\times10^{-4}$ &
+$-0.09239792$ & 83.550120\\
+1 & 66 & $8.0406752\times10^{-4}$ & $8.0406752\times10^{-4}$ &
+$-0.09213921$ & 83.268112\\
+\bottomrule
+\end{tabular}
+\end{table}
+
+This behavior is consistent with
+\begin{equation}
+ q_K=O(\Delta a),\qquad
+ \Delta\theta=O(\Delta a)
+ \label{eq:increment-scaling}
+\end{equation}
+along a smooth limiting trajectory, while $q_K/\Delta a$ and
+$\Delta\theta/\Delta a$ remain finite measures of the local corrective
+response and turning density. Equation~\eqref{eq:increment-scaling} is an
+interpretation of the observed three-level trend, not an independently
+proved asymptotic result.
+
+The local-symmetry crossing also contracts systematically. The interpolated
+locations are 84.148913, 83.550120, and 83.268112 mm for the 4-, 2-, and
+1-mm paths. The successive shifts are therefore $0.59879$ and $0.28201$ mm,
+whose ratio is 2.12. Interpreted only as a three-level diagnostic this gives
+an apparent order of about 1.09 for the interpolated event location. The
+crossing is directly bracketed between the solved 83- and 84-mm states on
+the 1-mm path, but it remains an interpolated quantity rather than an
+independently solved zero-$K_{II}$ state.
+
+The combined result is stronger than visual path overlap alone. The
+geometrical trajectory and characteristic event locations contract under
+increment refinement, while the raw mode-II correction becomes smaller in
+proportion to the discrete step. This distinction is important when
+interpreting $q_K$: its absolute value along a finite-step MTS path is a
+step-dependent corrective quantity, whereas its increment-normalized form
+has the more stable continuous-path interpretation.
+
 \section{Discussion}
 \subsection{Interpretation of late redirection}
 The accepted sequence shows reorientation under increasing $K_I$.
