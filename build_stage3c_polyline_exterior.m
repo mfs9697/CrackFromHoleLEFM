@@ -13,6 +13,9 @@ function [Z,T,info,physicalIDs,physicalEdges]=build_stage3c_polyline_exterior(X,
 % are replaced. Ring seeds follow a monotone C1 exterior size law; fixed
 % geometric boundary subdivisions receive a compatible boundary layer.
 % Exterior constraint subdivision is allowed; original vertices never move.
+if isfield(design,'exteriorScale'),es=design.exteriorScale;else,es=[];end
+scale=resolve_crack_exterior_scale(design.scale,es);
+design.exteriorScale=scale;
 E=sort([Told(:,[1 2]);Told(:,[2 3]);Told(:,[3 1])],2);
 [E,~,g]=unique(E,'rows');E=E(accumarray(g,1)==1,:);
 face=all(ismember(E,[cr.upperNodes(:);cr.tipNode]),2)| ...
@@ -55,7 +58,7 @@ cutInner=nOld+find(vecnorm(inner-[-rp,0],2,2)<=1e-10,1);
 assert(~isempty(cutInner),'stage3c:CoreIntersection', ...
     'Could not recover the rear core-axis vertex.');
 
-hCut=design.scale*(design.hBase_m+design.slope*rp);
+hCut=design.exteriorScale*(design.hBase_m+design.slope*rp);
 cutPts=[];
 for kk=1:size(cutPath,1)-1
     Aseg=cutPath(kk,:);Bseg=cutPath(kk+1,:);
@@ -74,12 +77,12 @@ C=unique(sort(C,2),'rows');
 assert(all(C(:,1)~=C(:,2)),'stage3c:ZeroConstraint','Zero constraint.');
 sourceTri=triangulation(Told,X);
 maxR=max(vecnorm(X(physicalIDs,:),2,2));
-scale=design.scale;hRp=scale*(design.hBase_m+design.slope*rp);
+hRp=scale*(design.hBase_m+design.slope*rp);
 cal=exterior_calibration(design);
 % Ring widths start consistently with the structured patch, then increase.
 radial=rp;seedRows=[];ringRows=[];
 while radial<maxR
-    hh=exterior_h(radial,rp,hRp,design.farCap_m,scale,design.slope,cal);
+    hh=crack_exterior_size_law(radial,rp,hRp,design.farCap_m,scale,design.slope,cal);
     dr=design.radialFactor*hh;
     radial=radial+dr;
     n=max(6,6*ceil(2*pi*radial/hh/6));
@@ -104,7 +107,7 @@ for j=1:size(physicalEdges,1)
     third=setdiff(Told(hit,:),edge);toward=X(third,:)-mid;
     v=b-a;normal=[-v(2),v(1)]/norm(v);
     if dot(normal,toward)<0,normal=-normal;end
-    hh=exterior_h(norm(mid),rp,hRp,design.farCap_m,scale,design.slope,cal);
+    hh=crack_exterior_size_law(norm(mid),rp,hRp,design.farCap_m,scale,design.slope,cal);
     z=mid+design.radialFactor*min(scale*norm(v),hh)*normal;
     if ~isnan(pointLocation(sourceTri,z))&&norm(z)>rp+1e-12&& ...
             point_polyline_distance(z,cutPath)>.1*min(norm(v),hh)
@@ -114,7 +117,7 @@ end
 % Keep ring seeds apart from immutable-geometry boundary-layer seeds.
 keep=true(size(seedRows,1),1);
 for j=1:size(seedRows,1)
-    hh=exterior_h(norm(seedRows(j,:)),rp,hRp,design.farCap_m,scale,design.slope,cal);
+    hh=crack_exterior_size_law(norm(seedRows(j,:)),rp,hRp,design.farCap_m,scale,design.slope,cal);
     keep(j)=isempty(layer)||min(vecnorm(layer-seedRows(j,:),2,2))>.45*hh;
 end
 Q=[Q;layer;seedRows(keep,:)];
@@ -143,7 +146,7 @@ refinementRows=[];nSplits=0;nPhysicalSplits=0;
 for it=1:cal.refinementMaxPasses
     [minAngle,longest,L]=triangle_quality(Q,T);
     cent=(Q(T(:,1),:)+Q(T(:,2),:)+Q(T(:,3),:))/3;
-    hr=exterior_h(vecnorm(cent,2,2),rp,hRp,design.farCap_m,scale,design.slope,cal);
+    hr=crack_exterior_size_law(vecnorm(cent,2,2),rp,hRp,design.farCap_m,scale,design.slope,cal);
     heff=min(hr,scale*boundary_metric(cent,X,physicalEdges,cal.boundaryMetricGrowth));
     bad=minAngle<cal.refinementMinAngle_deg-1e-8 | ...
         longest>cal.refinementLongestFactor*heff;
@@ -224,7 +227,7 @@ crackNodeMask(lower(cut))=true;
 info=struct('innerPolygon',inner,'nodeSide',nodeSide, ...
     'originalPhysicalIDs',oldIDs,'excludedZeroInteriorHullSlivers',excluded, ...
     'allExteriorInteriorTrianglesReplaced',true,'usesRandomness',false, ...
-    'hMax_m',design.farCap_m,'hRp_m',hRp,'farSlope',cal.farSlope, ...
+    'exteriorScale',scale,'hMax_m',design.farCap_m,'hRp_m',hRp,'farSlope',cal.farSlope, ...
     'slopeTransitionLength_m',cal.transitionLength_m, ...
     'boundaryLayerSeeds',size(layer,1), ...
     'ringSeedCount',nnz(keep),'smoothingSteps',cal.smoothingSteps, ...
@@ -297,7 +300,7 @@ if isfield(design,'exteriorCalibration')&&~isempty(design.exteriorCalibration)
         cal.(names{k})=u.(names{k});
     end
 end
-assert(design.farCap_m>design.scale*(design.hBase_m+design.slope*design.rCore_m), ...
+assert(design.farCap_m>design.exteriorScale*(design.hBase_m+design.slope*design.rCore_m), ...
     'stage3c:FarCapTooSmall','Far-field cap must exceed the core-boundary target size.');
 assert(cal.transitionLength_m>0&&cal.farSlope>0&& ...
     cal.boundaryMetricGrowth>=0&&cal.smoothingSteps>=0&& ...
@@ -305,12 +308,6 @@ assert(cal.transitionLength_m>0&&cal.farSlope>0&& ...
     cal.refinementLongestFactor>1&&cal.neighborRatioTarget>1);
 end
 
-function h=exterior_h(r,rp,hRp,farCap,scale,nearSlope,cal)
-t=max(0,r-rp);L=cal.transitionLength_m;cap=farCap-hRp;
-z=t/L;logcosh=z+log1p(exp(-2*z))-log(2);
-increment=scale*(nearSlope*t+(cal.farSlope-nearSlope)*L*logcosh);
-h=hRp+cap*tanh(increment/cap);
-end
 function [angle,longest,L]=triangle_quality(P,T)
 a=P(T(:,1),:);b=P(T(:,2),:);c=P(T(:,3),:);
 L=[vecnorm(b-c,2,2),vecnorm(a-c,2,2),vecnorm(a-b,2,2)];

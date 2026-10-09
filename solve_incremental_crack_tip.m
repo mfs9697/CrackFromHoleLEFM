@@ -229,7 +229,7 @@ function R = solve_incremental_crack_tip(candidate,varargin)
     incremental_profile_clock('phase','physical','checkpoint_validation');
     if exist(cp,'file')==2
         s0=load(cp,'meta','mesh','U','mat','crack','currentIncrement','solverInfo','C');
-        local_validate_checkpoint(s0,mesh,crack,currentIncrement,ndof,path,thetaSegmentsDeg,mat,C);
+        local_validate_checkpoint(s0,mesh,crack,currentIncrement,ndof,path,thetaSegmentsDeg,mat,C,candidate);
         fprintf('\nPHASE 1: valid physical checkpoint found; NO new solve.\n');
     else
         if ~opt.AllowSolve
@@ -459,6 +459,8 @@ function R = solve_incremental_crack_tip(candidate,varargin)
             'noAngleSweep',true);
 
         incremental_profile_clock('phase','physical','checkpoint_save');
+        meta.coreScale=coreFP.scale;
+        meta.exteriorMeshControls=crack_candidate_exterior_identity(candidate);
         tmp=[cp '.incomplete.mat'];
         if exist(tmp,'file')==2
             error('pathsolve:InterruptedSave', ...
@@ -485,7 +487,7 @@ function R = solve_incremental_crack_tip(candidate,varargin)
     fprintf('\nPHASE 2: POSTPROCESS SAVED PHYSICAL FIELD\n');
     incremental_profile_clock('phase','physical','checkpoint_reload');
     s=load(cp,'mesh','U','mat','crack','currentIncrement','meta','solverInfo','C');
-    local_validate_checkpoint(s,mesh,crack,currentIncrement,ndof,path,thetaSegmentsDeg,mat,C);
+    local_validate_checkpoint(s,mesh,crack,currentIncrement,ndof,path,thetaSegmentsDeg,mat,C,candidate);
 
     incremental_profile_clock('phase','physical','native_cod');
     [r,app,face]=native_COD_polyline_audit( ...
@@ -654,8 +656,12 @@ function R = solve_incremental_crack_tip(candidate,varargin)
         'theta_next_local_deg','theta_next_global_deg', ...
         'EDI_elements','EDI_Gauss_points','newSolve','pass'});
 
+    exteriorIdentity=crack_candidate_exterior_identity(candidate);
+    Summary.exterior_scale=exteriorIdentity.exteriorScale;
+
     R=struct();
     R.summary=Summary;
+    R.exteriorScale=Summary.exterior_scale;
     R.coreMeshControls=coreFP;
     if isfield(candidate,'exteriorMeshControls')
         R.exteriorMeshControls=candidate.exteriorMeshControls;
@@ -820,7 +826,7 @@ function mat=local_material_with_D(mat0,C)
     mat.Dmat=D;
 end
 
-function local_validate_checkpoint(s,mesh,crack,currentIncrement,ndof,path,thetaSegmentsDeg,mat,C)
+function local_validate_checkpoint(s,mesh,crack,currentIncrement,ndof,path,thetaSegmentsDeg,mat,C,candidate)
     req={'meta','mesh','U','mat','crack','currentIncrement','solverInfo'};
     for k=1:numel(req)
         if ~isfield(s,req{k})
@@ -829,6 +835,7 @@ function local_validate_checkpoint(s,mesh,crack,currentIncrement,ndof,path,theta
         end
     end
 
+    assert_crack_checkpoint_exterior(s,candidate,'pathsolve:CheckpointMismatch');
     assert_crack_checkpoint_physics(s,mat,C,'pathsolve:CheckpointMismatch');
     if ~strcmp(s.meta.stage,'incremental_crack_tip_physical_solved') || ...
             s.meta.nT3Nodes~=size(mesh.coord3,1) || ...

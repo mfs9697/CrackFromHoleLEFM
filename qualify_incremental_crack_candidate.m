@@ -43,8 +43,12 @@ function F = qualify_incremental_crack_candidate(pathGlobal,varargin)
     addParameter(ip,'SaveCompact',true,@(x)islogical(x)&&isscalar(x));
     addParameter(ip,'CompactFile','',@(x)ischar(x)||isstring(x));
     addParameter(ip,'Plot',false,@(x)islogical(x)&&isscalar(x));
+    % Omission preserves the historical coupled scale.
+    addParameter(ip,'ExteriorScale',[],@(x)isempty(x)||(isnumeric(x)&& ...
+        isreal(x)&&isscalar(x)&&isfinite(x)&&x>0));
     parse(ip,varargin{:});
     opt=ip.Results;
+    opt.ExteriorScale=resolve_crack_exterior_scale(opt.CoreScale,opt.ExteriorScale);
 
     incremental_profile_clock('begin','qualification',size(pathGlobal,1)-1);
     profileCleanup=onCleanup(@()incremental_profile_clock('end','qualification'));
@@ -194,6 +198,7 @@ function F = qualify_incremental_crack_candidate(pathGlobal,varargin)
     Tp=Core.local.connect3;
     rp=Core.rCore;
     design=Core.design;
+    design.exteriorScale=opt.ExteriorScale;
     design.rCore_m=rp;
     design.transitionLength_m=opt.ExteriorTransitionOverIncrement*increment;
     design.farCap_m=opt.ExteriorFarCapOverIncrement*increment;
@@ -660,6 +665,8 @@ function F = qualify_incremental_crack_candidate(pathGlobal,varargin)
         'recovery_matrix_error','tiny_mixed_KII_rel_error', ...
         'superposition_residual','pass'});
 
+    Summary.exterior_scale=opt.ExteriorScale;
+
     candidate=struct();
     candidate.p=Pg;
     candidate.t=Tc;
@@ -705,10 +712,12 @@ function F = qualify_incremental_crack_candidate(pathGlobal,varargin)
         'expectedNativeSamples',expectedNative);
     candidate.exteriorDesign=ext;
     candidate.exteriorMeshControls=struct( ...
+        'exteriorScale',opt.ExteriorScale, ...
         'farCapOverIncrement',opt.ExteriorFarCapOverIncrement, ...
         'transitionOverIncrement',opt.ExteriorTransitionOverIncrement, ...
         'calibrationOverride',opt.ExteriorCalibration, ...
-        'isReferenceProductionExterior',exteriorIsReference);
+        'isReferenceProductionExterior',exteriorIsReference, ...
+        'isReferenceRequestedExteriorLaw',exteriorIsReference&&abs(opt.ExteriorScale-1)<=1e-14);
     candidate.polylineCarrierEdgeIDs=polyIDs;
     candidate.maxChordDeviation=chordDeviation;
     candidate.gates=gates;

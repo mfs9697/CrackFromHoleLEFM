@@ -64,11 +64,16 @@ function Path = run_incremental_crack_path(varargin)
     addParameter(ip,'ResumeAcceptedResultFile','',@(x)ischar(x)||isstring(x));
     addParameter(ip,'SeedKI',0.366479612185,@(x)isnumeric(x)&&isscalar(x)&&isfinite(x));
     addParameter(ip,'SeedKII',4.19826648316e-6,@(x)isnumeric(x)&&isscalar(x)&&isfinite(x));
+    % Omission preserves the historical coupled scale.
+    addParameter(ip,'ExteriorScale',[],@(x)isempty(x)||(isnumeric(x)&& ...
+        isreal(x)&&isscalar(x)&&isfinite(x)&&x>0));
     parse(ip,varargin{:});
     opt=ip.Results;
+    opt.ExteriorScale=resolve_crack_exterior_scale(opt.CoreScale,opt.ExteriorScale);
 
     meshControls=struct( ...
         'coreScale',opt.CoreScale, ...
+        'exteriorScale',opt.ExteriorScale, ...
         'farCapOverIncrement',opt.ExteriorFarCapOverIncrement, ...
         'transitionOverIncrement',opt.ExteriorTransitionOverIncrement, ...
         'calibrationOverride',opt.ExteriorCalibration, ...
@@ -77,6 +82,8 @@ function Path = run_incremental_crack_path(varargin)
         abs(opt.ExteriorTransitionOverIncrement-1.0)<=10*eps && ...
         abs(opt.ExteriorFarCapOverIncrement-0.625)<=10*eps && ...
         isempty(fieldnames(opt.ExteriorCalibration));
+    meshControls.isReferenceRequestedExteriorLaw= ...
+        meshControls.isReferenceProductionExterior&&abs(opt.ExteriorScale-1)<=1e-14;
 
     incremental_profile_clock('begin','run',0);
     profileCleanup=onCleanup(@()incremental_profile_clock('end','run'));
@@ -247,7 +254,7 @@ function Path = run_incremental_crack_path(varargin)
                     norm(d.candidate.path-pathNow,'fro')<=2e-12 && ...
                     isfield(d.candidate,'scientificallyReadyForIncrementalPhysicalSolve') && ...
                     logical(d.candidate.scientificallyReadyForIncrementalPhysicalSolve) && ...
-                    local_candidate_mesh_controls_match(d.candidate,meshControls)
+                    crack_candidate_mesh_controls_match(d.candidate,meshControls)
                 candidate=d.candidate;
                 useSaved=true;
                 fprintf('  Reusing qualified candidate: %s\n',candidateFile);
@@ -258,6 +265,7 @@ function Path = run_incremental_crack_path(varargin)
             Q=qualify_incremental_crack_candidate(pathNow, ...
                 'FrozenState',R0, ...
                 'CoreScale',opt.CoreScale, ...
+                'ExteriorScale',opt.ExteriorScale, ...
                 'RunSynthetic',opt.RunSynthetic, ...
                 'FastEDI',opt.FastEDI, ...
                 'ExteriorFarCapOverIncrement',opt.ExteriorFarCapOverIncrement, ...
@@ -380,6 +388,8 @@ function Path = run_incremental_crack_path(varargin)
     StepTable=array2table(rows(used,:), ...
         'VariableNames',local_row_variable_names());
     StepTable.pass=true(height(StepTable),1);
+    StepTable.core_scale=repmat(opt.CoreScale,height(StepTable),1);
+    StepTable.exterior_scale=repmat(opt.ExteriorScale,height(StepTable),1);
 
     nExisting=size(vertices,1)-1;
     Path=struct();
@@ -395,6 +405,7 @@ function Path = run_incremental_crack_path(varargin)
     Path.outputDir=outDir;
     Path.fastEDI=opt.FastEDI;
     Path.exteriorMeshControls=meshControls;
+    Path.exteriorScale=opt.ExteriorScale;
     Path.coreScale=meshControls.coreScale;
     Path.meshFamilyLabel=meshControls.label;
     Path.resumed=resumed;
@@ -582,6 +593,7 @@ function [vertices,thetaDeg,rows,stepResults,regression,kDone,startK,historyMode
                 'Resume State was created with different exterior mesh controls.');
         end
     elseif ~meshControls.isReferenceProductionExterior || ...
+            abs(meshControls.exteriorScale-1)>1e-14 || ...
             abs(meshControls.coreScale-1)>1e-14
         error('pathrun:ResumeMeshFamilyMissing', ...
             'Alternative mesh-family resume requires stored mesh controls.');
@@ -845,8 +857,8 @@ function local_validate_resume_result(R,k,vertices,thetaDeg,meshControls,increme
         error('pathrun:ResumeResultMismatch','Nonreference result lacks core-family provenance.');
     end
     if isfield(R,'exteriorMeshControls')&&isfield(R,'frozenPhysics')
-        wanted=rmfield(meshControls,'coreScale');
-        if ~local_mesh_controls_equal(R.exteriorMeshControls,wanted)|| ...
+        if ~crack_exterior_controls_match(R.exteriorMeshControls,meshControls, ...
+                meshControls.coreScale,meshControls.coreScale)|| ...
                 ~isequaln(R.frozenPhysics,crack_physics_signature(C))
             error('pathrun:ResumeResultMismatch','Accepted result has different exterior/physical controls.');
         end
@@ -861,9 +873,10 @@ function local_validate_resume_result(R,k,vertices,thetaDeg,meshControls,increme
         assert(exist(candidateFile,'file')==2,'pathrun:ResumeResultProvenanceMissing', ...
             'Legacy compact needs source candidate %s.',candidateFile);
         d=load(candidateFile,'candidate');c=d.candidate;
-        assert(local_candidate_mesh_controls_match(c,meshControls), ...
+        assert(crack_candidate_mesh_controls_match(c,meshControls), ...
             'pathrun:ResumeResultMismatch','Legacy result source candidate has a different mesh family.');
         s=load(R.checkpointPath,'mesh','mat','C','meta');
+        assert_crack_checkpoint_exterior(s,c,'pathrun:ResumeResultMismatch');
         [p6,t6]=T3toT6_fast(c.p,c.t);
         assert(isequal(s.mesh.connect3,c.t)&&isequal(size(s.mesh.coord3),size(c.p))&& ...
             max(abs(s.mesh.coord3(:)-c.p(:)))<=1e-12&& ...
@@ -956,92 +969,11 @@ function local_require_table_variables(T,names)
     end
 end
 
-function tf=local_candidate_mesh_controls_match(candidate,requested)
-    tf=false;
-
-    % Exterior controls.
-    if ~isfield(candidate,'exteriorMeshControls') || ...
-            ~isstruct(candidate.exteriorMeshControls)
-        % Historical reference candidates predate explicit control metadata.
-        exteriorOK=requested.isReferenceProductionExterior;
-    else
-        % candidate.exteriorMeshControls intentionally contains exterior
-        % controls only. Compare those independently of requested coreScale.
-        requestedExterior=requested;
-        if isfield(requestedExterior,'coreScale')
-            requestedExterior=rmfield(requestedExterior,'coreScale');
-        end
-        exteriorOK=local_mesh_controls_equal( ...
-            candidate.exteriorMeshControls,requestedExterior);
-    end
-    if ~exteriorOK,return,end
-
-    % Structured tip-core scale. Historical candidates are production h0.
-    if isfield(candidate,'coreMeshControls') && ...
-            isstruct(candidate.coreMeshControls) && ...
-            isfield(candidate.coreMeshControls,'scale')
-        candidateScale=candidate.coreMeshControls.scale;
-    else
-        candidateScale=1;
-    end
-    if isfield(requested,'coreScale')
-        requestedScale=requested.coreScale;
-    else
-        requestedScale=1;
-    end
-    tf=abs(candidateScale-requestedScale)<=1e-14;
-end
-
 function tf=local_mesh_controls_equal(a,b)
-    tf=false;
-    if ~isstruct(a)||~isstruct(b),return,end
-
-    if isfield(a,'farCapOverIncrement')
-        fa=a.farCapOverIncrement;
-    elseif isfield(a,'farCapOverA0')
-        fa=a.farCapOverA0;
-    else
-        return
-    end
-    if isfield(a,'transitionOverIncrement')
-        ta=a.transitionOverIncrement;
-    elseif isfield(a,'transitionOverA0')
-        ta=a.transitionOverA0;
-    else
-        return
-    end
-
-    if ~isfield(b,'farCapOverIncrement')||~isfield(b,'transitionOverIncrement')
-        return
-    end
-
-    if ~local_finite_scalar(fa)||~local_finite_scalar(ta)|| ...
-            ~local_finite_scalar(b.farCapOverIncrement)|| ...
-            ~local_finite_scalar(b.transitionOverIncrement)
-        return
-    end
-    if abs(fa-b.farCapOverIncrement)>1e-14 || ...
-            abs(ta-b.transitionOverIncrement)>1e-14
-        return
-    end
-
-    if isfield(a,'coreScale'),csa=a.coreScale;else,csa=1;end
-    if isfield(b,'coreScale'),csb=b.coreScale;else,csb=1;end
-    if ~local_finite_scalar(csa)||~local_finite_scalar(csb)||abs(csa-csb)>1e-14
-        return
-    end
-
-    if isfield(a,'calibrationOverride')
-        ca=a.calibrationOverride;
-    else
-        ca=struct();
-    end
-    if isfield(b,'calibrationOverride')
-        cb=b.calibrationOverride;
-    else
-        cb=struct();
-    end
-    tf=isequaln(ca,cb);
+    if isfield(a,'coreScale'),ca=a.coreScale;else,ca=1;end
+    if isfield(b,'coreScale'),cb=b.coreScale;else,cb=1;end
+    tf=local_finite_scalar(ca)&&local_finite_scalar(cb)&& ...
+        abs(ca-cb)<=1e-14&&crack_exterior_controls_match(a,b,ca,cb);
 end
 
 function tf=local_finite_scalar(x)

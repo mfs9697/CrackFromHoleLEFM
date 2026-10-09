@@ -62,8 +62,12 @@ function F = main_stage2_embed_scaled_core_full_domain_theta0(varargin)
     addParameter(ip,'SaveCompact',true,@(x)islogical(x)&&isscalar(x));
     addParameter(ip,'CompactFile','',@(x)ischar(x)||isstring(x));
     addParameter(ip,'Plot',true,@(x)islogical(x)&&isscalar(x));
+    % Omission preserves the historical coupled scale.
+    addParameter(ip,'ExteriorScale',[],@(x)isempty(x)||(isnumeric(x)&& ...
+        isreal(x)&&isscalar(x)&&isfinite(x)&&x>0));
     parse(ip,varargin{:});
     opt=ip.Results;
+    opt.ExteriorScale=resolve_crack_exterior_scale(opt.CoreScale,opt.ExteriorScale);
 
     root=fileparts(mfilename('fullpath'));
     [R0,sourceLabel]=local_load_frozen_state(root,opt.FrozenState,char(opt.StateFile));
@@ -143,6 +147,7 @@ function F = main_stage2_embed_scaled_core_full_domain_theta0(varargin)
     Tp=Core.local.connect3;
     rp=Core.rCore;
     design=Core.design;
+    design.exteriorScale=opt.ExteriorScale;
     design.rCore_m=rp;
     design.transitionLength_m=opt.ExteriorTransitionOverA0*a0;
     design.farCap_m=opt.ExteriorFarCapOverA0*a0;
@@ -521,6 +526,9 @@ function F = main_stage2_embed_scaled_core_full_domain_theta0(varargin)
         'recovery_matrix_error','tiny_mixed_KII_rel_error', ...
         'superposition_residual','pass'});
 
+    Summary.exterior_scale=opt.ExteriorScale;
+    Summary.core_scale=opt.CoreScale;
+
     candidate=struct();
     candidate.p=Pg;
     candidate.t=Tc;
@@ -549,10 +557,12 @@ function F = main_stage2_embed_scaled_core_full_domain_theta0(varargin)
         'expectedNativeSamples',expectedNative);
     candidate.exteriorDesign=ext;
     candidate.exteriorMeshControls=struct( ...
+        'exteriorScale',opt.ExteriorScale, ...
         'farCapOverA0',opt.ExteriorFarCapOverA0, ...
         'transitionOverA0',opt.ExteriorTransitionOverA0, ...
         'calibrationOverride',opt.ExteriorCalibration, ...
-        'isReferenceProductionExterior',exteriorIsReference);
+        'isReferenceProductionExterior',exteriorIsReference, ...
+        'isReferenceRequestedExteriorLaw',exteriorIsReference&&abs(opt.ExteriorScale-1)<=1e-14);
     candidate.gates=gates;
     candidate.synthetic=Synthetic;
     candidate.syntheticGates=syntheticGates;

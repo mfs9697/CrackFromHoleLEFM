@@ -131,6 +131,8 @@ function R = main_stage2_theta0_physical_solve(varargin)
         exteriorAlternative= ...
             ~logical(candidate.exteriorMeshControls.isReferenceProductionExterior);
     end
+    exteriorIdentity=crack_candidate_exterior_identity(candidate);
+    exteriorAlternative=exteriorAlternative||abs(exteriorIdentity.exteriorScale-1)>1e-14;
     coreAlternative=abs(coreFP.scale-1)>1e-14;
 
     if ~opt.AlternativeQualifiedCandidate
@@ -260,7 +262,7 @@ function R = main_stage2_theta0_physical_solve(varargin)
 
     if exist(cp,'file')==2
         s0=load(cp,'meta','mesh','U','mat','crack','a0','solverInfo','C');
-        local_validate_checkpoint(s0,mesh,crack,a0,ndof,opt.AlternativeQualifiedCandidate,mat,C);
+        local_validate_checkpoint(s0,mesh,crack,a0,ndof,opt.AlternativeQualifiedCandidate,mat,C,candidate);
         fprintf('\nPHASE 1: valid physical checkpoint found; NO new solve.\n');
     else
         if ~opt.AllowSolve
@@ -457,6 +459,8 @@ function R = main_stage2_theta0_physical_solve(varargin)
             'noAngleSweep',true, ...
             'alternativeQualifiedCandidate',logical(opt.AlternativeQualifiedCandidate));
 
+        meta.coreScale=coreFP.scale;
+        meta.exteriorMeshControls=crack_candidate_exterior_identity(candidate);
         tmp=[cp '.incomplete.mat'];
         if exist(tmp,'file')==2
             error('stage2phys:InterruptedSave', ...
@@ -482,7 +486,7 @@ function R = main_stage2_theta0_physical_solve(varargin)
     % ------------------------------------------------------------------
     fprintf('\nPHASE 2: POSTPROCESS SAVED PHYSICAL FIELD\n');
     s=load(cp,'mesh','U','mat','crack','a0','meta','solverInfo','C');
-    local_validate_checkpoint(s,mesh,crack,a0,ndof,opt.AlternativeQualifiedCandidate,mat,C);
+    local_validate_checkpoint(s,mesh,crack,a0,ndof,opt.AlternativeQualifiedCandidate,mat,C,candidate);
 
     [r,app,face]=native_COD_audit( ...
         s.mesh,s.U,s.mat,s.crack,8);
@@ -608,8 +612,13 @@ function R = main_stage2_theta0_physical_solve(varargin)
         'KI_unit','KII_unit','KII_over_KI', ...
         'EDI_elements','EDI_Gauss_points','newSolve','pass'});
 
+    exteriorIdentity=crack_candidate_exterior_identity(candidate);
+    Summary.exterior_scale=exteriorIdentity.exteriorScale;
+    Summary.core_scale=coreFP.scale;
+
     R=struct();
     R.summary=Summary;
+    R.exteriorScale=Summary.exterior_scale;
     R.fitTable=fitTable;
     R.EDI=EDI;
     R.solverInfo=s.solverInfo;
@@ -763,7 +772,7 @@ function mat=local_material_with_D(mat0,C)
     mat.Dmat=D;
 end
 
-function local_validate_checkpoint(s,mesh,crack,a0,ndof,alternativeQualifiedCandidate,mat,C)
+function local_validate_checkpoint(s,mesh,crack,a0,ndof,alternativeQualifiedCandidate,mat,C,candidate)
     req={'meta','mesh','U','mat','crack','a0','solverInfo'};
     for k=1:numel(req)
         if ~isfield(s,req{k})
@@ -772,6 +781,7 @@ function local_validate_checkpoint(s,mesh,crack,a0,ndof,alternativeQualifiedCand
         end
     end
 
+    assert_crack_checkpoint_exterior(s,candidate,'stage2phys:CheckpointMismatch');
     assert_crack_checkpoint_physics(s,mat,C,'stage2phys:CheckpointMismatch');
     commonMismatch = ...
             ~strcmp(s.meta.stage,'stage2_theta0_physical_solved') || ...
