@@ -202,12 +202,16 @@ visually plausible within a particular discretization.
 
 \section{Problem formulation}
 \subsection{Geometry, material, and loading}
-Figure~\ref{fig:geometry-loading} illustrates the specimen, coordinate
-system, and loading. The plate has width $2A=300$ mm and height
-$B=200$ mm. The origin is located at the midpoint of its left edge,
-with $x$ directed to the right and $y$ upward; thus the rectangular
-region is $[0,2A]\times[-B/2,B/2]$. A circular hole of radius
-$R=\HoleRMM$ mm has center $(x_c,y_c)=(\HoleCxMM,\HoleCyMM)$ mm.
+Figure~\ref{fig:geometry-loading} illustrates the specimen and
+loading scheme. The plate has width $2A=300$ mm and height $B=200$ mm.
+The sketch measures the hole-center ordinate $y_c$ upward from the lower
+edge, with $x_c$ measured from the left edge. The computations retain the
+established Cartesian frame with its origin at the midpoint of the left
+edge: its vertical coordinate is $y=y_{\mathrm{sketch}}-B/2$.
+Accordingly, the computational plate region is
+$[0,2A]\times[-B/2,B/2]$, and the circular hole of radius
+$R=\HoleRMM$ mm is centered at $(\HoleCxMM,\HoleCyMM)$ mm in that
+frame (equivalently, $(x_c,y_c)=(170,80)$ mm in the sketch).
 
 \input{figures/geometry_loading/figure}
 

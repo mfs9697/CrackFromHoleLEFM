@@ -71,6 +71,8 @@ for item in inputs:
     wrapper=(paper/(item+'.tex')).read_text()
     for asset in re.findall(r'\\includegraphics(?:\[[^]]*\])?\{([^}]+)\}',wrapper):
         assert (paper/asset).is_file(),asset;panel_count+=1
+approved_figure=paper/'figures/geometry_loading/specimen_geometry.pdf'
+assert hashlib.sha256(approved_figure.read_bytes()).hexdigest()=='7258f046f8d09c5c9c9b0c45a0a39ab1f9b3e8228d2f0c121c1b17d6e6f0f934'
 assert panel_count==31
 assert r'\label{fig:geometry-loading}' in (paper/'figures/geometry_loading/figure.tex').read_text()
 assert r'\ref{fig:geometry-loading}' in text
