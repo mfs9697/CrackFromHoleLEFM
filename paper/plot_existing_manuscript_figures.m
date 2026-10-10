@@ -15,6 +15,9 @@ function S = plot_existing_manuscript_figures(varargin)
 %
 % Optional:
 %   S = plot_existing_manuscript_figures('ShowFigures',true);
+%   S = plot_existing_manuscript_figures('OnlyTrajectory',true, ...
+%       'OutputRoot',fullfile(pwd,'paper','figures_review'));
+%       % Figure 3 only, safely exported outside publication directories.
 %
 % Output:
 %   paper/figures/trajectory/
@@ -27,6 +30,7 @@ function S = plot_existing_manuscript_figures(varargin)
     addParameter(ip,'EvidenceFile','',@(x)ischar(x)||isstring(x));
     addParameter(ip,'OutputRoot','',@(x)ischar(x)||isstring(x));
     addParameter(ip,'ShowFigures',false,@(x)islogical(x)&&isscalar(x));
+    addParameter(ip,'OnlyTrajectory',false,@(x)islogical(x)&&isscalar(x));
     parse(ip,varargin{:});
     opt=ip.Results;
 
@@ -122,15 +126,30 @@ function S = plot_existing_manuscript_figures(varargin)
     plot(ax,p17(1),p17(2),'o','Color',C.green,'LineWidth',1.2,'MarkerSize',5);
     plot(ax,pLS(1),pLS(2),'d','Color',C.purple,'LineWidth',1.2,'MarkerSize',5);
     plot(ax,p23(1),p23(2),'s','Color','k','MarkerFaceColor','k','MarkerSize',4);
-    text(ax,p17(1),p17(2),'  $P_{17}$','Interpreter','latex','VerticalAlignment','bottom','FontSize',8);
-    text(ax,pLS(1),pLS(2),'  $q_K=0$ estimate','Interpreter','latex','VerticalAlignment','bottom','FontSize',8);
-    text(ax,p23(1),p23(2),'  $P_{23}$','Interpreter','latex','VerticalAlignment','top','HorizontalAlignment','right','FontSize',8);
-    text(ax,p24(1),p24(2),'  $P_{24}$: unsolved','Interpreter','latex','Color',C.orange, ...
-        'VerticalAlignment','top','FontSize',8);
+    % The four labels are offset from the original data markers. Keep
+    % the late-path interpolation estimate clearly distinct from solved tips.
+    text(ax,p17(1)-0.65,p17(2)+0.48,'$P_{17}$', ...
+        'Interpreter','latex','HorizontalAlignment','center', ...
+        'VerticalAlignment','bottom');
+    text(ax,pLS(1)+0.2,pLS(2)+0.62,'$q_K=0$', ...
+        'Interpreter','latex','HorizontalAlignment','center', ...
+        'VerticalAlignment','bottom');
+    text(ax,p23(1)-0.35,p23(2)+0.35,'$P_{23}$', ...
+        'Interpreter','latex','HorizontalAlignment','right', ...
+        'VerticalAlignment','bottom');
+    % Keep the long P24 label below and to the left, since the extension
+    % terminates close to the physical right boundary.
+    text(ax,p24(1)-0.45,p24(2)-0.75,'$P_{24}$ unsolved', ...
+        'Interpreter','latex','Color',C.orange, ...
+        'HorizontalAlignment','right','VerticalAlignment','top');
     axis(ax,'equal'); xlim(ax,[258 302]); ylim(ax,[-27.3 -21.3]);
     xlabel(ax,'$x$ [mm]','Interpreter','latex'); ylabel(ax,'$y$ [mm]','Interpreter','latex');
     local_style_axis(ax);
     S.files{end+1}=local_export_axis(ax,out,'late_detail'); %#ok<AGROW>
+    if opt.OnlyTrajectory
+        % Do not redraw or overwrite unrelated manuscript figures.
+        return;
+    end
 
     %% Figure 2: KI, KII, absolute direction
     out=fullfile(outRoot,'intensities');
@@ -303,15 +322,8 @@ function files=local_export_axis(ax,outDir,name)
     if fig.Position(3)>10,kind='full';else,kind='half';end
     if strcmp(name,'overview'),kind='spatial_full';end
     if strcmp(name,'late_detail')
-        for tx=findall(ax,'Type','text').'
-            if contains(tx.String,'unsolved')
-                tx.HorizontalAlignment='right';tx.VerticalAlignment='top';tx.Position(2)=tx.Position(2)-.3;
-            elseif contains(tx.String,'P_{23}')
-                tx.VerticalAlignment='bottom';
-            elseif contains(tx.String,'estimate')
-                tx.HorizontalAlignment='right';
-            end
-        end
+        % The original publication bottom margin is retained, but all
+        % annotation positions are final before the export helper runs.
         limits=ax.YLim;limits(1)=min(limits(1),-29);ylim(ax,limits);
     end
     publication_export_axis(ax,pdfFile,pngFile,kind);

@@ -17,12 +17,14 @@ function R = main_tip_core_mesh_level_comparison(varargin)
 % sampling gate. The gate is not weakened here.
 %
 % Output:
-%   - one vector PDF per level, with no panel letter/title;
-%   - one PNG per level;
-%   - one combined PNG preview;
-%   - table of mesh counts and native COD sampling.
+%   - three fixed-physical-width vector PDFs for 0.315\linewidth subfigures;
+%   - one PNG per level and a compact combined preview;
+%   - unchanged mesh/COD fingerprints and metadata.
 %
-% LaTeX should provide panel letters/captions.
+% The mesh is reconstructed by the audited deterministic core builder.
+% No elastic solve is performed. The default MATLAB LaTeX interpreter
+% matches the approved Figure 1 math labels. Euclid is optional.
+% LaTeX provides panel letters/captions; only external graphical PDFs are made.
 
     ip=inputParser;
     addParameter(ip,'Increment_mm',4,@(x)isnumeric(x)&&isscalar(x)&&isfinite(x)&&x>0);
@@ -30,8 +32,29 @@ function R = main_tip_core_mesh_level_comparison(varargin)
     addParameter(ip,'XLim_mm',[-3.15 0.85],@(x)isnumeric(x)&&numel(x)==2&&all(isfinite(x))&&x(2)>x(1));
     addParameter(ip,'YLim_mm',[-1.65 1.65],@(x)isnumeric(x)&&numel(x)==2&&all(isfinite(x))&&x(2)>x(1));
     addParameter(ip,'MeshLineWidth',0.25,@(x)isnumeric(x)&&isscalar(x)&&isfinite(x)&&x>0);
+    addParameter(ip,'MeshGrayLevels',[0.48 0.64 0.77], ...
+        @(x)isnumeric(x)&&numel(x)==3&&all(isfinite(x))&&all(x>=0)&&all(x<=1));
+    addParameter(ip,'FontMode','latex',@(x)ischar(x)||isstring(x));
     parse(ip,varargin{:});
     opt=ip.Results;
+    opt.FontMode=lower(char(opt.FontMode));
+    assert(ismember(opt.FontMode,{'euclid','latex'}), ...
+        'meshlevels:FontMode','FontMode must be ''euclid'' or ''latex''.');
+
+    % Default MATLAB LaTeX math matches approved Figure 1. Euclid is
+    % optional; MATLAB's LaTeX interpreter cannot select an external font.
+    if strcmp(opt.FontMode,'euclid')
+        fonts=listfonts;
+        assert(any(strcmpi(fonts,'Euclid'))&&any(strcmpi(fonts,'Euclid Symbol')), ...
+            'meshlevels:EuclidFontsMissing', ...
+            ['Install licensed Euclid and Euclid Symbol fonts before ' ...
+             'using optional Euclid mode. The default ''FontMode'',''latex'' ' ...
+             'matches the approved Figure 1 typography.']);
+    end
+    Pub=publication_style();
+    % Exactly the final physical width of each 0.315\linewidth panel.
+    panelWidth_cm=Pub.thirdWidth_cm;
+    panelHeight_cm=4.50;
 
     root=fileparts(fileparts(fileparts(mfilename('fullpath'))));
     addpath(genpath(root));
@@ -88,31 +111,24 @@ function R = main_tip_core_mesh_level_comparison(varargin)
         fprintf('  %s: scale=%g, hTip=%.10f mm, T3=%d, T6 nodes=%d, native=%s\n', ...
             labels(i),scales(i),hTip_mm,nT3,nT6,mat2str(native));
 
-        fig=figure('Color','w','Units','centimeters','Position',[2 2 6.4 5.2]);
-        ax=axes(fig); hold(ax,'on');
-
-        P=1e3*C.local.coord3;
-        T=C.local.connect3;
-        triplot(T,P(:,1),P(:,2),'Color',[0.25 0.25 0.25], ...
-            'LineWidth',opt.MeshLineWidth);
-
-        % Emphasize the crack line without adding labels or panel letters.
-        plot(ax,[-1e3*C.rCore 0],[0 0],'k-','LineWidth',0.75);
-
-        axis(ax,'equal');
-        xlim(ax,opt.XLim_mm);
-        ylim(ax,opt.YLim_mm);
-        box(ax,'on');
-        grid(ax,'off');
-        set(ax,'FontName','Times New Roman','FontSize',8.5, ...
-            'TickDir','out','LineWidth',0.75,'Layer','top');
-        xlabel(ax,'$x_1$ [mm]','Interpreter','latex');
-        ylabel(ax,'$x_2$ [mm]','Interpreter','latex');
+        % View the accepted topology at the same limits and spatial scale.
+        % Lightening the ELEMENT EDGES does not alter mesh connectivity.
+        fig=figure('Color','w','Visible','off','Units','centimeters', ...
+            'Position',[2 2 panelWidth_cm panelHeight_cm]);
+        ax=axes(fig);hold(ax,'on');
+        local_draw_core(ax,C,opt,i);
+        local_style_axes(ax,opt,Pub,true,true);
 
         pdfFile=fullfile(outDir,sprintf('tip_mesh_%s.pdf',labels(i)));
         pngFile=fullfile(outDir,sprintf('tip_mesh_%s.png',labels(i)));
-        exportgraphics(ax,pdfFile,'ContentType','vector');
-        exportgraphics(ax,pngFile,'Resolution',600);
+        % A fixed physical PDF page prevents later LaTeX scaling from
+        % silently reducing embedded lettering below the manuscript size.
+        set(fig,'PaperUnits','centimeters', ...
+            'PaperSize',[panelWidth_cm panelHeight_cm], ...
+            'PaperPosition',[0 0 panelWidth_cm panelHeight_cm], ...
+            'PaperPositionMode','manual','Renderer','painters');
+        print(fig,pdfFile,'-dpdf','-painters');
+        print(fig,pngFile,'-dpng','-r350');
         close(fig);
     end
 
@@ -129,31 +145,21 @@ function R = main_tip_core_mesh_level_comparison(varargin)
         Summary.native_sampling_gate_12(1));
     fprintf('  H2 is mesh-visualization only unless the scientific qualification policy is changed explicitly.\n');
 
-    % Combined preview only; final manuscript composition should use the
-    % separate vector panels so LaTeX controls panel letters and caption.
-    fig=figure('Color','w','Units','centimeters','Position',[2 2 19.2 5.2]);
+    % Combined preview only; final manuscript remains three separate PDFs.
+    fig=figure('Color','w','Visible','off','Units','centimeters', ...
+        'Position',[2 2 Pub.textWidth_cm panelHeight_cm+0.35]);
     tl=tiledlayout(fig,1,3,'TileSpacing','compact','Padding','compact');
     for i=1:3
-        ax=nexttile(tl); hold(ax,'on');
-        C=cores{i};
-        P=1e3*C.local.coord3; T=C.local.connect3;
-        triplot(T,P(:,1),P(:,2),'Color',[0.25 0.25 0.25], ...
-            'LineWidth',opt.MeshLineWidth);
-        plot(ax,[-1e3*C.rCore 0],[0 0],'k-','LineWidth',0.75);
-        axis(ax,'equal');
-        xlim(ax,opt.XLim_mm); ylim(ax,opt.YLim_mm);
-        box(ax,'on'); grid(ax,'off');
-        set(ax,'FontName','Times New Roman','FontSize',8.5, ...
-            'TickDir','out','LineWidth',0.75,'Layer','top');
-        xlabel(ax,'$x_1$ [mm]','Interpreter','latex');
-        if i==1
-            ylabel(ax,'$x_2$ [mm]','Interpreter','latex');
-        else
+        ax=nexttile(tl);hold(ax,'on');
+        local_draw_core(ax,cores{i},opt,i);
+        local_style_axes(ax,opt,Pub,i==1,false);
+        if i>1
+            % Show one vertical scale in the preview to avoid repetition.
             ax.YTickLabel=[];
         end
     end
     previewFile=fullfile(outDir,'tip_mesh_H2_H1_H0_preview.png');
-    exportgraphics(fig,previewFile,'Resolution',220);
+    exportgraphics(fig,previewFile,'Resolution',300);
     close(fig);
 
     writetable(Summary,fullfile(outDir,'tip_mesh_levels_summary.csv'));
@@ -166,8 +172,62 @@ function R = main_tip_core_mesh_level_comparison(varargin)
     R.h2PhysicalQualificationAdmitted=false;
     R.h2NativeSamplingGatePass=logical(Summary.native_sampling_gate_12(1));
     R.source='deterministic structured core only; no physical solve';
+    R.style=struct('fontMode',opt.FontMode,'label_pt',Pub.label_pt, ...
+        'tick_pt',Pub.tick_pt,'panelWidth_cm',panelWidth_cm, ...
+        'panelHeight_cm',panelHeight_cm,'meshGrayLevels',opt.MeshGrayLevels, ...
+        'meshLineWidth_pt',opt.MeshLineWidth, ...
+        'vectorPdf',true,'meshesPhysicallyUnchanged',true);
 
     save(fullfile(outDir,'tip_mesh_levels_summary.mat'),'R','-v7');
+end
+
+function local_draw_core(ax,C,opt,level)
+% Render the precise audited mesh; no manipulation of nodes/connectivity.
+    xy=double(1e3*C.local.coord3);
+    triangles=double(C.local.connect3);
+    gray=opt.MeshGrayLevels(level);
+    widths=opt.MeshLineWidth*[1.15 0.90 0.70];
+    % triplot(ax,...) is not supported in some MATLAB versions: ax is
+    % interpreted as triangle connectivity and triangulation() fails.
+    % Use an explicitly parented, edge-only patch on the EXACT topology.
+    % This changes only rendering, not nodes, triangles or geometry.
+    patch('Parent',ax,'Faces',triangles,'Vertices',xy, ...
+        'FaceColor','none','EdgeColor',[gray gray gray], ...
+        'LineWidth',widths(level));
+    % Keep the crack faces conspicuously black at every resolution.
+    plot(ax,[-1e3*C.rCore 0],[0 0],'k-','LineWidth',1.05);
+end
+
+function local_style_axes(ax,opt,Pub,showY,fixedPosition)
+% Give each standalone vector PDF a fixed physical axes location.
+% TiledChartLayout owns tile Positions: NEVER set Position on its axes.
+    axis(ax,'equal');
+    xlim(ax,opt.XLim_mm);ylim(ax,opt.YLim_mm);
+    box(ax,'on');grid(ax,'off');
+    set(ax,'FontSize',Pub.tick_pt,'TickDir','out', ...
+        'LineWidth',.75,'Layer','top');
+    if fixedPosition
+        set(ax,'Units','normalized','Position',[.24 .25 .72 .68]);
+    end
+    if strcmp(opt.FontMode,'euclid')
+        set(ax,'FontName','Euclid','TickLabelInterpreter','none');
+        xlabel(ax,'\fontname{Euclid}x_{1} [mm]', ...
+            'Interpreter','tex','FontName','Euclid','FontSize',Pub.label_pt);
+        if showY
+            ylabel(ax,'\fontname{Euclid}x_{2} [mm]', ...
+                'Interpreter','tex','FontName','Euclid','FontSize',Pub.label_pt);
+        end
+    else
+        set(ax,'FontName','Times New Roman','TickLabelInterpreter','latex');
+        xlabel(ax,'$x_1$ [mm]','Interpreter','latex','FontSize',Pub.label_pt);
+        if showY
+            ylabel(ax,'$x_2$ [mm]','Interpreter','latex','FontSize',Pub.label_pt);
+        end
+    end
+    if ~showY
+        % Keep the same viewport and y tick values; omit only repeated label.
+        ax.YLabel.String='';
+    end
 end
 
 function tf=local_is_absolute_path(p)
