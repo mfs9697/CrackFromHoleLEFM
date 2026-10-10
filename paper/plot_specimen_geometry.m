@@ -2,10 +2,10 @@ function S=plot_specimen_geometry(varargin)
 % Symbolic vector schematic: specimen geometry, tractions and possible crack.
 % This function is PLOT ONLY. All coordinates below are drawing coordinates.
 %
-% FontMode='euclid' (default) requires installed, licensed MathType Euclid and
-% Euclid Symbol fonts. MATLAB's 'latex' interpreter cannot select arbitrary
-% math fonts, so this mode uses TeX for Latin symbols and the Euclid Symbol
-% glyph for sigma. Do NOT silently substitute Computer Modern or other fonts.
+% FontMode='euclid' (default) requires installed, licensed MathType Euclid
+% and Euclid Symbol fonts. MATLAB's 'latex' interpreter ignores FontName;
+% this mode uses explicit TeX Euclid roman/italic styles and the Euclid
+% Symbol sigma glyph. Neither font nor italic mathematical style is implicit.
 % FontMode='latex' is an explicit portability/proofing fallback only.
 %
 % Call from repository root:
@@ -148,7 +148,8 @@ S=struct('pdf',pdf,'vector',true,'illustrativeCrack',true, ...
     'numericalParametersShown',false,'origin','lower-left O', ...
     'coordinateTransform','y_comp = y_sketch - B/2', ...
     'fontMode',fontMode,'font_pt',labelPt,'width_cm',pageWidth, ...
-    'mathFont',fontDescription(),'plateGray',ip.Results.PlateGray,'png',png);
+    'mathFont',fontDescription(),'plateGray',ip.Results.PlateGray,'png',png, ...
+    'mathItalicEnabled',strcmp(fontMode,'euclid'));
 fprintf('Figure 1 regenerated (%s):\n  %s\n  %s\n',fontMode,pdf,png);
 
     function name=fontDescription()
@@ -160,16 +161,40 @@ fprintf('Figure 1 regenerated (%s):\n  %s\n  %s\n',fontMode,pdf,png);
     end
 
     function t=label(x,y,mathString)
-        % Preserve subscript syntax such as x_c and P_0.
+        % MATLAB TeX recognizes \fontname and \it; MATLAB LaTeX does not
+        % respect FontName. Define the exact mathematical typography rather
+        % than printing Euclid variables in the upright roman face.
         if strcmp(fontMode,'euclid')
-            mathString=regexprep(mathString,'^\$|\$','');
-            % Explicit TeX family selection is needed for reliable Euclid
-            % rendering; FontName alone can be ignored by TeX markup.
-            mathString=['\fontname{Euclid}' mathString];
-            t=text(ax,x,y,mathString,'Interpreter','tex', ...
+            switch mathString
+                case '$P_0$'
+                    glyph='\fontname{Euclid}\it P_{\rm 0}';
+                case '$R$'
+                    glyph='\fontname{Euclid}\it R';
+                case '$B$'
+                    glyph='\fontname{Euclid}\it B';
+                case '$x$'
+                    glyph='\fontname{Euclid}\it x';
+                case '$y$'
+                    glyph='\fontname{Euclid}\it y';
+                case '$x_c$'
+                    glyph='\fontname{Euclid}\it x_{c}';
+                case '$y_c$'
+                    glyph='\fontname{Euclid}\it y_{c}';
+                case '$2A$'
+                    glyph='\fontname{Euclid}\rm 2\it A';
+                case '$(x_c,y_c)$'
+                    glyph='\fontname{Euclid}\rm (\it x_{c}\rm ,\it y_{c}\rm )';
+                case '$O$'
+                    glyph='\fontname{Euclid}\rm O';
+                otherwise
+                    error('specimenFig:UnknownMathLabel', ...
+                        'No Euclid math style has been defined for %s.',mathString);
+            end
+            t=text(ax,x,y,glyph,'Interpreter','tex', ...
                 'FontName','Euclid','FontSize',labelPt, ...
                 'HorizontalAlignment','center','VerticalAlignment','middle');
         else
+            % Explicit non-Euclid proofing mode: MATLAB's own LaTeX font.
             t=text(ax,x,y,mathString,'Interpreter','latex', ...
                 'FontSize',labelPt,'HorizontalAlignment','center', ...
                 'VerticalAlignment','middle');
