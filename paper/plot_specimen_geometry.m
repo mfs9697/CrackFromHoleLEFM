@@ -154,7 +154,10 @@ S=struct('pdf',pdf,'vector',true,'illustrativeCrack',true, ...
     function t=label(x,y,mathString)
         % Preserve subscript syntax such as x_c and P_0.
         if strcmp(fontMode,'euclid')
-            mathString=regexprep(mathString,'^\$|\$$','');
+            mathString=regexprep(mathString,'^\$|\$','');
+            % Explicit TeX family selection is needed for reliable Euclid
+            % rendering; FontName alone can be ignored by TeX markup.
+            mathString=['\fontname{Euclid}' mathString];
             t=text(ax,x,y,mathString,'Interpreter','tex', ...
                 'FontName','Euclid','FontSize',labelPt, ...
                 'HorizontalAlignment','center','VerticalAlignment','middle');
