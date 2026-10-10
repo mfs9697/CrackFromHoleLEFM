@@ -20,7 +20,7 @@ regenerated and retained graphics and records their sources and hashes.
 | Figure | Source | Action |
 |---|---|---|
 | 1, geometry/loading | `plot_specimen_geometry.m`; author's approved composition retained as `specimen_geometry_approved_reference.pdf` | MATLAB vector drawing, symbolic dimensions only, unsigned outward sigma arrows, origin O and illustrative crack. Drawing origin is lower-left; numerical y is shifted by -B/2. |
-| 2, mesh hierarchy | Existing three vector PDFs and saved count summary | Retained. Coordinates/connectivity are absent; the core generator is deliberately not invoked. |
+| 2, mesh hierarchy | `verification/crack_path/main_tip_core_mesh_level_comparison.m` and audited `build_stage2_scaled_audited_core.m` | Regenerated separately in mesh-only mode; exact element/COD fingerprints are checked. Excluded deliberately from strictly plot-only `redraw_all_figures()`. |
 | 3, reference path | `evidence_exact.mat`, `plot_existing_manuscript_figures.m` | Regenerated. Solid P0-P23 and dashed qualified-unsolved P24; interpolation diamond not a solved state. |
 | 4, KI/KII/absolute direction | Same saved reference table | Regenerated; theta is absolute in the frozen frame, not a local MTS turn. |
 | 5, late mode mixity/MTS turn | Same saved reference table | Regenerated; Delta theta belongs to the current accepted field and predicts the next segment. |
@@ -35,6 +35,43 @@ result, not a new numerical result. Its 23 exact-common-length comparison rows
 and 161 native q/turn-density rows were checked against the published figures
 and tables during the previous accepted-archive audit. The original archive
 paths remain in its provenance; those physical archives are now absent.
+
+## Figure 2: approved mesh panels (separate mesh-only workflow)
+
+Figure 2 has three reviewed local PDF panels. The publication source uses
+`figures/mesh_levels/tip_mesh_H2.pdf`, `tip_mesh_H1.pdf`, and
+`tip_mesh_H0.pdf` with concise subcaptions `4h_0`, `2h_0`, and `h_0`.
+These are **mesh illustrations**; the paper distinguishes the physically
+qualified H1/H0 levels from the illustration-only H2 level (COD counts
+10/15/12/9 fail the 12-native-point gate).
+
+To promote **the already reviewed** PDF and PNG panels from their scratch
+folder into the manuscript folder, run from the repository root:
+
+```matlab
+addpath(genpath(pwd));
+P = promote_figure2_review();
+```
+
+The promotion helper checks the original T3 and T6 node counts, all four COD
+point counts, the three tip sizes and the expected H2/H1/H0 qualification
+statuses **before copying any files**. It does not run a solve or even a mesh
+builder. The output is six locally updated graphic files
+(`tip_mesh_H2/H1/H0.pdf` and `.png` in `paper/figures/mesh_levels`).
+Commit these with GitHub Desktop to make the approved binaries available on
+GitHub; merely pulling the PR cannot upload MATLAB-generated binary files.
+
+If generation must be repeated, it remains a separate **mesh-only**
+diagnostic, not part of `redraw_all_figures`:
+
+```matlab
+addpath(genpath(pwd));
+R = main_tip_core_mesh_level_comparison( ...
+    'OutputDir', fullfile(pwd,'paper','figures','mesh_levels_review'));
+disp(R.summary);
+```
+
+Examine the new PDFs before running the promotion helper again.
 
 ## Physical sizing and typography
 
@@ -52,10 +89,12 @@ M1 panels would either exceed the page or require substantially smaller text.
 The common arrangement preserves quantities and spatial aspect ratios while
 allowing the available-data panels to be rendered at their final physical size.
 
-**Retained-source limitation:** the original M1, mesh-hierarchy and increment
-trajectory graphics cannot be fully regenerated or brought to the exact
-11/9.5-pt target without their raw coordinates. Their embedded fonts are
-retained, not represented as having passed the new interpreter/font checks.
+**Retained-source limitation:** original M1 and increment-trajectory graphics
+cannot be fully regenerated without their raw source coordinates. Their
+embedded fonts are retained, not represented as having passed the new
+interpreter/font checks. Figure 2 is no longer in this category: its audited
+deterministic mesh-only generator is available and has passed the exact T3,
+T6-node and four-window COD-sampling fingerprints.
 The wide increment asset is a verified graphical variant of the same accepted
 4/2/1-mm histories, not a substituted numerical family. This limitation is
 recorded for review rather than concealed by numerical reconstruction.
