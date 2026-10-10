@@ -1,0 +1,48 @@
+symbol,meaning,units,first_source_line,subsequent_source_lines,clarification
+A,Half specimen width,mm or m,210,216;229;387;743,Full width 2A; software C.A is the full width
+B,Full specimen height,mm or m,210,216;217;230;232;387,Numerical ordinate spans -B/2 to B/2; software C.B is half-height
+"x,y",Computational Cartesian coordinates,mm or m,214,232;276;311;753;778,"x right, y up; the drawing uses a translated lower-left origin"
+"x_c,y_c",Hole-center construction coordinates in the sketch,mm or m,211,212;217;231;292;293;388,Lower-left convention only
+y_c^{comp},Computational hole-center ordinate,mm or m,217,293,Equals y_c-B/2; translation leaves segment directions unchanged
+R,Hole radius,mm or m,210,230,Also drawn symbolically; sketch not to numerical scale
+"\Omega_{rect},\Omega_k",Rectangular reference region and cracked material domain,set in plane,216,241;249;535;538;553,Excludes hole and retained crack
+\Gamma_k,Retained crack polyline at state k,curve,242,245,Both faces belong to the material boundary
+"P_0,P_k,P_{k+1}",Initiation point and crack-tip positions,mm or m,221,245;292;317;326;327;373;401;479;653;737;1105,P24 geometry is qualified but physically unsolved
+k,Discrete crack-state index,dimensionless,241,245;326;327;373,"Current state, not time"
+"E,\nu",Young modulus and Poisson ratio,stress; dimensionless,244,254;255;392;551;566,Plane strain; displayed E=210 GPa represents stored 210000 MPa
+"\mu,\lambda",Shear modulus and first Lamé coefficient,stress,252,254;255;257;564;1012;1026;1027;1039;1116;1117;1129;1250;1251;1252;1267;1268;1378;1410;1414;1436;1437;1440;1490;1493;1502,Lamé lambda differs from dimensionless initiation multiplier
+"\bm u,u_i",Displacement field and local components,length,246,250;533;560,Comma subscript is a local spatial derivative
+"\bm\varepsilon,\varepsilon_{33}",Infinitesimal strain tensor; out-of-plane strain,dimensionless,246,250;251;252;253;533;536,Plane-strain constraint epsilon33=0
+"\bm\sigma,\sigma_{ij}",Cauchy stress tensor and components,stress,247,249;252;533;536;537,Bold or indexed; distinct from scalar traction magnitude
+\bm I,Identity tensor,dimensionless,253,257,Distinct from the mode interaction integral
+\sigma,Applied unsigned tensile traction magnitude,stress,235,247;261;268,Matches figure sigma; software load.sig0 remains unchanged
+\sigma_c,Tensile initiation threshold,stress,278,286;394,"Location/initiation criterion, not a growth or arrest law"
+"\sigma_{tt},\sigma_{tt}^+",Tangential hole-boundary stress and its positive part,stress,275,284;286;287,Boundary angle dependent
+"\phi,\phi_*",Hole polar angle and selected initiation angle,radians/degrees as declared,275,283;284;286;289;292;293;303;312;400,Counterclockwise from positive Cartesian x
+\lambda_{ini},Positive initiation load multiplier,dimensionless,280,285;403,Stress threshold divided by reference peak stress
+"\bm n_{mat},\bm t",Frozen radial normal and counterclockwise tangent,unit vectors,302,305;308;317;365;366,No later re-selection of initiation frame
+\theta_k,Absolute segment direction in frozen initiation frame,angle,309,312;372;825;861,Not the global direction or local MTS turn
+\Theta_k,Global Cartesian segment direction,angle,312,,Theta_k=phi_*+theta_k
+"\Delta\theta_{k+1},\alpha",Accepted local MTS turn and trial turn,angle,343,344;347;348;353;359;370;372;671;734;852;861;963;996;997;1233;1315;1331;1335;1393,Referenced to the current forward segment; small-mixity expansion in radians
+"\bm e_1^{(k)},\bm e_2^{(k)},\bm e(\theta)",Current-tip basis and direction map,unit vectors,327,328;343;365;373,"Last-segment frame, not the mouth-to-tip chord"
+"x_1,x_2,r",Local tip coordinates and distance,length,329,330;331;561,"r ahead of tip for SIF definition, behind tip for COD distance"
+"K_I,K_{II},K_m",Opening/sliding signed stress-intensity factors,stress sqrt(length),104,131;145;173;174;187;334;335;338;347;348;359;371;480;481;550;563;592;645;659;671;677;679;706;732;733;772;788;790;791;796;807;816;850;851;861;888;970;971;976;978;1032;1035;1083;1107;1122;1125;1175;1291;1347;1361;1363;1481,Current-tip frame; figures use MPa sqrt(m)
+q_K,Mode-mixity ratio KII/KI,dimensionless,338,555;645;791;838;839;843;851;965;996;997;1270;1291;1307;1330;1334;1354;1389;1393;1394;1439,Defined before use; differs from radial domain weight q
+"S(\alpha),T(\alpha),c,s",Angular hoop/shear coefficients and half-angle cosine/sine,SIF; dimensionless,347,348;353,T(alpha) is not the T3/T6 element designation
+"\Delta a,a_k,a",Prescribed step and accumulated crack length,length,241,242;245;249;309;312;313;317;327;372;373;375;405;420;421;422;423;535;568;570;612;617;619;620;621;626;627;630;633;657;825;861;901;948;1192;1208;1233;1241;1281;1292;1294;1311;1314;1315;1330;1331;1334;1335;1389;1390;1506;1510,"a_k=k Delta a; plot a is arc length, not x coordinate"
+"h_{tip},h_0",Characteristic tip spacing and production reference spacing,length,414,420;425;438;453;456;457;458;465;466;468;477;480;482;483;487;489;500;507;514;519;521;522;615;617;626;977;995;1000;1002;1004;1010;1011;1020;1037;1038;1057;1068;1076;1089;1090;1093;1411;1414;1429;1443;1493,h0 corresponds to the specified reference increment
+"\eta_c,\eta_e",Structured-core and requested exterior sizing multipliers,dimensionless,468,469;470;471;989;1092;1412;1494,Software CoreScale/ExteriorScale; eta_e=1 does not fix connectivity
+"r_i,r_o,r_c",Inner/outer interaction radii and paired-core radius,length,421,422;423;426;438;439;462;463;519;545;619;620;621,Unchanged normalized definitions
+"L_{tr},h_{max},s_\infty,g_b","Grading transition, exterior size cap and growth parameters",length; dimensionless,627,,Separate from half-angle sine s
+"I^{(m)},m",Mode interaction integral and auxiliary-mode index,stress length; mode label,334,347;348;371;480;535;550;563;732;1107,"m in {I,II}; not a spatial index"
+"q,q_{,j}",Radial finite-element domain weight and gradient,dimensionless; inverse length,538,554,Not the mode ratio qK
+"i,j,\delta_{1j}",Tip-local indices and Kronecker delta,dimensionless,530,531;536,Repeated indices summed
+\mathrm d\Omega,Area integration measure,length squared,538,553,Avoids overloading geometric half-width A with an area symbol
+h,Auxiliary-displacement finite-difference step,length,544,,"Standalone derivative step, not tip/exterior mesh spacing"
+"E\prime,K_{aux}",Plane-strain effective modulus and auxiliary amplitude,stress; SIF,548,550;551,Recorded normalization unchanged
+"K_I^{app},K_{II}^{app},[[u_i]],\kappa","Apparent native COD intensities, face displacement jump and Kolosov constant",SIF; length; dimensionless,563,564;566,"Upper-minus-lower jump; kappa=3-4nu, not a curvature variable"
+"F(\theta_2),F\prime(0)",Symmetric-control one-step direction map and multiplier,angle; dimensionless,669,682;694;706;710;713,Local stability statement only
+a_{LS},Linearly interpolated mode-ratio zero location,length,216,275;280;284;285;286;287;334;335;370;372;373;403;531;536;537;671;750;842;843;846;852;853;861;963;965;979;996;997;998;1037;1076;1095;1127;1168;1185;1306;1316;1340;1379;1430;1440;1503,Not an independently solved state
+"\delta x,\delta y,\delta r,\delta\theta,\delta q_K,\delta a_{LS}",Differences between compared trajectories at matching lengths,length/angle/dimensionless,959,961;962;965;1267;1268;1269;1270;1436;1437;1438;1439;1440,Lowercase delta distinguishes direction differences from local MTS turns
+"d_{\Delta a},p",Chosen successive-difference maximum and diagnostic log-ratio,metric units; dimensionless,1281,,No rigorous error bound/Richardson order asserted
+"\nabla,\operatorname{tr},:,O(\Delta a)","Gradient, trace, tensor contraction and observed scaling notation",operators,249,250;253;1330;1331;1510,Observed scaling is qualified by the tested increment family
