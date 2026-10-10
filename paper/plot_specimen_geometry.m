@@ -51,10 +51,14 @@ fig=figure('Color','w','Visible','off','Units','centimeters', ...
 cleanup=onCleanup(@()close(fig)); %#ok<NASGU>
 ax=axes(fig);hold(ax,'on');
 
-% Plate, hole and auxiliary center lines.
-plot(ax,[0 W W 0 0],[0 0 H H 0],'k-','LineWidth',1.35);
+% Light-gray plate with a white, open hole; all mesh-free linework
+% remains black. Do not change the numerical model or the schematic geometry.
+plateGray=[.94 .94 .94];
+patch(ax,[0 W W 0],[0 0 H H],plateGray, ...
+    'EdgeColor','k','LineWidth',1.35);
 a=linspace(0,2*pi,361);
-plot(ax,cx+r*cos(a),cy+r*sin(a),'k-','LineWidth',1.35);
+patch(ax,cx+r*cos(a),cy+r*sin(a),'w', ...
+    'EdgeColor','k','LineWidth',1.35);
 plot(ax,[0 cx],[cy cy],'k--','LineWidth',.85);
 plot(ax,[cx cx],[0 H],'k--','LineWidth',.85);
 plot(ax,cx,cy,'ko','MarkerFaceColor','k','MarkerSize',3.5);
