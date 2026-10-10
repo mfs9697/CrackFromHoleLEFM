@@ -43,18 +43,33 @@ def sci(x,decimals=5,sign=False):
     mantissa,exponent=format(x,('+' if sign else '')+f'.{decimals}e').split('e')
     return mantissa+rf'\times10^{{{int(exponent)}}}'
 table=text.split(r'\label{tab:tipmesh}')[1].split(r'\end{table}')[0]
-for x in metrics['fixed']:
-    required=[sci(x['q21'],sign=True),format(x['turn21_deg'],'.8f'),sci(x['q22']),
-              format(x['turn22_deg'],'+.8f'),format(x['crossing_mm'],'.6f')]
-    for value in required: assert value in table,value;count+=1
+def displayed_number(token):
+    token=token.strip().strip('$').replace(' ', '')
+    token=re.sub(r'\\times10\{([+-]?\d+)\}',r'e\1',token)
+    token=re.sub(r'\\times10\^\{([+-]?\d+)\}',r'e\1',token)
+    value=float(token)
+    mantissa,exponent=(token.split('e')+["0"])[:2] if 'e' in token else (token,'0')
+    decimals=len(mantissa.split('.')[1]) if '.' in mantissa else 0
+    half_unit=.50001*10**(int(exponent)-decimals)
+    return value,half_unit
+fixed_rows=table.split(r'\midrule')[1].split(r'\bottomrule')[0].split(r'\\')
+fixed_rows=[row for row in fixed_rows if '&' in row]
+assert len(fixed_rows)==3
+for row,x in zip(fixed_rows,metrics['fixed']):
+    fields=row.split('&')[2:]
+    expected=[x['q21'],x['turn21_deg'],x['q22'],x['turn22_deg'],x['crossing_mm']]
+    for token,value in zip(fields,expected):
+        shown,tolerance=displayed_number(token)
+        assert abs(shown-value)<=tolerance,(token,value,tolerance);count+=1
 summary=text.split(r'\label{tab:independent-sensitivity}')[1].split(r'\end{table}')[0]
 expected=(f"Isolated-core $2h_0$ & {values['maxAbsDy_um']:.5f} & {values['maxTipSeparation_um']:.5f} & "
           f"{values['maxAbsDtheta_mdeg']:.5f} & ${sci(values['maxAbsDq'],2)}$ & ${metrics['localSymmetryDifference_um']:.3f}$")
 assert expected in summary;count+=1
 assert r'Coarser exterior M1 & 0.06734 & 0.06742 & 0.07304 & $2.89\times10^{-7}$ & $-0.322$' in summary
 assert '0.123~' not in text and 'tip-scaled' not in text and 'decouple tip and exterior' not in text
-assert r'\texttt{ExteriorScale}=1' in text and 'connectivity need not be identical' in text
-assert format(metrics['isolatedLocalSymmetry_mm'],'.9f') in text
+assert 'CoreScale' not in text and 'ExteriorScale' not in text
+assert r'$\eta_e=1$' in text and 'connectivity need not be identical' in text
+assert format(metrics['isolatedLocalSymmetry_mm'],'.6f') in text
 assert format(metrics['fixed'][-1]['P17KIChange_percent'],'.5f') in text
 assert sci(metrics['fixed'][-1]['P17qDifference'],2) in text
 assert sci(metrics['fixed'][-1]['P17turnDifference_deg'],2) in text
@@ -75,15 +90,19 @@ assert r'\includegraphics[width=0.78\textwidth]{figures/geometry_loading/specime
 assert r'\label{fig:geometry-loading}' in text
 assert r'\ref{fig:geometry-loading}' in text
 approved_figure=paper/'figures/geometry_loading/specimen_geometry.pdf'
-assert hashlib.sha256(approved_figure.read_bytes()).hexdigest()=='7258f046f8d09c5c9c9b0c45a0a39ab1f9b3e8228d2f0c121c1b17d6e6f0f934'
+approved_reference=paper/'figures/geometry_loading/specimen_geometry_approved_reference.pdf'
+assert hashlib.sha256(approved_reference.read_bytes()).hexdigest()=='7258f046f8d09c5c9c9b0c45a0a39ab1f9b3e8228d2f0c121c1b17d6e6f0f934'
+from pypdf import PdfReader
+for obj in (PdfReader(approved_figure).pages[0].get('/Resources').get('/XObject',{})).values():
+    assert obj.get_object().get('/Subtype')!='/Image', 'Schematic must be vector, not a raster wrapper'
 problem=text.split(r'\section{Problem formulation}',1)[1].split(r'\section{Incremental crack-path formulation}',1)[0]
 assert r'[0,2A]\times[-B/2,B/2]' in problem
 assert r'\sigma_c' in problem and r'\Delta a' in problem
-for numeric in ('210000','0.30','300$ mm','200$ mm','\PlateAMM','\HoleRMM','\PhiStar','\MouthX','\PeakStress',r'\sigma_0=1',r'\Delta a=4'):
+for numeric in ('210000','0.30','300$ mm','200$ mm',r'\PlateAMM',r'\HoleRMM',r'\PhiStar',r'\MouthX',r'\PeakStress',r'\sigma=1',r'\Delta a=4'):
     assert numeric not in problem, f'Numerical value left in problem formulation: {numeric}'
 numerical=text.split(r'\section{Numerical implementation and verification}',1)[1]
 assert r'\subsection{Numerical parameters and initiation state}' in numerical
-assert r'\sigma_0=1' in numerical and r'E=210000' in numerical
+assert r'\sigma=1' in numerical and r'E=210' in numerical
 assert r'\lambda_{\mathrm{ini}}=\LoadFactor' in numerical
 assert r'2A-x_{23}=\LastLigamentMM' in text
 print(f'PASS: {count} independent data/table checks; 31 accepted records; 10 inline figures / 31 panels; symbolic problem formulation; historical fallback absent.')

@@ -12,6 +12,7 @@ set(ax,'Units','normalized','Position',[.20 .23 .76 .70], ...
     'FontName',P.fontName,'FontSize',P.tick_pt,'TickLabelInterpreter','latex', ...
     'LineWidth',.8,'TickDir','out');
 if any(strcmp(kind,{'full','spatial_full'})),ax.Position=[.09 .24 .88 .69];end
+if strcmp(kind,'third'),ax.Position=[.32 .23 .63 .70];end
 xlim(ax,limits{1});ylim(ax,limits{2});
 for obj=[ax.XLabel,ax.YLabel,ax.ZLabel,ax.Title]
     set(obj,'Interpreter','latex','FontSize',P.label_pt,'FontName',P.fontName);
@@ -33,6 +34,11 @@ try,ax.XAxis.SecondaryLabel.Interpreter='latex';ax.YAxis.SecondaryLabel.Interpre
 set(fig,'PaperUnits','centimeters','PaperSize',[width height], ...
     'PaperPosition',[0 0 width height],'PaperPositionMode','manual','Renderer','painters');
 drawnow;
+for lg=findall(fig,'Type','legend').'
+    lg.Units='normalized';position=lg.Position;
+    position(1)=min(position(1),.98-position(3));
+    position(2)=min(position(2),.98-position(4));lg.Position=position;
+end
 print(fig,pdf,'-dpdf','-painters');
 if nargin>=3&&~isempty(png),print(fig,png,'-dpng','-r220');end
 info=struct('pdf',pdf,'width_cm',width,'height_cm',height, ...

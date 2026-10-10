@@ -304,8 +304,15 @@ function files=local_export_axis(ax,outDir,name)
     if strcmp(name,'overview'),kind='spatial_full';end
     if strcmp(name,'late_detail')
         for tx=findall(ax,'Type','text').'
-            if contains(tx.String,'unsolved'),tx.HorizontalAlignment='right';end
+            if contains(tx.String,'unsolved')
+                tx.HorizontalAlignment='right';tx.VerticalAlignment='top';tx.Position(2)=tx.Position(2)-.3;
+            elseif contains(tx.String,'P_{23}')
+                tx.VerticalAlignment='bottom';
+            elseif contains(tx.String,'estimate')
+                tx.HorizontalAlignment='right';
+            end
         end
+        limits=ax.YLim;limits(1)=min(limits(1),-29);ylim(ax,limits);
     end
     publication_export_axis(ax,pdfFile,pngFile,kind);
     files={pdfFile,pngFile};

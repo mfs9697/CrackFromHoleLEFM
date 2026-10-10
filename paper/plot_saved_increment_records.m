@@ -16,7 +16,7 @@ for j=1:3
         fields={};lab='$\Delta\theta/\Delta a$ [deg/mm]';
     end
     if j<3
-        marks={'o','^'};labels={'$2-4$ mm','$1-2$ mm'};
+        marks={'o','^'};labels={'$2-4$','$1-2$'};
         for k=1:2,plot(ax,T.crack_length_mm,T.(fields{k}),['-' marks{k}], ...
                 'Color',cols{k},'DisplayName',labels{k});end
         yline(ax,0,':','HandleVisibility','off');
@@ -25,11 +25,12 @@ for j=1:3
         for k=1:3
             increment=[4,2,1];hit=N.increment_mm==increment(k);
             plot(ax,N.crack_length_mm(hit),N.turn_density_deg_per_mm(hit),['-' marks{k}], ...
-                'Color',colors{k},'DisplayName',['$\Delta a=' num2str(increment(k)) '$ mm']);
+                'Color',colors{k},'DisplayName',['$' num2str(increment(k)) '$ mm']);
         end
     end
     xlim(ax,[0,100]);xlabel(ax,'$a$ [mm]','Interpreter','latex');ylabel(ax,lab,'Interpreter','latex');
-    legend(ax,'Location','best','Interpreter','latex','Box','off');box(ax,'on');
+    if j==1,location='northeast';else,location='northwest';end
+    legend(ax,'Location',location,'Interpreter','latex','Box','off');box(ax,'on');
     publication_export_axis(ax,fullfile(out,[names{j} '.pdf']),fullfile(out,[names{j} '.png']),'third');
     clear cleanup
 end
