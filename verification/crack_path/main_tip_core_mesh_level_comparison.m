@@ -22,8 +22,8 @@ function R = main_tip_core_mesh_level_comparison(varargin)
 %   - unchanged mesh/COD fingerprints and metadata.
 %
 % The mesh is reconstructed by the audited deterministic core builder.
-% No elastic solve is performed. The defaults favor readable printed
-% mesh panels; Euclid math fonts are REQUIRED by default (no silent fallback).
+% No elastic solve is performed. The default MATLAB LaTeX interpreter
+% matches the approved Figure 1 math labels. Euclid is optional.
 % LaTeX provides panel letters/captions; only external graphical PDFs are made.
 
     ip=inputParser;
@@ -34,23 +34,22 @@ function R = main_tip_core_mesh_level_comparison(varargin)
     addParameter(ip,'MeshLineWidth',0.25,@(x)isnumeric(x)&&isscalar(x)&&isfinite(x)&&x>0);
     addParameter(ip,'MeshGrayLevels',[0.48 0.64 0.77], ...
         @(x)isnumeric(x)&&numel(x)==3&&all(isfinite(x))&&all(x>=0)&&all(x<=1));
-    addParameter(ip,'FontMode','euclid',@(x)ischar(x)||isstring(x));
+    addParameter(ip,'FontMode','latex',@(x)ischar(x)||isstring(x));
     parse(ip,varargin{:});
     opt=ip.Results;
     opt.FontMode=lower(char(opt.FontMode));
     assert(ismember(opt.FontMode,{'euclid','latex'}), ...
         'meshlevels:FontMode','FontMode must be ''euclid'' or ''latex''.');
 
-    % MATLAB's LaTeX interpreter DOES NOT honor MathType Euclid fonts.
-    % For publication use Euclid and its TeX font family explicitly.
-    % This early check avoids overwriting accepted PDF assets on failure.
+    % Default MATLAB LaTeX math matches approved Figure 1. Euclid is
+    % optional; MATLAB's LaTeX interpreter cannot select an external font.
     if strcmp(opt.FontMode,'euclid')
         fonts=listfonts;
         assert(any(strcmpi(fonts,'Euclid'))&&any(strcmpi(fonts,'Euclid Symbol')), ...
             'meshlevels:EuclidFontsMissing', ...
             ['Install licensed Euclid and Euclid Symbol fonts before ' ...
-             'generating publication meshes, or use ''FontMode'',''latex'' ' ...
-             'only for nonpublication proofs.']);
+             'using optional Euclid mode. The default ''FontMode'',''latex'' ' ...
+             'matches the approved Figure 1 typography.']);
     end
     Pub=publication_style();
     % Exactly the final physical width of each 0.315\linewidth panel.
@@ -184,12 +183,17 @@ end
 
 function local_draw_core(ax,C,opt,level)
 % Render the precise audited mesh; no manipulation of nodes/connectivity.
-    xy=1e3*C.local.coord3;
-    triangles=C.local.connect3;
+    xy=double(1e3*C.local.coord3);
+    triangles=double(C.local.connect3);
     gray=opt.MeshGrayLevels(level);
     widths=opt.MeshLineWidth*[1.15 0.90 0.70];
-    triplot(ax,triangles,xy(:,1),xy(:,2), ...
-        'Color',[gray gray gray],'LineWidth',widths(level));
+    % triplot(ax,...) is not supported in some MATLAB versions: ax is
+    % interpreted as triangle connectivity and triangulation() fails.
+    % Use an explicitly parented, edge-only patch on the EXACT topology.
+    % This changes only rendering, not nodes, triangles or geometry.
+    patch('Parent',ax,'Faces',triangles,'Vertices',xy, ...
+        'FaceColor','none','EdgeColor',[gray gray gray], ...
+        'LineWidth',widths(level));
     % Keep the crack faces conspicuously black at every resolution.
     plot(ax,[-1e3*C.rCore 0],[0 0],'k-','LineWidth',1.05);
 end
