@@ -151,8 +151,8 @@ function S = plot_increment_sensitivity_coarse_publication(varargin)
         'MarkerSize',3,'DisplayName','$2-4$ mm');
     plot(ax2,common,dy12_um,'-^','Color',yellow,'LineWidth',1.0, ...
         'MarkerSize',3,'DisplayName','$1-2$ mm');
-    xlabel(ax2,'Crack length $a$ [mm]','Interpreter','latex');
-    ylabel(ax2,'Successive $\Delta y$ [$\mu$m]','Interpreter','latex');
+    xlabel(ax2,'$a$ [mm]','Interpreter','latex');
+    ylabel(ax2,'Successive $\delta y$ [$\mu$m]','Interpreter','latex');
     legend(ax2,'Location','best','Box','off','Interpreter','latex');
     box(ax2,'on');
 
@@ -162,7 +162,7 @@ function S = plot_increment_sensitivity_coarse_publication(varargin)
         'MarkerSize',3,'DisplayName','$2-4$ mm');
     plot(ax3,common,dtheta12_mdeg,'-^','Color',yellow,'LineWidth',1.0, ...
         'MarkerSize',3,'DisplayName','$1-2$ mm');
-    xlabel(ax3,'Crack length $a$ [mm]','Interpreter','latex');
+    xlabel(ax3,'$a$ [mm]','Interpreter','latex');
     ylabel(ax3,'Successive direction difference [mdeg]','Interpreter','latex');
     legend(ax3,'Location','best','Box','off','Interpreter','latex');
     box(ax3,'on');
@@ -175,7 +175,7 @@ function S = plot_increment_sensitivity_coarse_publication(varargin)
         'LineWidth',1.0,'MarkerSize',2.4,'DisplayName','$\Delta a=2$ mm');
     plot(ax4,T1.crack_length_mm,kappa1,'-^','Color',yellow, ...
         'LineWidth',1.0,'MarkerSize',2.2,'DisplayName','$\Delta a=1$ mm');
-    xlabel(ax4,'Crack length $a$ [mm]','Interpreter','latex');
+    xlabel(ax4,'$a$ [mm]','Interpreter','latex');
     ylabel(ax4,'$(\Delta\theta/\Delta a)$ [deg/mm]','Interpreter','latex');
     box(ax4,'on');
     legend(ax4,'Location','southwest','Box','off','Interpreter','latex');
@@ -330,14 +330,14 @@ function S=local_plot_two_level(T4,V4,T2,V2,outDir,opt)
     ax2=nexttile(tl); hold(ax2,'on');
     yline(ax2,0,'-','Color',[.7 .7 .7],'LineWidth',.6,'HandleVisibility','off');
     plot(ax2,common,dy_um,'-o','Color',orange,'LineWidth',1.0,'MarkerSize',3);
-    xlabel(ax2,'Crack length $a$ [mm]','Interpreter','latex');
+    xlabel(ax2,'$a$ [mm]','Interpreter','latex');
     ylabel(ax2,'$y_{2\mathrm{mm}}-y_{4\mathrm{mm}}$ [$\mu$m]','Interpreter','latex');
     box(ax2,'on');
 
     ax3=nexttile(tl); hold(ax3,'on');
     yline(ax3,0,'-','Color',[.7 .7 .7],'LineWidth',.6,'HandleVisibility','off');
     plot(ax3,common,dtheta_mdeg,'-o','Color',orange,'LineWidth',1.0,'MarkerSize',3);
-    xlabel(ax3,'Crack length $a$ [mm]','Interpreter','latex');
+    xlabel(ax3,'$a$ [mm]','Interpreter','latex');
     ylabel(ax3,'$\theta_{2\mathrm{mm}}-\theta_{4\mathrm{mm}}$ [mdeg]','Interpreter','latex');
     box(ax3,'on');
 
@@ -347,7 +347,7 @@ function S=local_plot_two_level(T4,V4,T2,V2,outDir,opt)
         'LineWidth',1.0,'MarkerSize',3.0,'DisplayName','$\Delta a=4$ mm');
     plot(ax4,T2.crack_length_mm,kappa2,'-s','Color',orange, ...
         'LineWidth',1.0,'MarkerSize',2.4,'DisplayName','$\Delta a=2$ mm');
-    xlabel(ax4,'Crack length $a$ [mm]','Interpreter','latex');
+    xlabel(ax4,'$a$ [mm]','Interpreter','latex');
     ylabel(ax4,'$(\Delta\theta/\Delta a)$ [deg/mm]','Interpreter','latex');
     box(ax4,'on');
     legend(ax4,'Location','southwest','Box','off','Interpreter','latex');
@@ -529,8 +529,8 @@ function local_export_axis(srcAx,pdfFile,pngFile,panelName)
         legend(ax,'show','Location','best','Box','off','Interpreter','latex');
     end
     drawnow;
-    exportgraphics(ax,pdfFile,'ContentType','vector');
-    exportgraphics(ax,pngFile,'Resolution',600);
+    if strcmp(panelName,'trajectory'),kind='spatial_full';else,kind='third';end
+    publication_export_axis(ax,pdfFile,pngFile,kind);
 end
 
 function local_close_if_valid(h)
