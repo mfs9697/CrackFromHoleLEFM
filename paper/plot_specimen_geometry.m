@@ -2,11 +2,11 @@ function S=plot_specimen_geometry(varargin)
 % Symbolic vector schematic: specimen geometry, tractions and possible crack.
 % This function is PLOT ONLY. All coordinates below are drawing coordinates.
 %
-% FontMode='euclid' (default) requires installed, licensed MathType Euclid
-% and Euclid Symbol fonts. MATLAB's 'latex' interpreter ignores FontName;
-% this mode uses explicit TeX Euclid roman/italic styles and the Euclid
-% Symbol sigma glyph. Neither font nor italic mathematical style is implicit.
-% FontMode='latex' is an explicit portability/proofing fallback only.
+% The original publication math style uses MATLAB's LaTeX interpreter.
+% Restore that style as the default: consistent italic math, subscripts,
+% and Greek sigma, without experimental TeX font-name overrides.
+% Optional Euclid mode is retained for comparison only. Its special
+% glyph behavior is NOT equivalent to the original approved appearance.
 %
 % Call from repository root:
 %   addpath(genpath(pwd));
@@ -16,7 +16,7 @@ function S=plot_specimen_geometry(varargin)
 
 ip=inputParser;
 addParameter(ip,'OutputDir','',@(x)ischar(x)||isstring(x));
-addParameter(ip,'FontMode','euclid',@(x)ischar(x)||isstring(x));
+addParameter(ip,'FontMode','latex',@(x)ischar(x)||isstring(x));
 addParameter(ip,'PlateGray',0.94,@(x)isnumeric(x)&&isscalar(x)&&isfinite(x)&&x>=0&&x<=1);
 parse(ip,varargin{:});
 fontMode=lower(char(ip.Results.FontMode));
@@ -27,7 +27,7 @@ paper=fileparts(mfilename('fullpath'));
 out=char(ip.Results.OutputDir);
 if isempty(out),out=fullfile(paper,'figures','geometry_loading');end
 
-% Validate typography BEFORE touching the publication image assets.
+% Only explicitly requested Euclid mode requires local font validation.
 if strcmp(fontMode,'euclid')
     installed=listfonts;
     haveEuclid=any(strcmpi(installed,'Euclid'));
@@ -149,14 +149,14 @@ S=struct('pdf',pdf,'vector',true,'illustrativeCrack',true, ...
     'coordinateTransform','y_comp = y_sketch - B/2', ...
     'fontMode',fontMode,'font_pt',labelPt,'width_cm',pageWidth, ...
     'mathFont',fontDescription(),'plateGray',ip.Results.PlateGray,'png',png, ...
-    'mathItalicEnabled',strcmp(fontMode,'euclid'));
+    'mathItalicEnabled',true);
 fprintf('Figure 1 regenerated (%s):\n  %s\n  %s\n',fontMode,pdf,png);
 
     function name=fontDescription()
         if strcmp(fontMode,'euclid')
             name='Euclid / Euclid Symbol';
         else
-            name='MATLAB LaTeX (fallback, not Euclid)';
+            name='MATLAB LaTeX (original mathematical lettering)';
         end
     end
 
@@ -194,7 +194,7 @@ fprintf('Figure 1 regenerated (%s):\n  %s\n  %s\n',fontMode,pdf,png);
                 'FontName','Euclid','FontSize',labelPt, ...
                 'HorizontalAlignment','center','VerticalAlignment','middle');
         else
-            % Explicit non-Euclid proofing mode: MATLAB's own LaTeX font.
+            % Original Figure 1 math: LaTeX controls all italic and symbolic text.
             t=text(ax,x,y,mathString,'Interpreter','latex', ...
                 'FontSize',labelPt,'HorizontalAlignment','center', ...
                 'VerticalAlignment','middle');
@@ -207,7 +207,8 @@ fprintf('Figure 1 regenerated (%s):\n  %s\n  %s\n',fontMode,pdf,png);
                 'FontSize',labelPt,'HorizontalAlignment','center', ...
                 'VerticalAlignment','middle');
         else
-            text(ax,x,y,s,'Interpreter','none', ...
+            % Upright words rendered by the same LaTeX interpreter.
+            text(ax,x,y,s,'Interpreter','latex', ...
                 'FontSize',labelPt,'HorizontalAlignment','center', ...
                 'VerticalAlignment','middle');
         end
