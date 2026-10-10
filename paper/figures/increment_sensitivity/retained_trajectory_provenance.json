@@ -1,0 +1,9 @@
+{
+  "status": "retained verified wide export, not regenerated",
+  "sourceCommit": "81f1608",
+  "sourceAsset": "paper/figures/increment_sensitivity/trajectory.pdf",
+  "sha256": "562cf7b2f445e7d6b8a70604d8ad195c157e25d9b7a392d6557a8c4ed053c2f9",
+  "sameNumericalStudy": "accepted 4/2/1-mm increment family; graphical export variant only",
+  "rawHistoryAvailable": false,
+  "fontTargetVerified": false
+}

@@ -102,7 +102,7 @@ function S = plot_existing_manuscript_figures(varargin)
     plot(ax,hx,hy,'k-','LineWidth',1.0,'HandleVisibility','off');
     plot(ax,[rightBoundary_mm rightBoundary_mm],[-54 14],'k-','LineWidth',0.9,'HandleVisibility','off');
     plot(ax,accepted(:,1),accepted(:,2),'-o','Color',C.blue,'LineWidth',1.25, ...
-        'MarkerSize',2.9,'MarkerFaceColor','w','DisplayName','Accepted P_0--P_{23}');
+        'MarkerSize',2.9,'MarkerFaceColor','w','DisplayName','Accepted $P_0$--$P_{23}$');
     plot(ax,extension(:,1),extension(:,2),'--x','Color',C.orange,'LineWidth',1.15, ...
         'MarkerSize',5,'DisplayName','Qualified, unsolved extension');
     plot(ax,p23(1),p23(2),'s','Color','k','MarkerFaceColor','k','MarkerSize',4, ...
@@ -205,9 +205,9 @@ function S = plot_existing_manuscript_figures(varargin)
     S.files{end+1}=local_plot_cod_panel(D,2,'turn_error_deg',1, ...
         'COD-EDI turn [deg]','turn_quadratic',out,vis,windows,labels,cols,marks,false,false); %#ok<AGROW>
     S.files{end+1}=local_plot_cod_panel(D,1,'ratio_error',1e5, ...
-        '10^5 (COD-EDI mode mixity)','mixity_linear',out,vis,windows,labels,cols,marks,false,true); %#ok<AGROW>
+        '$10^5$ (COD--EDI mode mixity)','mixity_linear',out,vis,windows,labels,cols,marks,false,true); %#ok<AGROW>
     S.files{end+1}=local_plot_cod_panel(D,2,'ratio_error',1e5, ...
-        '10^5 (COD-EDI mode mixity)','mixity_quadratic',out,vis,windows,labels,cols,marks,true,true); %#ok<AGROW>
+        '$10^5$ (COD--EDI mode mixity)','mixity_quadratic',out,vis,windows,labels,cols,marks,true,true); %#ok<AGROW>
 
     %% Figure S1: numerical quality
     out=fullfile(outRoot,'quality');
@@ -299,8 +299,22 @@ end
 function files=local_export_axis(ax,outDir,name)
     pdfFile=fullfile(outDir,[name '.pdf']);
     pngFile=fullfile(outDir,[name '.png']);
-    exportgraphics(ax,pdfFile,'ContentType','vector');
-    exportgraphics(ax,pngFile,'Resolution',600);
+    fig=ancestor(ax,'figure');fig.Units='centimeters';
+    if fig.Position(3)>10,kind='full';else,kind='half';end
+    if strcmp(name,'overview'),kind='spatial_full';end
+    if strcmp(name,'late_detail')
+        for tx=findall(ax,'Type','text').'
+            if contains(tx.String,'unsolved')
+                tx.HorizontalAlignment='right';tx.VerticalAlignment='top';tx.Position(2)=tx.Position(2)-.3;
+            elseif contains(tx.String,'P_{23}')
+                tx.VerticalAlignment='bottom';
+            elseif contains(tx.String,'estimate')
+                tx.HorizontalAlignment='right';
+            end
+        end
+        limits=ax.YLim;limits(1)=min(limits(1),-29);ylim(ax,limits);
+    end
+    publication_export_axis(ax,pdfFile,pngFile,kind);
     files={pdfFile,pngFile};
 end
 

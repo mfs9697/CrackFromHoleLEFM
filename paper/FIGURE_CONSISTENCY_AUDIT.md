@@ -14,6 +14,32 @@ curvilinear crack is schematic rather than an accepted physical state.
 The dimensional relabeling preserves the original 300-mm by 200-mm plate
 and unchanged saved physical coordinates.
 
+**2026-10-10 update to the statement figure:** The author-selected
+geometry/loading drawing has replaced the previous programmatically drawn
+schematic in the specimen geometry PDF. The replacement PDF contains
+black-and-white raster artwork derived from the supplied
+1448-by-1086-pixel source image, downsampled to 1150-by-862 pixels (not editable vectors). The figure labels
+the hole-center ordinate from the lower edge; the numerical coordinate
+used throughout the physical computations is shifted by $-B/2$, giving
+$(170,-20)$ mm rather than the schematic $(170,80)$ mm. No computed
+geometry, applied traction, other figure, or numerical data changed.
+The prior rendering script was removed to prevent inadvertent reproduction
+of the superseded drawing.
+
+**2026-10-10 manuscript-layout revision:** All ten `figure`/`subfigure`
+environments and their captions are now defined directly in
+`paper/main.tex`; the former `figures/*/figure.tex` wrappers are
+retired. The 31 saved PDF images remain unchanged. The approved specimen
+schematic uses `0.78\\textwidth`, with visual font-size comparison in
+an 11-point LaTeX proof. The remaining plot sizes are preserved rather
+than arbitrarily rescaled without checking their native font metrics.
+The general problem statement now defines geometry, material, loading,
+initiation and increment parameters symbolically. All displaced numerical
+values are stated in the numerical implementation/results, leaving the
+physical records unchanged. An existing right-edge clearance expression
+was corrected from `A-x_{23}` to `2A-x_{23}` (numerical clearance
+unchanged).
+
 ## Figure-by-figure findings
 
 | Figure / labels | Saved data and generating routine | Audit result and action |

@@ -1,10 +1,33 @@
 # Pilot manuscript: crack trajectory from a circular hole
 
-The specimen/loading schematic is included as the first figure in
-`main.tex` from `figures/geometry_loading/specimen_geometry.pdf`.
-The labels $2A=300$ mm and $B=200$ mm preserve the physical 300-by-200-mm
-plate; the global y-origin remains at the midpoint of the left side, so
-$(x_c,y_c)=(170,-20)$ mm is unchanged. The curved crack is illustrative.
+## Manuscript figure and problem-statement conventions (2026-10-10)
+
+All ten `figure` environments, including subfigure captions and labels, are
+maintained **directly in `paper/main.tex`**. External files under
+`paper/figures/` hold graphical PDF assets only; no external
+`figure.tex` wrappers are included or required. The approved specimen
+schematic is displayed at `0.78\\textwidth`, selected against the
+11-point manuscript text in a PDFLaTeX proof. Other graph-panel widths
+retain their audited arrangements pending separate font-scale checks.
+
+The **Problem formulation** introduces dimensions, hole coordinates,
+material, loads, initiation threshold and crack-increment variables
+symbolically. Physical numerical values are consolidated under
+**Numerical parameters and initiation state** in the implementation
+section; the first-tip SIFs and turn are reported in results. The
+schematic measures the center ordinate from the bottom edge, while the
+computational frame is shifted upward by `B/2`. The right-edge
+clearance is consistently `2A-x_{23}`.
+
+
+The author-approved specimen/loading schematic is included as the first figure in
+`main.tex` from `figures/geometry_loading/specimen_geometry.pdf`. It is a
+PDF-wrapped black-and-white rendering of the supplied original image, not a
+newly generated mechanics result. The drawing measures $y_c$ from the lower
+plate edge; the numerical frame shifts the vertical origin up by $B/2$.
+Thus the same physical hole is at (170,80) mm in the sketch and
+(170,-20) mm in the numerical frame. The curved crack is illustrative.
+The old procedural figure generator has been retired.
 
 
 Current correction (2026-10-09): the manuscript retains its existing structure

@@ -200,7 +200,7 @@ function S = plot_tip2h0_vs_reference_publication(varargin)
     plot(ax2,a_mm,dy_um,'-o','Color',blue,'LineWidth',1.15, ...
         'MarkerSize',3,'MarkerFaceColor','w');
     yline(ax2,0,':','Color',gray,'HandleVisibility','off');
-    xlabel(ax2,'Crack length $a$ [mm]','Interpreter','latex');
+    xlabel(ax2,'$a$ [mm]','Interpreter','latex');
     ylabel(ax2,'$y_{2h_0}-y_{h_0}\;[\mu\mathrm{m}]$','Interpreter','latex');
     % No title/panel label here: LaTeX supplies the subcaption.
 
@@ -211,7 +211,7 @@ function S = plot_tip2h0_vs_reference_publication(varargin)
     plot(ax3,a_mm,dtheta_mdeg,'-o','Color',purple,'LineWidth',1.15, ...
         'MarkerSize',3,'MarkerFaceColor','w');
     yline(ax3,0,':','Color',gray,'HandleVisibility','off');
-    xlabel(ax3,'Crack length $a$ [mm]','Interpreter','latex');
+    xlabel(ax3,'$a$ [mm]','Interpreter','latex');
     ylabel(ax3,'$\theta_{2h_0}-\theta_{h_0}$ [mdeg]','Interpreter','latex');
     % No title/panel label here: LaTeX supplies the subcaption.
 
@@ -228,7 +228,7 @@ function S = plot_tip2h0_vs_reference_publication(varargin)
         xline(ax4,aLSr_mm,'--','Color',green,'LineWidth',0.9, ...
             'HandleVisibility','off');
     end
-    xlabel(ax4,'Crack length $a$ [mm]','Interpreter','latex');
+    xlabel(ax4,'$a$ [mm]','Interpreter','latex');
     ylabel(ax4,'$K_{II}/K_I$','Interpreter','latex');
     % No title/panel label here: LaTeX supplies the subcaption.
     legend(ax4,'Location','southwest','Box','off','Interpreter','latex');
@@ -363,8 +363,8 @@ function local_export_tiled_axis_copy(srcAx,pdfFile,pngFile,panelName)
     end
 
     drawnow;
-    exportgraphics(tmpAx,pdfFile,'ContentType','vector');
-    exportgraphics(tmpAx,pngFile,'Resolution',600);
+    if strcmp(panelName,'trajectory'),kind='spatial_full';else,kind='third';end
+    publication_export_axis(tmpAx,pdfFile,pngFile,kind);
 end
 
 function local_close_if_valid(h)
