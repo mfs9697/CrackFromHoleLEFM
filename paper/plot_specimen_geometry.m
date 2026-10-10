@@ -10,11 +10,14 @@ function S=plot_specimen_geometry(varargin)
 %
 % Call from repository root:
 %   addpath(genpath(pwd));
-%   S=plot_specimen_geometry();
+%   S=plot_specimen_geometry();              % standard pale-gray version
+%   S=plot_specimen_geometry('PlateGray',.92); % optional slightly darker fill
+%   winopen(S.pdf);                          % show PDF on Windows
 
 ip=inputParser;
 addParameter(ip,'OutputDir','',@(x)ischar(x)||isstring(x));
 addParameter(ip,'FontMode','euclid',@(x)ischar(x)||isstring(x));
+addParameter(ip,'PlateGray',0.94,@(x)isnumeric(x)&&isscalar(x)&&isfinite(x)&&x>=0&&x<=1);
 parse(ip,varargin{:});
 fontMode=lower(char(ip.Results.FontMode));
 assert(ismember(fontMode,{'euclid','latex'}), ...
@@ -53,7 +56,7 @@ ax=axes(fig);hold(ax,'on');
 
 % Light-gray plate with a white, open hole; all mesh-free linework
 % remains black. Do not change the numerical model or the schematic geometry.
-plateGray=[.94 .94 .94];
+plateGray=double(ip.Results.PlateGray)*[1 1 1];
 patch(ax,[0 W W 0],[0 0 H H],plateGray, ...
     'EdgeColor','k','LineWidth',1.35);
 a=linspace(0,2*pi,361);
@@ -145,7 +148,8 @@ S=struct('pdf',pdf,'vector',true,'illustrativeCrack',true, ...
     'numericalParametersShown',false,'origin','lower-left O', ...
     'coordinateTransform','y_comp = y_sketch - B/2', ...
     'fontMode',fontMode,'font_pt',labelPt,'width_cm',pageWidth, ...
-    'mathFont',fontDescription());
+    'mathFont',fontDescription(),'plateGray',ip.Results.PlateGray,'png',png);
+fprintf('Figure 1 regenerated (%s):\n  %s\n  %s\n',fontMode,pdf,png);
 
     function name=fontDescription()
         if strcmp(fontMode,'euclid')
