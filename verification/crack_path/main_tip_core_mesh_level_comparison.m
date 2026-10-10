@@ -117,7 +117,7 @@ function R = main_tip_core_mesh_level_comparison(varargin)
             'Position',[2 2 panelWidth_cm panelHeight_cm]);
         ax=axes(fig);hold(ax,'on');
         local_draw_core(ax,C,opt,i);
-        local_style_axes(ax,opt,Pub,true);
+        local_style_axes(ax,opt,Pub,true,true);
 
         pdfFile=fullfile(outDir,sprintf('tip_mesh_%s.pdf',labels(i)));
         pngFile=fullfile(outDir,sprintf('tip_mesh_%s.png',labels(i)));
@@ -152,7 +152,7 @@ function R = main_tip_core_mesh_level_comparison(varargin)
     for i=1:3
         ax=nexttile(tl);hold(ax,'on');
         local_draw_core(ax,cores{i},opt,i);
-        local_style_axes(ax,opt,Pub,i==1);
+        local_style_axes(ax,opt,Pub,i==1,false);
         if i>1
             % Show one vertical scale in the preview to avoid repetition.
             ax.YTickLabel=[];
@@ -198,14 +198,17 @@ function local_draw_core(ax,C,opt,level)
     plot(ax,[-1e3*C.rCore 0],[0 0],'k-','LineWidth',1.05);
 end
 
-function local_style_axes(ax,opt,Pub,showY)
-% Axes placed identically in all three exported pages.
+function local_style_axes(ax,opt,Pub,showY,fixedPosition)
+% Give each standalone vector PDF a fixed physical axes location.
+% TiledChartLayout owns tile Positions: NEVER set Position on its axes.
     axis(ax,'equal');
     xlim(ax,opt.XLim_mm);ylim(ax,opt.YLim_mm);
     box(ax,'on');grid(ax,'off');
-    set(ax,'Units','normalized','Position',[.24 .25 .72 .68], ...
-        'FontSize',Pub.tick_pt,'TickDir','out', ...
+    set(ax,'FontSize',Pub.tick_pt,'TickDir','out', ...
         'LineWidth',.75,'Layer','top');
+    if fixedPosition
+        set(ax,'Units','normalized','Position',[.24 .25 .72 .68]);
+    end
     if strcmp(opt.FontMode,'euclid')
         set(ax,'FontName','Euclid','TickLabelInterpreter','none');
         xlabel(ax,'\fontname{Euclid}x_{1} [mm]', ...
