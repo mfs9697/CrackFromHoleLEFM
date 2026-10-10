@@ -63,7 +63,7 @@ plot=(root/'verification/crack_path/plot_tip2h0_vs_reference_publication.m').rea
 assert 'tip2h0_states.csv' not in plot and 'tip_2h0_independent_run' not in plot
 assert 'HistoricalInputRejected' in plot and 'load_isolated_tip_publication_data' in plot
 inputs=re.findall(r'\\input\{(figures/[^}]+)\}',text)
-assert inputs==['figures/mesh_levels/figure','figures/trajectory/figure','figures/intensities/figure',
+assert inputs==['figures/geometry_loading/figure','figures/mesh_levels/figure','figures/trajectory/figure','figures/intensities/figure',
                 'figures/late/figure','figures/cod/figure','figures/tip_resolution_sensitivity/figure',
                 'figures/m1_mesh_sensitivity/figure','figures/increment_sensitivity/figure','figures/quality/figure']
 panel_count=0
@@ -71,5 +71,8 @@ for item in inputs:
     wrapper=(paper/(item+'.tex')).read_text()
     for asset in re.findall(r'\\includegraphics(?:\[[^]]*\])?\{([^}]+)\}',wrapper):
         assert (paper/asset).is_file(),asset;panel_count+=1
-assert panel_count==30
-print(f'PASS: {count} independent data/table checks; 31 accepted records; 9 figures / 30 panels; historical fallback absent.')
+assert panel_count==31
+assert r'\label{fig:geometry-loading}' in (paper/'figures/geometry_loading/figure.tex').read_text()
+assert r'\ref{fig:geometry-loading}' in text
+assert '[0,2A]' in text and r'[-B/2,B/2]' in text
+print(f'PASS: {count} independent data/table checks; 31 accepted records; 10 figures / 31 panels; historical fallback absent.')

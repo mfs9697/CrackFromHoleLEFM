@@ -1,5 +1,12 @@
 # Pilot manuscript: crack trajectory from a circular hole
 
+The specimen/loading schematic is included as the first figure in
+`main.tex` from `figures/geometry_loading/specimen_geometry.pdf`.
+The labels $2A=300$ mm and $B=200$ mm preserve the physical 300-by-200-mm
+plate; the global y-origin remains at the midpoint of the left side, so
+$(x_c,y_c)=(170,-20)$ mm is unchanged. The curved crack is illustrative.
+
+
 Current correction (2026-10-09): the manuscript retains its existing structure
 and now uses the completed isolated-core tip-resolution study. See
 [ISOLATED_TIP_REPLACEMENT.md](ISOLATED_TIP_REPLACEMENT.md) for portable reproduction
