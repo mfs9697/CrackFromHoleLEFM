@@ -1,5 +1,25 @@
 # Pilot manuscript: crack trajectory from a circular hole
 
+## Manuscript figure and problem-statement conventions (2026-10-10)
+
+All ten `figure` environments, including subfigure captions and labels, are
+maintained **directly in `paper/main.tex`**. External files under
+`paper/figures/` hold graphical PDF assets only; no external
+`figure.tex` wrappers are included or required. The approved specimen
+schematic is displayed at `0.78\\textwidth`, selected against the
+11-point manuscript text in a PDFLaTeX proof. Other graph-panel widths
+retain their audited arrangements pending separate font-scale checks.
+
+The **Problem formulation** introduces dimensions, hole coordinates,
+material, loads, initiation threshold and crack-increment variables
+symbolically. Physical numerical values are consolidated under
+**Numerical parameters and initiation state** in the implementation
+section; the first-tip SIFs and turn are reported in results. The
+schematic measures the center ordinate from the bottom edge, while the
+computational frame is shifted upward by `B/2`. The right-edge
+clearance is consistently `2A-x_{23}`.
+
+
 The author-approved specimen/loading schematic is included as the first figure in
 `main.tex` from `figures/geometry_loading/specimen_geometry.pdf`. It is a
 PDF-wrapped black-and-white rendering of the supplied original image, not a

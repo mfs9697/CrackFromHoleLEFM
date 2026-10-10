@@ -62,19 +62,28 @@ assert 'not an independently solved' in text and 'qualified but unsolved' in tex
 plot=(root/'verification/crack_path/plot_tip2h0_vs_reference_publication.m').read_text()
 assert 'tip2h0_states.csv' not in plot and 'tip_2h0_independent_run' not in plot
 assert 'HistoricalInputRejected' in plot and 'load_isolated_tip_publication_data' in plot
-inputs=re.findall(r'\\input\{(figures/[^}]+)\}',text)
-assert inputs==['figures/geometry_loading/figure','figures/mesh_levels/figure','figures/trajectory/figure','figures/intensities/figure',
-                'figures/late/figure','figures/cod/figure','figures/tip_resolution_sensitivity/figure',
-                'figures/m1_mesh_sensitivity/figure','figures/increment_sensitivity/figure','figures/quality/figure']
-panel_count=0
-for item in inputs:
-    wrapper=(paper/(item+'.tex')).read_text()
-    for asset in re.findall(r'\\includegraphics(?:\[[^]]*\])?\{([^}]+)\}',wrapper):
-        assert (paper/asset).is_file(),asset;panel_count+=1
+# Figure environments live in main.tex; PDFs remain separate graphical assets.
+assert r'\input{figures/' not in text
+assert len(re.findall(r'\\begin\{figure\}(?:\[[^]]*\])?',text))==10
+assert len(re.findall(r'\\end\{figure\}',text))==10
+assets=re.findall(r'\\includegraphics(?:\[[^]]*\])?\{([^}]+)\}',text)
+assert len(assets)==31
+assert len(set(assets))==31
+for asset in assets:
+    assert (paper/asset).is_file(),asset
+assert r'\includegraphics[width=0.78\textwidth]{figures/geometry_loading/specimen_geometry.pdf}' in text
+assert r'\label{fig:geometry-loading}' in text
+assert r'\ref{fig:geometry-loading}' in text
 approved_figure=paper/'figures/geometry_loading/specimen_geometry.pdf'
 assert hashlib.sha256(approved_figure.read_bytes()).hexdigest()=='7258f046f8d09c5c9c9b0c45a0a39ab1f9b3e8228d2f0c121c1b17d6e6f0f934'
-assert panel_count==31
-assert r'\label{fig:geometry-loading}' in (paper/'figures/geometry_loading/figure.tex').read_text()
-assert r'\ref{fig:geometry-loading}' in text
-assert '[0,2A]' in text and r'[-B/2,B/2]' in text
-print(f'PASS: {count} independent data/table checks; 31 accepted records; 10 figures / 31 panels; historical fallback absent.')
+problem=text.split(r'\section{Problem formulation}',1)[1].split(r'\section{Incremental crack-path formulation}',1)[0]
+assert r'[0,2A]\times[-B/2,B/2]' in problem
+assert r'\sigma_c' in problem and r'\Delta a' in problem
+for numeric in ('210000','0.30','300$ mm','200$ mm','\PlateAMM','\HoleRMM','\PhiStar','\MouthX','\PeakStress',r'\sigma_0=1',r'\Delta a=4'):
+    assert numeric not in problem, f'Numerical value left in problem formulation: {numeric}'
+numerical=text.split(r'\section{Numerical implementation and verification}',1)[1]
+assert r'\subsection{Numerical parameters and initiation state}' in numerical
+assert r'\sigma_0=1' in numerical and r'E=210000' in numerical
+assert r'\lambda_{\mathrm{ini}}=\LoadFactor' in numerical
+assert r'2A-x_{23}=\LastLigamentMM' in text
+print(f'PASS: {count} independent data/table checks; 31 accepted records; 10 inline figures / 31 panels; symbolic problem formulation; historical fallback absent.')

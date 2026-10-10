@@ -26,6 +26,20 @@ geometry, applied traction, other figure, or numerical data changed.
 The prior rendering script was removed to prevent inadvertent reproduction
 of the superseded drawing.
 
+**2026-10-10 manuscript-layout revision:** All ten `figure`/`subfigure`
+environments and their captions are now defined directly in
+`paper/main.tex`; the former `figures/*/figure.tex` wrappers are
+retired. The 31 saved PDF images remain unchanged. The approved specimen
+schematic uses `0.78\\textwidth`, with visual font-size comparison in
+an 11-point LaTeX proof. The remaining plot sizes are preserved rather
+than arbitrarily rescaled without checking their native font metrics.
+The general problem statement now defines geometry, material, loading,
+initiation and increment parameters symbolically. All displaced numerical
+values are stated in the numerical implementation/results, leaving the
+physical records unchanged. An existing right-edge clearance expression
+was corrected from `A-x_{23}` to `2A-x_{23}` (numerical clearance
+unchanged).
+
 ## Figure-by-figure findings
 
 | Figure / labels | Saved data and generating routine | Audit result and action |
