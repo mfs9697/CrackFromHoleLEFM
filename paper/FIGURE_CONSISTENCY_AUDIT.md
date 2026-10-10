@@ -2,6 +2,18 @@
 
 Scope: the nine figure groups / 30 subfigures included by `main.tex`. No FEM solve, mesh-generation study, EDI evaluation, COD refit, or numerical experiment was performed. Plot-only redraws and arithmetic comparisons used existing saved records. The figure order, numbering, labels, subfigure layout and established palette were preserved.
 
+**2026-10-10 addendum (new statement figure):** A vector specimen/loading
+schematic is now Figure 1, preceding the previously audited mesh hierarchy.
+The original audit table below is preserved as an October 9 historical
+record of the **previous** Figures 1--8 and S1 (30 graphics). In the
+current manuscript, those original main figures are renumbered 2--9, and
+S1 is unchanged; there are now 10 figure groups and 31 included graphics.
+The new PDF is plot-only, labels $2A$, $B$, $(x_c,y_c)$, $R$, the $(x,y)$
+coordinate axes, and unsigned tensile loading $\sigma$. The depicted
+curvilinear crack is schematic rather than an accepted physical state.
+The dimensional relabeling preserves the original 300-mm by 200-mm plate
+and unchanged saved physical coordinates.
+
 ## Figure-by-figure findings
 
 | Figure / labels | Saved data and generating routine | Audit result and action |

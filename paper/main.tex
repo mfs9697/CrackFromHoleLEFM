@@ -202,13 +202,26 @@ visually plausible within a particular discretization.
 
 \section{Problem formulation}
 \subsection{Geometry, material, and loading}
-The plate occupies $[0,A]\times[-B,B]$, with $A=\PlateAMM$ mm and
-$B=\PlateBMM$ mm. A circular hole of radius $R=\HoleRMM$ mm is centered at
-$(\HoleCxMM,\HoleCyMM)$ mm. The finite-element hole boundary is represented
-by a 480-segment polygon with the fitted initiation point retained. The
-material is isotropic, with $E=210000$ MPa and $\nu=0.30$, under plane
-strain. For the crack geometry $\Gamma_k$ ending at $P_k$, the elastic
-problem is
+Figure~\ref{fig:geometry-loading} illustrates the specimen, coordinate
+system, and loading. The plate has width $2A=300$ mm and height
+$B=200$ mm. The origin is located at the midpoint of its left edge,
+with $x$ directed to the right and $y$ upward; thus the rectangular
+region is $[0,2A]\times[-B/2,B/2]$. A circular hole of radius
+$R=\HoleRMM$ mm has center $(x_c,y_c)=(\HoleCxMM,\HoleCyMM)$ mm.
+
+\input{figures/geometry_loading/figure}
+
+The curvilinear crack in the schematic illustrates a possible path and
+is not an imposed geometry or a computed trajectory. The actual
+initiation point $P_0$ is selected from the uncracked-hole stress field,
+as described below. Only the first crack segment is prescribed; later
+directions are obtained recursively from the current-tip stress-intensity
+factors. The finite-element hole boundary is represented by a
+480-segment polygon with the fitted initiation point retained.
+
+The material is homogeneous, isotropic, and linearly elastic,
+with $E=210000$ MPa and $\nu=0.30$, under plane strain. For the
+crack geometry $\Gamma_k$ ending at $P_k$, the elastic problem is
 \begin{align}
  \nabla\!\cdot\bm{\sigma}&=\bm0 &&\text{in }\Omega_k,\label{eq:equilibrium}\\
  \bm{\varepsilon}&=\tfrac12(\nabla\bm u+\nabla\bm u^{\mathsf T}),\qquad
@@ -218,9 +231,13 @@ problem is
  \quad \mu=\frac{E}{2(1+\nu)},\quad
  \lambda=\frac{E\nu}{(1+\nu)(1-2\nu)}.\label{eq:constitutive}
 \end{align}
-The top and bottom tractions are $(0,\sigma_0)$ and $(0,-\sigma_0)$,
-respectively, with $\sigma_0=1$ MPa. The vertical sides, hole boundary, and
-crack faces are traction free. Rigid-body motions are removed by imposing
+Uniform outward tensile tractions act on the horizontal
+boundaries, as indicated by the arrows in Fig.~\ref{fig:geometry-loading}.
+The schematic labels their common magnitude by $\sigma$, without signs.
+For the normalized calculation, the prescribed traction vectors on the
+top and bottom edges are $(0,\sigma_0)$ and $(0,-\sigma_0)$,
+respectively, with $\sigma_0=1$ MPa. The vertical sides, hole boundary,
+and crack faces are traction free. Rigid-body motions are removed by imposing
 $u_x=u_y=0$ at the lower left corner and $u_y=0$ at the lower right corner.
 There are no body forces.
 
