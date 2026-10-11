@@ -753,29 +753,31 @@ negatively inclined and their global $y$ coordinates continue to decrease.
 % Figure environment maintained inline in main.tex; graphics remain separate PDFs.
 \begin{figure}[tbp]
   \centering
-  \begin{subfigure}[t]{0.485\linewidth}
+  \begin{subfigure}[t]{0.94\linewidth}
     \centering
     \includegraphics[width=\linewidth]{figures/trajectory/overview.pdf}
-    \caption{Full accepted path and qualified, unsolved extension.}
+    \caption{Hole and accepted trajectory through $P_{23}$, with the
+    qualified but physically unsolved $P_{23}$--$P_{24}$ extension.}
     \label{fig:trajectory-overview}
-  \end{subfigure}\hfill
-  \begin{subfigure}[t]{0.485\linewidth}
+  \end{subfigure}
+
+  \medskip
+
+  \begin{subfigure}[t]{0.94\linewidth}
     \centering
     \includegraphics[width=\linewidth]{figures/trajectory/late_detail.pdf}
-    \caption{Late-tip detail with approximately fourfold vertical
-    magnification.}
+    \caption{Late-path detail with equal spatial scales. The markers identify
+    $P_{17}$, the linearly interpolated $K_{II}/K_I=0$ location, $P_{23}$,
+    and the qualified unsolved point $P_{24}$.}
     \label{fig:trajectory-late}
   \end{subfigure}
 
-  \caption{Hole-initiated crack trajectory (left) and late-tip detail
-  (right). The overview preserves equal physical $x$ and $y$ scales,
-  so the circular hole is undistorted; the numerical hole is polygonally
-  discretized. Only the late detail uses an approximately fourfold
-  vertical exaggeration to resolve small changes in ordinate.
-  Solid segments are accepted geometry through $P_{23}$; the dashed
-  $P_{23}$--$P_{24}$ extension is geometrically qualified but physically
-  unsolved and has no accepted SIFs. The diamond marks a linear
-  interpolation of $K_{II}/K_I=0$, not a solved crack tip.}
+  \caption{Hole-initiated trajectory and late detail. Both spatial panels
+  use equal $x$ and $y$ scales within the panel. The circle gives geometric
+  context; the numerical hole is polygonally discretized. Solid segments are
+  accepted geometry through $P_{23}$. The dashed extension is qualified
+  geometry only and has no accepted physical SIFs. The diamond is a linear
+  interpolation marker, not a solved tip.}
   \label{fig:trajectory}
 \end{figure}
 
@@ -797,34 +799,30 @@ an increasing opening-mode intensity, not unloading.
 % Figure environment maintained inline in main.tex; graphics remain separate PDFs.
 \begin{figure}[tbp]
   \centering
-  \begin{subfigure}[t]{0.82\linewidth}
+  \begin{subfigure}[t]{0.315\linewidth}
     \centering
     \includegraphics[width=\linewidth]{figures/intensities/KI.pdf}
     \caption{Opening-mode factor $K_I$.}
     \label{fig:intensities-KI}
-  \end{subfigure}
-
-  \smallskip
-
-  \begin{subfigure}[t]{0.82\linewidth}
+  \end{subfigure}\hfill
+  \begin{subfigure}[t]{0.315\linewidth}
     \centering
     \includegraphics[width=\linewidth]{figures/intensities/KII.pdf}
     \caption{Sliding-mode factor $K_{II}$.}
     \label{fig:intensities-KII}
-  \end{subfigure}
-
-  \smallskip
-
-  \begin{subfigure}[t]{0.82\linewidth}
+  \end{subfigure}\hfill
+  \begin{subfigure}[t]{0.315\linewidth}
     \centering
     \includegraphics[width=\linewidth]{figures/intensities/theta.pdf}
     \caption{Absolute direction $\theta_k$.}
     \label{fig:intensities-theta}
   \end{subfigure}
 
-  \caption{Accepted intensities and absolute direction in the frozen
-  initiation frame. Intensities correspond to unit remote traction. The
-  direction minimum occurs at $P_{22}$; positive turning there produces the
+  \caption{Accepted mode-I and mode-II stress-intensity factors
+  (MPa$\sqrt{\mathrm m}$) and absolute direction in the frozen initiation
+  frame, all plotted against the accumulated crack length $a$ (mm).
+  Intensities correspond to unit remote traction. The direction
+  minimum occurs at $P_{22}$; a positive subsequent turn yields the
   less negative $P_{23}$ direction. No physical curve includes $P_{24}$.}
   \label{fig:intensities}
 \end{figure}
