@@ -1114,20 +1114,23 @@ frame. The symbol $\Delta\theta_{k+1}$ remains reserved for a local MTS
 turn. Differences in mode mixity and interpolated crossing length are
 denoted by $\delta q_{\mathrm{K}}$ and $\delta a_{\mathrm{LS}}$, respectively.
 
-The fixed-geometry three-level comparison changes the structured-tip
-resolution with the requested exterior sizing law held at its reference
-value. At $P_{17}$, halving the production tip size from
-$0.027012$ to $0.013506$ mm changes $K_{\mathrm{I}}$ by $0.00134\%$,
-$K_{\mathrm{II}}/K_{\mathrm{I}}$ by $1.05\times10^{-6}$ in absolute value, and the MTS turn by
-only $-1.20\times10^{-4}$ degrees. Thus the positive mode-mixity maximum is
-stable under this structured-tip refinement at fixed requested exterior sizing.
+Two aspects of the characteristic mode-mixity history are
+examined on fixed accepted crack geometries. At the positive
+maximum $P_{17}$, reducing the structured-tip spacing from
+$0.027012$ to $0.013506$ mm changes $K_{\mathrm{I}}$
+by $0.00134\%$, $q_{\mathrm{K}}$ by
+$1.05\times10^{-6}$, and the MTS turn by
+$-1.20\times10^{-4}$ degrees. The small differences arise
+from alternative discretizations of the same physical geometry.
 
-The more discriminating comparison is the $P_{21}$--$P_{22}$ bracket, where
-$K_{\mathrm{II}}$ changes sign. Table~\ref{tab:tipmesh} shows three physically
-qualified levels spanning a factor of four in $h_{\mathrm{tip}}$. Every
-level keeps $K_{\mathrm{II}}/K_{\mathrm{I}}>0$ at $P_{21}$ and $K_{\mathrm{II}}/K_{\mathrm{I}}<0$ at $P_{22}$, so
-the local-symmetry bracket and the associated reversal of MTS turning sense
-are unchanged.
+The late sign-change bracket provides a more sensitive test.
+Table~\ref{tab:tipmesh} compares the $P_{21}$ and
+$P_{22}$ fields at three near-tip resolutions spanning
+a factor of four in $h_{\mathrm{tip}}$.
+For every tested level, $q_{\mathrm{K}}$ remains positive
+at $P_{21}$ and negative at $P_{22}$. The bracket
+and the corresponding change in MTS turning sense thus persist
+under the tested near-tip refinement.
 
 \begin{table}[tbp]
 \centering
@@ -1157,15 +1160,18 @@ $-2.1399\times10^{-3}$ & $+0.245207$ & 84.14941\\
 \end{tabular}
 \end{table}
 
-The interpolated crossing moves from $84.14027$ mm at $2h_0$ to
-$84.14637$ mm at $h_0$ and $84.14941$ mm at $h_0/2$. The successive
-changes, $6.10~\mu\mathrm{m}$ and $3.04~\mu\mathrm{m}$, are tiny relative
-to the 4-mm crack increment. Taken only as a three-level diagnostic, their
-ratio corresponds to an observed order of approximately $1.00$ for this
-interpolated quantity. The exterior is remeshed to conform to each core and the crossing
-is inferred between states separated by one full crack increment. This
-three-level regularity is therefore not treated as a formal convergence
-order or as micrometer-scale physical accuracy.
+The linearly interpolated estimate $a_{\mathrm{LS}}$
+varies from $84.14027$ mm at $2h_0$ through
+$84.14637$ mm at $h_0$ to $84.14941$ mm at
+$h_0/2$. Its successive shifts of $6.10$ and
+$3.04~\mu\mathrm{m}$ give an indicative contraction
+ratio corresponding to an apparent order of approximately
+$1.00$. This figure describes the mesh sensitivity of an
+\emph{interpolated estimate}, not convergence of a solved
+zero-mode-II point. Because the contributing physical states
+are separated by a 4-mm crack increment, the small shifts
+cannot be interpreted as micrometer-scale accuracy of the
+local-symmetry location.
 
 The independent $2h_0$ trajectory tests whether these small fixed-geometry
 differences accumulate along the path. Figure~
@@ -1178,23 +1184,26 @@ corresponding tips is $0.12800~\mu\mathrm{m}$, both at $P_{23}$. The
 maximum absolute direction difference is $0.24539$ millidegrees at
 $P_{22}$ [Figs.~\ref{fig:tipres-dy} and \ref{fig:tipres-dtheta}].
 
-The mechanical history is equally stable. Both mesh families place the
-positive maximum of $K_{\mathrm{II}}/K_{\mathrm{I}}$ at $P_{17}$ and retain positive mode
-mixity at $P_{21}$ and negative mode mixity at $P_{22}$
-[Fig.~\ref{fig:tipres-q}]. The maximum absolute difference in
-$K_{\mathrm{II}}/K_{\mathrm{I}}$ is $2.65\times10^{-7}$. Linear interpolation of the two
-independently propagated $P_{21}$--$P_{22}$ brackets gives
+The two independently generated paths also retain the
+positive mode-mixity maximum at $P_{17}$ and the sign-change
+bracket between $P_{21}$ and $P_{22}$
+[Fig.~\ref{fig:tipres-q}]. The largest difference
+in $q_{\mathrm{K}}$ is $2.65\times10^{-7}$.
+Linear interpolation of the two independently propagated
+$P_{21}$--$P_{22}$ brackets gives
 $a_{\mathrm{LS}}=84.14637$ mm for $h_0$ and
 $84.146276$ mm for $2h_0$, a difference of
 $-0.000094$ mm ($-0.094~\mu\mathrm{m}$). As above, this is only a
 sub-increment sensitivity diagnostic, not a micrometer-accurate physical
 location of local symmetry.
 
-The fixed-geometry and independent-path results therefore show that the
-reported characteristic events are insensitive to the tested structured-tip
-resolution changes with the requested exterior sizing law fixed. This
-parameter isolation does not imply identical exterior connectivity or bound
-every discretization error.
+Taken together, the fixed-geometry calculations and the
+independently propagated $2h_0$ path show that the
+positive mode-mixity maximum, sign-change bracket, and
+turning reversal persist under the tested structured-tip
+resolution changes. This agreement does not bound all
+discretization errors, particularly because the exterior
+connectivity adapts to the changed core interface.
 
 % Figure environment maintained inline in main.tex; graphics remain separate PDFs.
 \begin{figure}[tbp]
@@ -1268,25 +1277,26 @@ corresponding tips is $0.06742~\mu\mathrm{m}$, and the maximum absolute directio
 difference is $0.07304$ millidegrees, or $7.30\times10^{-5}$ degrees
 [Figs.~\ref{fig:m1mesh-dy} and \ref{fig:m1mesh-dtheta}].
 
-The mechanical history is equally stable. Both calculations place the
-positive maximum of $K_{\mathrm{II}}/K_{\mathrm{I}}$ at $P_{17}$ ($a=68$ mm), and both retain
-positive mode mixity at $P_{21}$ and negative mode mixity at $P_{22}$
-[Fig.~\ref{fig:m1mesh-q}]. The maximum absolute difference in
-$K_{\mathrm{II}}/K_{\mathrm{I}}$ over the accepted histories is $2.89\times10^{-7}$. Linear
-interpolation of the two respective $P_{21}$--$P_{22}$ brackets gives
+The event sequence is also preserved when the exterior
+mesh is coarsened. Both propagated trajectories attain
+their positive mode-mixity maximum at $P_{17}$
+($a=68$ mm), with a positive ratio at $P_{21}$ and
+a negative ratio at $P_{22}$ [Fig.~\ref{fig:m1mesh-q}].
+Their largest absolute difference in $q_{\mathrm{K}}$
+is $2.89\times10^{-7}$. Linear interpolation of
+the respective $P_{21}$--$P_{22}$ brackets gives
 $a_{\mathrm{LS}}=84.14637$ mm for the reference trajectory and
 $84.146$ mm for M1, a difference of $0.000322$ mm
 ($0.322~\mu\mathrm{m}$). This sub-increment difference is reported only as a
 sensitivity diagnostic; neither interpolated value has physical precision
 at the micrometer scale.
 
-The result therefore supports robustness of the reported mode-mixity
-maximum, sign reversal, and late turning response with respect to a
-substantial coarsening of the \emph{exterior} mesh. It is deliberately
-narrower than a general mesh-independence claim because the paired tip core
-and interaction-domain radii are held fixed. Local tip-resolution sensitivity
-is examined separately above, whereas interaction-domain-radius sensitivity
-remains unresolved.
+This independent propagation confirms that the characteristic
+event sequence is retained under a substantial reduction in
+\emph{exterior} mesh density. It is not a general
+mesh-independence result: the paired near-tip mesh and
+interaction-domain radii are unchanged in M1, and
+interaction-domain-radius sensitivity has not been isolated.
 
 % Figure environment maintained inline in main.tex; graphics remain separate PDFs.
 \begin{figure}[tbp]
@@ -1338,15 +1348,21 @@ remains unresolved.
 \end{figure}
 \FloatBarrier
 
-\subsection{Crack-increment sensitivity}
-The three-level increment study compares independently generated
-$\Delta a=4$, 2, and 1 mm trajectories over the exact common range
-4--92 mm. Figure~\ref{fig:increment-sensitivity} shows the three actual
-paths together with the successive vertical and directional differences and
-the turning density. At specimen scale the trajectories nearly overlap
-[Fig.~\ref{fig:inc-trajectory}], whereas the difference panels resolve a
-systematic reduction of the accumulated path error when the increment is
-halved [Figs.~\ref{fig:inc-dy} and \ref{fig:inc-dtheta}].
+\subsection{Coupled crack-increment and discretization refinement}
+The three independently propagated trajectories with
+$\Delta a=4$, 2, and 1 mm provide a complementary
+test of the finite-step formulation. As defined in
+Section~\ref{sec:numerics}, reducing the increment also
+reduces the absolute tip-mesh, interaction-domain, and
+exterior scales within a common dimensionless family.
+The paths are therefore compared as complete numerical
+schemes, not at fixed physical mesh resolution.
+All three reach 92 mm of accumulated length.
+Although their trajectories almost coincide at specimen
+scale [Fig.~\ref{fig:inc-trajectory}], the successive
+coordinate and direction differences in
+Fig.~\ref{fig:increment-sensitivity} resolve the
+changes accompanying each refinement.
 
 % Figure environment maintained inline in main.tex; graphics remain separate PDFs.
 \begin{figure}[tbp]
@@ -1397,13 +1413,15 @@ halved [Figs.~\ref{fig:inc-dy} and \ref{fig:inc-dtheta}].
 \end{figure}
 \FloatBarrier
 
-Table~\ref{tab:increment-pairwise} quantifies these successive differences.
-Halving the increment from 4 to 2 mm gives a maximum corresponding-tip
-separation of $35.472~\mu\mathrm{m}$; halving it again to 1 mm reduces that
-maximum to $18.291~\mu\mathrm{m}$. The corresponding maximum
-vertical-coordinate differences are $35.418$ and $18.263~\mu\mathrm{m}$.
-The maximum absolute direction difference likewise falls from $214.931$ to
-$127.391$ millidegrees.
+Table~\ref{tab:increment-pairwise} compares tip positions
+and directions at crack lengths common to all three paths.
+The maximum tip separation contracts from
+$35.472~\mu\mathrm{m}$ for 4 versus 2 mm to
+$18.291~\mu\mathrm{m}$ for 2 versus 1 mm.
+The corresponding vertical differences decrease from
+$35.418$ to $18.263~\mu\mathrm{m}$, while the
+maximum absolute direction difference decreases from
+$214.931$ to $127.391$ millidegrees.
 
 \begin{table}[H]
 \centering
@@ -1427,28 +1445,37 @@ $\max|\delta q_{\mathrm{K}}|$\\
 \end{tabular}
 \end{table}
 
-The successive contraction ratios are 1.939 for the maximum tip separation
-and 1.687 for the maximum direction difference. If these ratios are
-converted only as diagnostics through
-$p=\log_2(d_{\Delta a}/d_{\Delta a/2})$, where $d$ denotes the selected successive-difference maximum, they correspond to
-$p\simeq0.96$ and $p\simeq0.75$, respectively. Because the trajectory is
-generated recursively and the reported quantities are maxima that need not
-occur at the same crack length, these values are not treated as formal
-Richardson orders. They do, however, show clear contraction of both the
-accumulated path and direction differences under successive halving of the
-increment.
+The contraction ratios are 1.939 for maximum tip
+separation and 1.687 for maximum direction difference.
+If $d$ denotes a successive-difference maximum,
+the descriptive quantity
+$p=\log_2(d_{\Delta a}/d_{\Delta a/2})$
+takes values of approximately 0.96 and 0.75,
+respectively. These are not formal Richardson orders:
+the compared paths result from recursively updated
+geometries, the maximizers need not occur at the same
+crack length, and both the increment and discretization
+scales change. The numerical evidence is therefore
+one of contraction within the specified three-level
+family, rather than a measured asymptotic rate.
 
-A more revealing pattern appears in the mode-mixity correction.
-Table~\ref{tab:increment-characteristic} lists the positive maximum of
-$q_{\mathrm{K}}=K_{\mathrm{II}}/K_{\mathrm{I}}$ for each level. The raw maximum decreases almost in direct
-proportion to $\Delta a$: from $3.23937\times10^{-3}$ at 4 mm to
-$1.61266\times10^{-3}$ at 2 mm and $8.04068\times10^{-4}$ at 1 mm.
-In contrast, the normalized quantity $q_{\mathrm{K},\max}/\Delta a$ changes by only
-about $0.71\%$ over the entire 4-to-1-mm refinement. The MTS turning density at the same characteristic state is similarly
-stable, varying from $-0.092799$ to $-0.092139$ deg/mm. The complete
-turning-density histories in Fig.~\ref{fig:inc-turn-density} show that this
-agreement is not confined to a single state: refinement primarily resolves
-the same smooth variation on progressively finer crack-length grids.
+The normalized mode-mixity response exhibits a
+complementary trend. As shown in
+Table~\ref{tab:increment-characteristic}, the
+positive maximum of $q_{\mathrm{K}}$ falls from
+$3.23937\times10^{-3}$ at 4 mm to
+$1.61266\times10^{-3}$ at 2 mm and
+$8.04068\times10^{-4}$ at 1 mm.
+Despite this nearly proportional decrease, the
+maximum divided by $\Delta a$ changes by only
+about $0.71\%$ between the coarsest and finest levels.
+The corresponding MTS turning density ranges from
+$-0.092799$ to $-0.092139$ deg/mm.
+The turning-density histories in
+Fig.~\ref{fig:inc-turn-density} exhibit similar shapes
+on their respective crack-length grids, although this
+does not establish convergence of a smooth limiting
+curvature.
 
 \begin{table}[tbp]
 \centering
@@ -1493,23 +1520,28 @@ within the investigated numerical family. Three coupled refinement
 levels provide evidence of this scaling rather than an
 independent proof of asymptotic convergence.
 
-The local-symmetry crossing also contracts systematically. The interpolated
-locations are 84.148913, 83.550120, and 83.268112 mm for the 4-, 2-, and
-1-mm paths. The successive shifts are therefore $0.59879$ and $0.28201$ mm,
-whose ratio is 2.12. Interpreted only as a three-level diagnostic this gives
-an apparent order of about 1.09 for the interpolated event location. The
-crossing is directly bracketed between the solved 83- and 84-mm states on
-the 1-mm path, but it remains an interpolated quantity rather than an
-independently solved zero-$K_{\mathrm{II}}$ state.
+The estimated position of the mode-mixity sign change
+also shifts less with successive refinement. Linear
+interpolation gives $a_{\mathrm{LS}}=84.148913$,
+$83.550120$, and $83.268112$ mm for the three
+levels. The successive differences are $0.59879$
+and $0.28201$ mm, giving a contraction ratio of
+2.12 and a descriptive apparent order near 1.09.
+On the 1-mm path, the sign change is bracketed by
+the solved states at 83 and 84 mm. None of these
+interpolated estimates is itself a solved
+zero-$K_{\mathrm{II}}$ state.
 
-The combined result is stronger than visual path overlap alone. The
-trajectory panel establishes the common macroscopic path, while the
-successive-difference panels show that the remaining geometric and
-directional discrepancies contract under refinement. At the same time, the
-raw mode-II correction becomes smaller in proportion to the discrete step. This distinction is important when
-interpreting $q_{\mathrm{K}}$: its absolute value along a finite-step MTS path is a
-step-dependent corrective quantity, whereas its increment-normalized form
-has the more stable continuous-path interpretation.
+Thus the independently generated paths retain their
+macroscopic geometry and characteristic event sequence,
+while their pairwise positional and directional
+differences contract under the tested coupled refinement.
+The decrease of the raw mode-mixity maxima and the
+comparatively stable increment-normalized measures
+are consistent with the conditional MTS--curvature
+relation in Eq.~\eqref{eq:curvature-mts}; they do not
+prove that the polygonal trajectories have a unique
+smooth limit.
 
 \section{Discussion}
 \label{sec:discussion}
