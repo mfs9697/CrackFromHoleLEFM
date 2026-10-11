@@ -473,10 +473,16 @@ reported for unit reference traction in MPa$\sqrt{\mathrm m}$.
 
 \subsection{Geometry and paired tip discretization}
 At each increment the finite-element geometry contains the complete
-crack polyline, including previous kinks, with distinct upper and lower
-crack-face nodes. A temporary geometric carrier is used to identify
-these faces during mesh construction; they are subsequently collapsed
-to the zero-width polyline without merging their nodal identities.
+crack polyline, including previous kinks. During mesh generation,
+a narrow auxiliary notch (meshing channel) is merged with the circular
+hole to represent the two crack faces. After meshing, the opposing
+notch faces are collapsed onto the crack polyline while retaining
+distinct upper and lower nodal identities. This approach is related
+to the auxiliary meshing channel used in the cohesive crack-kinking
+formulation of Bogdanov and Selivanov~\cite{BogdanovSelivanov2026}.
+Here the collapsed faces are traction-free; no cohesive
+traction--separation law is introduced.
+
 The current-tip region has a structured mesh with characteristic
 spacing $h_{\mathrm{tip}}$, paired by reflection across the last
 crack segment. A conforming graded mesh resolves the remaining plate
@@ -493,10 +499,12 @@ numerical scales are
  \frac{r_{\mathrm{out}}}{\Delta a}=0.65,\quad
  \frac{r_{\mathrm{core}}}{\Delta a}=0.75.\label{eq:meshscales}
 \end{equation}
-For this 4-mm increment these give $h_{\mathrm{tip}}=0.027012$ mm,
-$r_{\mathrm{in}}=0.4$ mm, $r_{\mathrm{out}}=2.6$ mm, and $r_{\mathrm{core}}=3$ mm. The grading transition is
-4 mm and the far-field size cap is 2.5 mm. The structured core contains 12678 T3 triangles, of which
-11316 contribute to the interaction-integral evaluation.
+For the 4-mm reference increment these give
+$h_{\mathrm{tip}}=0.027012$ mm,
+$r_{\mathrm{in}}=0.4$ mm, $r_{\mathrm{out}}=2.6$ mm, and
+$r_{\mathrm{core}}=3$ mm. The structured core contains 12678
+T3 triangles, of which 11316 contribute to the
+interaction-integral evaluation.
 
 Every candidate mesh is checked for retention of the physical boundary,
 separate crack faces, preservation of the intact ligament, and conforming
@@ -506,17 +514,27 @@ $20^\circ$, and the maximum permitted adjacent longest-edge ratio is 1.8.
 These requirements establish geometric and discretization
 admissibility, not the accuracy of the elastic solution.
 
-Sensitivity to the exterior discretization is examined using a
-second mesh family, M1. It retains the paired tip core, the tip spacing,
-the interaction-domain radii, and the 4-mm grading transition length.
-The far-field size cap increases from 2.5 to 5.0 mm, the grading
-slope from 0.10 to 0.15, and the boundary-metric growth parameter
-from 0.25 to 0.35. For fixed $P_{17}$ and $P_{22}$ geometries,
-the total T3 element count falls by approximately 31--33\% and the
-exterior count by 40--43\%, while the 12678-element core and its
-11316-element interaction-domain support remain unchanged.
-The local SIF response is evaluated on the fixed geometries before
-the M1 mesh is used to propagate a separate crack path.
+Two exterior mesh-sizing laws are considered. The reference law,
+denoted M0, uses a far-field element-size cap of 2.5 mm, a grading
+slope of 0.10, and a boundary-metric growth parameter of 0.25.
+The coarser law M1 increases these values to 5.0 mm, 0.15, and
+0.35, respectively. Both laws retain the 4-mm grading transition
+length in the reference-increment comparisons. M0 is used for
+the reference 4-mm trajectory and the structured-tip resolution
+tests, including the independently propagated $2h_0$ path.
+M1 is used for the fixed-geometry exterior-mesh comparison
+and the independently propagated exterior-mesh trajectory.
+The coupled 4/2/1-mm refinement study, described below,
+uses dimensionless versions of the M1 exterior law and a
+coarser structured-tip family.
+
+For the fixed $P_{17}$ and $P_{22}$ geometries, changing
+from M0 to M1 reduces the total T3 element count by
+approximately 31--33\% and the exterior count by 40--43\%.
+The paired 12678-element near-tip core and its 11316-element
+interaction-domain support remain unchanged, permitting a
+comparison of the extracted SIFs before the M1 trajectory
+is propagated independently.
 
 \subsection{Structured-tip resolution tests}
 The influence of structured-tip resolution is first examined on fixed
@@ -542,10 +560,10 @@ with the extraction procedure in Section~\ref{sec:cod-extraction}.
 
 The levels $2h_0$, $h_0$, and $h_0/2$ differ only in the
 prescribed structured-tip scale and the conforming remeshing it
-requires. The requested exterior sizing law remains fixed, although
-the exterior connectivity need not be identical because its elements
-must conform to each core interface. Thus this study primarily probes
-near-tip resolution, complementing the M1 exterior-size comparison.
+requires. The M0 exterior sizing law remains fixed, although
+the exterior connectivity may change to conform to each
+core interface. This study consequently examines near-tip
+resolution, complementing the M0--M1 exterior-size comparison.
 
 To examine accumulated directional sensitivity, the $2h_0$
 discretization is also propagated through 92 mm of crack extension.
@@ -715,10 +733,11 @@ three independently propagated paths with
 \[
  \Delta a\in\{4,2,1\}\ \mathrm{mm}.
 \]
-These calculations use the same dimensionless coarse family,
-rather than the production reference 4-mm mesh. The local
-tip spacing is twice the production dimensionless spacing,
-and the exterior follows the M1 sizing law. Thus
+These calculations use a common dimensionless coarse family,
+distinct from the reference 4-mm calculation with exterior law M0
+and structured-tip spacing $h_0$. The local tip spacing is twice
+the reference dimensionless spacing, and the exterior follows
+the dimensionless M1 sizing law. Thus
 \begin{equation}
  \frac{h_{\rm tip}}{\Delta a}
  =2(0.00675308135),\qquad
