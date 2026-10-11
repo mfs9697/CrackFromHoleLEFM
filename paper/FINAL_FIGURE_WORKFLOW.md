@@ -73,6 +73,45 @@ disp(R.summary);
 
 Examine the new PDFs before running the promotion helper again.
 
+## Figures 7–9: common four-panel publication structure
+
+The three manuscript figures **already share** the same LaTeX geometry:
+
+- one 0.94\linewidth trajectory panel above
+- three 0.315\linewidth companion panels, separated with \hfill.
+
+Keep all three LaTeX figure environments inline in main.tex.
+Do **not** rearrange these as 2x2 grids merely to make them different from
+the accepted publication layout.
+
+A separate plot-only review driver produces all 12 PDFs together without
+overwriting any approved publication graphics or creating new files in
+GitHub's tracked figure directories:
+
+\`\`\`matlab
+addpath(genpath(pwd));
+R = review_figures_7_9();
+winopen(R.outputRoot);  % on Windows
+\`\`\`
+
+The default review destination is inside MATLAB's system temp directory,
+outside the Git working tree. An optional 'OutputRoot' is supported.
+
+- Figure 7: draw the four panels from the isolated-core sensitivity
+  dataset through plot_tip2h0_vs_reference_publication.m.
+- Figure 8: COPY the four verified M1 vector PDFs because the original
+  M1 full vertex/run history is unavailable; do not invent or
+  interpolate this history.
+- Figure 9: retain the audited native-trajectory vector PDF; draw the
+  other three panels from increment_plot_records.mat, using exact
+  common-length metrics and saved native turning-density samples.
+
+The driver checks retained file signatures and requires the source
+plotters' existing data-qualification gates. It is NOT a numerical solver
+and does not itself harmonize fonts inside unavailable historical PDFs.
+Do not promote any PDFs into paper/figures before visual inspection and
+confirmation of matched panel dimensions and legends.
+
 ## Physical sizing and typography
 
 `publication_style.m` defines the manuscript's 162-mm text width and matching
