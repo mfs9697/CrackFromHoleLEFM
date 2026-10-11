@@ -212,7 +212,7 @@ function S = plot_existing_manuscript_figures(varargin)
         'MarkerSize',3.1,'MarkerFaceColor','w');
     yline(ax,0,'--','Color',C.gray,'HandleVisibility','off');
     xline(ax,aLS,':','Color',C.purple,'LineWidth',1.0,'HandleVisibility','off');
-    xlim(ax,[60 92]); xticks(ax,[60 68 76 84 92]);
+    xlim(ax,[60 94]); xticks(ax,[60 68 76 84 92]);
     xlabel(ax,'$a$ [mm]','Interpreter','latex'); ylabel(ax,'$10^3 K_{II}/K_I$','Interpreter','latex');
     local_style_axis(ax);
     S.files{end+1}=local_export_late_pair(ax,out,'mode_mixity'); %#ok<AGROW>
@@ -222,7 +222,7 @@ function S = plot_existing_manuscript_figures(varargin)
         'MarkerSize',3.1,'MarkerFaceColor','w');
     yline(ax,0,'--','Color',C.gray,'HandleVisibility','off');
     xline(ax,aLS,':','Color',C.purple,'LineWidth',1.0,'HandleVisibility','off');
-    xlim(ax,[60 92]); xticks(ax,[60 68 76 84 92]);
+    xlim(ax,[60 94]); xticks(ax,[60 68 76 84 92]);
     xlabel(ax,'$a$ [mm]','Interpreter','latex'); ylabel(ax,'$\Delta\theta_{k+1}$ [deg]','Interpreter','latex');
     local_style_axis(ax);
     S.files{end+1}=local_export_late_pair(ax,out,'turn'); %#ok<AGROW>
@@ -315,7 +315,7 @@ function out=local_plot_cod_panel(D,degree,varName,scale,yLab,fileName,outDir,vi
             'MarkerSize',3.0,'MarkerFaceColor','w','DisplayName',labels{j});
     end
     yline(ax,0,'--','Color',[0.45 0.45 0.45],'HandleVisibility','off');
-    xlim(ax,[60 92]); xticks(ax,[60 76 92]);
+    xlim(ax,[60 94]); xticks(ax,[60 76 92]);
     if showXLabel
         xlabel(ax,'Crack length $a$ [mm]','Interpreter','latex');
     end
