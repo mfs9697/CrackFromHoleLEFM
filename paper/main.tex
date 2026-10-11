@@ -82,126 +82,109 @@ fracture mechanics; maximum tangential stress; mode mixity; interaction
 integral; crack-opening displacement.
 
 \section{Introduction}
-Circular holes are among the classical stress concentrators of fracture
-mechanics.  Once a crack is prescribed at a hole boundary, its stress-
-intensity factors have been studied analytically for radial and inclined
-configurations since the early work of Bowie~\cite{Bowie1956}; mixed-mode
-solutions for cracks emanating from circular holes were subsequently
-developed for finite plates~\cite{WooWangCheung1989}, and modern
-weight-function formulations provide efficient mixed-mode SIF and
-crack-opening-displacement estimates for hole-edge cracks~\cite{XuEtAl2018}.
-The onset problem is related but distinct.  Finite-fracture-mechanics
-studies have examined crack initiation from an initially uncracked circular
-hole, including the competition between symmetric and asymmetric
-initiation~\cite{SaporaEtAl2018} and the stability of subsequent growth
-under biaxial loading~\cite{SaporaCornetti2018}.  These results emphasize
-a basic distinction that is central here: identification of an initiation
-site does not by itself determine the trajectory of the finite crack that
-subsequently develops.
+The initiation and subsequent propagation of a crack at a circular hole
+are related but distinct fracture-mechanics problems. Stress-intensity
+factors for prescribed radial and inclined hole-edge cracks have been
+studied since the classical work of Bowie~\cite{Bowie1956}; mixed-mode
+solutions for finite plates~\cite{WooWangCheung1989} and weight-function
+methods~\cite{XuEtAl2018} have extended their evaluation to other
+geometries and loading conditions. For an initially uncracked hole,
+the initiation site must first be determined from the stress field or a
+fracture criterion. Finite-fracture-mechanics analyses have examined
+both symmetric and asymmetric initiation~\cite{SaporaEtAl2018} and
+subsequent growth stability under biaxial loading
+\cite{SaporaCornetti2018}. Selection of the initiation site, however,
+does not determine the path followed by a crack of finite length.
 
-Once a finite crack exists, its direction depends on the mixed-mode field
-at its current tip and therefore on the complete crack geometry accumulated
-up to that state.  The maximum tangential stress (MTS) criterion of Erdogan
-and Sih~\cite{ErdoganSih1963} provides a classical local direction rule in
-terms of the opening and sliding intensities $K_{\mathrm{I}}$ and $K_{\mathrm{II}}$,
-respectively. Numerical crack-growth frameworks have long
-combined such local criteria with repeated updating or remeshing of the
-geometry; for example, Bouchard et al.~\cite{BouchardEtAl2003} compared
-several mixed-mode direction criteria within an automatic finite-element
-propagation procedure.  At a different modeling scale, cohesive-zone
-formulations replace the singular-tip idealization by a finite fracture
-process zone.  Recent potential-based cohesive calculations in a near-LEFM
-regime show that the selected kink direction can remain close to the
-classical elastic prediction even when the critical load is more sensitive
-to the cohesive-zone description~\cite{BogdanovSelivanov2026}.  The
-present work deliberately remains within LEFM in order to isolate the
-trajectory-selection problem itself.
+Once the first segment has formed, each change in crack direction
+alters the geometry and hence the mixed-mode field at the advancing
+tip. The maximum tangential stress (MTS) criterion of Erdogan and
+Sih~\cite{ErdoganSih1963} supplies a local direction rule in terms of
+the opening- and sliding-mode stress-intensity factors,
+$K_{\mathrm{I}}$ and $K_{\mathrm{II}}$, respectively. Such criteria
+have long been incorporated into finite-element procedures with
+successive remeshing; Bouchard et al.~\cite{BouchardEtAl2003},
+for example, compared alternative mixed-mode criteria in an
+automatic propagation framework. A cohesive-zone description
+instead resolves the fracture process zone rather than retaining
+an ideally sharp singular tip. Recent potential-based cohesive
+calculations~\cite{BogdanovSelivanov2026} provide a useful
+comparison with classical elastic kink predictions, although the
+present study is confined to linear elastic fracture mechanics
+(LEFM) and direction selection for prescribed crack extensions.
 
-Crack trajectories influenced by holes have been predicted using several
-different numerical and semi-analytical technologies.  Wang et
-al.~\cite{WangMeguidPapanikos1999} treated curved cracks emanating from
-adjacent holes and compared predicted paths with fatigue experiments.
-Boundary-element propagation has been used for multiple cracks in perforated
-domains~\cite{LiuLiXie2017}, while Fang et al.~\cite{FangEtAl2020}
-combined adaptive extended isogeometric analysis with an interaction
-integral and the maximum circumferential-stress criterion for cracks
-interacting with arbitrary holes and voids.  Their study also compared two
-prescribed crack-growth increments and found similar trajectories, with the
-smaller increment producing the smoother path.  Yang et
-al.~\cite{YangEtAl2020} used incremental remeshing to study cracks
-emanating from circular blasting holes and showed that, in mixed-mode
-configurations, the sign and magnitude of $K_{\mathrm{II}}$ govern the direction of
-curving.  Related perforated-plate problems have been studied with a
-boundary-cracklet formulation~\cite{AhmedEtAl2021}, and commercial
-adaptive remeshing has been used to reproduce hole-induced crack deflection
-and arrest~\cite{AlshoaibiFageehi2022}.  Taken together, these studies
-establish both the strong physical influence of holes on crack paths and
-the ability of several numerical technologies to reproduce such
-interactions.
+Hole-induced crack deflection has also been investigated using
+several computational approaches. Wang et al.~\cite{WangMeguidPapanikos1999}
+studied curved cracks emanating from adjacent holes; boundary-element
+methods have been applied to multiple cracks in perforated
+solids~\cite{LiuLiXie2017}. Fang et al.~\cite{FangEtAl2020}
+combined adaptive extended isogeometric analysis with an
+interaction integral for cracks interacting with holes and voids,
+and compared trajectories obtained with two extension increments.
+Related studies include incremental remeshing for cracks from
+blasting holes~\cite{YangEtAl2020}, boundary-cracklet
+propagation in perforated plates~\cite{AhmedEtAl2021}, and
+finite-element simulations of hole-induced deflection
+\cite{AlshoaibiFageehi2022}. These investigations demonstrate
+the range of available methods, but visual agreement between
+trajectories alone does not quantify the sensitivity of their
+successive direction updates.
 
-For an incremental trajectory calculation, however, the stress-intensity
-factors are not merely postprocessed outputs.  They determine the next
-segment, perturbing each later boundary-value problem.  Numerical
-SIF extraction therefore enters the propagation algorithm recursively.
-The mixed-mode interaction-integral construction provides a natural
-energetic route to separating $K_{\mathrm{I}}$ and $K_{\mathrm{II}}$~\cite{YauWangCorten1980}.
-Independent accuracy studies have shown that near-tip discretization and
-postprocessing choices can materially affect extracted SIFs:
-displacement-extrapolation estimates depend on element size, shape, and
-mesh arrangement~\cite{GuineaPlanasElices2000}; energetic/domain-integral
-approaches are generally less dependent on detailed near-tip field fitting
-and are attractive for stepwise crack-growth calculations
-\cite{CourtinEtAl2005}; and comparative studies report their best
-finite-element SIF accuracy when domain integrals are combined with
-appropriately refined meshes~\cite{QianEtAl2016}.  Ghafoori Ahangar and
-Verreman~\cite{GhafooriAhangarVerreman2019} further demonstrated the
-relative robustness of the interaction-integral method with respect to
-angular discretization, element size, local refinement, crack length, and
-mixed-mode extraction.  These results motivate treating verification of the
-SIF calculation as part of the crack-path problem rather than as an
-independent implementation detail.
+The latter question is particularly important because numerical
+stress-intensity factors are not merely outputs of an incremental
+calculation: they determine the next geometry and therefore
+influence all subsequent solutions. Interaction integrals offer
+a means of separating the mixed-mode contributions
+\cite{YauWangCorten1980}, while displacement-extrapolation
+estimates are sensitive to near-tip element arrangements
+\cite{GuineaPlanasElices2000}. Comparisons of extraction
+procedures have emphasized the advantages of integral
+methods~\cite{CourtinEtAl2005} and their dependence on
+adequate finite-element resolution~\cite{QianEtAl2016}.
+Mixed-mode assessments have likewise examined the response
+of interaction-integral estimates to discretization choices
+\cite{GhafooriAhangarVerreman2019}. For a recursively generated
+path, such local extraction differences can also alter the
+later crack geometries. Accuracy checks for a prescribed tip
+must therefore be distinguished from comparisons of
+independently propagated trajectories.
 
-The studies above provide extensive evidence for individual components of
-incremental LEFM propagation, but comparatively less attention has been
-given to the trajectory as a recursively generated numerical object whose
-characteristic events should remain stable under controlled perturbations
-of the numerical procedure.  The purpose of the present study is therefore
-not to introduce a new mixed-mode fracture criterion or a new remeshing
-technology.  Instead, we construct a single crack trajectory from a circular
-stress concentrator and ask which features of that trajectory can be
-regarded as robust consequences of the evolving elastic field.  The
-uncracked-hole solution selects the initiation point and a material-side
-normal; only the first crack segment is prescribed along that normal.
-Every subsequent direction is obtained from the current-tip $K_{\mathrm{I}}$ and
-$K_{\mathrm{II}}$ values through the MTS rule after solving the complete current
-crack geometry.
+Here we examine this distinction for a single crack initiating
+at an asymmetric circular hole in a finite plate. The maximum
+tensile tangential stress of the uncracked-hole solution determines
+the initiation point and its outward material-side normal.
+Only the first crack segment is prescribed along that normal.
+At each subsequent step, the current elastic boundary-value
+problem is solved for the complete accumulated crack geometry,
+and the next direction is selected from the current-tip SIFs
+using the MTS criterion. The objective is not to introduce a
+new fracture criterion, but to establish which features of the
+resulting numerical trajectory remain stable under the
+investigated changes in extraction and discretization.
 
-The numerical assessment separates extraction accuracy from the sensitivity
-of a recursively generated trajectory.  The interaction integral in equivalent domain form (EDI) is checked
-against prescribed asymptotic fields and independent crack-opening-
-displacement estimates.  A centered-hole control checks reflection symmetry and measures the
-one-step response to small prescribed angular perturbations.  Exterior-mesh density is perturbed independently, while a separate
-structured-tip resolution study varies the near-tip scale while holding the
-requested exterior sizing law fixed.  Finally, crack-increment sensitivity is examined through independently
-generated 4-, 2-, and 1-mm paths using one dimensionless numerical family.
-Particular attention is paid to the evolution of the mode mixity
-$K_{\mathrm{II}}/K_{\mathrm{I}}$, the location of its positive maximum and sign reversal, the
-corresponding change in turning sense, and the behavior of increment-
-normalized corrective quantities.  This structure is intended
-to distinguish a physically interpretable trajectory from one that is only
-visually plausible within a particular discretization.
+The assessment combines prescribed-field and fixed-geometry
+checks with independent crack-path calculations. Interaction-integral
+SIFs are compared with crack-opening-displacement (COD)
+extrapolations from the same computed displacement field; a
+centered-hole control probes reflection symmetry and the local
+one-step angular response. Independently propagated paths
+then test changes in exterior-mesh density and structured-tip
+resolution. A separate family with 4-, 2-, and 1-mm increments
+also refines the numerical length scales, so that it examines
+coupled increment/discretization sensitivity rather than the
+increment in isolation. Of particular interest are the positive
+maximum and subsequent sign reversal of the signed mode-mixity
+ratio, the associated reversal of the MTS turn, and the
+increment-normalized turning measures. Their interpretation
+is kept distinct from proof of a smooth limiting trajectory
+or an isolated free-boundary mechanism.
 
-The contribution is a reproducible assessment of how initiation selection,
-current-tip extraction, and prescribed increments interact during recursive
-direction selection using established LEFM and MTS methods.
-Section~\ref{sec:problem} defines the geometry, loading, and stress-selected
-initiation frame. Section~\ref{sec:recurrence} develops the current-tip
-directional recurrence. Section~\ref{sec:numerics} describes discretization,
-extraction, and verification, and Section~\ref{sec:results} presents the
-trajectory and sensitivity results. Section~\ref{sec:discussion} separates
-the mechanical interpretation from discretization evidence and model
-limitations. Section~\ref{sec:conclusions} summarizes the findings; the
-supplementary diagnostics document numerical acceptance.
+Sections~\ref{sec:problem} and \ref{sec:recurrence} define the
+physical problem and the incremental MTS construction.
+Sections~\ref{sec:numerics} and \ref{sec:results} present the
+numerical assessment and crack-trajectory results, followed
+by the physical interpretation, limitations, and conclusions
+in Sections~\ref{sec:discussion} and \ref{sec:conclusions}.
 
 \section{Problem formulation}
 \label{sec:problem}
