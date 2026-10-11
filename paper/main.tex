@@ -429,22 +429,18 @@ must resolve mode mixity at the scale of $\Delta a$.
 
 \section{Numerical implementation and verification}
 \label{sec:numerics}
-The numerical procedure is presented together with the tests used to assess
-its implementation and sensitivity to discretization. We first specify the
-reference initiation state and the finite-element representation of the
-crack, including the structured near-tip mesh and its resolution levels.
-Stress-intensity factors are then obtained from the interaction integral
-and compared with estimates based on crack-opening displacement. The
-solver and extraction acceptance criteria are followed by two further
-investigations: a coupled refinement of the crack increment and numerical
-length scales, and a centered-hole control of the local MTS response.
-
-The numerical assessment distinguishes tests performed on prescribed
-fields or fixed crack geometries from independently propagated trajectories.
-The former examine SIF extraction without advancing the crack, whereas
-the latter assess how discretization changes influence successive
-crack directions. Their results and physical implications are discussed
-in Section~\ref{sec:results}.
+The computation begins with stress-selected initiation and proceeds by
+solving successive cracked geometries with a structured near-tip mesh.
+We describe the interaction-integral and crack-opening-displacement
+(COD) extractions, the numerical acceptance criteria, and the
+mesh configurations used to assess their sensitivity. The subsequent
+tests address two distinct questions. Prescribed fields and fixed
+crack geometries examine SIF extraction without changing the path,
+whereas independently propagated calculations reveal how differences
+in the discretization affect successive crack directions. A coupled
+4/2/1-mm refinement study and a centered-hole symmetry control
+complete the numerical assessment. The trajectory results are
+presented in Section~\ref{sec:results}.
 
 \subsection{Numerical parameters and initiation state}
 \label{sec:numerical-parameters}
@@ -517,9 +513,8 @@ from 0.25 to 0.35. For fixed $P_{17}$ and $P_{22}$ geometries,
 the total T3 element count falls by approximately 31--33\% and the
 exterior count by 40--43\%, while the 12678-element core and its
 11316-element interaction-domain support remain unchanged.
-These fixed-geometry comparisons assess local SIF sensitivity.
-The separate independent propagation on M1 tests whether those
-differences influence later crack directions.
+The local SIF response is evaluated on the fixed geometries before
+the M1 mesh is used to propagate a separate crack path.
 
 \subsection{Structured-tip resolution tests}
 The influence of structured-tip resolution is first examined on fixed
@@ -550,15 +545,12 @@ the exterior connectivity need not be identical because its elements
 must conform to each core interface. Thus this study primarily probes
 near-tip resolution, complementing the M1 exterior-size comparison.
 
-The $2h_0$ mesh is also used to generate an independent
-trajectory to the common length of 92 mm. Both paths retain the
-prescribed first segment $P_0P_1$, but the elastic field at $P_1$
-is recomputed on the coarser tip mesh. Its own
-$K_{\mathrm{I}}^{(1)}$ and $K_{\mathrm{II}}^{(1)}$ determine
-$\theta_2$, and each subsequent vertex follows from the preceding
-$2h_0$ solution, with no reference vertex imposed after $P_1$.
-The $h_0/2$ calculation supplies fixed-geometry refinement evidence
-only and is not independently propagated.
+To examine accumulated directional sensitivity, the $2h_0$
+discretization is also propagated through 92 mm of crack extension.
+The prescribed first segment $P_0P_1$ is common to the two paths;
+thereafter, each MTS update follows from the elastic field of
+the corresponding path. The $h_0/2$ level is used only
+in the fixed-geometry comparison.
 
 For completeness, Fig.~\ref{fig:mesh-levels} also shows a
 $4h_0$ core ($h_{\mathrm{tip}}=0.10805$ mm) for geometric
@@ -803,7 +795,7 @@ map summarized in Table~\ref{tab:symmetric-stability}.
 \centering
 \small
 \caption{One-step directional map for the centered-hole symmetric control.
-Each row is an independently rebuilt and solved two-segment geometry.}
+The prescribed second-segment angle and the predicted third-segment direction are shown.}
 \label{tab:symmetric-stability}
 \begin{tabular}{rr}
 \toprule
@@ -1181,12 +1173,10 @@ are separated by a 4-mm crack increment, the small shifts
 cannot be interpreted as micrometer-scale accuracy of the
 local-symmetry location.
 
-The independent $2h_0$ trajectory tests whether these small fixed-geometry
-differences accumulate along the path. Figure~
-\ref{fig:tip-resolution-sensitivity} uses the same four-panel comparison as
-the exterior-mesh study. The trajectories are visually indistinguishable
-at specimen scale [Fig.~\ref{fig:tipres-trajectory}]. Over the full accepted
-history, the maximum vertical-coordinate difference is
+Propagation with the $2h_0$ tip mesh produces a path nearly
+indistinguishable from the reference trajectory at specimen scale
+[Fig.~\ref{fig:tipres-trajectory}]. The maximum vertical-coordinate
+difference is
 $0.12760~\mu\mathrm{m}$ and the maximum Euclidean separation of
 corresponding tips is $0.12800~\mu\mathrm{m}$, both at $P_{23}$. The
 maximum absolute direction difference is $0.24539$ millidegrees at
@@ -1205,13 +1195,12 @@ $-0.000094$ mm ($-0.094~\mu\mathrm{m}$). As above, this is only a
 sub-increment sensitivity diagnostic, not a micrometer-accurate physical
 location of local symmetry.
 
-Taken together, the fixed-geometry calculations and the
-independently propagated $2h_0$ path show that the
-positive mode-mixity maximum, sign-change bracket, and
-turning reversal persist under the tested structured-tip
-resolution changes. This agreement does not bound all
-discretization errors, particularly because the exterior
-connectivity adapts to the changed core interface.
+The positive mode-mixity maximum, sign-change bracket, and
+turning reversal persist across the tested structured-tip
+resolutions, both on fixed geometries and along the propagated
+$2h_0$ trajectory. This evidence concerns the stated
+mesh perturbations; the conforming exterior connectivity
+also changes when the core is remeshed.
 
 % Figure environment maintained inline in main.tex; graphics remain separate PDFs.
 \begin{figure}[tbp]
@@ -1265,21 +1254,17 @@ connectivity adapts to the changed core interface.
 \end{figure}
 
 \subsection{Sensitivity to exterior-mesh density}
-The fixed-geometry M1 checks establish that the coarser exterior mesh does
-not materially perturb the extracted current-tip quantities when the crack
-polyline is held fixed. To test accumulated trajectory sensitivity, however,
-the M1 path was regenerated independently rather than evaluated on the
-reference vertices. The prescribed first segment $P_0P_1$ is common to both
-calculations, but the $P_1$ elastic problem is resolved on M1, its own
-$K_{\mathrm{I}}^{(1)}$ and $K_{\mathrm{II}}^{(1)}$ determine $\theta_2$, and every subsequent
-vertex follows recursively from the preceding M1 solution. Thus no
-reference-path vertex after $P_1$ is imposed.
+Coarsening the exterior mesh has little effect on the SIFs
+of the fixed $P_{17}$ and $P_{22}$ geometries. We therefore
+examined its influence on the complete trajectory by propagating
+the M1 discretization from the common first segment $P_0P_1$.
+All later crack directions follow from the M1 solutions
+rather than from the reference path.
 
-Figure~\ref{fig:m1-mesh-sensitivity} compares the two complete accepted
-histories through $P_{23}$. At specimen scale the trajectories are visually
-indistinguishable [Fig.~\ref{fig:m1mesh-trajectory}]. The accumulated
-difference is resolved by plotting the coordinate and direction differences
-directly. Over all common accepted states, the maximum vertical-coordinate
+The two trajectories are nearly coincident at specimen scale
+[Fig.~\ref{fig:m1mesh-trajectory}]. Their small separation becomes
+apparent in the coordinate and angular differences in
+Fig.~\ref{fig:m1-mesh-sensitivity}. The maximum vertical-coordinate
 difference is $0.06734~\mu\mathrm{m}$, the maximum Euclidean separation of
 corresponding tips is $0.06742~\mu\mathrm{m}$, and the maximum absolute direction
 difference is $0.07304$ millidegrees, or $7.30\times10^{-5}$ degrees
@@ -1299,12 +1284,11 @@ $84.146$ mm for M1, a difference of $0.000322$ mm
 sensitivity diagnostic; neither interpolated value has physical precision
 at the micrometer scale.
 
-This independent propagation confirms that the characteristic
-event sequence is retained under a substantial reduction in
-\emph{exterior} mesh density. It is not a general
-mesh-independence result: the paired near-tip mesh and
-interaction-domain radii are unchanged in M1, and
-interaction-domain-radius sensitivity has not been isolated.
+The characteristic event sequence is therefore insensitive
+to the tested coarsening of the \emph{exterior} mesh.
+Because the near-tip discretization and interaction-domain
+radii are unchanged, the comparison does not establish
+general mesh independence.
 
 % Figure environment maintained inline in main.tex; graphics remain separate PDFs.
 \begin{figure}[tbp]
@@ -1357,20 +1341,15 @@ interaction-domain-radius sensitivity has not been isolated.
 \FloatBarrier
 
 \subsection{Coupled crack-increment and discretization refinement}
-The three independently propagated trajectories with
-$\Delta a=4$, 2, and 1 mm provide a complementary
-test of the finite-step formulation. As defined in
-Section~\ref{sec:numerics}, reducing the increment also
-reduces the absolute tip-mesh, interaction-domain, and
-exterior scales within a common dimensionless family.
-The paths are therefore compared as complete numerical
-schemes, not at fixed physical mesh resolution.
-All three reach 92 mm of accumulated length.
-Although their trajectories almost coincide at specimen
-scale [Fig.~\ref{fig:inc-trajectory}], the successive
-coordinate and direction differences in
-Fig.~\ref{fig:increment-sensitivity} resolve the
-changes accompanying each refinement.
+The paths computed with $\Delta a=4$, 2, and 1 mm remain
+nearly coincident through 92 mm of growth
+[Fig.~\ref{fig:inc-trajectory}]. Their differences in
+tip position and segment direction nevertheless decrease with
+refinement [Fig.~\ref{fig:increment-sensitivity}].
+In this study, the near-tip mesh, interaction domain, and
+exterior scales are reduced together with $\Delta a$,
+as specified in Section~\ref{sec:numerics}; hence the comparison
+concerns a coupled increment/discretization family.
 
 % Figure environment maintained inline in main.tex; graphics remain separate PDFs.
 \begin{figure}[tbp]
@@ -1463,9 +1442,8 @@ respectively. These are not formal Richardson orders:
 the compared paths result from recursively updated
 geometries, the maximizers need not occur at the same
 crack length, and both the increment and discretization
-scales change. The numerical evidence is therefore
-one of contraction within the specified three-level
-family, rather than a measured asymptotic rate.
+scales change. These values describe contraction within the three-level family
+and cannot be regarded as measured asymptotic rates.
 
 The normalized mode-mixity response exhibits a
 complementary trend. As shown in
@@ -1540,16 +1518,12 @@ the solved states at 83 and 84 mm. None of these
 interpolated estimates is itself a solved
 zero-$K_{\mathrm{II}}$ state.
 
-Thus the independently generated paths retain their
-macroscopic geometry and characteristic event sequence,
-while their pairwise positional and directional
-differences contract under the tested coupled refinement.
-The decrease of the raw mode-mixity maxima and the
-comparatively stable increment-normalized measures
-are consistent with the conditional MTS--curvature
-relation in Eq.~\eqref{eq:curvature-mts}; they do not
-prove that the polygonal trajectories have a unique
-smooth limit.
+The nearly proportional decrease of the raw mode-mixity
+maxima and the stability of the increment-normalized
+measures accord with the conditional MTS--curvature
+relation in Eq.~\eqref{eq:curvature-mts}. The available
+three-level evidence does not establish a unique smooth
+limiting trajectory.
 
 \section{Discussion}
 \label{sec:discussion}
@@ -1623,11 +1597,10 @@ limits direct comparison with studies that vary the
 increment alone, including the two-level comparison of
 Fang et al.~\cite{FangEtAl2020}.
 
-Table~\ref{tab:independent-sensitivity} summarizes the two
-independently propagated mesh comparisons. The table concerns
-sensitivity to selected discretization changes; the larger
-differences in the coupled 4/2/1-mm study cannot be used
-to rank independent error sources.
+Table~\ref{tab:independent-sensitivity} compares the
+exterior-mesh and structured-tip perturbations. The larger
+differences observed in the coupled 4/2/1-mm family do
+not isolate the contribution of any individual numerical scale.
 
 \begin{table}[tbp]
 \centering
