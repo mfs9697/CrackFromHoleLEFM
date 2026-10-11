@@ -1,6 +1,6 @@
 # Scientific notation and editorial style — Crack Trajectory
 
-Status: **Editorial convention through Batch 5** (2026-10-11). This is an editorial guide, not a source of numerical evidence. The authoritative numerical results remain in the accepted saved records and the manuscript's cited verification reports. The approved Figures 1–9 and their graphical provenance are not changed by this guide.
+Status: **Editorial convention through Batch 6** (2026-10-11). This is an editorial guide, not a source of numerical evidence. The authoritative numerical results remain in the accepted saved records and the manuscript's cited verification reports. The approved Figures 1–9 and their graphical provenance are not changed by this guide.
 
 ## Principles
 
@@ -102,6 +102,14 @@ Separate the **direction-selection mechanism** (the signed MTS turn determined b
 Interpret fixed-geometry extraction, independently propagated mesh perturbations, and coupled 4/2/1-mm refinement only within their respective numerical designs. The latter changes several length scales together and cannot establish an isolated increment-error estimate, a formal convergence order, or a unique smooth limiting curve. The centered-hole angular slope refers only to the prescribed one-step map. The accepted path ends at \(P_{23}\), not at the qualified but unsolved \(P_{24}\) geometry.
 
 Discussion paragraphs should synthesize explanations and limitations rather than reproduce tables of values. Conclusions should identify the method, the observed directional phenomenon, the scope of numerical support, and the essential outstanding questions without repeating the Results section.
+
+## Main-text and caption distinction
+
+Keep a concise methodological statement establishing that alternative mesh families are propagated independently from the common first segment. Do not rehearse each solver update in the Results or in the captions; describe the observed geometrical, angular, and mode-mixity responses instead. Numerical-acceptance and provenance details belong in the numerical methodology or archived verification evidence when they do not affect interpretation.
+
+Figure captions state the plotted quantities, the compared configurations, and qualifications necessary to avoid a false physical inference. Avoid repeating the paragraph introducing the figure or narrating how the code generated it. Table captions identify the comparison conditions and the status of interpolated quantities; the table body retains the authoritative numerical values.
+
+As an editorial starting point, graphical groups in Figures 2--9 and supplementary Figure S1 are set within `0.8\\textwidth` minipages; Figure 1 already has an included width of `0.78\\textwidth`. Figure and table captions use `\\small` and subfigure captions `\\footnotesize`. The three four-panel figure layouts retain their original panel ordering, with reduced fixed vertical boxes. These are **provisional display dimensions** that require checking a freshly compiled PDF for legibility, float placement and whitespace. Adjust locally if dense axes become too small; never reconstruct or alter the approved vector graphics.
 
 ## Prose conventions
 
