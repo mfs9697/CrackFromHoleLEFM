@@ -109,7 +109,7 @@ Keep a concise methodological statement establishing that alternative mesh famil
 
 Figure captions state the plotted quantities, the compared configurations, and qualifications necessary to avoid a false physical inference. Avoid repeating the paragraph introducing the figure or narrating how the code generated it. Table captions identify the comparison conditions and the status of interpolated quantities; the table body retains the authoritative numerical values.
 
-As an editorial starting point, graphical groups in Figures 2--9 and supplementary Figure S1 are set within `0.8\\textwidth` minipages; Figure 1 already has an included width of `0.78\\textwidth`. Figure and table captions use `\\small` and subfigure captions `\\footnotesize`. The three four-panel figure layouts retain their original panel ordering, with reduced fixed vertical boxes. These are **provisional display dimensions** that require checking a freshly compiled PDF for legibility, float placement and whitespace. Adjust locally if dense axes become too small; never reconstruct or alter the approved vector graphics.
+As an editorial starting point, graphical groups in Figures 2--9 and supplementary Figure S1 are set within `0.8\textwidth` minipages; Figure 1 already has an included width of `0.78\textwidth`. Figure and table captions use `\small` and subfigure captions `\footnotesize`. The three four-panel figure layouts retain their original panel ordering, with reduced fixed vertical boxes. These are **provisional display dimensions** that require checking a freshly compiled PDF for legibility, float placement and whitespace. Adjust locally if dense axes become too small; never reconstruct or alter the approved vector graphics.
 
 ## Prose conventions
 
