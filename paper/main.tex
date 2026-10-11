@@ -7,6 +7,8 @@
 \usepackage{float}
 \usepackage{placeins}
 \usepackage{subcaption}
+\captionsetup{font=small}
+\captionsetup[subfigure]{font=footnotesize,skip=3pt}
 \usepackage{xcolor}
 \definecolor{referenceblue}{RGB}{25,55,95}
 \usepackage[colorlinks=true,linkcolor=referenceblue,citecolor=referenceblue,urlcolor=referenceblue]{hyperref}
@@ -558,6 +560,8 @@ Section~\ref{sec:cod-extraction}.
 % Figure environment maintained inline in main.tex; graphics remain separate PDFs.
 \begin{figure}[tbp]
   \centering
+  \begin{minipage}{0.8\textwidth}
+  \centering
   \begin{subfigure}[t]{0.315\linewidth}
     \centering
     \includegraphics[width=\linewidth]{figures/mesh_levels/tip_mesh_H2.pdf}
@@ -579,6 +583,7 @@ Section~\ref{sec:cod-extraction}.
     \label{fig:mesh-level-H0}
   \end{subfigure}
 
+  \end{minipage}
   \caption{Structured-tip meshes with a common core radius
   $r_{\mathrm{core}}=3$ mm. The reference spacing is
   $h_0=0.027012$ mm; the illustrative $4h_0$ level does not
@@ -874,6 +879,8 @@ path has been solved independently.
 % Figure environment maintained inline in main.tex; graphics remain separate PDFs.
 \begin{figure}[tbp]
   \centering
+  \begin{minipage}{0.8\textwidth}
+  \centering
   \begin{subfigure}[t]{0.94\linewidth}
     \centering
     \includegraphics[width=\linewidth]{figures/trajectory/overview.pdf}
@@ -890,6 +897,7 @@ path has been solved independently.
     \label{fig:trajectory-late}
   \end{subfigure}
 
+  \end{minipage}
   \caption{Crack trajectory from the asymmetric hole.
   Both panels use equal spatial scales. The solid line ends at the
   last accepted tip $P_{23}$; the dashed $P_{23}P_{24}$ extension
@@ -923,6 +931,8 @@ $P_{21}$ (Fig.~\ref{fig:late}).
 % Figure environment maintained inline in main.tex; graphics remain separate PDFs.
 \begin{figure}[tbp]
   \centering
+  \begin{minipage}{0.8\textwidth}
+  \centering
   \begin{subfigure}[t]{0.315\linewidth}
     \centering
     \includegraphics[width=\linewidth]{figures/intensities/KI.pdf}
@@ -942,6 +952,7 @@ $P_{21}$ (Fig.~\ref{fig:late}).
     \label{fig:intensities-theta}
   \end{subfigure}
 
+  \end{minipage}
   \caption{Opening- and sliding-mode SIFs (MPa$\sqrt{\mathrm m}$)
   and segment direction (degrees) versus accumulated crack length
   $a$ (mm), under unit remote traction. The segment direction
@@ -999,6 +1010,8 @@ Interpolated & \LSLengthMM & --- & --- & $0$ & --- & ---\\
 % Figure environment maintained inline in main.tex; graphics remain separate PDFs.
 \begin{figure}[tbp]
   \centering
+  \begin{minipage}{0.8\textwidth}
+  \centering
   \begin{subfigure}[t]{0.485\linewidth}
     \centering
     \includegraphics[width=\linewidth]{figures/late/mode_mixity.pdf}
@@ -1012,6 +1025,7 @@ Interpolated & \LSLengthMM & --- & --- & $0$ & --- & ---\\
     \label{fig:late-turn}
   \end{subfigure}
 
+  \end{minipage}
   \caption{Mode-mixity sign change and reversal of the MTS turn.
   The dotted line denotes the interpolated mode-mixity zero.
   The turn computed at $P_{23}$ ($a=92$ mm) predicts the
@@ -1053,6 +1067,8 @@ uncertainty interval.
 % Figure environment maintained inline in main.tex; graphics remain separate PDFs.
 \begin{figure}[tbp]
   \centering
+  \begin{minipage}{0.8\textwidth}
+  \centering
   \begin{subfigure}[t]{0.485\linewidth}
     \centering
     \includegraphics[width=\linewidth]{figures/cod/turn_linear.pdf}
@@ -1083,6 +1099,7 @@ uncertainty interval.
     \label{fig:cod-mixity-quadratic}
   \end{subfigure}
 
+  \end{minipage}
   \caption{COD--EDI differences along the late crack path for
   four normalized COD fitting windows and linear or quadratic
   extrapolation. Upper panels compare MTS turns; lower panels
@@ -1191,8 +1208,10 @@ also changes when the core is remeshed.
 % Figure environment maintained inline in main.tex; graphics remain separate PDFs.
 \begin{figure}[tbp]
   \centering
+  \begin{minipage}{0.8\textwidth}
+  \centering
 
-  \begin{subfigure}[t][107mm][t]{0.94\linewidth}
+  \begin{subfigure}[t][86mm][t]{0.94\linewidth}
     \centering
     \includegraphics[width=\linewidth]{figures/tip_resolution_sensitivity/trajectory.pdf}
     \caption{Trajectories with structured-tip spacings $h_0$ and $2h_0$.}
@@ -1201,7 +1220,7 @@ also changes when the core is remeshed.
 
   \par\smallskip
 
-  \begin{subfigure}[t][103.5mm][t]{0.315\linewidth}
+  \begin{subfigure}[t][83mm][t]{0.315\linewidth}
     \centering
     \includegraphics[width=\linewidth]{figures/tip_resolution_sensitivity/vertical_deviation.pdf}
     \caption{Accumulated vertical tip-coordinate difference,
@@ -1209,7 +1228,7 @@ also changes when the core is remeshed.
     \label{fig:tipres-dy}
   \end{subfigure}
   \hfill
-  \begin{subfigure}[t][103.5mm][t]{0.315\linewidth}
+  \begin{subfigure}[t][83mm][t]{0.315\linewidth}
     \centering
     \includegraphics[width=\linewidth]{figures/tip_resolution_sensitivity/direction_deviation.pdf}
     \caption{Difference in the absolute crack direction in the frozen initiation frame,
@@ -1217,7 +1236,7 @@ also changes when the core is remeshed.
     \label{fig:tipres-dtheta}
   \end{subfigure}
   \hfill
-  \begin{subfigure}[t][103.5mm][t]{0.315\linewidth}
+  \begin{subfigure}[t][83mm][t]{0.315\linewidth}
     \centering
     \includegraphics[width=\linewidth]{figures/tip_resolution_sensitivity/mode_mixity.pdf}
     \caption{Mode-mixity ratio $K_{\mathrm{II}}/K_{\mathrm{I}}$ along the two independently
@@ -1225,6 +1244,7 @@ also changes when the core is remeshed.
     \label{fig:tipres-q}
   \end{subfigure}
 
+  \end{minipage}
   \caption{Effect of structured-tip resolution on the propagated
   trajectory. The $h_0$ and $2h_0$ paths share the interaction-domain
   radii and prescribed exterior sizing. The diamond indicates the
@@ -1272,8 +1292,10 @@ general mesh independence.
 % Figure environment maintained inline in main.tex; graphics remain separate PDFs.
 \begin{figure}[tbp]
   \centering
+  \begin{minipage}{0.8\textwidth}
+  \centering
 
-  \begin{subfigure}[t][107mm][t]{0.94\linewidth}
+  \begin{subfigure}[t][86mm][t]{0.94\linewidth}
     \centering
     \includegraphics[width=\linewidth]{figures/m1_mesh_sensitivity/trajectory.pdf}
     \caption{Crack trajectories with the reference and M1 exterior meshes.}
@@ -1282,7 +1304,7 @@ general mesh independence.
 
   \par\smallskip
 
-  \begin{subfigure}[t][103.5mm][t]{0.315\linewidth}
+  \begin{subfigure}[t][83mm][t]{0.315\linewidth}
     \centering
     \includegraphics[width=\linewidth]{figures/m1_mesh_sensitivity/vertical_deviation.pdf}
     \caption{Accumulated vertical tip-coordinate difference,
@@ -1290,7 +1312,7 @@ general mesh independence.
     \label{fig:m1mesh-dy}
   \end{subfigure}
   \hfill
-  \begin{subfigure}[t][103.5mm][t]{0.315\linewidth}
+  \begin{subfigure}[t][83mm][t]{0.315\linewidth}
     \centering
     \includegraphics[width=\linewidth]{figures/m1_mesh_sensitivity/direction_deviation.pdf}
     \caption{Difference in the absolute crack direction in the frozen initiation frame,
@@ -1298,7 +1320,7 @@ general mesh independence.
     \label{fig:m1mesh-dtheta}
   \end{subfigure}
   \hfill
-  \begin{subfigure}[t][103.5mm][t]{0.315\linewidth}
+  \begin{subfigure}[t][83mm][t]{0.315\linewidth}
     \centering
     \includegraphics[width=\linewidth]{figures/m1_mesh_sensitivity/mode_mixity.pdf}
     \caption{Mode-mixity ratio $K_{\mathrm{II}}/K_{\mathrm{I}}$ along the two independently
@@ -1306,6 +1328,7 @@ general mesh independence.
     \label{fig:m1mesh-q}
   \end{subfigure}
 
+  \end{minipage}
   \caption{Effect of exterior-mesh coarsening on the crack path.
   The reference and M1 trajectories are propagated separately with
   identical near-tip discretizations and interaction-domain radii.
@@ -1329,8 +1352,10 @@ concerns a coupled increment/discretization family.
 % Figure environment maintained inline in main.tex; graphics remain separate PDFs.
 \begin{figure}[tbp]
   \centering
+  \begin{minipage}{0.8\textwidth}
+  \centering
 
-  \begin{subfigure}[t][107mm][t]{0.94\linewidth}
+  \begin{subfigure}[t][86mm][t]{0.94\linewidth}
     \centering
     \includegraphics[width=\linewidth]{figures/increment_sensitivity/trajectory.pdf}
     \caption{Independently propagated crack trajectories for
@@ -1338,7 +1363,7 @@ concerns a coupled increment/discretization family.
     \label{fig:inc-trajectory}
   \end{subfigure}
   \par\smallskip
-  \begin{subfigure}[t][103.5mm][t]{0.315\linewidth}
+  \begin{subfigure}[t][83mm][t]{0.315\linewidth}
     \centering
     \includegraphics[width=\linewidth]{figures/increment_sensitivity/vertical_deviation.pdf}
     \caption{Successive vertical-coordinate differences,
@@ -1348,7 +1373,7 @@ concerns a coupled increment/discretization family.
     \label{fig:inc-dy}
   \end{subfigure}
   \hfill
-  \begin{subfigure}[t][103.5mm][t]{0.315\linewidth}
+  \begin{subfigure}[t][83mm][t]{0.315\linewidth}
     \centering
     \includegraphics[width=\linewidth]{figures/increment_sensitivity/direction_deviation.pdf}
     \caption{Successive differences in absolute crack direction in the
@@ -1356,7 +1381,7 @@ concerns a coupled increment/discretization family.
     \label{fig:inc-dtheta}
   \end{subfigure}
   \hfill
-  \begin{subfigure}[t][103.5mm][t]{0.315\linewidth}
+  \begin{subfigure}[t][83mm][t]{0.315\linewidth}
     \centering
     \includegraphics[width=\linewidth]{figures/increment_sensitivity/turn_density.pdf}
     \caption{Turning density $\Delta\theta/\Delta a$ along the three
@@ -1364,6 +1389,7 @@ concerns a coupled increment/discretization family.
     \label{fig:inc-turn-density}
   \end{subfigure}
 
+  \end{minipage}
   \caption{Coupled crack-increment and discretization refinement.
   The $4$-, $2$-, and $1$-mm paths share dimensionless mesh and
   interaction-domain scales. Panels (b,c) compare paths at common
@@ -1689,6 +1715,8 @@ estimate of the discretization error in the trajectory.
 % Figure environment maintained inline in main.tex; graphics remain separate PDFs.
 \begin{figure}[htbp]
   \centering
+  \begin{minipage}{0.8\textwidth}
+  \centering
   \begin{subfigure}[t]{0.485\linewidth}
     \centering
     \includegraphics[width=\linewidth]{figures/quality/min_angle.pdf}
@@ -1719,6 +1747,7 @@ estimate of the discretization error in the trajectory.
     \label{fig:quality-residual}
   \end{subfigure}
 
+  \end{minipage}
   \caption{Diagnostics for accepted $P_2$--$P_{23}$ states. Dashed lines are
   the $20^\circ$ minimum-angle gate, 1.8 adjacent-size-ratio gate, and normalized
   true-residual gate of one. The separately enforced reported-PCG tolerance
