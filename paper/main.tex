@@ -1546,32 +1546,44 @@ smooth limit.
 \section{Discussion}
 \label{sec:discussion}
 \subsection{Interpretation of late redirection}
-The accepted sequence shows reorientation under increasing $K_{\mathrm{I}}$.
-The change in turning sign is directly associated with the change in
-$K_{\mathrm{II}}/K_{\mathrm{I}}$, as required by Eqs.~\eqref{eq:trt}--\eqref{eq:angleupdate}.
-The shrinking right-side ligament makes increased free-boundary influence
-a consistent physical interpretation. However, the boundary distance and
-the accumulated crack geometry change together. A control with a more
-distant boundary, or matched fixed-geometry calculations, is needed to
-isolate that influence. The result supports a mode-mixity explanation of
-the computed redirection; it does not prove that the boundary is its sole
-cause.
+The late reorientation follows directly from the signed
+mode-mixity ratio in the MTS relation
+[Eqs.~\eqref{eq:trt}--\eqref{eq:angleupdate}].
+At the reference unit traction, $K_{\mathrm{I}}$
+continues to increase while $K_{\mathrm{II}}$
+decreases through zero and becomes negative.
+The latter change reverses the sense of the
+incremental turn, despite the continued growth of
+the opening-mode intensity.
+
+As the crack approaches the right edge, the
+remaining horizontal ligament decreases to
+$\LastLigamentMM$ mm at $P_{23}$. An increasing
+influence of that traction-free boundary is
+mechanically plausible, but it has not been
+separated from the effects of crack length and
+the accumulated curved geometry. Establishing
+its contribution would require a controlled
+boundary-distance comparison. The MTS mechanism
+of the observed turn is therefore identified,
+whereas its unique geometric cause is not.
 
 \subsection{Discretization, increment size, and boundary proximity}
-The 4-mm reference trajectory samples a continuously changing boundary-value
-problem at discrete geometries, so the finite segment length is part of the
-numerical propagation rule. The three-level increment study now provides a
-direct measure of this effect. Successive halving from 4 to 2 to 1 mm
-reduces the maximum corresponding-tip separation from $35.47$ to
-$18.29~\mu\mathrm{m}$ and the maximum direction difference from
-$214.93$ to $127.39$ millidegrees. The local-symmetry estimate shifts by
-$0.599$ mm and then $0.282$ mm. These contractions are consistent with stabilization of the computed
-trajectory within the tested family, although three levels do not
-establish a smooth limiting curve or a formal convergence order. The result complements the two-increment
-comparison of Fang et al.~\cite{FangEtAl2020}, who observed similar but
-smoother crack paths at smaller prescribed increments: here the effect is
-quantified over three independently propagated levels and separated into
-geometric, directional, and mode-mixity measures.
+The prescribed increment defines both the successive
+geometries and the scale at which the updated elastic
+problem is sampled. In the 4/2/1-mm study, the
+absolute near-tip and exterior mesh sizes and
+interaction-domain radii are also reduced
+proportionally. The observed contraction in
+corresponding-tip and direction differences
+therefore belongs to this \emph{coupled}
+refinement, not to increment length alone.
+The interpolated sign-change locations likewise
+show decreasing differences between successive
+levels. These trends complement the two-increment
+comparison of Fang et al.~\cite{FangEtAl2020}
+but do not establish a formal convergence order
+or the existence of a smooth limiting path.
 
 The mode-mixity history complements the geometric comparisons.
 Although the positive maximum of $q_{\mathrm{K}}$ approximately
@@ -1596,22 +1608,28 @@ path. The effect of accumulated numerical perturbations on the
 asymmetric trajectory is instead assessed by independently
 propagated mesh and increment studies.
 
-Mesh sensitivity is addressed by two complementary perturbations. The M1
-calculation is a clean exterior-only change: it retains the paired tip core
-and EDI support while substantially reducing exterior resolution, and its
-independently propagated path remains within $0.0674~\mu\mathrm{m}$ of the
-reference tips. The $2h_0$--$h_0$--$h_0/2$ comparison changes structured-tip resolution
-while retaining the requested exterior sizing law
-and allowing conforming remeshing of the exterior. The independently
-propagated $2h_0$ path remains within $0.128~\mu\mathrm{m}$ of the
-reference path and preserves the mode-mixity maximum and sign-change
-bracket.
+The mesh tests answer a different question. In M1,
+the requested exterior sizing law is coarsened
+while the paired tip core and EDI support are
+retained. In the structured-tip study,
+the local tip spacing changes while the requested
+exterior sizing law is held fixed, although the
+conforming exterior connectivity may change.
+Independent propagation of M1 and $2h_0$
+preserves the positive maximum and sign-change
+bracket, with maximum corresponding-tip separations
+of $0.0674$ and $0.128~\mu\mathrm{m}$,
+respectively.
 
-Table~\ref{tab:independent-sensitivity} summarizes these two independent
-mesh-family tests. Their submicrometer path differences are much smaller
-than the finite-increment differences quantified above, indicating that
-crack-increment error is the dominant tested numerical sensitivity at the
-scale of the reported trajectory.
+Table~\ref{tab:independent-sensitivity} compares
+these propagated mesh families. Their submicrometer
+differences are much smaller than those observed
+between the coupled 4/2/1-mm paths.
+Because the latter study changes several numerical
+length scales simultaneously, this comparison
+does not identify a separate crack-increment
+error or rank the contributions of individual
+sources of discretization error.
 
 \begin{table}[tbp]
 \centering
@@ -1668,11 +1686,13 @@ the results.
 A stress-selected circular-hole point and one prescribed normal segment
 provide the initial state for an incremental LEFM trajectory whose later
 directions are determined by interaction-integral SIFs at the current tip
-and the MTS rule. The 4-mm reference history reaches 92 mm. Positive mode mixity
-peaks near the middle of the path, later crosses zero, and becomes negative
-while $K_{\mathrm{I}}$ continues to increase. The sign change reverses the incremental
-turn and produces the observed late reduction of the negative crack
-inclination.
+and the MTS rule. The 4-mm reference history reaches 92 mm. Positive mode mixity reaches a maximum at
+$P_{17}$ and changes sign between the solved
+states $P_{21}$ and $P_{22}$ while
+$K_{\mathrm{I}}$ continues to increase.
+This sign reversal changes the incremental
+MTS turning sense and reduces the negative
+inclination of the final accepted segment.
 
 The numerical evidence separates several aspects of this recursive path
 construction. A centered-hole control recovers the straight symmetric response
