@@ -620,7 +620,11 @@ auxiliary field. The component indices $i,j\in\{1,2\}$ refer
 to the current-tip frame and are summed when repeated;
 $\delta_{1j}$ is the Kronecker delta. For the actual stress,
 strain, and displacement fields
-$(\bm\sigma,\bm\varepsilon,\bm u)$, the interaction integral reads
+$(\bm\sigma,\bm\varepsilon,\bm u)$, let $\Omega_k$ denote the integration
+domain around the current tip. Here $\dd\Omega$ is the area element,
+a comma followed by an index denotes partial differentiation in the
+local frame, and the colon denotes tensor contraction. The interaction
+integral reads
 \begin{equation}
  I^{(m)}=\int_{\Omega_k}
  \left[-(\bm\sigma^{(m)}\!:\bm\varepsilon)\delta_{1j}
@@ -644,8 +648,6 @@ $K_{\mathrm{aux}}=1$ in plane strain,
  K_m=\frac{E'}{2K_{\mathrm{aux}}}I^{(m)},\qquad
  E'=\frac{E}{1-\nu^2},\qquad m\in\{I,II\}.\label{eq:normalization}
 \end{equation}
-Here $\dd\Omega$ is the area measure, a comma denotes differentiation,
-and the colon denotes tensor contraction. The normalization preserves the signed local-mode convention.
 % TODO: verified interaction-integral and quadrature references.
 
 \subsection{COD-based extraction comparison}
@@ -1375,7 +1377,7 @@ concerns a coupled increment/discretization family.
   \begin{minipage}{0.8\textwidth}
   \centering
 
-  \begin{subfigure}[t][86mm][t]{0.94\linewidth}
+  \begin{subfigure}[t]{0.94\linewidth}
     \centering
     \includegraphics[width=\linewidth]{figures/increment_sensitivity/trajectory.pdf}
     \caption{Independently propagated crack trajectories for
@@ -1383,7 +1385,7 @@ concerns a coupled increment/discretization family.
     \label{fig:inc-trajectory}
   \end{subfigure}
   \par\smallskip
-  \begin{subfigure}[t][83mm][t]{0.315\linewidth}
+  \begin{subfigure}[t]{0.315\linewidth}
     \centering
     \includegraphics[width=\linewidth]{figures/increment_sensitivity/vertical_deviation.pdf}
     \caption{Successive vertical-coordinate differences,
@@ -1393,7 +1395,7 @@ concerns a coupled increment/discretization family.
     \label{fig:inc-dy}
   \end{subfigure}
   \hfill
-  \begin{subfigure}[t][83mm][t]{0.315\linewidth}
+  \begin{subfigure}[t]{0.315\linewidth}
     \centering
     \includegraphics[width=\linewidth]{figures/increment_sensitivity/direction_deviation.pdf}
     \caption{Successive differences in absolute crack direction in the
@@ -1401,7 +1403,7 @@ concerns a coupled increment/discretization family.
     \label{fig:inc-dtheta}
   \end{subfigure}
   \hfill
-  \begin{subfigure}[t][83mm][t]{0.315\linewidth}
+  \begin{subfigure}[t]{0.315\linewidth}
     \centering
     \includegraphics[width=\linewidth]{figures/increment_sensitivity/turn_density.pdf}
     \caption{Turning density $\Delta\theta/\Delta a$ along the three
@@ -1410,6 +1412,7 @@ concerns a coupled increment/discretization family.
   \end{subfigure}
 
   \end{minipage}
+  \par\medskip
   \caption{Coupled crack-increment and discretization refinement.
   The $4$-, $2$-, and $1$-mm paths share dimensionless mesh and
   interaction-domain scales. Panels (b,c) compare paths at common
