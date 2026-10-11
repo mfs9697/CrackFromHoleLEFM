@@ -753,25 +753,27 @@ event-location diagnostic, not an independently solved
 local-symmetry state.
 
 \subsection{Centered-hole symmetric control}
-The directional response of the algorithm is examined separately in a
-reflection-symmetric centered-hole configuration. The full plate dimensions and hole radius are unchanged,
-but the circular hole is centered at $(0.150,0)$ m. The crack starts from the
-rightmost point of the hole,
+To assess reflection symmetry and the local angular response of the
+numerical procedure, we consider a centered-hole plate with the same
+overall dimensions and hole radius. The hole center is
+$(0.150,0)$ m, and the crack starts from its rightmost point,
 \[
  P_0=(0.180,0)\ \mathrm m,
  \qquad
  P_1=(0.184,0)\ \mathrm m,
 \]
-with the same increment $\Delta a=4$ mm. The straight configuration is
-therefore a nominally pure mode-I path. To characterize the one-step response near this configuration, five
-two-segment crack geometries are prescribed,
+with $\Delta a=4$ mm. The straight crack is reflection symmetric
+and therefore has a pure mode-I field in the ideal continuum problem.
+The one-step angular response is probed by prescribing five
+two-segment crack geometries,
 \[
  \theta_2\in\{-0.10^\circ,-0.05^\circ,0,
                  +0.05^\circ,+0.10^\circ\},
 \]
-and each probe is rebuilt and solved independently with the same paired-core,
-EDI, solver, and MTS machinery used for the asymmetric calculation. The
-resulting one-step map is
+and solving each geometry independently with the same tip
+discretization, EDI extraction, and elastic solver as in the
+asymmetric case. Let $F$ denote the predicted direction of the
+third segment. The one-step MTS map is
 \begin{equation}
  F(\theta_2)=\theta_3
  =\theta_2+
@@ -790,7 +792,7 @@ $F(0)=-7.13\times10^{-7}$ degrees, numerically indistinguishable from the
 symmetry line at the scale relevant here. The perturbed probes give the
 map summarized in Table~\ref{tab:symmetric-stability}.
 
-\begin{table}[tbp]
+\begin{table}[H]
 \centering
 \small
 \caption{One-step directional map for the centered-hole symmetric control.
@@ -809,9 +811,10 @@ $+0.10$ & $-0.011415$\\
 \end{tabular}
 \end{table}
 
-The recovered opening-mode intensity is even with respect to the imposed
-perturbation, whereas $K_{\mathrm{II}}/K_{\mathrm{I}}$ and $F(\theta_2)$ are antisymmetric to
-within numerical mismatches of order $10^{-9}$. The two symmetric
+The computed opening-mode intensity is even with respect to the
+sign of the prescribed perturbation, while the signed mode-mixity
+ratio and $F(\theta_2)$ are odd to numerical mismatches of
+order $10^{-9}$. The two symmetric
 finite-difference estimates are
 \[
  \frac{F(+0.05^\circ)-F(-0.05^\circ)}{0.10^\circ}
@@ -828,13 +831,13 @@ slope estimate
 \end{equation}
 Within this prescribed two-segment family, the next-segment angular
 response reverses sign and is approximately 8.8 times smaller than
-the imposed perturbation. The measured slope characterizes the
-one-step map at the given crack length and $\Delta a=4$ mm, not
-the stability of the entire evolving crack. Subsequent updates
-solve different geometries and are not iterations of the same
-scalar map $F$. The control therefore demonstrates reflection
-symmetry and the local signed response of the EDI--MTS procedure,
-without establishing attraction of a complete trajectory.
+the imposed perturbation. The fitted slope characterizes this prescribed family of
+two-segment geometries at $\Delta a=4$ mm. Later steps change the
+entire crack geometry and cannot be described by repeated
+application of the same scalar map $F$. The control therefore
+verifies the expected symmetry and the local signed EDI--MTS
+response; it does not establish stability of the evolving
+crack trajectory.
 
 \section{Crack-trajectory results}
 \label{sec:results}
@@ -997,10 +1000,12 @@ Interpolated & \LSLengthMM & --- & --- & $0$ & --- & ---\\
 
 
 \subsection{COD comparison and extraction sensitivity}
-All eight stored COD fit definitions retain positive mode mixity at $P_{21}$
-and negative mode mixity at $P_{22}$, corroborating the bracketed sign change
-without making COD the direction selector. Differences remain nonzero and
-depend on the fitting definition (Fig.~\ref{fig:cod}). Over all 176 fits,
+The COD-based estimates provide a check on the sign of mode mixity
+and its dependence on the extraction procedure. All eight fitting
+definitions give positive mode mixity at $P_{21}$ and negative
+mode mixity at $P_{22}$, consistent with the EDI sign-change
+bracket. Their values nevertheless depend on the fitting
+definition, as illustrated in Fig.~\ref{fig:cod}. Across 176 fits,
 the largest absolute COD--EDI turning difference is $\MaxCODError^\circ$,
 at $P_{23}$ for a linear fit over $[0.12,0.30]\Delta a$.
 The quadratic-fit turns at $P_{23}$ range from $\CODQuadMin^\circ$ to
@@ -1009,11 +1014,13 @@ $\CODQuadMax^\circ$, compared with the EDI value $0.62435^\circ$.
 Near local symmetry, relative differences can be large despite small
 absolute errors. At $P_{21}$ the same rear-window linear fit gives mode
 mixity about $\CODNearZeroPercent$\% above EDI, while its turning-angle
-difference is only $\CODNearZeroTurnDiff^\circ$. Thus visual overlap of
-full-history curves is not sufficient to establish extraction accuracy.
-The late fitting sensitivity is a postprocessing limitation to investigate,
-not an error bar on the physical path. Both routes also share any error in
-the underlying elastic solution.
+difference is only $\CODNearZeroTurnDiff^\circ$. Agreement over the full crack history therefore does not
+by itself establish accuracy near the sign change. The observed
+differences measure sensitivity to postprocessing choices rather
+than a statistical uncertainty interval for the crack trajectory.
+Because the COD and EDI estimates use the same computed
+displacement field, they do not independently validate the
+underlying elastic solution.
 
 % Figure environment maintained inline in main.tex; graphics remain separate PDFs.
 \begin{figure}[tbp]
@@ -1090,8 +1097,8 @@ are unchanged.
 \caption{Fixed-geometry sensitivity to structured-tip resolution. The crack
 geometries at $P_{21}$ and $P_{22}$, material, loading, EDI radii, far-field
 cap, transition length, and MTS formulation are unchanged; the structured
-tip scale changes while $\eta_e=1$ fixes the requested
-exterior sizing law. Exterior connectivity need not be identical. The final column is an interpolation between solved values, not a solved
+tip scale changes while the requested
+exterior sizing law remains fixed. Exterior connectivity need not be identical. The final column is an interpolation between solved values, not a solved
 crack state; its extra digits resolve numerical mesh-comparison shifts only.}
 \label{tab:tipmesh}
 \begin{tabular}{lrrrrrr}
@@ -1193,8 +1200,8 @@ every discretization error.
   structured-tip resolution. The $2h_0$ calculation doubles the production
   tip size from $h_0=0.027012$ mm to $0.054025$ mm while retaining the
   interaction-domain radii, far-field cap, and transition length.
-  $\eta_e=1$ preserves the requested exterior sizing law;
-  the conforming exterior connectivity need not be identical. The $2h_0$
+  The requested exterior sizing law is unchanged;
+  conforming exterior connectivity need not be identical. The $2h_0$
   trajectory is propagated independently from a recomputed $P_1$ field
   rather than from reference vertices. The local-symmetry marker is the
   linearly interpolated reference crossing, not an independently solved state.}
@@ -1521,8 +1528,8 @@ calculation is a clean exterior-only change: it retains the paired tip core
 and EDI support while substantially reducing exterior resolution, and its
 independently propagated path remains within $0.0674~\mu\mathrm{m}$ of the
 reference tips. The $2h_0$--$h_0$--$h_0/2$ comparison changes structured-tip resolution
-with $\eta_e=1$, holding the requested exterior sizing law
-fixed while allowing conforming exterior remeshing. The independently
+while retaining the requested exterior sizing law
+and allowing conforming remeshing of the exterior. The independently
 propagated $2h_0$ path remains within $0.128~\mu\mathrm{m}$ of the
 reference path and preserves the mode-mixity maximum and sign-change
 bracket.
@@ -1603,10 +1610,9 @@ mesh perturbation preserves the characteristic mode-mixity events and
 differs from the reference path by at most $0.0674~\mu\mathrm{m}$ at
 corresponding tips. A separate structured-tip resolution study likewise
 preserves the mode-mixity maximum and sign reversal; its independent
-$2h_0$ path differs by at most $0.128~\mu\mathrm{m}$. Here
-$\eta_e=1$ fixes the requested exterior sizing law while
-structured-tip resolution changes; conforming exterior connectivity is
-not required to remain identical.
+$2h_0$ path differs by at most $0.128~\mu\mathrm{m}$. The structured-tip comparison keeps the requested exterior sizing
+law fixed, although the conforming exterior connectivity can
+differ between resolutions.
 
 The three-level crack-increment study provides the most direct
 evidence of trajectory sensitivity to coupled increment and mesh
