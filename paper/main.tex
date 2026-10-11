@@ -443,15 +443,22 @@ must resolve mode mixity at the scale of $\Delta a$.
 
 \section{Numerical implementation and verification}
 \label{sec:numerics}
-The numerical assessment proceeds from current-tip stress-intensity-factor
-extraction to the response of the recursively generated crack trajectory.
-Prescribed near-tip fields and fixed-geometry comparisons examine the
-extraction procedure without advancing the crack. Independently propagated
-exterior-mesh and structured-tip calculations then test whether small
-discretization differences accumulate through the MTS recurrence.
-A separate three-level family varies the crack increment together with
-mesh and interaction-domain scales. The centered-hole control examines
-reflection symmetry and the local one-step angular response.
+The numerical procedure is presented together with the tests used to assess
+its implementation and sensitivity to discretization. We first specify the
+reference initiation state and the finite-element representation of the
+crack, including the structured near-tip mesh and its resolution levels.
+Stress-intensity factors are then obtained from the interaction integral
+and compared with estimates based on crack-opening displacement. The
+solver and extraction acceptance criteria are followed by two further
+investigations: a coupled refinement of the crack increment and numerical
+length scales, and a centered-hole control of the local MTS response.
+
+The numerical assessment distinguishes tests performed on prescribed
+fields or fixed crack geometries from independently propagated trajectories.
+The former examine SIF extraction without advancing the crack, whereas
+the latter assess how discretization changes influence successive
+crack directions. Their results and physical implications are discussed
+in Section~\ref{sec:results}.
 
 \subsection{Numerical parameters and initiation state}
 \label{sec:numerical-parameters}
@@ -545,9 +552,10 @@ physically compared resolutions are
 These correspond to structured-core scale factors $2$, $1$, and $1/2$.
 The paired-core radius remains $r_{\mathrm{core}}=3$ mm and the EDI annulus remains
 $r_{\mathrm{in}}=0.4$ mm to $r_{\mathrm{out}}=2.6$ mm. The paired cores contain 3318, 12678, and
-49518 T3 elements, respectively. The established four COD windows contain
-19/28/23/18 native points at $2h_0$, 38/55/44/34 at $h_0$, and
-74/108/86/67 at $h_0/2$.
+49518 T3 elements, respectively. COD fitting uses native crack-face
+node pairs, namely corresponding upper and lower T6 nodes at the same
+distance behind the crack tip. Their sampling adequacy is discussed
+with the extraction procedure in Section~\ref{sec:cod-extraction}.
 
 The levels $2h_0$, $h_0$, and $h_0/2$ differ only in the
 prescribed structured-tip scale and the conforming remeshing it
@@ -567,10 +575,10 @@ The $h_0/2$ calculation supplies fixed-geometry refinement evidence
 only and is not independently propagated.
 
 For completeness, Fig.~\ref{fig:mesh-levels} also shows a
-$4h_0$ core ($h_{\mathrm{tip}}=0.10805$ mm), with 10/15/12/9
-native COD samples in the four fitting windows. This mesh is
-included to illustrate the resolution hierarchy, not as a
-physical SIF or MTS comparison level.
+$4h_0$ core ($h_{\mathrm{tip}}=0.10805$ mm) for geometric
+illustration. Its exclusion from physical SIF comparisons is
+explained by the COD sampling criterion in
+Section~\ref{sec:cod-extraction}.
 
 % Figure environment maintained inline in main.tex; graphics remain separate PDFs.
 \begin{figure}[tbp]
@@ -641,12 +649,16 @@ and the colon denotes tensor contraction. The normalization preserves the signed
 % TODO: verified interaction-integral and quadrature references.
 
 \subsection{COD-based extraction comparison}
+\label{sec:cod-extraction}
 Crack-opening displacement (COD) provides a second route to
 stress-intensity factors from the same computed elastic field.
-The native T6 nodes on the upper and lower crack faces are paired
-in the last-segment frame. With $[\![u_i]\!]$ denoting the
-upper-minus-lower jump of displacement component $u_i$ at distance
-$r$ behind the current tip, the apparent COD SIFs are
+Each native crack-face node pair consists of matching upper and
+lower T6 nodes on the last segment, with both nodes located at
+distance $r$ behind the current tip. The displacement jump
+$[\![u_i]\!]$ is the upper-minus-lower difference in component
+$u_i$ at such a pair. These existing nodal positions are used
+directly; no additional interpolation points are introduced.
+The corresponding apparent COD SIFs are
 \begin{equation}
  \begin{bmatrix}K_{\mathrm{I}}^{\mathrm{app}}(r)\\K_{\mathrm{II}}^{\mathrm{app}}(r)\end{bmatrix}
  =\frac{\mu}{\kappa+1}\sqrt{\frac{2\pi}{r}}
@@ -654,15 +666,25 @@ $r$ behind the current tip, the apparent COD SIFs are
  \qquad \kappa=3-4\nu.\label{eq:cod}
 \end{equation}
 Here $\kappa$ is the dimensionless plane-strain Kolosov constant.
-Linear and quadratic fits of these apparent values in
-$r/\Delta a$ are extrapolated to the tip. The four fitting
-windows, $[0.04,0.20]$, $[0.04,0.30]$, $[0.08,0.30]$, and
-$[0.12,0.30]$ times $\Delta a$, contain 38, 55, 44, and
-34 native sampling points on the reference mesh, respectively.
-The resulting eight fits compare extraction procedures, not
-independent physical solutions. Only the EDI values determine
-subsequent MTS directions, and the variation among COD fits is
-not interpreted as a statistical uncertainty interval.
+Linear and quadratic fits of the apparent SIFs against the normalized
+distance $r/\Delta a$ are extrapolated to $r=0$. The four fitting
+intervals are $[0.04,0.20]$, $[0.04,0.30]$, $[0.08,0.30]$, and
+$[0.12,0.30]$. The intervals overlap, so their sampling counts are
+not additive. In the stated order, the numbers of native crack-face
+node pairs are 19, 28, 23, and 18 for the $2h_0$ mesh;
+38, 55, 44, and 34 for the reference $h_0$ mesh; and
+74, 108, 86, and 67 for the $h_0/2$ mesh.
+
+The prescribed qualification criterion requires at least 12 pairs
+in each fitting interval. The illustrative $4h_0$ core provides
+10, 15, 12, and 9 pairs, respectively, and fails this criterion
+in the first and fourth intervals. It is therefore excluded from
+the physical SIF and MTS comparisons. Linear and quadratic fitting
+over the four intervals gives eight COD estimates from the same
+finite-element displacement field, not eight independent elastic
+solutions. Only the EDI SIFs determine subsequent MTS directions,
+and the differences among COD fits do not represent a statistical
+uncertainty interval.
 
 \subsection{Numerical acceptance and extraction checks}
 The assembled stiffness system is reduced to the free degrees of
