@@ -83,7 +83,7 @@ function S = plot_existing_manuscript_figures(varargin)
     S.outputRoot=outRoot;
     S.files={};
 
-    %% Figure 1: trajectory and late detail
+    %% Manuscript Figure 3: accepted trajectory and late-tip detail
     out=fullfile(outRoot,'trajectory');
     local_mkdir(out);
 
@@ -115,7 +115,7 @@ function S = plot_existing_manuscript_figures(varargin)
     xlabel(ax,'$x$ [mm]','Interpreter','latex'); ylabel(ax,'$y$ [mm]','Interpreter','latex');
     legend(ax,'Location','northeast','Box','off','Interpreter','tex');
     local_style_axis(ax);
-    S.files{end+1}=local_export_axis(ax,out,'overview'); %#ok<AGROW>
+    S.files{end+1}=local_export_trajectory_equalwidth(ax,out,'overview'); %#ok<AGROW>
 
     f=local_figure(vis,[17.0 4.5]); ax=axes(f); hold(ax,'on');
     plot(ax,accepted(16:end,1),accepted(16:end,2),'-o','Color',C.blue, ...
@@ -142,10 +142,12 @@ function S = plot_existing_manuscript_figures(varargin)
     text(ax,p24(1)-0.45,p24(2)-0.75,'$P_{24}$ unsolved', ...
         'Interpreter','latex','Color',C.orange, ...
         'HorizontalAlignment','right','VerticalAlignment','top');
-    axis(ax,'equal'); xlim(ax,[258 302]); ylim(ax,[-27.3 -21.3]);
+    % Use the same FINAL y-limits as the earlier published export, whose
+    % lower bound was extended from -27.3 to -29 mm for label clearance.
+    axis(ax,'equal'); xlim(ax,[258 302]); ylim(ax,[-29 -21.3]);
     xlabel(ax,'$x$ [mm]','Interpreter','latex'); ylabel(ax,'$y$ [mm]','Interpreter','latex');
     local_style_axis(ax);
-    S.files{end+1}=local_export_axis(ax,out,'late_detail'); %#ok<AGROW>
+    S.files{end+1}=local_export_trajectory_equalwidth(ax,out,'late_detail'); %#ok<AGROW>
     if opt.OnlyTrajectory
         % Do not redraw or overwrite unrelated manuscript figures.
         return;
@@ -313,6 +315,82 @@ function local_style_axis(ax)
     set(ax,'FontName','Times New Roman','FontSize',8.5, ...
         'LineWidth',0.75,'TickDir','out','Box','on');
     grid(ax,'off');
+end
+
+function files=local_export_trajectory_equalwidth(ax,outDir,name)
+% Exact SAME printed width for both stacked manuscript Figure 3 panels.
+% The existing PDFs already shared a page width, but axis equal shrank
+% the overview plot box because its data range has a different aspect.
+% Derive the panel height from the numerical x/y spans so the plot BOX
+% also occupies precisely the same physical width, without distortion.
+% Only layout/typography is touched; the audited vertices are unchanged.
+    P=publication_style();
+    pageWidth_cm=P.fullWidth_cm; % 0.94 * manuscript text width
+    left_cm=1.65;
+    right_cm=0.50;
+    bottom_cm=1.05;
+    top_cm=0.45;
+    plotWidth_cm=pageWidth_cm-left_cm-right_cm;
+
+    oldXLim=ax.XLim;
+    oldYLim=ax.YLim;
+    xRange=diff(oldXLim);
+    yRange=diff(oldYLim);
+    assert(xRange>0&&yRange>0,'paperfig:InvalidTrajectoryLimits', ...
+        'Figure 3 axis limits must be strictly increasing.');
+    plotHeight_cm=plotWidth_cm*yRange/xRange;
+    pageHeight_cm=bottom_cm+plotHeight_cm+top_cm;
+
+    fig=ancestor(ax,'figure');
+    set(fig,'Units','centimeters', ...
+        'Position',[2 2 pageWidth_cm pageHeight_cm], ...
+        'Color','w','Renderer','painters');
+    set(ax,'Units','centimeters', ...
+        'Position',[left_cm bottom_cm plotWidth_cm plotHeight_cm], ...
+        'FontName',P.fontName,'FontSize',P.tick_pt, ...
+        'TickLabelInterpreter','latex','LineWidth',.8,'TickDir','out');
+    % The physical plot-box aspect is exactly xRange/yRange, allowing
+    % MATLAB's equal-data-aspect constraint to use the whole plot width.
+    axis(ax,'equal');
+    xlim(ax,oldXLim);
+    ylim(ax,oldYLim);
+
+    for obj=[ax.XLabel,ax.YLabel,ax.ZLabel,ax.Title]
+        set(obj,'Interpreter','latex','FontName',P.fontName, ...
+            'FontSize',P.label_pt);
+    end
+    annotations=findall(ax,'Type','text');
+    for obj=annotations(:).'
+        set(obj,'Interpreter','latex','FontName',P.fontName);
+        if ~ismember(obj,[ax.XLabel,ax.YLabel,ax.ZLabel,ax.Title])
+            obj.FontSize=P.annotation_pt;
+        end
+    end
+    for lg=findall(fig,'Type','legend').'
+        set(lg,'Interpreter','latex','FontName',P.fontName, ...
+            'FontSize',P.legend_pt);
+    end
+    for line=findall(ax,'Type','line').'
+        if ~strcmp(line.LineStyle,'none')
+            line.LineWidth=P.lineWidth_pt;
+        end
+        if ~strcmp(line.Marker,'none')
+            line.MarkerSize=P.markerSize_pt;
+        end
+    end
+
+    pdfFile=fullfile(outDir,[name '.pdf']);
+    pngFile=fullfile(outDir,[name '.png']);
+    set(fig,'PaperUnits','centimeters', ...
+        'PaperSize',[pageWidth_cm pageHeight_cm], ...
+        'PaperPosition',[0 0 pageWidth_cm pageHeight_cm], ...
+        'PaperPositionMode','manual');
+    drawnow;
+    print(fig,pdfFile,'-dpdf','-painters');
+    print(fig,pngFile,'-dpng','-r220');
+    fprintf('Figure 3 %-11s: PDF width %.3f cm, plot width %.3f cm, height %.3f cm\\n', ...
+        name,pageWidth_cm,plotWidth_cm,pageHeight_cm);
+    files={pdfFile,pngFile};
 end
 
 function files=local_export_axis(ax,outDir,name)
