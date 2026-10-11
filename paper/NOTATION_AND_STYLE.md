@@ -63,7 +63,8 @@ It is acceptable to write \(K_{\mathrm{II}}/K_{\mathrm{I}}\) at the point of def
 | \(h_{\mathrm{far}}\) | Requested far-field exterior mesh size cap |
 | \(L_{\mathrm{tr}}\) | Grading transition length |
 | \(2h_0,h_0,h_0/2\) | Physically evaluated structured-tip resolution family on prescribed crack geometries |
-| M1 | Coarser exterior-sizing law with the production structured core retained |
+| M0 | Reference exterior mesh-sizing law: far-field cap 2.5 mm, grading slope 0.10, boundary-metric growth 0.25; used with the reference and structured-tip studies |
+| M1 | Coarser exterior mesh-sizing law: far-field cap 5.0 mm, grading slope 0.15, boundary-metric growth 0.35; used for exterior-mesh comparisons and in dimensionless form for the 4/2/1-mm refinement |
 | Native crack-face node pair | Corresponding existing upper and lower T6 nodes at the same distance behind the current crack tip; COD uses their displacement jump without inserting additional sampling locations |
 | \(\delta y,\delta r,\delta\theta\) | Differences of matched-tip position and absolute segment direction between propagated trajectories; define their direction at first use |
 
@@ -102,6 +103,14 @@ Separate the **direction-selection mechanism** (the signed MTS turn determined b
 Interpret fixed-geometry extraction, independently propagated mesh perturbations, and coupled 4/2/1-mm refinement only within their respective numerical designs. The latter changes several length scales together and cannot establish an isolated increment-error estimate, a formal convergence order, or a unique smooth limiting curve. The centered-hole angular slope refers only to the prescribed one-step map. The accepted path ends at \(P_{23}\), not at the qualified but unsolved \(P_{24}\) geometry.
 
 Discussion paragraphs should synthesize explanations and limitations rather than reproduce tables of values. Conclusions should identify the method, the observed directional phenomenon, the scope of numerical support, and the essential outstanding questions without repeating the Results section.
+
+## Authorship and methodological attribution
+
+The manuscript is **single-authored by Danylo Selivanov**, S.P. Timoshenko Institute of Mechanics, National Academy of Sciences of Ukraine, Kyiv, Ukraine. Correspondence: `fract@inmech.kyiv.ua`. Do not add a coauthor or an acknowledgment without a separate contribution-based decision and appropriate permission.
+
+The mesh-generation procedure employs a narrow auxiliary notch merged into the circular hole, followed by collapse of its opposing crack faces onto a zero-width crack line while keeping the upper/lower nodal identities distinct. Its conceptual relation to the previously published cohesive meshing-channel approach is cited as `BogdanovSelivanov2026`. The current LEFM crack faces are traction-free; there is no cohesive law.
+
+M0 and M1 identify **exterior mesh-sizing laws**, not complete finite-element meshes. M0 is used for the reference trajectory and structured-tip-resolution studies. M1 is used for fixed-geometry and independently propagated exterior sensitivity tests, and its dimensionless law underlies the coupled 4/2/1-mm refinement. The production 4-mm M0 path and the coarse-family 4-mm path are different calculations.
 
 ## Main-text and caption distinction
 
