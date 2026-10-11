@@ -4,7 +4,7 @@ Status: **Batch 1 working convention** (2026-10-11). This is an editorial guide,
 
 ## Principles
 
-1. Use italic symbols for physical quantities and running mathematical indices. Use **upright (roman) descriptive subscripts**, e.g., \(r_{\mathrm{in}}\), \(r_{\mathrm{out}}\), \(h_{\mathrm{tip}}\), \(a_{\mathrm{LS}}\), and \(K_{\mathrm{II}}\).
+1. Use italic symbols for physical quantities and mathematical component or running indices, including \(\sigma_{tt}\) (the tangential--tangential stress component) and \(\sigma_{12}\). Use **upright (roman) descriptive subscripts**, e.g., \(r_{\mathrm{in}}\), \(r_{\mathrm{out}}\), \(h_{\mathrm{tip}}\), \(a_{\mathrm{LS}}\), \(x_{\mathrm c}\), and \(K_{\mathrm{II}}\).
 2. Define **every symbol at its first substantive use**, in the introducing sentence or immediately following its defining equation. State the physical meaning, sign convention, and units where applicable.
 3. Introduce an abbreviation or mathematical alias only when it is used repeatedly or substantially simplifies the equations. Avoid defining several symbols for the same quantity.
 4. Keep manuscript notation distinct from MATLAB configuration-field names. Mathematical typography and descriptive subscripts do not require changes to code variables or numerical archives.
@@ -40,10 +40,10 @@ The approved figure labels the center coordinates as \(x_{\mathrm{c}},y_{\mathrm
 | \(E,\nu\) | Young's modulus and Poisson's ratio |
 | \(\lambda,\mu\) | First and second Lamé constants |
 | \(\sigma\), \(\sigma_{\mathrm{ini}}\) | Applied tensile traction and prescribed tensile-stress threshold for initiation |
-| \(\sigma_{\mathrm{tt}}\), \(\phi_*\) | Tangential stress around the uncracked hole and its selected maximum-tension angle |
+| \(\sigma_{tt}\), \(\phi_*\) | Tangential--tangential stress component around the uncracked hole (italic component indices) and its selected maximum-tension angle |
 | \(\Lambda_{\mathrm{ini}}\) | Initiation load multiplier (distinct from \(\lambda\)) |
 | \(K_{\mathrm{I}}^{(k)},K_{\mathrm{II}}^{(k)}\) | Signed opening- and sliding-mode stress-intensity factors at \(P_k\) |
-| \(q_{\mathrm{K}}^{(k)}=K_{\mathrm{II}}^{(k)}/K_{\mathrm{I}}^{(k)}\) | Signed mode-mixity ratio, defined for \(K_{\mathrm{I}}^{(k)}>0\) |
+| \(q_{\mathrm{K}}^{(k)}\) | Dimensionless signed mode-mixity ratio, defined by the numbered Eq. \`eq:mode-mixity\` for \(K_{\mathrm{I}}^{(k)}>0\) |
 | \(I^{(m)}\) | Mode-\(m\) interaction integral |
 | \(S(\alpha),T(\alpha)\) | Angular amplitudes of circumferential normal and radial--circumferential shear stresses, respectively |
 | \(\kappa=3-4\nu\) | Dimensionless plane-strain Kolosov constant in COD extraction |

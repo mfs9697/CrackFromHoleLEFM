@@ -273,7 +273,7 @@ not a load-versus-time crack-growth history.
 
 \subsection{Stress-selected initiation and the frozen frame}
 The uncracked-hole elastic field supplies the tangential boundary stress
-$\sigma_{\mathrm{tt}}(\phi)$, where $\phi$ is measured counterclockwise from the
+$\sigma_{tt}(\phi)$, where $\phi$ is measured counterclockwise from the
 positive Cartesian $x$ direction. Its maximum tensile value selects the
 initiation point; the numerical boundary evaluation is described in
 Section~\ref{sec:numerics}. Let $\sigma_{\mathrm{ini}}$ denote the
@@ -284,10 +284,10 @@ tensile stress under the reference loading; it is distinct from the
 first Lam\'e coefficient $\lambda$. The initiation rule is
 \begin{equation}
  \phi_* = \mathop{\operatorname{arg\,max}}_\phi
-      \sigma_{\mathrm{tt}}^{+}(\phi;\sigma),\qquad
+      \sigma_{tt}^{+}(\phi;\sigma),\qquad
  \Lambda_{\mathrm{ini}}=
-      \frac{\sigma_{\mathrm{ini}}}{\max_\phi\sigma_{\mathrm{tt}}^{+}(\phi;\sigma)},
- \quad \sigma_{\mathrm{tt}}^{+}=\max(\sigma_{\mathrm{tt}},0).\label{eq:initiation}
+      \frac{\sigma_{\mathrm{ini}}}{\max_\phi\sigma_{tt}^{+}(\phi;\sigma)},
+ \quad \sigma_{tt}^{+}=\max(\sigma_{tt},0).\label{eq:initiation}
 \end{equation}
 The fitted angle $\phi_*$ specifies the initiation point and the
 outward material-side radial normal:
@@ -342,11 +342,17 @@ stress-intensity factors are defined by
  \label{eq:sifdefinition}
 \end{equation}
 Here $\sigma_{22}$ and $\sigma_{12}$ are the stress components in
-the current-tip frame. For positive $K_{\mathrm{I}}^{(k)}$, define
-the signed mode-mixity ratio
-$q_{\mathrm{K}}^{(k)}=K_{\mathrm{II}}^{(k)}/K_{\mathrm{I}}^{(k)}$.
-Both intensities are extracted from an elastic solution that retains
-the complete preceding crack geometry.
+the current-tip frame. The signed mode-mixity ratio is defined for
+positive opening-mode intensity by
+\begin{equation}
+ q_{\mathrm{K}}^{(k)}
+ =\frac{K_{\mathrm{II}}^{(k)}}{K_{\mathrm{I}}^{(k)}},
+ \qquad K_{\mathrm{I}}^{(k)}>0.
+ \label{eq:mode-mixity}
+\end{equation}
+This dimensionless ratio has the sign of the sliding-mode intensity.
+Both stress-intensity factors are extracted from an elastic solution
+that retains the complete preceding crack geometry.
 
 \subsection{The implemented MTS rule}
 The maximum tangential stress (MTS) criterion determines the direction
@@ -696,7 +702,8 @@ differences are evaluated only at exact common crack lengths, using the
 4-mm grid as the common set; no path interpolation is used for those
 comparisons. The location of local symmetry is reported separately by
 linear interpolation between the two solved states that bracket
-$q_{\mathrm{K}}=K_{\mathrm{II}}/K_{\mathrm{I}}=0$ and is therefore used only as a sub-increment diagnostic.
+$q_{\mathrm{K}}=0$ [Eq.~\eqref{eq:mode-mixity}] and is therefore
+used only as a sub-increment diagnostic.
 
 \subsection{Centered-hole symmetric control}
 The directional response of the algorithm is examined separately in a
