@@ -108,7 +108,7 @@ def normalize(key, axes_plate, output):
     writer.add_metadata({'/Subject': 'Layout-only wrapping of retained accepted vector evidence; no numerical reconstruction'})
     output = Path(output); output.parent.mkdir(parents=True, exist_ok=True)
     with output.open('wb') as f: writer.write(f)
-    report = dict(source=str(source), source_sha256=profile['sha256'], panelClass=profile['class'],
+    report = dict(source=source.relative_to(PAPER.parent).as_posix(), source_sha256=profile['sha256'], panelClass=profile['class'],
                   page_mm=spec['page'], axes_mm=spec['axes'], graphTransform=transform,
                   xlim=[135,300] if profile['class']=='top' else [0,100], ylim=profile['ylim'],
                   originalGraphOperations_sha256=graph_sha, originalGraphOperationCount=n,

@@ -116,3 +116,17 @@ history**, which is still unavailable. Its plotted evidence is preserved and
 layout is reproducible from the committed immutable PDFs. This pass does not
 independently revalidate missing raw results. Original legend glyph typography
 is retained; it is not falsely certified as newly typeset MATLAB LaTeX.
+
+## Repository cleanup and portable provenance
+
+Final publication PDFs and immutable retained vector source PDFs stay tracked.
+Temporary `paper/figures_review/` and `paper/figures/mesh_levels_review/`
+are excluded from Git; future plot-only reviews use the system temp folder.
+The previously changed compiled `paper/main.pdf` was restored to the base
+commit and is not part of the figure-source revisions.
+
+Retained-panel metadata refers to immutable inputs using repository-relative
+`paper/data/retained_figure_7_9/...` paths. The redraw manifest uses stable
+`repo:...` identifiers; subsequent `redraw_all_figures.m` runs serialize
+the same portable form. The MATLAB caller's returned Report is unchanged.
+This hygiene pass modifies no numerical data or approved figure artwork.

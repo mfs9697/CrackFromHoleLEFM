@@ -18,3 +18,7 @@
 # OS clutter
 .DS_Store
 Thumbs.db
+
+# Scratch figures: keep reviewed publication PDFs, not proof exports
+/paper/figures_review/
+/paper/figures/mesh_levels_review/

@@ -41,7 +41,8 @@ end
 retain('mesh_levels',{'tip_mesh_H2','tip_mesh_H1','tip_mesh_H0'}, ...
     'Original coordinates/connectivity not saved; core generator deliberately not called');
 fid=fopen(fullfile(output,'redraw_manifest.json'),'wb');assert(fid>=0);
-fwrite(fid,unicode2native(jsonencode(Report),'UTF-8'),'uint8');fclose(fid);
+portable=local_portable_manifest(Report,root,output);
+fwrite(fid,unicode2native(jsonencode(portable),'UTF-8'),'uint8');fclose(fid);
 fprintf('Plot-only workflow complete. Retained-source limitations are in redraw_manifest.json.\n');
 
     function retain(folder,names,reason)
@@ -56,5 +57,38 @@ fprintf('Plot-only workflow complete. Retained-source limitations are in redraw_
             if isempty(Report.retainedGraphics),Report.retainedGraphics=row;else,Report.retainedGraphics(end+1)=row;end
         end
         fprintf('Retained %s: %s\n',folder,reason);
+    end
+end
+
+function value=local_portable_manifest(value,repositoryRoot,outputRoot)
+% Serialize stable, machine-independent paths without changing the caller's
+% returned MATLAB Report struct or the original source provenance.
+    if isstruct(value)
+        for j=1:numel(value)
+            keys=fieldnames(value(j));
+            for k=1:numel(keys)
+                key=keys{k};
+                value(j).(key)=local_portable_manifest( ...
+                    value(j).(key),repositoryRoot,outputRoot);
+            end
+        end
+    elseif iscell(value)
+        for j=1:numel(value)
+            value{j}=local_portable_manifest(value{j},repositoryRoot,outputRoot);
+        end
+    elseif isstring(value)
+        for j=1:numel(value)
+            value(j)=string(local_portable_manifest(char(value(j)),repositoryRoot,outputRoot));
+        end
+    elseif ischar(value) && isrow(value)
+        if strcmpi(value,repositoryRoot)
+            value='repo:.';
+        elseif startsWith(value,[repositoryRoot filesep],'IgnoreCase',true)
+            value=['repo:' strrep(value(numel(repositoryRoot)+2:end),filesep,'/')];
+        elseif strcmpi(value,outputRoot)
+            value='output:.';
+        elseif startsWith(value,[outputRoot filesep],'IgnoreCase',true)
+            value=['output:' strrep(value(numel(outputRoot)+2:end),filesep,'/')];
+        end
     end
 end

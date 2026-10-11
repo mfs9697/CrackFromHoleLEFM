@@ -24,6 +24,7 @@ def test(review_root):
         reader = PdfReader(source)
         graph, digest, count = tool.layer(reader,p['graph'])
         meta = json.loads((root/(path+'.layout.json')).read_text())
+        assert meta['source'] == f'paper/data/retained_figure_7_9/{key}.pdf', 'Retained source must be repository-relative'
         assert meta['originalGraphOperations_sha256'] == digest
         assert meta['originalGraphOperationCount'] == count
         assert meta['numericalReconstruction'] is False and meta['rasterization'] is False
