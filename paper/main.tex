@@ -207,14 +207,16 @@ supplementary diagnostics document numerical acceptance.
 Figure~\ref{fig:geometry-loading} introduces the plate geometry, the
 coordinate conventions, and the applied loading. The specimen has
 width $2A$ and height $B$, with a circular hole of radius $R$ whose
-center is denoted by $(x_c,y_c)$ in the schematic. The figure measures
-$y_c$ upward from the lower plate edge. For the computational
-formulation we use a Cartesian frame with origin at the midpoint of
-the left edge, $x$ pointing right and $y$ upward. Thus
+center is denoted in the schematic by $(x_{\mathrm{c}},y_{\mathrm{c}})$, where $x_{\mathrm{c}}$
+and $y_{\mathrm{c}}$ are the coordinates measured from the lower-left corner.
+The computational Cartesian frame has its origin at the midpoint of
+the left edge, with $x$ pointing right and $y$ upward. Its rectangular
+domain is
 \[
-  \Omega_{\mathrm{rect}}=[0,2A]\times[-B/2,B/2],
-  \qquad (x_c,y_c^{\mathrm{comp}})=(x_c,y_c-B/2).
+  \Omega_{\mathrm{rect}}=[0,2A]\times[-B/2,B/2].
 \]
+In this frame the hole center is $(x_{\mathrm{c}},y_{\mathrm{c}}-B/2)$; no separate symbol
+for the shifted center ordinate is needed.
 The curved line emerging from the hole illustrates an admissible
 crack path; it is schematic and does not prescribe the computed
 trajectory. The initiation point $P_0$ is selected from the
@@ -227,7 +229,7 @@ prescribed. Subsequent directions follow from the current-tip SIFs.
   \includegraphics[width=0.78\textwidth]{figures/geometry_loading/specimen_geometry.pdf}
   \caption{Specimen geometry and tensile loading. The plate has width $2A$
   and height $B$, and the circular hole has radius $R$ and center
-  $(x_c,y_c)$ in the schematic's lower-left coordinate system. The
+  $(x_{\mathrm{c}},y_{\mathrm{c}})$ in the schematic's lower-left coordinate system. The
   computational $y$ coordinate is shifted by $-B/2$ relative to the sketch.
   The symbolic sketch is not drawn to the numerical scale.
   The arrows indicate outward tensile tractions of unsigned magnitude
@@ -271,31 +273,34 @@ not a load-versus-time crack-growth history.
 
 \subsection{Stress-selected initiation and the frozen frame}
 The uncracked-hole elastic field supplies the tangential boundary stress
-$\sigma_{tt}(\phi)$, where $\phi$ is measured counterclockwise from the
+$\sigma_{\mathrm{tt}}(\phi)$, where $\phi$ is measured counterclockwise from the
 positive Cartesian $x$ direction. Its maximum tensile value selects the
 initiation point; the numerical boundary evaluation is described in
-Section~\ref{sec:numerics}. Let $\sigma_c$ denote the tensile
-initiation threshold. The dimensionless multiplier $\Lambda_{\mathrm{ini}}$ is the ratio of the
-tensile initiation threshold to the maximum tensile stress under the
-reference loading; it is distinct from the first Lam\'e coefficient
-$\lambda$. The initiation rule is
+Section~\ref{sec:numerics}. Let $\sigma_{\mathrm{ini}}$ denote the
+prescribed tensile-stress threshold for initiation, not a cohesive
+strength. The dimensionless initiation load multiplier
+$\Lambda_{\mathrm{ini}}$ is the ratio of this threshold to the maximum
+tensile stress under the reference loading; it is distinct from the
+first Lam\'e coefficient $\lambda$. The initiation rule is
 \begin{equation}
  \phi_* = \mathop{\operatorname{arg\,max}}_\phi
-      \sigma_{tt}^{+}(\phi;\sigma),\qquad
+      \sigma_{\mathrm{tt}}^{+}(\phi;\sigma),\qquad
  \Lambda_{\mathrm{ini}}=
-      \frac{\sigma_c}{\max_\phi\sigma_{tt}^{+}(\phi;\sigma)},
- \quad \sigma_{tt}^{+}=\max(\sigma_{tt},0).\label{eq:initiation}
+      \frac{\sigma_{\mathrm{ini}}}{\max_\phi\sigma_{\mathrm{tt}}^{+}(\phi;\sigma)},
+ \quad \sigma_{\mathrm{tt}}^{+}=\max(\sigma_{\mathrm{tt}},0).\label{eq:initiation}
 \end{equation}
 The fitted angle $\phi_*$ specifies the initiation point and the
 outward material-side radial normal:
 \begin{equation}
- P_0=\begin{bmatrix}x_c+R\cos\phi_*\\
-                     y_c^{\mathrm{comp}}+R\sin\phi_*
+ P_0=\begin{bmatrix}x_{\mathrm{c}}+R\cos\phi_*\\
+                     y_{\mathrm{c}}-B/2+R\sin\phi_*
      \end{bmatrix}.
  \label{eq:mouth}
 \end{equation}
-The initiation condition supplies the location; it is not reused as
-a growth or arrest criterion along the crack.
+The stress-based initiation condition supplies the location and the
+corresponding load multiplier; it is not reused as a growth or arrest
+criterion along the crack. No cohesive traction--separation law is
+introduced in the present LEFM formulation.
 
 The frozen basis is
 \begin{equation}
@@ -346,9 +351,11 @@ the complete preceding crack geometry.
 \subsection{The implemented MTS rule}
 The maximum tangential stress (MTS) criterion determines the direction
 of a new segment relative to the preceding one. Let $\alpha$ be the
-counterclockwise turning angle, and write $c=\cos(\alpha/2)$ and
-$s=\sin(\alpha/2)$. The angular coefficients of the leading crack-tip
-stress field are
+counterclockwise turning angle in local polar coordinates centered at
+the crack tip, and write $c=\cos(\alpha/2)$ and
+$s=\sin(\alpha/2)$. The functions $S(\alpha)$ and $T(\alpha)$ are
+the angular amplitudes of the leading circumferential normal stress
+and radial--circumferential shear stress, respectively:
 \begin{align}
  S(\alpha)&=K_{\mathrm{I}}^{(k)}c^3
              -3K_{\mathrm{II}}^{(k)}s c^2,\label{eq:stt}\\
@@ -356,8 +363,8 @@ stress field are
              +K_{\mathrm{II}}^{(k)}c(1-3s^2).
  \label{eq:trt}
 \end{align}
-The physical stresses contain the common factor $1/\sqrt{2\pi r}$.
-Since $S'(\alpha)=-3T(\alpha)/2$, the stationary tangential-stress
+Both stresses have the common singular factor $1/\sqrt{2\pi r}$.
+Since $S'(\alpha)=-3T(\alpha)/2$, the stationary circumferential-stress
 directions satisfy $T(\alpha)=0$. The numerical procedure selects the
 tensile root continuously connected to straight extension as
 $K_{\mathrm{II}}^{(k)}\to0$. The accepted states have positive opening
@@ -407,13 +414,13 @@ decreasing increments and suppose that the computed polygons
 approach an arc-length-parametrized curve $\bm r(a)$ with a
 differentiable tangent angle $\theta(a)$. If, in addition, their
 discrete turning densities converge at corresponding crack lengths
-to the signed curvature
-$\kappa(a)=\dd\theta/\dd a$, the small-turn MTS expansion implies
+to the signed curvature $\dd\theta/\dd a$, the small-turn
+MTS expansion implies
 \begin{equation}
  \frac{q_{\mathrm{K}}^{(k)}}{\Delta a}
  =-\frac12\frac{\Delta\theta_{k+1}}{\Delta a}
   +O((\Delta a)^2)
- \longrightarrow-\frac{\kappa(a)}{2}.
+ \longrightarrow-\frac12\frac{\dd\theta}{\dd a}.
  \label{eq:curvature-mts}
 \end{equation}
 Indeed, a bounded turning density implies
@@ -431,13 +438,13 @@ must resolve mode mixity at the scale of $\Delta a$.
 \subsection{Numerical parameters and initiation state}
 \label{sec:numerical-parameters}
 For the computations, $2A=\PlateAMM$ mm, $B=200$ mm, and
-$R=\HoleRMM$ mm. The center is $(x_c,y_c)=(170,80)$ mm in the
+$R=\HoleRMM$ mm. The center is $(x_{\mathrm{c}},y_{\mathrm{c}})=(170,80)$ mm in the
 lower-left convention of Fig.~\ref{fig:geometry-loading}; in the
 midheight computational frame it is
 $(\HoleCxMM,\HoleCyMM)$ mm. The material constants are
 $E=210$ GPa and $\nu=0.30$ (plane strain). The reference
 tensile traction is $\sigma=1$ MPa, and the tensile initiation
-threshold is $\sigma_c=300$ MPa.
+threshold is $\sigma_{\mathrm{ini}}=300$ MPa.
 
 The numerical hole boundary uses a 480-segment polygon retaining
 the fitted initiation point. Stresses from six-node quadratic triangles (T6) at three material-side
@@ -611,6 +618,7 @@ the tip at distance $r$, the apparent COD SIFs are
  \begin{bmatrix}{[\![u_2]\!]}\\{[\![u_1]\!]}\end{bmatrix},
  \qquad \kappa=3-4\nu.\label{eq:cod}
 \end{equation}
+Here $\kappa$ is the dimensionless plane-strain Kolosov constant.
 Linear and quadratic fits in $r/\Delta a$ extrapolate these quantities to
 $r=0$. The four fitting windows are $[0.04,0.20]$, $[0.04,0.30]$,
 $[0.08,0.30]$, and $[0.12,0.30]$ times $\Delta a$, with 38, 55, 44,

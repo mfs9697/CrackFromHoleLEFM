@@ -19,7 +19,7 @@ Status: **Batch 1 working convention** (2026-10-11). This is an editorial guide,
 | --- | --- |
 | \(2A\), \(B\) | Full plate width and height in the manuscript; respectively 300 and 200 mm in the reference problem |
 | \(R\) | Hole radius |
-| \((x_c,y_c)\) | Hole-center coordinates in the midheight computational frame; the approved schematic measures the ordinate from the lower edge |
+| \((x_{\mathrm{c}},y_{\mathrm{c}})\) | Hole-center coordinates in the schematic, measured from the lower-left corner; the computational center has ordinate \(y_{\mathrm{c}}-B/2\) |
 | \(\phi_*\) | Stress-selected initiation angle, counterclockwise from the positive global \(x\)-axis |
 | \(P_0\), \(P_k\) | Hole-boundary initiation point and current tip after \(k\) segments |
 | \(\Gamma_k\) | Complete existing crack polyline at step \(k\) |
@@ -28,10 +28,10 @@ Status: **Batch 1 working convention** (2026-10-11). This is an editorial guide,
 | \(\theta_k\), \(\Delta\theta_{k+1}\) | Absolute segment angle in frozen frame and next incremental MTS turn; positive is counterclockwise |
 | \(\bm e_1^{(k)},\bm e_2^{(k)}\) | Local last-segment forward direction and counterclockwise normal at the tip |
 | \(\alpha_{\mathrm{MTS}}\) | MTS turning-angle function; **not** a second independently evolving crack angle |
-| \(\kappa(a)\) | Signed curvature of a *hypothetical smooth limiting trajectory*, not the classical curvature of a polygon |
+| \(\mathrm{d}\theta/\mathrm{d}a\) | Signed curvature of a *hypothetical smooth limiting trajectory*, not pointwise curvature of a polygon |
 | \(a_{\mathrm{LS}}\) | Linearly interpolated crack length where \(K_{\mathrm{II}}/K_{\mathrm{I}}\) changes sign; not a solved state |
 
-The current figure uses the accepted geometry labels \(x_c,y_c\). Preserve its artwork. The MATLAB configuration describes full width with \`C.A=0.300\` m and half-height with \`C.B=0.100\` m; the manuscript uses \(2A=0.300\) m and \(B=0.200\) m. These conventions must not be conflated.
+The approved figure labels the center coordinates as \(x_{\mathrm{c}},y_{\mathrm{c}}\) in a lower-left frame; preserve its artwork. The computational origin is at the left-edge midpoint, and the hole-center ordinate there is \(y_{\mathrm{c}}-B/2\), not a separate variable. Thus the schematic center \((170,80)\) mm corresponds to \((170,-20)\) mm computationally. The MATLAB configuration describes full width with \`C.A=0.300\` m and half-height with \`C.B=0.100\` m; the manuscript uses \(2A=0.300\) m and \(B=0.200\) m. These conventions must not be conflated.
 
 ## Elasticity and fracture mechanics
 
@@ -39,12 +39,14 @@ The current figure uses the accepted geometry labels \(x_c,y_c\). Preserve its a
 | --- | --- |
 | \(E,\nu\) | Young's modulus and Poisson's ratio |
 | \(\lambda,\mu\) | First and second Lamé constants |
-| \(\sigma\), \(\sigma_c\) | Applied tensile traction magnitude and stress-based initiation threshold |
-| \(\sigma_{tt}\), \(\phi_*\) | Tangential stress around the uncracked hole and its selected maximum-tension angle |
+| \(\sigma\), \(\sigma_{\mathrm{ini}}\) | Applied tensile traction and prescribed tensile-stress threshold for initiation |
+| \(\sigma_{\mathrm{tt}}\), \(\phi_*\) | Tangential stress around the uncracked hole and its selected maximum-tension angle |
 | \(\Lambda_{\mathrm{ini}}\) | Initiation load multiplier (distinct from \(\lambda\)) |
 | \(K_{\mathrm{I}}^{(k)},K_{\mathrm{II}}^{(k)}\) | Signed opening- and sliding-mode stress-intensity factors at \(P_k\) |
 | \(q_{\mathrm{K}}^{(k)}=K_{\mathrm{II}}^{(k)}/K_{\mathrm{I}}^{(k)}\) | Signed mode-mixity ratio, defined for \(K_{\mathrm{I}}^{(k)}>0\) |
 | \(I^{(m)}\) | Mode-\(m\) interaction integral |
+| \(S(\alpha),T(\alpha)\) | Angular amplitudes of circumferential normal and radial--circumferential shear stresses, respectively |
+| \(\kappa=3-4\nu\) | Dimensionless plane-strain Kolosov constant in COD extraction |
 | \(w\) | Scalar radial weight used for the equivalent domain integral; not to be confused with \(q_{\mathrm K}\) |
 | \(E'=E/(1-\nu^2)\) | Plane-strain effective modulus |
 | EDI, COD | Equivalent domain integral and crack-opening displacement; first expand in prose before abbreviation |
@@ -69,12 +71,12 @@ Descriptive scale factors such as \(\eta_c\) and \(\eta_e\) should appear only i
 ## Required scientific distinctions
 
 - **One-step centered-hole angular response:** the fitted slope \(F'(0)\approx-0.11415\) is a restricted angular response of a fixed family of two-segment geometries, not proof of attraction or stability of the full evolving crack.
-- **Mode-mixity/curvature relation:** the MTS small-mixity expansion is analytic; the relation \(q_{\mathrm K}/\Delta a\to-\kappa/2\) is *conditional* on an appropriately smooth limiting path, convergent discrete turning densities, and extraction accuracy on the relevant scale.
+- **Mode-mixity/curvature relation:** the MTS small-mixity expansion is analytic; the relation \(q_{\mathrm K}/\Delta a\to-\frac12\,\mathrm{d}\theta/\mathrm{d}a\) is *conditional* on an appropriately smooth limiting path, convergent discrete turning densities, and extraction accuracy on the relevant scale.
 - **Three-level increment family:** \(4/2/1\) mm calculations independently propagate their paths while absolute near-tip, EDI, transition, and exterior scales change together. They provide a coupled increment/discretization refinement study, not a pure increment experiment or formal convergence theorem.
 - **Characteristic events:** the positive mode-mixity maximum, a bracketed sign change, and reversed MTS turning direction are observed in the accepted discrete solutions. The interpolated zero is not an independent physical solution.
 - **Near free boundary:** shrinking ligament and rising \(K_{\mathrm I}\) are recorded; attributing redirection uniquely to boundary proximity requires a separate control.
 - **Accepted states:** the reference physical history ends at \(P_{23}\). The qualified \(P_{24}\) geometry has no accepted physical solution.
-- **First segment:** the initiation site is selected from the uncracked-hole stress; the initial outward-normal segment is prescribed, not selected by MTS. Only one active crack is considered.
+- **First segment and initiation stress:** the initiation site is selected from the uncracked-hole tangential stress. The adopted threshold \(\sigma_{\mathrm{ini}}=300\) MPa determines the initiation load multiplier \(\Lambda_{\mathrm{ini}}\); it is not a CZM cohesive strength. The initial outward-normal segment is prescribed, not selected by MTS. No cohesive traction--separation law or subsequent strength-based propagation criterion is introduced; only one active crack is considered.
 
 ## Prose conventions
 
