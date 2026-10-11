@@ -19,7 +19,9 @@ function S = plot_existing_manuscript_figures(varargin)
 %       'OutputRoot',fullfile(pwd,'paper','figures_review'));
 %   S = plot_existing_manuscript_figures('OnlyIntensities',true, ...
 %       'OutputRoot',fullfile(pwd,'paper','figures_review'));
-%       % Isolated Figure 3 or Figure 4 proof, without other overwrites.
+%   S = plot_existing_manuscript_figures('OnlyLate',true, ...
+%       'OutputRoot',fullfile(pwd,'paper','figures_review'));
+%       % Isolated Figure 3, 4 or 5 proof, without other overwrites.
 %
 % Output:
 %   paper/figures/trajectory/
@@ -34,11 +36,12 @@ function S = plot_existing_manuscript_figures(varargin)
     addParameter(ip,'ShowFigures',false,@(x)islogical(x)&&isscalar(x));
     addParameter(ip,'OnlyTrajectory',false,@(x)islogical(x)&&isscalar(x));
     addParameter(ip,'OnlyIntensities',false,@(x)islogical(x)&&isscalar(x));
+    addParameter(ip,'OnlyLate',false,@(x)islogical(x)&&isscalar(x));
     parse(ip,varargin{:});
     opt=ip.Results;
-    assert(~(opt.OnlyTrajectory&&opt.OnlyIntensities), ...
+    assert(sum([opt.OnlyTrajectory,opt.OnlyIntensities,opt.OnlyLate])<=1, ...
         'paperfig:ExclusivePanelMode', ...
-        'Choose at most one of OnlyTrajectory and OnlyIntensities.');
+        'Choose at most one of OnlyTrajectory, OnlyIntensities, or OnlyLate.');
 
     paperDir=fileparts(mfilename('fullpath'));
     root=fileparts(paperDir);
@@ -90,7 +93,7 @@ function S = plot_existing_manuscript_figures(varargin)
     S.files={};
 
     %% Manuscript Figure 3: accepted trajectory and late-tip detail
-    if ~opt.OnlyIntensities
+    if ~opt.OnlyIntensities && ~opt.OnlyLate
     out=fullfile(outRoot,'trajectory');
     local_mkdir(out);
 
@@ -162,6 +165,7 @@ function S = plot_existing_manuscript_figures(varargin)
     end % Figure 3: skip for isolated Figure 4 review.
 
     %% Manuscript Figure 4: KI, KII, absolute direction
+    if ~opt.OnlyLate
     out=fullfile(outRoot,'intensities');
     local_mkdir(out);
     a=T.crack_length_mm;
@@ -194,33 +198,38 @@ function S = plot_existing_manuscript_figures(varargin)
         % Avoid modifying Figure 5 and later publication graphics.
         return;
     end
+    end % Skip the three Figure 4 panels in isolated Figure 5 mode.
 
-    %% Figure 3: late mode mixity and MTS turn
+    %% Manuscript Figure 5: late mode mixity and MTS turn
     out=fullfile(outRoot,'late');
     local_mkdir(out);
     late=T.crack_length_mm>=60;
     aLate=T.crack_length_mm(late);
     aLS=E.interpolatedZeroLength_mm;
 
-    f=local_figure(vis,[13.4 4.2]); ax=axes(f); hold(ax,'on');
+    f=local_figure(vis,[7.857 7.2]); ax=axes(f); hold(ax,'on');
     plot(ax,aLate,1e3*T.KII_over_KI(late),'-o','Color',C.blue,'LineWidth',1.2, ...
         'MarkerSize',3.1,'MarkerFaceColor','w');
     yline(ax,0,'--','Color',C.gray,'HandleVisibility','off');
     xline(ax,aLS,':','Color',C.purple,'LineWidth',1.0,'HandleVisibility','off');
-    xlim(ax,[60 92]); xticks(ax,[60 68 76 84 88 92]);
-    xlabel(ax,'Crack length $a$ [mm]','Interpreter','latex'); ylabel(ax,'$10^3 K_{II}/K_I$','Interpreter','latex');
+    xlim(ax,[60 92]); xticks(ax,[60 68 76 84 92]);
+    xlabel(ax,'$a$ [mm]','Interpreter','latex'); ylabel(ax,'$10^3 K_{II}/K_I$','Interpreter','latex');
     local_style_axis(ax);
-    S.files{end+1}=local_export_axis(ax,out,'mode_mixity'); %#ok<AGROW>
+    S.files{end+1}=local_export_late_pair(ax,out,'mode_mixity'); %#ok<AGROW>
 
-    f=local_figure(vis,[13.4 4.2]); ax=axes(f); hold(ax,'on');
+    f=local_figure(vis,[7.857 7.2]); ax=axes(f); hold(ax,'on');
     plot(ax,aLate,T.delta_theta_next_deg(late),'-o','Color',C.blue,'LineWidth',1.2, ...
         'MarkerSize',3.1,'MarkerFaceColor','w');
     yline(ax,0,'--','Color',C.gray,'HandleVisibility','off');
     xline(ax,aLS,':','Color',C.purple,'LineWidth',1.0,'HandleVisibility','off');
-    xlim(ax,[60 92]); xticks(ax,[60 68 76 84 88 92]);
-    xlabel(ax,'Crack length $a$ [mm]','Interpreter','latex'); ylabel(ax,'$\Delta\theta_{k+1}$ [deg]','Interpreter','latex');
+    xlim(ax,[60 92]); xticks(ax,[60 68 76 84 92]);
+    xlabel(ax,'$a$ [mm]','Interpreter','latex'); ylabel(ax,'$\Delta\theta_{k+1}$ [deg]','Interpreter','latex');
     local_style_axis(ax);
-    S.files{end+1}=local_export_axis(ax,out,'turn'); %#ok<AGROW>
+    S.files{end+1}=local_export_late_pair(ax,out,'turn'); %#ok<AGROW>
+    if opt.OnlyLate
+        % Regenerate only Figure 5; preserve Figures 6 and later.
+        return;
+    end
 
     %% Figure 4: COD--EDI sensitivity, all four windows and both degrees
     out=fullfile(outRoot,'cod');
@@ -402,6 +411,54 @@ function files=local_export_trajectory_equalwidth(ax,outDir,name)
     print(fig,pngFile,'-dpng','-r220');
     fprintf('Figure 3 %-11s: PDF width %.3f cm, plot width %.3f cm, height %.3f cm\n', ...
         name,pageWidth_cm,plotWidth_cm,pageHeight_cm);
+    files={pdfFile,pngFile};
+end
+
+function files=local_export_late_pair(ax,outDir,name)
+% Manuscript Figure 5: two identical narrow/tall, single-row vector panels.
+% Same fonts, line weights and page height as the approved Figure 4.
+% Plot data and physically qualified history are never modified.
+    P=publication_style();
+    pageWidth_cm=P.halfWidth_cm; % 0.485\linewidth in main.tex
+    pageHeight_cm=7.2;
+    left_cm=1.50;
+    bottom_cm=1.10;
+    plotWidth_cm=pageWidth_cm-left_cm-0.35;
+    plotHeight_cm=pageHeight_cm-bottom_cm-0.45;
+    assert(plotWidth_cm>0&&plotHeight_cm>0,'paperfig:BadFigure5Size');
+
+    fig=ancestor(ax,'figure');
+    xlimits=ax.XLim;
+    ylimits=ax.YLim;
+    set(fig,'Units','centimeters', ...
+        'Position',[2 2 pageWidth_cm pageHeight_cm], ...
+        'Color','w','Renderer','painters');
+    set(ax,'Units','centimeters', ...
+        'Position',[left_cm bottom_cm plotWidth_cm plotHeight_cm], ...
+        'FontName',P.fontName,'FontSize',P.tick_pt, ...
+        'TickLabelInterpreter','latex','LineWidth',.8,'TickDir','out', ...
+        'Box','on');
+    grid(ax,'off');
+    xlim(ax,xlimits);ylim(ax,ylimits);
+    for obj=[ax.XLabel,ax.YLabel,ax.ZLabel,ax.Title]
+        set(obj,'Interpreter','latex','FontSize',P.label_pt, ...
+            'FontName',P.fontName);
+    end
+    for line=findall(ax,'Type','line').'
+        if ~strcmp(line.LineStyle,'none'),line.LineWidth=P.lineWidth_pt;end
+        if ~strcmp(line.Marker,'none'),line.MarkerSize=P.markerSize_pt;end
+    end
+    pdfFile=fullfile(outDir,[name '.pdf']);
+    pngFile=fullfile(outDir,[name '.png']);
+    set(fig,'PaperUnits','centimeters', ...
+        'PaperSize',[pageWidth_cm pageHeight_cm], ...
+        'PaperPosition',[0 0 pageWidth_cm pageHeight_cm], ...
+        'PaperPositionMode','manual');
+    drawnow;
+    print(fig,pdfFile,'-dpdf','-painters');
+    print(fig,pngFile,'-dpng','-r220');
+    fprintf('Figure 5 %-11s: PDF %.3f x %.3f cm, plot %.3f x %.3f cm\n', ...
+        name,pageWidth_cm,pageHeight_cm,plotWidth_cm,plotHeight_cm);
     files={pdfFile,pngFile};
 end
 
