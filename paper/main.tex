@@ -753,31 +753,29 @@ negatively inclined and their global $y$ coordinates continue to decrease.
 % Figure environment maintained inline in main.tex; graphics remain separate PDFs.
 \begin{figure}[tbp]
   \centering
-  \begin{subfigure}[t]{0.94\linewidth}
+  \begin{subfigure}[t]{0.485\linewidth}
     \centering
     \includegraphics[width=\linewidth]{figures/trajectory/overview.pdf}
-    \caption{Hole and accepted trajectory through $P_{23}$, with the
-    qualified but physically unsolved $P_{23}$--$P_{24}$ extension.}
+    \caption{Full accepted path and qualified, unsolved extension.}
     \label{fig:trajectory-overview}
-  \end{subfigure}
-
-  \medskip
-
-  \begin{subfigure}[t]{0.94\linewidth}
+  \end{subfigure}\hfill
+  \begin{subfigure}[t]{0.485\linewidth}
     \centering
     \includegraphics[width=\linewidth]{figures/trajectory/late_detail.pdf}
-    \caption{Late-path detail with equal spatial scales. The markers identify
-    $P_{17}$, the linearly interpolated $K_{II}/K_I=0$ location, $P_{23}$,
-    and the qualified unsolved point $P_{24}$.}
+    \caption{Late-tip detail with approximately fourfold vertical
+    magnification.}
     \label{fig:trajectory-late}
   \end{subfigure}
 
-  \caption{Hole-initiated trajectory and late detail. Both spatial panels
-  use equal $x$ and $y$ scales within the panel. The circle gives geometric
-  context; the numerical hole is polygonally discretized. Solid segments are
-  accepted geometry through $P_{23}$. The dashed extension is qualified
-  geometry only and has no accepted physical SIFs. The diamond is a linear
-  interpolation marker, not a solved tip.}
+  \caption{Hole-initiated crack trajectory (left) and late-tip detail
+  (right). The overview preserves equal physical $x$ and $y$ scales,
+  so the circular hole is undistorted; the numerical hole is polygonally
+  discretized. Only the late detail uses an approximately fourfold
+  vertical exaggeration to resolve small changes in ordinate.
+  Solid segments are accepted geometry through $P_{23}$; the dashed
+  $P_{23}$--$P_{24}$ extension is geometrically qualified but physically
+  unsolved and has no accepted SIFs. The diamond marks a linear
+  interpolation of $K_{II}/K_I=0$, not a solved crack tip.}
   \label{fig:trajectory}
 \end{figure}
 
