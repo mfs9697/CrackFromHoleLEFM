@@ -106,14 +106,14 @@ function S = plot_existing_manuscript_figures(varargin)
     plot(ax,hx,hy,'k-','LineWidth',1.0,'HandleVisibility','off');
     plot(ax,[rightBoundary_mm rightBoundary_mm],[-54 14],'k-','LineWidth',0.9,'HandleVisibility','off');
     plot(ax,accepted(:,1),accepted(:,2),'-o','Color',C.blue,'LineWidth',1.25, ...
-        'MarkerSize',2.9,'MarkerFaceColor','w','DisplayName','Accepted $P_0$--$P_{23}$');
+        'MarkerSize',2.9,'MarkerFaceColor','w','DisplayName','Accepted');
     plot(ax,extension(:,1),extension(:,2),'--x','Color',C.orange,'LineWidth',1.15, ...
-        'MarkerSize',5,'DisplayName','Qualified, unsolved extension');
+        'MarkerSize',5,'DisplayName','Qualified, unsolved');
     plot(ax,p23(1),p23(2),'s','Color','k','MarkerFaceColor','k','MarkerSize',4, ...
         'HandleVisibility','off');
     axis(ax,'equal'); xlim(ax,[136 302]); ylim(ax,[-54 14]);
     xlabel(ax,'$x$ [mm]','Interpreter','latex'); ylabel(ax,'$y$ [mm]','Interpreter','latex');
-    legend(ax,'Location','northeast','Box','off','Interpreter','tex');
+    legend(ax,'Location','northeast','Box','off','Interpreter','latex');
     local_style_axis(ax);
     S.files{end+1}=local_export_trajectory_equalwidth(ax,out,'overview'); %#ok<AGROW>
 
@@ -142,9 +142,10 @@ function S = plot_existing_manuscript_figures(varargin)
     text(ax,p24(1)-0.45,p24(2)-0.75,'$P_{24}$ unsolved', ...
         'Interpreter','latex','Color',C.orange, ...
         'HorizontalAlignment','right','VerticalAlignment','top');
-    % Use the same FINAL y-limits as the earlier published export, whose
-    % lower bound was extended from -27.3 to -29 mm for label clearance.
-    axis(ax,'equal'); xlim(ax,[258 302]); ylim(ax,[-29 -21.3]);
+    % Retain the accepted late-tip coordinate window and clearance.
+    % Vertical exaggeration is applied only at export (and disclosed
+    % in the Figure 3(b) caption); numerical data are unchanged.
+    axis(ax,'normal'); xlim(ax,[258 302]); ylim(ax,[-29 -21.3]);
     xlabel(ax,'$x$ [mm]','Interpreter','latex'); ylabel(ax,'$y$ [mm]','Interpreter','latex');
     local_style_axis(ax);
     S.files{end+1}=local_export_trajectory_equalwidth(ax,out,'late_detail'); %#ok<AGROW>
@@ -318,42 +319,67 @@ function local_style_axis(ax)
 end
 
 function files=local_export_trajectory_equalwidth(ax,outDir,name)
-% Exact SAME printed width for both stacked manuscript Figure 3 panels.
-% The existing PDFs already shared a page width, but axis equal shrank
-% the overview plot box because its data range has a different aspect.
-% Derive the panel height from the numerical x/y spans so the plot BOX
-% also occupies precisely the same physical width, without distortion.
-% Only layout/typography is touched; the audited vertices are unchanged.
+% Figure 3: two NARROWER, TALLER panels for one manuscript row.
+% Both have the same physical PDF/page dimensions and axes plot-box width.
+% The overview keeps an undistorted circle (equal x/y physical scales);
+% the late detail magnifies vertical variations, explicitly noted in the
+% LaTeX subcaption. The saved vertices and markers remain unmodified.
     P=publication_style();
-    pageWidth_cm=P.fullWidth_cm; % 0.94 * manuscript text width
-    left_cm=1.65;
-    right_cm=0.50;
-    bottom_cm=1.05;
-    top_cm=0.45;
+    pageWidth_cm=P.halfWidth_cm; % 0.485 * full text width
+    left_cm=1.45;
+    right_cm=0.35;
+    bottom_cm=1.15;
+    top_cm=0.43;
     plotWidth_cm=pageWidth_cm-left_cm-right_cm;
-
-    oldXLim=ax.XLim;
-    oldYLim=ax.YLim;
-    xRange=diff(oldXLim);
-    yRange=diff(oldYLim);
-    assert(xRange>0&&yRange>0,'paperfig:InvalidTrajectoryLimits', ...
-        'Figure 3 axis limits must be strictly increasing.');
-    plotHeight_cm=plotWidth_cm*yRange/xRange;
+    plotHeight_cm=4.28;
     pageHeight_cm=bottom_cm+plotHeight_cm+top_cm;
+    assert(plotWidth_cm>0 && plotHeight_cm>0,'paperfig:BadFigure3Size');
+
+    xlimits=ax.XLim;
+    ylimits=ax.YLim;
+    xRange=diff(xlimits);
+    yRange=diff(ylimits);
+    assert(xRange>0&&yRange>0,'paperfig:InvalidTrajectoryLimits');
+
+    if strcmp(name,'overview')
+        % To keep the circular hole geometrically CIRCULAR and still use
+        % the taller panel, expand ONLY the displayed vertical window,
+        % centered on the existing hole at y=-20 mm. No point is moved.
+        yRange=xRange*plotHeight_cm/plotWidth_cm;
+        ylimits=[-20-yRange/2, -20+yRange/2];
+        assert(ylimits(1)<-50 && ylimits(2)>10, ...
+            'paperfig:HoleNotFullyVisible');
+    elseif ~strcmp(name,'late_detail')
+        error('paperfig:Figure3Panel','Unknown Figure 3 panel: %s',name);
+    end
 
     fig=ancestor(ax,'figure');
-    set(fig,'Units','centimeters', ...
-        'Position',[2 2 pageWidth_cm pageHeight_cm], ...
+    set(fig,'Units','centimeters','Position',[2 2 pageWidth_cm pageHeight_cm], ...
         'Color','w','Renderer','painters');
     set(ax,'Units','centimeters', ...
         'Position',[left_cm bottom_cm plotWidth_cm plotHeight_cm], ...
         'FontName',P.fontName,'FontSize',P.tick_pt, ...
         'TickLabelInterpreter','latex','LineWidth',.8,'TickDir','out');
-    % The physical plot-box aspect is exactly xRange/yRange, allowing
-    % MATLAB's equal-data-aspect constraint to use the whole plot width.
-    axis(ax,'equal');
-    xlim(ax,oldXLim);
-    ylim(ax,oldYLim);
+
+    xlim(ax,xlimits);
+    ylim(ax,ylimits);
+    if strcmp(name,'overview')
+        % Preserve equal physical scales and the undistorted circle.
+        axis(ax,'equal');
+        xticks(ax,[140 180 220 260 300]);
+        yticks(ax,[-60 -40 -20 0 20]);
+        verticalMagnification=1;
+    else
+        % With the small late-tip y-span, equal scales would produce a
+        % near-flat strip. Use a clearly disclosed vertical exaggeration.
+        axis(ax,'normal');
+        set(ax,'DataAspectRatioMode','auto', ...
+            'PlotBoxAspectRatioMode','auto');
+        xticks(ax,[260 270 280 290 300]);
+        yticks(ax,[-28 -26 -24 -22]);
+        verticalMagnification=(plotHeight_cm/plotWidth_cm)/(yRange/xRange);
+    end
+    xlim(ax,xlimits);ylim(ax,ylimits);
 
     for obj=[ax.XLabel,ax.YLabel,ax.ZLabel,ax.Title]
         set(obj,'Interpreter','latex','FontName',P.fontName, ...
@@ -368,15 +394,11 @@ function files=local_export_trajectory_equalwidth(ax,outDir,name)
     end
     for lg=findall(fig,'Type','legend').'
         set(lg,'Interpreter','latex','FontName',P.fontName, ...
-            'FontSize',P.legend_pt);
+            'FontSize',P.legend_pt,'Location','northeast','Box','off');
     end
     for line=findall(ax,'Type','line').'
-        if ~strcmp(line.LineStyle,'none')
-            line.LineWidth=P.lineWidth_pt;
-        end
-        if ~strcmp(line.Marker,'none')
-            line.MarkerSize=P.markerSize_pt;
-        end
+        if ~strcmp(line.LineStyle,'none'),line.LineWidth=P.lineWidth_pt;end
+        if ~strcmp(line.Marker,'none'),line.MarkerSize=P.markerSize_pt;end
     end
 
     pdfFile=fullfile(outDir,[name '.pdf']);
@@ -388,8 +410,10 @@ function files=local_export_trajectory_equalwidth(ax,outDir,name)
     drawnow;
     print(fig,pdfFile,'-dpdf','-painters');
     print(fig,pngFile,'-dpng','-r220');
-    fprintf('Figure 3 %-11s: PDF width %.3f cm, plot width %.3f cm, height %.3f cm\n', ...
-        name,pageWidth_cm,plotWidth_cm,pageHeight_cm);
+    fprintf(['Figure 3 %-11s: PDF %.3f x %.3f cm, plot %.3f x %.3f cm, ' ...
+        'vertical magnification %.2fx\n'], ...
+        name,pageWidth_cm,pageHeight_cm, ...
+        plotWidth_cm,plotHeight_cm,verticalMagnification);
     files={pdfFile,pngFile};
 end
 
