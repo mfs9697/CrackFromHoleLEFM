@@ -5,6 +5,7 @@
 \usepackage{amsmath,amssymb,bm,booktabs}
 \usepackage{graphicx}
 \usepackage{float}
+\usepackage{placeins}
 \usepackage{subcaption}
 \usepackage{xcolor}
 \definecolor{referenceblue}{RGB}{25,55,95}
@@ -565,13 +566,11 @@ $2h_0$ solution, with no reference vertex imposed after $P_1$.
 The $h_0/2$ calculation supplies fixed-geometry refinement evidence
 only and is not independently propagated.
 
-For geometric illustration, Fig.~\ref{fig:mesh-levels} also includes a
-coarser $4h_0$ core with $h_{\mathrm{tip}}=0.10805$ mm. It contains only
-10/15/12/9 native COD points in the four established windows, so it fails
-the requirement of at least 12 points in every window. Consequently, $4h_0$
-is shown only as part of the mesh-resolution hierarchy and is not used for
-physical SIF or MTS comparisons. No sampling or solver acceptance criterion
-is relaxed to admit it.
+For completeness, Fig.~\ref{fig:mesh-levels} also shows a
+$4h_0$ core ($h_{\mathrm{tip}}=0.10805$ mm), with 10/15/12/9
+native COD samples in the four fitting windows. This mesh is
+included to illustrate the resolution hierarchy, not as a
+physical SIF or MTS comparison level.
 
 % Figure environment maintained inline in main.tex; graphics remain separate PDFs.
 \begin{figure}[tbp]
@@ -811,11 +810,13 @@ $+0.10$ & $-0.011415$\\
 \end{tabular}
 \end{table}
 
-The computed opening-mode intensity is even with respect to the
-sign of the prescribed perturbation, while the signed mode-mixity
-ratio and $F(\theta_2)$ are odd to numerical mismatches of
-order $10^{-9}$. The two symmetric
-finite-difference estimates are
+The opening-mode intensity is approximately even in the
+prescribed perturbation $\theta_2$, whereas the signed mode-mixity
+ratio and $F(\theta_2)$ exhibit the expected approximately odd
+responses under reflection. The small residual at the straight
+configuration illustrates that these symmetry relations are
+recovered numerically rather than as exact identities.
+The two symmetric finite-difference estimates are
 \[
  \frac{F(+0.05^\circ)-F(-0.05^\circ)}{0.10^\circ}
  =-0.11416,
@@ -1297,6 +1298,7 @@ remains unresolved.
   diamond marks the interpolated reference crossing, not a solved tip.}
   \label{fig:m1-mesh-sensitivity}
 \end{figure}
+\FloatBarrier
 
 \subsection{Crack-increment sensitivity}
 The three-level increment study compares independently generated
@@ -1355,6 +1357,7 @@ halved [Figs.~\ref{fig:inc-dy} and \ref{fig:inc-dtheta}].
   density panel is plotted on each level's native crack-length grid.}
   \label{fig:increment-sensitivity}
 \end{figure}
+\FloatBarrier
 
 Table~\ref{tab:increment-pairwise} quantifies these successive differences.
 Halving the increment from 4 to 2 mm gives a maximum corresponding-tip
@@ -1364,7 +1367,7 @@ vertical-coordinate differences are $35.418$ and $18.263~\mu\mathrm{m}$.
 The maximum absolute direction difference likewise falls from $214.931$ to
 $127.391$ millidegrees.
 
-\begin{table}[tbp]
+\begin{table}[H]
 \centering
 \small
 \setlength{\tabcolsep}{4.0pt}
