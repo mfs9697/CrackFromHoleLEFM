@@ -11,7 +11,7 @@
 \setlength{\parindent}{1.4em}
 \setlength{\parskip}{2pt}
 \setlength{\textfloatsep}{14pt}
-\newcommand{\qmix}{q_{\!K}}
+\newcommand{\qmix}{q_{\mathrm{K}}}
 \newcommand{\dd}{\mathrm{d}}
 % BEGIN AUDITED DATA: populated by sync_manuscript_data.py
 % Snapshot: cfdf0f110010d688a4e3c48f6d88a00fd17dc698; no P24 physical data.
@@ -101,7 +101,7 @@ Once a finite crack exists, its direction depends on the mixed-mode field
 at its current tip and therefore on the complete crack geometry accumulated
 up to that state.  The maximum tangential stress (MTS) criterion of Erdogan
 and Sih~\cite{ErdoganSih1963} provides a classical local direction rule in
-terms of the opening and sliding intensities $K_I$ and $K_{II}$,
+terms of the opening and sliding intensities $K_{\mathrm{I}}$ and $K_{\mathrm{II}}$,
 respectively. Numerical crack-growth frameworks have long
 combined such local criteria with repeated updating or remeshing of the
 geometry; for example, Bouchard et al.~\cite{BouchardEtAl2003} compared
@@ -128,7 +128,7 @@ prescribed crack-growth increments and found similar trajectories, with the
 smaller increment producing the smoother path.  Yang et
 al.~\cite{YangEtAl2020} used incremental remeshing to study cracks
 emanating from circular blasting holes and showed that, in mixed-mode
-configurations, the sign and magnitude of $K_{II}$ govern the direction of
+configurations, the sign and magnitude of $K_{\mathrm{II}}$ govern the direction of
 curving.  Related perforated-plate problems have been studied with a
 boundary-cracklet formulation~\cite{AhmedEtAl2021}, and commercial
 adaptive remeshing has been used to reproduce hole-induced crack deflection
@@ -142,7 +142,7 @@ factors are not merely postprocessed outputs.  They determine the next
 segment, perturbing each later boundary-value problem.  Numerical
 SIF extraction therefore enters the propagation algorithm recursively.
 The mixed-mode interaction-integral construction provides a natural
-energetic route to separating $K_I$ and $K_{II}$~\cite{YauWangCorten1980}.
+energetic route to separating $K_{\mathrm{I}}$ and $K_{\mathrm{II}}$~\cite{YauWangCorten1980}.
 Independent accuracy studies have shown that near-tip discretization and
 postprocessing choices can materially affect extracted SIFs:
 displacement-extrapolation estimates depend on element size, shape, and
@@ -170,21 +170,20 @@ stress concentrator and ask which features of that trajectory can be
 regarded as robust consequences of the evolving elastic field.  The
 uncracked-hole solution selects the initiation point and a material-side
 normal; only the first crack segment is prescribed along that normal.
-Every subsequent direction is obtained from the current-tip $K_I$ and
-$K_{II}$ values through the MTS rule after solving the complete current
+Every subsequent direction is obtained from the current-tip $K_{\mathrm{I}}$ and
+$K_{\mathrm{II}}$ values through the MTS rule after solving the complete current
 crack geometry.
 
 The numerical assessment separates extraction accuracy from the sensitivity
 of a recursively generated trajectory.  The interaction integral in equivalent domain form (EDI) is checked
 against prescribed asymptotic fields and independent crack-opening-
-displacement estimates.  A centered-hole control tests whether the same
-EDI--MTS recurrence preserves and restores the exact straight symmetry
-path.  Exterior-mesh density is perturbed independently, while a separate
+displacement estimates.  A centered-hole control checks reflection symmetry and measures the
+one-step response to small prescribed angular perturbations.  Exterior-mesh density is perturbed independently, while a separate
 structured-tip resolution study varies the near-tip scale while holding the
 requested exterior sizing law fixed.  Finally, crack-increment sensitivity is examined through independently
 generated 4-, 2-, and 1-mm paths using one dimensionless numerical family.
 Particular attention is paid to the evolution of the mode mixity
-$K_{II}/K_I$, the location of its positive maximum and sign reversal, the
+$K_{\mathrm{II}}/K_{\mathrm{I}}$, the location of its positive maximum and sign reversal, the
 corresponding change in turning sense, and the behavior of increment-
 normalized corrective quantities.  This structure is intended
 to distinguish a physically interpretable trajectory from one that is only
@@ -276,13 +275,14 @@ $\sigma_{tt}(\phi)$, where $\phi$ is measured counterclockwise from the
 positive Cartesian $x$ direction. Its maximum tensile value selects the
 initiation point; the numerical boundary evaluation is described in
 Section~\ref{sec:numerics}. Let $\sigma_c$ denote the tensile
-initiation threshold. The dimensionless initiation multiplier
-$\lambda_{\mathrm{ini}}$ is distinct from the Lam\'e coefficient $\lambda$.
-The normalized initiation rule is
+initiation threshold. The dimensionless multiplier $\Lambda_{\mathrm{ini}}$ is the ratio of the
+tensile initiation threshold to the maximum tensile stress under the
+reference loading; it is distinct from the first Lam\'e coefficient
+$\lambda$. The initiation rule is
 \begin{equation}
  \phi_* = \mathop{\operatorname{arg\,max}}_\phi
       \sigma_{tt}^{+}(\phi;\sigma),\qquad
- \lambda_{\mathrm{ini}}=
+ \Lambda_{\mathrm{ini}}=
       \frac{\sigma_c}{\max_\phi\sigma_{tt}^{+}(\phi;\sigma)},
  \quad \sigma_{tt}^{+}=\max(\sigma_{tt},0).\label{eq:initiation}
 \end{equation}
@@ -323,62 +323,110 @@ are outside its scope.
 \section{Incremental crack-path formulation}
 \label{sec:recurrence}
 \subsection{Current-tip frame and stress-intensity factors}
-At $P_k$, the local forward direction is the \emph{last} segment direction,
-$\bm e_1^{(k)}=(P_k-P_{k-1})/\Delta a$, with
-$\bm e_2^{(k)}=(-e_{1y}^{(k)},e_{1x}^{(k)})$. This frame is not the
-mouth-to-tip chord. Local coordinates $x_1,x_2$ are measured from the
-current tip along these forward and transverse directions. With $r$
-measured ahead of the tip along $x_1$, the
-signed conventions correspond to
+At the current tip $P_k$, the local forward unit vector
+$\bm e_1^{(k)}=(P_k-P_{k-1})/\Delta a$ follows the last crack
+segment; $\bm e_2^{(k)}=(-e_{1y}^{(k)},e_{1x}^{(k)})$ is its
+counterclockwise normal. Thus the local frame follows the current
+tip direction rather than the chord connecting the crack mouth to the
+tip. With $x_1$ and $x_2$ measured along these vectors and $r>0$
+measured directly ahead of the tip, the opening- and sliding-mode
+stress-intensity factors are defined by
 \begin{equation}
- K_I^{(k)}=\lim_{r\to0^+}\sqrt{2\pi r}\,\sigma_{22}(r,0),\qquad
- K_{II}^{(k)}=\lim_{r\to0^+}\sqrt{2\pi r}\,\sigma_{12}(r,0).
+ K_{\mathrm{I}}^{(k)}=\lim_{r\to0^+}\sqrt{2\pi r}\,\sigma_{22}(r,0),
+ \qquad
+ K_{\mathrm{II}}^{(k)}=\lim_{r\to0^+}\sqrt{2\pi r}\,\sigma_{12}(r,0).
  \label{eq:sifdefinition}
 \end{equation}
-Mode mixity is denoted by $q_K=K_{II}/K_I$. The signed intensities are
-evaluated by the interaction integral described below. The complete previous crack geometry is retained during each
-elastic solution.
+Here $\sigma_{22}$ and $\sigma_{12}$ are the stress components in
+the current-tip frame. For positive $K_{\mathrm{I}}^{(k)}$, define
+the signed mode-mixity ratio
+$q_{\mathrm{K}}^{(k)}=K_{\mathrm{II}}^{(k)}/K_{\mathrm{I}}^{(k)}$.
+Both intensities are extracted from an elastic solution that retains
+the complete preceding crack geometry.
 
 \subsection{The implemented MTS rule}
-Let $\alpha$ be a turn relative to $\bm e_1^{(k)}$, and write
-$c=\cos(\alpha/2)$ and $s=\sin(\alpha/2)$. The implemented angular
-coefficients are exactly
+The maximum tangential stress (MTS) criterion determines the direction
+of a new segment relative to the preceding one. Let $\alpha$ be the
+counterclockwise turning angle, and write $c=\cos(\alpha/2)$ and
+$s=\sin(\alpha/2)$. The angular coefficients of the leading crack-tip
+stress field are
 \begin{align}
- S(\alpha)&=K_I^{(k)}c^3-3K_{II}^{(k)}s c^2,\label{eq:stt}\\
- T(\alpha)&=K_I^{(k)}s c^2+K_{II}^{(k)}c(1-3s^2).
+ S(\alpha)&=K_{\mathrm{I}}^{(k)}c^3
+             -3K_{\mathrm{II}}^{(k)}s c^2,\label{eq:stt}\\
+ T(\alpha)&=K_{\mathrm{I}}^{(k)}s c^2
+             +K_{\mathrm{II}}^{(k)}c(1-3s^2).
  \label{eq:trt}
 \end{align}
-Their physical stress amplitudes carry the common factor
-$1/\sqrt{2\pi r}$. Since $S'=-3T/2$, the direction rule finds a tensile
-stationary direction by solving $T(\alpha)=0$. The tensile stationary root continuously connected to straight
-propagation is selected. All accepted states have positive opening-mode
-intensity and small turns. The implemented root selection and safeguards
-are documented with the software; they are unchanged in this study.
+The physical stresses contain the common factor $1/\sqrt{2\pi r}$.
+Since $S'(\alpha)=-3T(\alpha)/2$, the stationary tangential-stress
+directions satisfy $T(\alpha)=0$. The numerical procedure selects the
+tensile root continuously connected to straight extension as
+$K_{\mathrm{II}}^{(k)}\to0$. The accepted states have positive opening
+intensity and small turning angles; the implemented root search and
+its safeguards are unchanged.
 
-For small mode mixity, expansion of Eq.~\eqref{eq:trt} gives
-$\alpha\simeq-2K_{II}/K_I$ in radians. This relation explains the turning
-sign but does not replace the root calculation used for the results.
+For $|q_{\mathrm{K}}^{(k)}|\ll1$, expansion on this branch gives
+\begin{equation}
+ \alpha_{\mathrm{MTS}}
+ =-2q_{\mathrm{K}}^{(k)}
+  +\frac{14}{3}\bigl(q_{\mathrm{K}}^{(k)}\bigr)^3
+  +O\bigl((q_{\mathrm{K}}^{(k)})^5\bigr),
+ \label{eq:mts-small-mixity}
+\end{equation}
+where the angle is in radians. In particular, positive mode mixity
+produces clockwise turning in the adopted frame. This expansion is
+used for interpretation, whereas the reported trajectories use the
+unapproximated MTS root.
 
 \subsection{Finite-increment recurrence}
-Define the direction vector in the frozen frame by
-\begin{equation}
- \bm e(\theta)=\cos\theta\,\bm n_{\mathrm{mat}}
-                 +\sin\theta\,\bm t.\label{eq:direction}
-\end{equation}
-The incremental and absolute angles are distinguished in the recurrence
+The direction of a segment, expressed in the frozen initiation frame,
+is $\bm e(\theta)=\cos\theta\,\bm n_{\mathrm{mat}}
++\sin\theta\,\bm t$. With $\Delta a$ denoting the prescribed
+segment length, the incremental turning angle, the absolute
+direction of the new segment, and the new tip position satisfy
 \begin{align}
- \Delta\theta_{k+1}&=\alpha_{\mathrm{MTS}}
-                     (K_I^{(k)},K_{II}^{(k)}),\label{eq:turn}\\
+ \bm e(\theta)&=\cos\theta\,\bm n_{\mathrm{mat}}
+                 +\sin\theta\,\bm t,\label{eq:direction}\\
+ \Delta\theta_{k+1}
+   &=\alpha_{\mathrm{MTS}}(K_{\mathrm{I}}^{(k)},K_{\mathrm{II}}^{(k)}),
+     \label{eq:turn}\\
  \theta_{k+1}&=\theta_k+\Delta\theta_{k+1},\label{eq:angleupdate}\\
-P_{k+1}&=P_k+\Delta a\,\bm e(\theta_{k+1}).\label{eq:pointupdate}
+ P_{k+1}&=P_k+\Delta a\,\bm e(\theta_{k+1}).\label{eq:pointupdate}
 \end{align}
-The accumulated crack length is $a_k=k\Delta a$; plot abscissae denoted
-by $a$ refer to this length, not to the horizontal tip coordinate.
-Thus each fixed current geometry is qualified, solved once, and used to
-append one segment. Only the first direction and the increment length are
-prescribed. The accepted first-tip state seeds the subsequent recursion;
-its numerical values and the computed trajectory are given in the
-numerical study below.
+Here $\theta_k$ is measured relative to the fixed outward normal at
+the initiation point. The accumulated crack length is
+$a_k=k\Delta a$; throughout the numerical results, $a$ denotes
+this length rather than the horizontal tip coordinate. The accepted
+elastic solution for each current geometry determines the following
+segment, so the propagation history enters recursively through the
+boundary-value problem.
+
+The turning density $\Delta\theta_{k+1}/\Delta a$ is the signed
+angle change per unit extension. It does not represent the
+pointwise curvature of the polygonal crack, whose direction is
+discontinuous at its vertices. Consider instead a family of
+decreasing increments and suppose that the computed polygons
+approach an arc-length-parametrized curve $\bm r(a)$ with a
+differentiable tangent angle $\theta(a)$. If, in addition, their
+discrete turning densities converge at corresponding crack lengths
+to the signed curvature
+$\kappa(a)=\dd\theta/\dd a$, the small-turn MTS expansion implies
+\begin{equation}
+ \frac{q_{\mathrm{K}}^{(k)}}{\Delta a}
+ =-\frac12\frac{\Delta\theta_{k+1}}{\Delta a}
+  +O((\Delta a)^2)
+ \longrightarrow-\frac{\kappa(a)}{2}.
+ \label{eq:curvature-mts}
+\end{equation}
+Indeed, a bounded turning density implies
+$\Delta\theta_{k+1}=O(\Delta a)$, and therefore
+$q_{\mathrm{K}}^{(k)}=O(\Delta a)$ on the selected small-turn
+branch. Positive curvature corresponds to counterclockwise
+turning, hence to negative mode mixity. This relation is a
+conditional smooth-path interpretation, not a convergence
+theorem: convergence of polygonal positions alone does not ensure
+convergence of the turning densities, and numerical SIF extraction
+must resolve mode mixity at the scale of $\Delta a$.
 
 \section{Numerical implementation and verification}
 \label{sec:numerics}
@@ -400,7 +448,7 @@ a local quadratic angular fit. The accepted Stage-I solution yields
 $\phi_*=\PhiStar^\circ$ and
 $P_0=(\MouthX,\MouthY)$ m.
 The fitted peak stress under unit traction is $\PeakStress$ MPa,
-so that $\lambda_{\mathrm{ini}}=\LoadFactor$. The frozen radial normal
+so that $\Lambda_{\mathrm{ini}}=\LoadFactor$. The frozen radial normal
 has components $(\NormalX,\NormalY)$. In the reference path,
 $\Delta a=4$ mm; the separately computed increment-refinement
 families use 2 and 1 mm. All subsequent SIFs reported at reference
@@ -415,15 +463,18 @@ identities. A structured core with characteristic tip spacing $h_{\mathrm{tip}}$
 under local reflection across that segment. The asymmetric physical
 exterior is retained through conforming graded triangulation. Three-node triangles (T3) are converted to straight-sided quadratic T6 elements.
 
-The fixed production scales are
+The inner and outer radii of the interaction-integral annulus are
+$r_{\mathrm{in}}$ and $r_{\mathrm{out}}$, respectively; the radius of
+the structured tip mesh is $r_{\mathrm{core}}$. The reference
+numerical scales are
 \begin{equation}
  \frac{h_{\mathrm{tip}}}{\Delta a}=0.00675308135,\quad
- \frac{r_i}{\Delta a}=0.10,\quad
- \frac{r_o}{\Delta a}=0.65,\quad
- \frac{r_c}{\Delta a}=0.75.\label{eq:meshscales}
+ \frac{r_{\mathrm{in}}}{\Delta a}=0.10,\quad
+ \frac{r_{\mathrm{out}}}{\Delta a}=0.65,\quad
+ \frac{r_{\mathrm{core}}}{\Delta a}=0.75.\label{eq:meshscales}
 \end{equation}
 For this 4-mm increment these give $h_{\mathrm{tip}}=0.027012$ mm,
-$r_i=0.4$ mm, $r_o=2.6$ mm, and $r_c=3$ mm. The grading transition is
+$r_{\mathrm{in}}=0.4$ mm, $r_{\mathrm{out}}=2.6$ mm, and $r_{\mathrm{core}}=3$ mm. The grading transition is
 4 mm and the far-field size cap is 2.5 mm. The paired core contains 12678
 T3 triangles. All primary FE-nodal integration support lies inside this
 core, with 11316 participating elements.
@@ -435,8 +486,8 @@ gates are $20^\circ$ and 1.8, respectively. These checks establish
 discretization integrity, not mesh-independent physical predictions.
 
 For an exterior-mesh sensitivity test, a second mesh family, denoted M1,
-retains the same paired tip core, $h_{\mathrm{tip}}$, $r_i$, $r_o$, and
-$r_c$, together with the same 4-mm transition length and all qualification
+retains the same paired tip core, $h_{\mathrm{tip}}$, $r_{\mathrm{in}}$, $r_{\mathrm{out}}$, and
+$r_{\mathrm{core}}$, together with the same 4-mm transition length and all qualification
 gates. Only the exterior size law is relaxed: the far-field size cap is
 increased from 2.5 to 5.0 mm, the far-field grading slope from 0.10 to
 0.15, and the boundary-metric growth parameter from 0.25 to 0.35. On the
@@ -459,8 +510,8 @@ physically compared resolutions are
  \label{eq:tiplevels}
 \end{equation}
 These correspond to structured-core scale factors $2$, $1$, and $1/2$.
-The paired-core radius remains $r_c=3$ mm and the EDI annulus remains
-$r_i=0.4$ mm to $r_o=2.6$ mm. The paired cores contain 3318, 12678, and
+The paired-core radius remains $r_{\mathrm{core}}=3$ mm and the EDI annulus remains
+$r_{\mathrm{in}}=0.4$ mm to $r_{\mathrm{out}}=2.6$ mm. The paired cores contain 3318, 12678, and
 49518 T3 elements, respectively. The established four COD windows contain
 19/28/23/18 native points at $2h_0$, 38/55/44/34 at $h_0$, and
 74/108/86/67 at $h_0/2$.
@@ -477,8 +528,8 @@ perturbation with the paired tip core held fixed.
 To test accumulation of this structured-tip resolution change, the $2h_0$ level is
 also propagated independently through the accepted 92-mm path. The
 prescribed first segment $P_0P_1$ is common, but the $P_1$ elastic problem
-is recomputed with the $2h_0$ family; its own $K_I^{(1)}$ and
-$K_{II}^{(1)}$ determine $\theta_2$, and all later vertices follow
+is recomputed with the $2h_0$ family; its own $K_{\mathrm{I}}^{(1)}$ and
+$K_{\mathrm{II}}^{(1)}$ determine $\theta_2$, and all later vertices follow
 recursively from the preceding $2h_0$ solution. No reference-path vertex
 after $P_1$ is imposed. The $h_0/2$ level is retained as fixed-geometry
 refinement evidence and is not propagated independently.
@@ -516,7 +567,7 @@ is relaxed to admit it.
   \end{subfigure}
 
   \caption{Structured near-tip mesh hierarchy at a common core radius
-  $r_c=3$ mm and identical spatial limits; $h_0=0.027012$ mm is
+  $r_{\mathrm{core}}=3$ mm and identical spatial limits; $h_0=0.027012$ mm is
   the baseline production tip size. The $4h_0$ mesh is shown for geometric illustration
   only: unlike $2h_0$ and $h_0$, it does not meet the native
   COD-sampling requirement.}
@@ -524,8 +575,8 @@ is relaxed to admit it.
 \end{figure}
 
 \subsection{Interaction/domain integral}
-Let $q$ be a radial domain weight and let $m$ identify an auxiliary
-opening or sliding mode. Indices $i,j$ refer to the two tip-local
+Let $w$ be the radial weight function of the interaction domain
+and let $m$ identify an auxiliary opening or sliding mode. Indices $i,j$ refer to the two tip-local
 coordinates and repeated indices are summed; $\delta_{1j}$ is the
 Kronecker delta. For the actual field
 $(\bm\sigma,\bm\varepsilon,\bm u)$, the interaction integral is
@@ -533,14 +584,14 @@ $(\bm\sigma,\bm\varepsilon,\bm u)$, the interaction integral is
  I^{(m)}=\int_{\Omega_k}
  \left[-(\bm\sigma^{(m)}\!:\bm\varepsilon)\delta_{1j}
  +\sigma_{ij}u^{(m)}_{i,1}
- +\sigma^{(m)}_{ij}u_{i,1}\right]q_{,j}\,\dd\Omega,
+ +\sigma^{(m)}_{ij}u_{i,1}\right]w_{,j}\,\dd\Omega,
  \qquad i,j\in\{1,2\}.\label{eq:interaction}
 \end{equation}
 Actual gradients use the T6 displacement field. Analytical near-tip
 auxiliary stresses and centered finite-difference derivatives of auxiliary
 displacements are used, with the recorded derivative step
-$h=\max(10^{-7}\ \mathrm m,10^{-5}r)$. A radial nodal weight is one for
-$r\leq r_i$, decreases linearly to zero at $r_o$, and is zero outside.
+$h=\max(10^{-7}\ \mathrm m,10^{-5}r)$. The nodal values of $w$ are one for $r\leq r_{\mathrm{in}}$,
+decrease linearly to zero at $r_{\mathrm{out}}$, and vanish outside.
 Its T6 interpolant supplies the FE-consistent gradient in
 Eq.~\eqref{eq:interaction}. Integration uses the 16-point triangular rule.
 For auxiliary amplitude $K_{\mathrm{aux}}=1$ and plane strain,
@@ -549,8 +600,7 @@ For auxiliary amplitude $K_{\mathrm{aux}}=1$ and plane strain,
  E'=\frac{E}{1-\nu^2},\qquad m\in\{I,II\}.\label{eq:normalization}
 \end{equation}
 Here $\dd\Omega$ is the area measure, a comma denotes differentiation,
-and the colon denotes tensor contraction. The domain weight $q$ is distinct
-from the mode-mixity ratio $q_K$. The normalization preserves the signed local-mode convention.
+and the colon denotes tensor contraction. The normalization preserves the signed local-mode convention.
 % TODO: verified interaction-integral and quadrature references.
 
 \subsection{Independent COD postprocessing}
@@ -558,7 +608,7 @@ Native upper/lower T6 face nodes are paired in the last-segment frame.
 If $[\![u_i]\!]$ denotes the upper-minus-lower displacement jump behind
 the tip at distance $r$, the apparent COD SIFs are
 \begin{equation}
- \begin{bmatrix}K_I^{\mathrm{app}}(r)\\K_{II}^{\mathrm{app}}(r)\end{bmatrix}
+ \begin{bmatrix}K_{\mathrm{I}}^{\mathrm{app}}(r)\\K_{\mathrm{II}}^{\mathrm{app}}(r)\end{bmatrix}
  =\frac{\mu}{\kappa+1}\sqrt{\frac{2\pi}{r}}
  \begin{bmatrix}{[\![u_2]\!]}\\{[\![u_1]\!]}\end{bmatrix},
  \qquad \kappa=3-4\nu.\label{eq:cod}
@@ -587,7 +637,7 @@ a restart therefore resets the recurrence but does not relax acceptance.
 Only an accepted elastic field is checkpointed, before SIF/COD/MTS
 postprocessing.
 
-Prescribed nodal pure-I, pure-II, and tiny-mixed $(K_I,K_{II})=(1,10^{-4})$
+Prescribed nodal pure-I, pure-II, and tiny-mixed $(K_{\mathrm{I}},K_{\mathrm{II}})=(1,10^{-4})$
 fields test modal recovery and leakage on each qualified mesh. Recovery
 and tiny-mixed relative-error gates are $2\times10^{-4}$; the pure-mode
 cross-leakage and superposition gates are $10^{-10}$. On the reference meshes, the observed maximum
@@ -614,9 +664,9 @@ the production $h_0$ family. The structured core uses scale factor 2, so that
 \begin{equation}
  \frac{h_{\rm tip}}{\Delta a}
  =2(0.00675308135),\qquad
- \frac{r_i}{\Delta a}=0.10,\qquad
- \frac{r_o}{\Delta a}=0.65,\qquad
- \frac{r_c}{\Delta a}=0.75.
+ \frac{r_{\mathrm{in}}}{\Delta a}=0.10,\qquad
+ \frac{r_{\mathrm{out}}}{\Delta a}=0.65,\qquad
+ \frac{r_{\mathrm{core}}}{\Delta a}=0.75.
  \label{eq:increment-family}
 \end{equation}
 The exterior uses the M1 dimensionless controls
@@ -640,11 +690,11 @@ differences are evaluated only at exact common crack lengths, using the
 4-mm grid as the common set; no path interpolation is used for those
 comparisons. The location of local symmetry is reported separately by
 linear interpolation between the two solved states that bracket
-$q_K=K_{II}/K_I=0$ and is therefore used only as a sub-increment diagnostic.
+$q_{\mathrm{K}}=K_{\mathrm{II}}/K_{\mathrm{I}}=0$ and is therefore used only as a sub-increment diagnostic.
 
 \subsection{Centered-hole symmetric control}
-A separate control problem tests the directional recurrence under exact
-reflection symmetry. The full plate dimensions and hole radius are unchanged,
+The directional response of the algorithm is examined separately in a
+reflection-symmetric centered-hole configuration. The full plate dimensions and hole radius are unchanged,
 but the circular hole is centered at $(0.150,0)$ m. The crack starts from the
 rightmost point of the hole,
 \[
@@ -653,9 +703,8 @@ rightmost point of the hole,
  P_1=(0.184,0)\ \mathrm m,
 \]
 with the same increment $\Delta a=4$ mm. The straight configuration is
-therefore a nominally pure mode-I path. To test its local directional
-stability rather than merely verify $K_{II}=0$ at one geometry, five
-two-segment probes are prescribed,
+therefore a nominally pure mode-I path. To characterize the one-step response near this configuration, five
+two-segment crack geometries are prescribed,
 \[
  \theta_2\in\{-0.10^\circ,-0.05^\circ,0,
                  +0.05^\circ,+0.10^\circ\},
@@ -666,15 +715,15 @@ resulting one-step map is
 \begin{equation}
  F(\theta_2)=\theta_3
  =\theta_2+
- \alpha_{\rm MTS}\!\left(K_I(\theta_2),K_{II}(\theta_2)\right).
+ \alpha_{\rm MTS}\!\left(K_{\mathrm{I}}(\theta_2),K_{\mathrm{II}}(\theta_2)\right).
  \label{eq:symmetric-map}
 \end{equation}
 
 At the straight state,
 \[
- K_I(0)=0.42541\ \mathrm{MPa}\sqrt{\mathrm m},
+ K_{\mathrm{I}}(0)=0.42541\ \mathrm{MPa}\sqrt{\mathrm m},
  \qquad
- \frac{K_{II}(0)}{K_I(0)}=6.22\times10^{-9},
+ \frac{K_{\mathrm{II}}(0)}{K_{\mathrm{I}}(0)}=6.22\times10^{-9},
 \]
 and the predicted next direction is
 $F(0)=-7.13\times10^{-7}$ degrees, numerically indistinguishable from the
@@ -701,7 +750,7 @@ $+0.10$ & $-0.011415$\\
 \end{table}
 
 The recovered opening-mode intensity is even with respect to the imposed
-perturbation, whereas $K_{II}/K_I$ and $F(\theta_2)$ are antisymmetric to
+perturbation, whereas $K_{\mathrm{II}}/K_{\mathrm{I}}$ and $F(\theta_2)$ are antisymmetric to
 within numerical mismatches of order $10^{-9}$. The two symmetric
 finite-difference estimates are
 \[
@@ -711,24 +760,28 @@ finite-difference estimates are
  \frac{F(+0.10^\circ)-F(-0.10^\circ)}{0.20^\circ}
  =-0.11415,
 \]
-and a least-squares fit constrained through the origin gives
+and a least-squares fit constrained through the origin yields the local
+slope estimate
 \begin{equation}
- F'(0)=-0.11415.
+ F'(0)\approx-0.11415.
  \label{eq:symmetric-multiplier}
 \end{equation}
-Because $|F'(0)|<1$, the straight symmetric path is a locally attracting
-fixed path for this one-step discrete recurrence. The negative multiplier
-means that a small angular perturbation changes sign after one update while
-its magnitude is reduced by almost an order of magnitude. This is a local stability statement for the chosen 4-mm recurrence, not a
-proof of global path stability. Crack-increment dependence is assessed
-independently by the three-level refinement family described above.
+Within this prescribed two-segment family, the next-segment angular
+response reverses sign and is approximately 8.8 times smaller than
+the imposed perturbation. The measured slope characterizes the
+one-step map at the given crack length and $\Delta a=4$ mm, not
+the stability of the entire evolving crack. Subsequent updates
+solve different geometries and are not iterations of the same
+scalar map $F$. The control therefore demonstrates reflection
+symmetry and the local signed response of the EDI--MTS procedure,
+without establishing attraction of a complete trajectory.
 
 \section{Crack-trajectory results}
 \label{sec:results}
 \subsection{Accepted path and direction history}
 The accepted first-tip SIFs at the stated unit traction are
-$K_I^{(1)}=0.36648$ and
-$K_{II}^{(1)}=4.1983\times10^{-6}$ MPa$\sqrt{\mathrm m}$,
+$K_{\mathrm{I}}^{(1)}=0.36648$ and
+$K_{\mathrm{II}}^{(1)}=4.1983\times10^{-6}$ MPa$\sqrt{\mathrm m}$,
 giving $\Delta\theta_2=\theta_2=-0.0013127^\circ$.
 The subsequent accepted elastic states are $P_2$ through $P_{23}$.
 
@@ -767,7 +820,7 @@ negatively inclined and their global $y$ coordinates continue to decrease.
     \centering
     \includegraphics[width=\linewidth]{figures/trajectory/late_detail.pdf}
     \caption{Late-path detail with equal spatial scales. The markers identify
-    $P_{17}$, the linearly interpolated $K_{II}/K_I=0$ location, $P_{23}$,
+    $P_{17}$, the linearly interpolated $K_{\mathrm{II}}/K_{\mathrm{I}}=0$ location, $P_{23}$,
     and the qualified unsolved point $P_{24}$.}
     \label{fig:trajectory-late}
   \end{subfigure}
@@ -783,15 +836,15 @@ negatively inclined and their global $y$ coordinates continue to decrease.
 
 
 \subsection{Mode intensities and the positive maximum}
-Figure~\ref{fig:intensities} shows monotonically increasing $K_I$, from
+Figure~\ref{fig:intensities} shows monotonically increasing $K_{\mathrm{I}}$, from
 0.36648 at $P_1$ to 1.2444 at $P_{23}$. The initially very small positive
-$K_{II}$ grows to its positive maximum at $P_{17}$, where $a=68$ mm,
-$K_{II}=0.0025484$, and $\qmix=K_{II}/K_I=0.0032389$.
+$K_{\mathrm{II}}$ grows to its positive maximum at $P_{17}$, where $a=68$ mm,
+$K_{\mathrm{II}}=0.0025484$, and $\qmix=K_{\mathrm{II}}/K_{\mathrm{I}}=0.0032389$.
 The positive mode-mixity maximum occurs at the same state. It is not the
 maximum \emph{absolute} mode-II intensity: the negative mode-II magnitude
 at the last accepted tip is larger.
 
-From $P_{17}$ through $P_{21}$, $K_{II}$ remains positive but decreases.
+From $P_{17}$ through $P_{21}$, $K_{\mathrm{II}}$ remains positive but decreases.
 Accordingly the negative incremental MTS turn becomes smaller in
 magnitude (Fig.~\ref{fig:late}). This change in turning response accompanies
 an increasing opening-mode intensity, not unloading.
@@ -802,13 +855,13 @@ an increasing opening-mode intensity, not unloading.
   \begin{subfigure}[t]{0.315\linewidth}
     \centering
     \includegraphics[width=\linewidth]{figures/intensities/KI.pdf}
-    \caption{Opening-mode factor $K_I$.}
+    \caption{Opening-mode factor $K_{\mathrm{I}}$.}
     \label{fig:intensities-KI}
   \end{subfigure}\hfill
   \begin{subfigure}[t]{0.315\linewidth}
     \centering
     \includegraphics[width=\linewidth]{figures/intensities/KII.pdf}
-    \caption{Sliding-mode factor $K_{II}$.}
+    \caption{Sliding-mode factor $K_{\mathrm{II}}$.}
     \label{fig:intensities-KII}
   \end{subfigure}\hfill
   \begin{subfigure}[t]{0.315\linewidth}
@@ -841,8 +894,8 @@ This estimate is not an independently solved local-symmetry state and does
 not quantify interpolation or increment-size error.
 
 Mode II is negative at $P_{22}$ and $P_{23}$, so the next turning increments
-are positive. The last accepted state has $K_I=1.2444$,
-$K_{II}=-0.0067803$, and $\qmix=-0.0054488$. It predicts
+are positive. The last accepted state has $K_{\mathrm{I}}=1.2444$,
+$K_{\mathrm{II}}=-0.0067803$, and $\qmix=-0.0054488$. It predicts
 $\Delta\theta_{24}=0.62435^\circ$ and
 $\theta_{24}=-2.7762^\circ$. The latter defines the next qualified
 geometry, not a physical solution at $P_{24}$.
@@ -852,7 +905,7 @@ geometry, not a physical solution at $P_{24}$.
 angles are in degrees. The interpolated row contains only a graphical
 zero estimate, not a solved stress field or crack direction.}
 \begin{tabular}{lrrrrrr}\toprule
-State & $a$ [mm] & $K_I$ & $K_{II}$ & $K_{II}/K_I$ & $\theta_k$ & $\Delta\theta_{k+1}$\\\midrule
+State & $a$ [mm] & $K_{\mathrm{I}}$ & $K_{\mathrm{II}}$ & $K_{\mathrm{II}}/K_{\mathrm{I}}$ & $\theta_k$ & $\Delta\theta_{k+1}$\\\midrule
 \CharacteristicRows
 Interpolated & \LSLengthMM & --- & --- & $0$ & --- & ---\\
 \bottomrule\end{tabular}\label{tab:states}
@@ -876,7 +929,7 @@ Interpolated & \LSLengthMM & --- & --- & $0$ & --- & ---\\
 
   \caption{Mode-mixity sign reversal and opposite-signed MTS turning.
   Each marker is an accepted current-tip state; its turn predicts the next
-  segment. The vertical dotted line is the interpolated $K_{II}/K_I=0$
+  segment. The vertical dotted line is the interpolated $K_{\mathrm{II}}/K_{\mathrm{I}}=0$
   location. The positive turn reported at $a=92$ mm belongs to the $P_{23}$
   solution and predicts the unsolved next geometry.}
   \label{fig:late}
@@ -953,20 +1006,20 @@ $\delta r=(\delta x^2+\delta y^2)^{1/2}$ is their separation, and
 $\delta\theta$ is the difference of absolute directions in the frozen
 frame. The symbol $\Delta\theta_{k+1}$ remains reserved for a local MTS
 turn. Differences in mode mixity and interpolated crossing length are
-denoted by $\delta q_K$ and $\delta a_{\mathrm{LS}}$, respectively.
+denoted by $\delta q_{\mathrm{K}}$ and $\delta a_{\mathrm{LS}}$, respectively.
 
 The fixed-geometry three-level comparison changes the structured-tip
 resolution with the requested exterior sizing law held at its reference
 value. At $P_{17}$, halving the production tip size from
-$0.027012$ to $0.013506$ mm changes $K_I$ by $0.00134\%$,
-$K_{II}/K_I$ by $1.05\times10^{-6}$ in absolute value, and the MTS turn by
+$0.027012$ to $0.013506$ mm changes $K_{\mathrm{I}}$ by $0.00134\%$,
+$K_{\mathrm{II}}/K_{\mathrm{I}}$ by $1.05\times10^{-6}$ in absolute value, and the MTS turn by
 only $-1.20\times10^{-4}$ degrees. Thus the positive mode-mixity maximum is
 stable under this structured-tip refinement at fixed requested exterior sizing.
 
 The more discriminating comparison is the $P_{21}$--$P_{22}$ bracket, where
-$K_{II}$ changes sign. Table~\ref{tab:tipmesh} shows three physically
+$K_{\mathrm{II}}$ changes sign. Table~\ref{tab:tipmesh} shows three physically
 qualified levels spanning a factor of four in $h_{\mathrm{tip}}$. Every
-level keeps $K_{II}/K_I>0$ at $P_{21}$ and $K_{II}/K_I<0$ at $P_{22}$, so
+level keeps $K_{\mathrm{II}}/K_{\mathrm{I}}>0$ at $P_{21}$ and $K_{\mathrm{II}}/K_{\mathrm{I}}<0$ at $P_{22}$, so
 the local-symmetry bracket and the associated reversal of MTS turning sense
 are unchanged.
 
@@ -984,8 +1037,8 @@ crack state; its extra digits resolve numerical mesh-comparison shifts only.}
 \begin{tabular}{lrrrrrr}
 \toprule
 Resolution & $h_{\rm tip}$ [mm] &
-$q_K(P_{21})$ & $\Delta\theta_{22}$ [deg] &
-$q_K(P_{22})$ & $\Delta\theta_{23}$ [deg] &
+$q_{\mathrm{K}}(P_{21})$ & $\Delta\theta_{22}$ [deg] &
+$q_{\mathrm{K}}(P_{22})$ & $\Delta\theta_{23}$ [deg] &
 $a_{\rm LS}$ [mm]\\
 \midrule
 $2h_0$ & 0.054025 & $+7.7957\times10^{-5}$ & $-0.008933$ &
@@ -1020,10 +1073,10 @@ maximum absolute direction difference is $0.24539$ millidegrees at
 $P_{22}$ [Figs.~\ref{fig:tipres-dy} and \ref{fig:tipres-dtheta}].
 
 The mechanical history is equally stable. Both mesh families place the
-positive maximum of $K_{II}/K_I$ at $P_{17}$ and retain positive mode
+positive maximum of $K_{\mathrm{II}}/K_{\mathrm{I}}$ at $P_{17}$ and retain positive mode
 mixity at $P_{21}$ and negative mode mixity at $P_{22}$
 [Fig.~\ref{fig:tipres-q}]. The maximum absolute difference in
-$K_{II}/K_I$ is $2.65\times10^{-7}$. Linear interpolation of the two
+$K_{\mathrm{II}}/K_{\mathrm{I}}$ is $2.65\times10^{-7}$. Linear interpolation of the two
 independently propagated $P_{21}$--$P_{22}$ brackets gives
 $a_{\mathrm{LS}}=84.14637$ mm for $h_0$ and
 $84.146276$ mm for $2h_0$, a difference of
@@ -1071,7 +1124,7 @@ every discretization error.
   \begin{subfigure}[t][103.5mm][t]{0.315\linewidth}
     \centering
     \includegraphics[width=\linewidth]{figures/tip_resolution_sensitivity/mode_mixity.pdf}
-    \caption{Mode-mixity ratio $K_{II}/K_I$ along the two independently
+    \caption{Mode-mixity ratio $K_{\mathrm{II}}/K_{\mathrm{I}}$ along the two independently
     propagated trajectories.}
     \label{fig:tipres-q}
   \end{subfigure}
@@ -1095,7 +1148,7 @@ polyline is held fixed. To test accumulated trajectory sensitivity, however,
 the M1 path was regenerated independently rather than evaluated on the
 reference vertices. The prescribed first segment $P_0P_1$ is common to both
 calculations, but the $P_1$ elastic problem is resolved on M1, its own
-$K_I^{(1)}$ and $K_{II}^{(1)}$ determine $\theta_2$, and every subsequent
+$K_{\mathrm{I}}^{(1)}$ and $K_{\mathrm{II}}^{(1)}$ determine $\theta_2$, and every subsequent
 vertex follows recursively from the preceding M1 solution. Thus no
 reference-path vertex after $P_1$ is imposed.
 
@@ -1110,10 +1163,10 @@ difference is $0.07304$ millidegrees, or $7.30\times10^{-5}$ degrees
 [Figs.~\ref{fig:m1mesh-dy} and \ref{fig:m1mesh-dtheta}].
 
 The mechanical history is equally stable. Both calculations place the
-positive maximum of $K_{II}/K_I$ at $P_{17}$ ($a=68$ mm), and both retain
+positive maximum of $K_{\mathrm{II}}/K_{\mathrm{I}}$ at $P_{17}$ ($a=68$ mm), and both retain
 positive mode mixity at $P_{21}$ and negative mode mixity at $P_{22}$
 [Fig.~\ref{fig:m1mesh-q}]. The maximum absolute difference in
-$K_{II}/K_I$ over the accepted histories is $2.89\times10^{-7}$. Linear
+$K_{\mathrm{II}}/K_{\mathrm{I}}$ over the accepted histories is $2.89\times10^{-7}$. Linear
 interpolation of the two respective $P_{21}$--$P_{22}$ brackets gives
 $a_{\mathrm{LS}}=84.14637$ mm for the reference trajectory and
 $84.146$ mm for M1, a difference of $0.000322$ mm
@@ -1163,7 +1216,7 @@ remains unresolved.
   \begin{subfigure}[t][103.5mm][t]{0.315\linewidth}
     \centering
     \includegraphics[width=\linewidth]{figures/m1_mesh_sensitivity/mode_mixity.pdf}
-    \caption{Mode-mixity ratio $K_{II}/K_I$ along the two independently
+    \caption{Mode-mixity ratio $K_{\mathrm{II}}/K_{\mathrm{I}}$ along the two independently
     propagated trajectories.}
     \label{fig:m1mesh-q}
   \end{subfigure}
@@ -1258,7 +1311,7 @@ Comparison &
 $\max|\delta y|$ [$\mu$m] &
 $\max\delta r$ [$\mu$m] &
 $\max|\delta\theta|$ [mdeg] &
-$\max|\delta q_K|$\\
+$\max|\delta q_{\mathrm{K}}|$\\
 \midrule
 2 mm $-$ 4 mm & 35.4181 & 35.4721 & 214.931 & $2.48578\times10^{-3}$\\
 1 mm $-$ 2 mm & 18.2629 & 18.2911 & 127.391 & $1.41618\times10^{-3}$\\
@@ -1279,10 +1332,10 @@ increment.
 
 A more revealing pattern appears in the mode-mixity correction.
 Table~\ref{tab:increment-characteristic} lists the positive maximum of
-$q_K=K_{II}/K_I$ for each level. The raw maximum decreases almost in direct
+$q_{\mathrm{K}}=K_{\mathrm{II}}/K_{\mathrm{I}}$ for each level. The raw maximum decreases almost in direct
 proportion to $\Delta a$: from $3.23937\times10^{-3}$ at 4 mm to
 $1.61266\times10^{-3}$ at 2 mm and $8.04068\times10^{-4}$ at 1 mm.
-In contrast, the normalized quantity $q_{K,\max}/\Delta a$ changes by only
+In contrast, the normalized quantity $q_{\mathrm{K},\max}/\Delta a$ changes by only
 about $0.71\%$ over the entire 4-to-1-mm refinement. The MTS turning density at the same characteristic state is similarly
 stable, varying from $-0.092799$ to $-0.092139$ deg/mm. The complete
 turning-density histories in Fig.~\ref{fig:inc-turn-density} show that this
@@ -1295,14 +1348,14 @@ the same smooth variation on progressively finer crack-length grids.
 \setlength{\tabcolsep}{3.6pt}
 \caption{Characteristic quantities in the crack-increment refinement
 family. The local-symmetry location is obtained by linear interpolation
-between the two solved states bracketing $q_K=0$.}
+between the two solved states bracketing $q_{\mathrm{K}}=0$.}
 \label{tab:increment-characteristic}
 \begin{tabular}{rrrrrr}
 \toprule
 $\Delta a$ [mm] &
-$a(q_{K,\max})$ [mm] &
-$q_{K,\max}$ &
-$q_{K,\max}/\Delta a$ [mm$^{-1}$] &
+$a(q_{\mathrm{K},\max})$ [mm] &
+$q_{\mathrm{K},\max}$ &
+$q_{\mathrm{K},\max}/\Delta a$ [mm$^{-1}$] &
 $(\Delta\theta/\Delta a)_{q_{\max}}$ [deg/mm] &
 $a_{\rm LS}$ [mm]\\
 \midrule
@@ -1316,17 +1369,21 @@ $-0.092139$ & 83.268112\\
 \end{tabular}
 \end{table}
 
-This behavior is consistent with
+The positive maximum is sampled at $a=68$ mm on the 4-mm path and
+at $a=66$ mm on the two finer paths; the values therefore do not
+correspond to an identical crack length. Nevertheless, their
+near-proportional decrease with $\Delta a$, together with the
+stability of turning density, is consistent with the conditional
+curvature--MTS correspondence in Eq.~\eqref{eq:curvature-mts}.
+The observed behavior may be summarized as
 \begin{equation}
- q_K=O(\Delta a),\qquad
- \Delta\theta=O(\Delta a)
+ q_{\mathrm{K}}=O(\Delta a),\qquad
+ \Delta\theta=O(\Delta a),
  \label{eq:increment-scaling}
 \end{equation}
-along a smooth limiting trajectory, while $q_K/\Delta a$ and
-$\Delta\theta/\Delta a$ remain finite measures of the local corrective
-response and turning density. Equation~\eqref{eq:increment-scaling} is an
-interpretation of the observed three-level trend, not an independently
-proved asymptotic result.
+within the investigated numerical family. Three coupled refinement
+levels provide evidence of this scaling rather than an
+independent proof of asymptotic convergence.
 
 The local-symmetry crossing also contracts systematically. The interpolated
 locations are 84.148913, 83.550120, and 83.268112 mm for the 4-, 2-, and
@@ -1335,23 +1392,23 @@ whose ratio is 2.12. Interpreted only as a three-level diagnostic this gives
 an apparent order of about 1.09 for the interpolated event location. The
 crossing is directly bracketed between the solved 83- and 84-mm states on
 the 1-mm path, but it remains an interpolated quantity rather than an
-independently solved zero-$K_{II}$ state.
+independently solved zero-$K_{\mathrm{II}}$ state.
 
 The combined result is stronger than visual path overlap alone. The
 trajectory panel establishes the common macroscopic path, while the
 successive-difference panels show that the remaining geometric and
 directional discrepancies contract under refinement. At the same time, the
 raw mode-II correction becomes smaller in proportion to the discrete step. This distinction is important when
-interpreting $q_K$: its absolute value along a finite-step MTS path is a
+interpreting $q_{\mathrm{K}}$: its absolute value along a finite-step MTS path is a
 step-dependent corrective quantity, whereas its increment-normalized form
 has the more stable continuous-path interpretation.
 
 \section{Discussion}
 \label{sec:discussion}
 \subsection{Interpretation of late redirection}
-The accepted sequence shows reorientation under increasing $K_I$.
+The accepted sequence shows reorientation under increasing $K_{\mathrm{I}}$.
 The change in turning sign is directly associated with the change in
-$K_{II}/K_I$, as required by Eqs.~\eqref{eq:trt}--\eqref{eq:angleupdate}.
+$K_{\mathrm{II}}/K_{\mathrm{I}}$, as required by Eqs.~\eqref{eq:trt}--\eqref{eq:angleupdate}.
 The shrinking right-side ligament makes increased free-boundary influence
 a consistent physical interpretation. However, the boundary distance and
 the accumulated crack geometry change together. A control with a more
@@ -1376,24 +1433,28 @@ smoother crack paths at smaller prescribed increments: here the effect is
 quantified over three independently propagated levels and separated into
 geometric, directional, and mode-mixity measures.
 
-The mode-mixity history clarifies what converges. The raw positive maximum
-of $q_K$ approximately halves with $\Delta a$, whereas
-$q_{K,\max}/\Delta a$ changes by only about $0.71\%$ over the 4-to-1-mm
-range; the turning density at the same state is equally stable. This is
-consistent with the small-mixity MTS relation
-$\Delta\theta\simeq-2q_K$ and with a smooth limiting path whose curvature
-is sampled over a finite step. Thus raw $q_K$ should not be interpreted as
-an increment-independent physical observable of the path. The more robust
-quantities are the geometry, characteristic event locations, and
-increment-normalized corrective measures.
+The mode-mixity history complements the geometric comparisons.
+Although the positive maximum of $q_{\mathrm{K}}$ approximately
+halves with $\Delta a$, the increment-normalized maximum varies by
+only about $0.71\%$ from 4 to 1 mm, and the turning density at the
+corresponding characteristic states changes comparably little.
+Equation~\eqref{eq:mts-small-mixity} relates these quantities,
+while Eq.~\eqref{eq:curvature-mts} gives a conditional
+interpretation in terms of smooth-path curvature. The mode mixity
+obtained at a tip of a finite-step calculation should not,
+therefore, be identified directly with an increment-independent
+measure of curvature. The three-level comparison supports this
+interpretation without establishing a continuum limit.
 
-The centered-hole control provides a separate check on the directional
-logic itself. Exact reflection symmetry gives a nearly pure mode-I fixed
-path, while the measured multiplier $F'(0)=-0.11415$ shows that the
-implemented recurrence damps small angular perturbations rather than
-amplifying a numerical mode-II imbalance. This local stability result is
-consistent with, but logically distinct from, the global increment-
-refinement evidence for the asymmetric trajectory.
+The centered-hole control addresses a separate aspect of the
+directional procedure. The symmetric configuration is recovered
+to numerical accuracy, and the fitted slope
+$F'(0)\approx-0.11415$ measures attenuation of small angular
+perturbations in a prescribed two-segment family. This one-step
+response does not establish stability of the complete evolving
+path. The effect of accumulated numerical perturbations on the
+asymmetric trajectory is instead assessed by independently
+propagated mesh and increment studies.
 
 Mesh sensitivity is addressed by two complementary perturbations. The M1
 calculation is a clean exterior-only change: it retains the paired tip core
@@ -1427,7 +1488,7 @@ Perturbation &
 $\max|\delta y|$ [$\mu$m] &
 $\max\delta r$ [$\mu$m] &
 $\max|\delta\theta|$ [mdeg] &
-$\max|\delta q_K|$ &
+$\max|\delta q_{\mathrm{K}}|$ &
 $\delta a_{\rm LS}$ [$\mu$m]\\
 \midrule
 Coarser exterior M1 & 0.06734 & 0.06742 & 0.07304 & $2.89\times10^{-7}$ & $-0.322$\\
@@ -1469,14 +1530,15 @@ provide the initial state for an incremental LEFM trajectory whose later
 directions are determined by interaction-integral SIFs at the current tip
 and the MTS rule. The 4-mm reference history reaches 92 mm. Positive mode mixity
 peaks near the middle of the path, later crosses zero, and becomes negative
-while $K_I$ continues to increase. The sign change reverses the incremental
+while $K_{\mathrm{I}}$ continues to increase. The sign change reverses the incremental
 turn and produces the observed late reduction of the negative crack
 inclination.
 
 The numerical evidence separates several aspects of this recursive path
-construction. A centered-hole control shows that the exact straight path is
-a locally attracting fixed path of the implemented EDI--MTS recurrence,
-with one-step multiplier $-0.11415$. An independently propagated exterior-
+construction. A centered-hole control recovers the straight symmetric response
+to numerical accuracy; its fitted one-step angular slope of
+approximately $-0.11415$ describes attenuation of small prescribed
+perturbations, not attraction of a complete evolving trajectory. An independently propagated exterior-
 mesh perturbation preserves the characteristic mode-mixity events and
 differs from the reference path by at most $0.0674~\mu\mathrm{m}$ at
 corresponding tips. A separate structured-tip resolution study likewise
@@ -1494,11 +1556,13 @@ from $35.47$ to $18.29~\mu\mathrm{m}$ and the maximum direction difference
 from $214.93$ to $127.39$ millidegrees. The interpolated local-symmetry
 location moves from 84.149 to 83.550 to 83.268 mm, with successive shifts
 of 0.599 and 0.282 mm. At the same time, the peak raw mode mixity decreases
-almost linearly with the increment, whereas $q_{K,\max}/\Delta a$ and the
+almost linearly with the increment, whereas $q_{\mathrm{K},\max}/\Delta a$ and the
 associated turning density vary by less than 1\% across the 4-to-1-mm
-refinement. The data are therefore consistent with a stable continuous-path
-limit in which the residual mode-II correction and discrete MTS turn are
-$O(\Delta a)$ quantities.
+refinement. These trends are consistent with the conditional
+smooth-path interpretation of the MTS recurrence, in which both the
+mode-mixity correction and the incremental turn scale with
+$\Delta a$; they do not by themselves establish a unique
+smooth limiting trajectory.
 
 These findings support interpretation of the computed trajectory as a
 robust consequence of the evolving elastic field rather than a particular
