@@ -55,27 +55,30 @@ $P_{23}$ & 92 & 1.2444 & $-6.780\times10^{-3}$ & $-5.449\times10^{-3}$ & -3.4006
 \begin{document}
 \maketitle
 \begin{abstract}
-Crack-direction prediction from a circular hole is examined as a recursively
-coupled numerical problem in quasi-static linear elastic fracture mechanics.
-The initiation point is selected from the maximum tensile tangential stress
-on the uncracked hole boundary. An initial segment follows its material-side
-normal, and subsequent directions are obtained from current-tip opening and
-sliding stress-intensity factors through the maximum tangential stress
-criterion. Each elastic solution retains the previously generated crack
-geometry. Reflection-paired tip meshes, prescribed-field extraction checks,
-independent crack-opening-displacement comparisons, and a centered-hole
-control support the numerical assessment. Fixed-geometry mesh comparisons
-and independently propagated mesh and increment studies distinguish
-extraction sensitivity from accumulated trajectory sensitivity. Mode mixity
-first increases and then changes sign as the crack develops, reversing the
-incremental turn while the opening intensity continues to increase.
-Characteristic path events persist under the tested mesh changes, while
-increment refinement contracts geometric and directional discrepancies and
-retains stable increment-normalized turning measures. These observations
-support numerical robustness within the tested families, rather than a
-rigorous error bound or a uniquely established boundary mechanism. The
-model addresses direction selection under prescribed increments; it does
-not resolve propagation kinetics, arrest, branching, or inelastic processes.
+Predicting a crack trajectory from an initially uncracked circular hole
+requires linking the initiation state to a sequence of mixed-mode
+crack-tip solutions. We consider this problem within quasi-static linear
+elastic fracture mechanics. The initiation point is selected by the
+maximum tensile tangential stress on the hole boundary, and the
+first segment follows the outward material-side normal. Subsequent
+directions are determined by the maximum tangential stress criterion
+using interaction-integral stress-intensity factors evaluated for the
+complete current crack geometry. Prescribed-field checks,
+crack-opening-displacement comparisons, and a centered-hole
+symmetry control assess the extraction and direction-selection
+procedures. Independently propagated exterior-mesh and
+structured-tip calculations test the sensitivity of the resulting
+trajectory. In the asymmetric case, the signed mode-mixity ratio
+reaches a positive maximum and then changes sign, reversing the
+incremental turning sense while the opening-mode intensity
+continues to increase under fixed remote traction. Independently
+propagated 4-, 2-, and 1-mm paths, refined together with their
+numerical length scales, exhibit contracting geometric and
+directional differences and nearly constant increment-normalized
+turning measures. The results support the characteristic trajectory
+events within the tested numerical families, without establishing
+a smooth-path convergence theorem or isolating the influence of
+the approaching free boundary.
 \end{abstract}
 \noindent\textbf{Keywords:} crack trajectory; circular hole; linear elastic
 fracture mechanics; maximum tangential stress; mode mixity; interaction
