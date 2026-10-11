@@ -308,9 +308,8 @@ The frozen basis is
 The normal points radially out of the hole and into the material; $\bm t$
 is its counterclockwise rotation. All absolute crack angles $\theta_k$
 below are measured relative to this frozen normal, not to the global
-$x$ axis. The global segment direction is therefore
-$\Theta_k=\phi_*+\theta_k$; translating the coordinate origin does not
-change this angle. With increment length $\Delta a$, the initial direction and
+$x$ axis. Its global orientation is $\phi_*+\theta_k$; translating the
+coordinate origin does not change this angle. With increment length $\Delta a$, the initial direction and
 first segment are prescribed by
 \begin{equation}
  \theta_1=0,\qquad
@@ -379,11 +378,10 @@ used for interpretation, whereas the reported trajectories use the
 unapproximated MTS root.
 
 \subsection{Finite-increment recurrence}
-The direction of a segment, expressed in the frozen initiation frame,
-is $\bm e(\theta)=\cos\theta\,\bm n_{\mathrm{mat}}
-+\sin\theta\,\bm t$. With $\Delta a$ denoting the prescribed
-segment length, the incremental turning angle, the absolute
-direction of the new segment, and the new tip position satisfy
+The unit direction of a segment is expressed in the frozen initiation
+basis. With $\Delta a$ denoting the prescribed segment length, the
+incremental turning angle, the absolute direction of the new segment,
+and its tip position satisfy
 \begin{align}
  \bm e(\theta)&=\cos\theta\,\bm n_{\mathrm{mat}}
                  +\sin\theta\,\bm t,\label{eq:direction}\\
@@ -1425,9 +1423,9 @@ direct measure of this effect. Successive halving from 4 to 2 to 1 mm
 reduces the maximum corresponding-tip separation from $35.47$ to
 $18.29~\mu\mathrm{m}$ and the maximum direction difference from
 $214.93$ to $127.39$ millidegrees. The local-symmetry estimate shifts by
-$0.599$ mm and then $0.282$ mm. These contractions support a stable limiting
-trajectory, although three levels are insufficient to establish a formal
-asymptotic convergence order. The result complements the two-increment
+$0.599$ mm and then $0.282$ mm. These contractions are consistent with stabilization of the computed
+trajectory within the tested family, although three levels do not
+establish a smooth limiting curve or a formal convergence order. The result complements the two-increment
 comparison of Fang et al.~\cite{FangEtAl2020}, who observed similar but
 smoother crack paths at smaller prescribed increments: here the effect is
 quantified over three independently propagated levels and separated into
@@ -1548,8 +1546,9 @@ $\eta_e=1$ fixes the requested exterior sizing law while
 structured-tip resolution changes; conforming exterior connectivity is
 not required to remain identical.
 
-The crack-increment study provides the strongest trajectory-convergence
-evidence. Independent 4-, 2-, and 1-mm paths were generated to the same
+The three-level crack-increment study provides the most direct
+evidence of trajectory sensitivity to coupled increment and mesh
+refinement. Independent 4-, 2-, and 1-mm paths were generated to the same
 92-mm length using one dimensionless coarse numerical family. Successive
 halving of the increment reduces the maximum corresponding-tip separation
 from $35.47$ to $18.29~\mu\mathrm{m}$ and the maximum direction difference
