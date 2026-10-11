@@ -1,0 +1,19 @@
+{
+  "date": "2026-10-11",
+  "protectedExistingFiles": 62,
+  "scientificCaptionOrTableChanges": false,
+  "allSourceEvidenceUnchanged": true,
+  "physicalSolves": 0,
+  "vectorStreamIdentityTests": "passed: five retained layers",
+  "sourceIdentityRejection": "passed",
+  "independentDataTableChecks": 59,
+  "plottedMetricRowsIdentical": 23,
+  "compiledPdfPages": 24,
+  "overfullBoxes": 0,
+  "oversizeFloats": 0,
+  "visuallyVerifiedFigures": [
+    7,
+    8,
+    9
+  ]
+}

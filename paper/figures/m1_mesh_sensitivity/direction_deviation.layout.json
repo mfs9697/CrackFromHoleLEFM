@@ -1,0 +1,37 @@
+{
+  "source": "C:\\Users\\Mikhailo\\Documents\\GitHub\\CrackFromHoleLEFM\\paper\\data\\retained_figure_7_9\\m1_direction_deviation.pdf",
+  "source_sha256": "e05616ce0d72a396a4e6cdfaf84d69959da3ba229297f90c2934b29676206b20",
+  "panelClass": "lower",
+  "page_mm": [
+    51.03,
+    83
+  ],
+  "axes_mm": [
+    16.3296,
+    18,
+    32.1489,
+    46.2
+  ],
+  "graphTransform": [
+    0.7481998370893295,
+    0,
+    0,
+    0.6148386304424976,
+    21.340846170137276,
+    35.08585186456426
+  ],
+  "xlim": [
+    0,
+    100
+  ],
+  "ylim": [
+    0,
+    0.08
+  ],
+  "originalGraphOperations_sha256": "c400afb2b2420e3cee8f475f90d556205a6b9378acb9ed79166bb2bb7d9288ed",
+  "originalGraphOperationCount": 784,
+  "legend": null,
+  "numericalReconstruction": false,
+  "rasterization": false,
+  "sourceTypography": "Original legend glyphs retained; axes plate uses shared MATLAB style"
+}

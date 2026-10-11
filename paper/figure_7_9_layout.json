@@ -1,0 +1,17 @@
+{
+  "units": "mm",
+  "top": {
+    "page": [152.28, 90],
+    "axes": [15, 16, 133.28, 56.5430303030303],
+    "legend": [15, 74.5, 133.28, 13.5]
+  },
+  "lower": {
+    "page": [51.03, 83],
+    "axes": [16.3296, 18, 32.1489, 46.2],
+    "legend": [16.3296, 67, 32.1489, 15]
+  },
+  "label_pt": 11,
+  "tick_pt": 9.5,
+  "legend_pt": 9.5,
+  "legend_policy": "Reserved strip above axes; never inside the data rectangle"
+}

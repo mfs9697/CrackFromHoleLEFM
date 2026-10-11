@@ -7,7 +7,7 @@ function Review=review_figures_7_9(varargin)
 % fabricate unavailable histories.
 %
 % Figure 7: redraw four panels from the audited isolated-tip dataset.
-% Figure 8: RETAIN the four verified M1 PDFs (native history unavailable).
+% Figure 8: WRAP the four immutable M1 vector PDFs (history unavailable).
 % Figure 9: RETAIN the exact native-trajectory PDF; regenerate only three
 %           companion panels from the saved 4/2/1-mm plotting records.
 %
@@ -21,7 +21,7 @@ function Review=review_figures_7_9(varargin)
 % To choose a destination:
 %   R=review_figures_7_9('OutputRoot','D:\FigureReview');
 %
-% Do not replace the published PDFs until all 12 panels have been inspected.
+% Also produces a three-page assembled review PDF and a geometry manifest.
 
     ip=inputParser;
     addParameter(ip,'OutputRoot','',@(x)ischar(x)||isstring(x));
@@ -39,7 +39,6 @@ function Review=review_figures_7_9(varargin)
     end
     if ~isfolder(target),mkdir(target);end
 
-    oldRoot=fullfile(paperDir,'figures');
     dir7=fullfile(target,'figure7_tip_resolution');
     dir8=fullfile(target,'figure8_M1_exterior');
     dir9=fullfile(target,'figure9_increment');
@@ -54,12 +53,11 @@ function Review=review_figures_7_9(varargin)
     incData=fullfile(paperDir,'data','increment_plot_records.mat');
     assert(isfile(incData),'fig789:MissingSavedIncrementRecords', ...
         'The audited 4/2/1-mm plotting records are missing: %s',incData);
-    retained8=fullfile(oldRoot,'m1_mesh_sensitivity');
-    retained9=fullfile(oldRoot,'increment_sensitivity');
+    retained8=fullfile(paperDir,'data','retained_figure_7_9');
     for k=1:numel(names8)
-        local_require_pdf(fullfile(retained8,[names8{k} '.pdf']));
+        local_require_pdf(fullfile(retained8,['m1_' names8{k} '.pdf']));
     end
-    local_require_pdf(fullfile(retained9,'trajectory.pdf'));
+    local_require_pdf(fullfile(retained8,'increment_trajectory.pdf'));
 
     % Figure 7: audited independent core-size sensitivity.
     if ~isfolder(dir7),mkdir(dir7);end
@@ -68,18 +66,17 @@ function Review=review_figures_7_9(varargin)
         local_require_pdf(fullfile(dir7,[names7{k} '.pdf']));
     end
 
-    % Figure 8: copy, not reconstruct, the accepted M1 vector PDFs.
+    % Figure 8: preserve accepted vector paths, reframe axes and relocate the
+    % original legend glyphs into the reserved strip. No numerical history.
     if ~isfolder(dir8),mkdir(dir8);end
     for k=1:numel(names8)
-        local_copy_pdf( ...
-            fullfile(retained8,[names8{k} '.pdf']), ...
+        publication_normalize_retained_pdf(['m1_' names8{k}], ...
             fullfile(dir8,[names8{k} '.pdf']));
     end
 
     % Figure 9: use ONLY the saved exact common-length and native records.
     if ~isfolder(dir9),mkdir(dir9);end
-    local_copy_pdf(fullfile(retained9,'trajectory.pdf'), ...
-                   fullfile(dir9,'trajectory.pdf'));
+    publication_normalize_retained_pdf('increment_trajectory',fullfile(dir9,'trajectory.pdf'));
     result9=plot_saved_increment_records(incData,dir9);
     for k=1:numel(names9)
         local_require_pdf(fullfile(dir9,[names9{k} '.pdf']));
@@ -90,7 +87,7 @@ function Review=review_figures_7_9(varargin)
     Review.figure7=struct('directory',dir7, ...
         'panels',{names7},'status','redrawn from audited isolated-core evidence');
     Review.figure8=struct('directory',dir8, ...
-        'panels',{names8},'status','retained original M1 vector PDFs; history unavailable');
+        'panels',{names8},'status','wrapped original M1 vector content; history unavailable');
     Review.figure9=struct('directory',dir9, ...
         'panels',{names9}, ...
         'status','original trajectory retained; three saved-data panels redrawn');
@@ -101,24 +98,19 @@ function Review=review_figures_7_9(varargin)
     Review.latexStructure='one 0.94 linewidth top panel; three 0.315 linewidth lower panels';
     Review.figure7Source=result7;
     Review.figure9Source=result9;
+    Review.layout=jsondecode(fileread(fullfile(paperDir,'figure_7_9_layout.json')));
+    fid=fopen(fullfile(target,'review_manifest.json'),'w');assert(fid>=0);
+    fprintf(fid,'%s\n',jsonencode(Review));fclose(fid);
+    publication_pdf_tool({'--review-root',target});
+    Review.reviewPdf=fullfile(target,'figures_7_9_review.pdf');
 
     fprintf('\nFIGURES 7--9 READY FOR GRAPHICAL REVIEW\n');
     fprintf('  %s\n',target);
     fprintf('  Fig. 7: four panels from audited isolated-core data\n');
-    fprintf('  Fig. 8: four VERIFIED retained M1 PDFs (no fake data)\n');
+    fprintf('  Fig. 8: four VERIFIED vector layers wrapped; no history reconstruction\n');
     fprintf('  Fig. 9: original trajectory plus three saved-record panels\n');
     fprintf('  All 12 PDFs checked for existence and PDF file signatures.\n');
-    fprintf('  Inspect the PDF panels before copying any to paper/figures.\n');
-end
-
-function local_copy_pdf(source,target)
-    local_require_pdf(source);
-    [ok,msg]=copyfile(source,target,'f');
-    assert(ok,'fig789:CopyFailure','Cannot copy %s: %s',source,msg);
-    local_require_pdf(target);
-    a=dir(source);b=dir(target);
-    assert(a.bytes==b.bytes,'fig789:CopyMismatch', ...
-        'Retained PDF size changed during copy: %s',source);
+    fprintf('  Assembled preview and physical geometry checks: %s\n',Review.reviewPdf);
 end
 
 function local_require_pdf(file)

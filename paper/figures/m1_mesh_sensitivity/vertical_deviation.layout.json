@@ -1,0 +1,37 @@
+{
+  "source": "C:\\Users\\Mikhailo\\Documents\\GitHub\\CrackFromHoleLEFM\\paper\\data\\retained_figure_7_9\\m1_vertical_deviation.pdf",
+  "source_sha256": "06f3d677063551b7232aaf127bb8dd53ad9ecc36a0674f078749184c7e397786",
+  "panelClass": "lower",
+  "page_mm": [
+    51.03,
+    83
+  ],
+  "axes_mm": [
+    16.3296,
+    18,
+    32.1489,
+    46.2
+  ],
+  "graphTransform": [
+    0.6841647158969993,
+    0,
+    0,
+    0.6148386304424976,
+    23.64705372369702,
+    35.08585186456426
+  ],
+  "xlim": [
+    0,
+    100
+  ],
+  "ylim": [
+    0,
+    0.07
+  ],
+  "originalGraphOperations_sha256": "a66b2ae5f8f1d2f4dc394bc278b18522207839a7de7691bcd0460fef394b5c95",
+  "originalGraphOperationCount": 784,
+  "legend": null,
+  "numericalReconstruction": false,
+  "rasterization": false,
+  "sourceTypography": "Original legend glyphs retained; axes plate uses shared MATLAB style"
+}

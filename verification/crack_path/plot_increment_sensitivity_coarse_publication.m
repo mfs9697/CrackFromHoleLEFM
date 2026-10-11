@@ -529,8 +529,11 @@ function local_export_axis(srcAx,pdfFile,pngFile,panelName)
         legend(ax,'show','Location','best','Box','off','Interpreter','latex');
     end
     drawnow;
-    if strcmp(panelName,'trajectory'),kind='spatial_full';else,kind='third';end
-    publication_export_axis(ax,pdfFile,pngFile,kind);
+    if strcmp(panelName,'trajectory')
+        publication_export_wide_top(ax,pdfFile,pngFile);
+    else
+        publication_export_lower_panel(ax,pdfFile,pngFile);
+    end
 end
 
 function local_close_if_valid(h)

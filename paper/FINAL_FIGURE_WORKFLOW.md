@@ -26,8 +26,8 @@ regenerated and retained graphics and records their sources and hashes.
 | 5, late mode mixity/MTS turn | Same saved reference table | Regenerated; Delta theta belongs to the current accepted field and predicts the next segment. |
 | 6, COD comparisons | Same 176 saved fits | Regenerated from stored differences; no fitting/extraction repeated. |
 | 7, isolated-core sensitivity | Validated portable isolated dataset and unchanged reference | Regenerated with existing plotting routine. Core multiplier eta_c varies, requested exterior multiplier eta_e=1; connectivity may change. |
-| 8, M1 exterior sensitivity | Verified existing four vector panels | Retained: raw M1 history remains unavailable. No replacement history is invented. |
-| 9, increment sensitivity | Saved accepted plotting records recovered from the executed 2026-10-09 figure audit | Three companion panels regenerated from exact saved metrics/native records. Complete native vertex histories remain unavailable: the previously verified wide trajectory export from commit 81f1608 is retained, with separate provenance. Common-length coordinates are not interpolated into missing native trajectories. |
+| 8, M1 exterior sensitivity | Immutable accepted vector PDFs in `paper/data/retained_figure_7_9` | Original plotting commands wrapped onto shared axes plates; original legends moved outside the data. Raw history remains unavailable; no numerical reconstruction. |
+| 9, increment sensitivity | Saved accepted plotting records recovered from the executed 2026-10-09 figure audit | Three companion panels regenerated from exact saved metrics/native records. Complete native vertex histories remain unavailable: the previously verified wide trajectory export from commit 81f1608 is retained as immutable vector content and wrapped to the common layout, with separate provenance. Common-length coordinates are not interpolated into missing native trajectories. |
 | S1, numerical acceptance | Saved reference solver and mesh summaries | Regenerated; gates unchanged, no P24 failed physical field plotted. |
 
 The compact `increment_plot_records.mat` is a copy of the existing plotting
@@ -73,44 +73,44 @@ disp(R.summary);
 
 Examine the new PDFs before running the promotion helper again.
 
-## Figures 7–9: common four-panel publication structure
+## Figures 7--9: common four-panel publication structure
 
-The three manuscript figures **already share** the same LaTeX geometry:
+The three inline LaTeX environments retain one 0.94\linewidth trajectory
+above three 0.315\linewidth companion panels. Fixed subfigure heights and
+row gaps also align panels when caption lengths differ.
 
-- one 0.94\linewidth trajectory panel above
-- three 0.315\linewidth companion panels, separated with \hfill.
+Exactly two physical PDF/axes classes are defined in
+`figure_7_9_layout.json`: 152.28 x 90 mm trajectory pages and 51.03 x 83 mm
+companion pages. All legends sit in reserved strips above the data rectangles.
+See `FIGURES_7_9_LAYOUT_REPORT.md` for dimensions, sources, tests and limitations.
 
-Keep all three LaTeX figure environments inline in main.tex.
-Do **not** rearrange these as 2x2 grids merely to make them different from
-the accepted publication layout.
+For an isolated, plot-only review of all 12 panels:
 
-A separate plot-only review driver produces all 12 PDFs together without
-overwriting any approved publication graphics or creating new files in
-GitHub's tracked figure directories:
-
-\`\`\`matlab
+```matlab
 addpath(genpath(pwd));
 R = review_figures_7_9();
-winopen(R.outputRoot);  % on Windows
-\`\`\`
+winopen(R.reviewPdf);  % Windows; three assembled vector review pages
+```
 
-The default review destination is inside MATLAB's system temp directory,
-outside the Git working tree. An optional 'OutputRoot' is supported.
+Outputs default to MATLAB's temp directory, outside the checkout. The driver
+also creates PNG previews, per-panel layout/provenance metadata and a machine
+geometry audit. `OutputRoot` can select a different review directory.
+After inspection, `promote_figures_7_9_layout(R)` copies only the 12 checked
+PDF/PNG panels and their layout metadata into the publication folders.
 
-- Figure 7: draw the four panels from the isolated-core sensitivity
-  dataset through plot_tip2h0_vs_reference_publication.m.
-- Figure 8: COPY the four verified M1 vector PDFs because the original
-  M1 full vertex/run history is unavailable; do not invent or
-  interpolate this history.
-- Figure 9: retain the audited native-trajectory vector PDF; draw the
-  other three panels from increment_plot_records.mat, using exact
-  common-length metrics and saved native turning-density samples.
+- Figure 7: regenerate four panels using the qualified portable isolated-core
+  dataset and the unchanged accepted reference.
+- Figure 8: wrap the four immutable accepted M1 vector layers; create only
+  common blank axes decorations and move the original encoded legend glyphs.
+  Do not digitize/reconstruct missing physical histories.
+- Figure 9: wrap the accepted native-trajectory vector layer and regenerate
+  only three companion panels from exact saved increment plotting records.
 
-The driver checks retained file signatures and requires the source
-plotters' existing data-qualification gates. It is NOT a numerical solver
-and does not itself harmonize fonts inside unavailable historical PDFs.
-Do not promote any PDFs into paper/figures before visual inspection and
-confirmation of matched panel dimensions and legends.
+The existing available-history plotters use the same wide/lower export
+helpers. `redraw_all_figures()` delegates Figures 7--9 to this isolated driver,
+so a full redraw cannot silently revert to an incompatible historical family.
+Python (`pypdf`, `pdfplumber`, `reportlab`) and Poppler provide vector wrapping,
+physical-size checks and previews. Runtime selection is documented in the report.
 
 ## Physical sizing and typography
 
@@ -122,21 +122,17 @@ legends and annotations are 11 pt and ticks are 9.5 pt. Mathematical text and
 ticks explicitly use MATLAB's LaTeX interpreter. MATLAB's Computer Modern
 math/text rendering is compatible with the manuscript's Latin Modern layout.
 
-Figures 7, 8 and 9 share a wide trajectory above three companion panels.
-A two-by-two layout was considered but rejected because the retained portrait
-M1 panels would either exceed the page or require substantially smaller text.
-The common arrangement preserves quantities and spatial aspect ratios while
-allowing the available-data panels to be rendered at their final physical size.
+Figures 7--9 use their dedicated two-class geometry and 9.5-pt outside-data
+legends; they do not change the export classes of unaffected figures.
+Retained M1 and increment-trajectory vector evidence can now be placed with
+matching pages, axes and margins without their raw source coordinates.
+Original legend glyph typography is preserved, rather than claiming it was
+newly typeset by MATLAB LaTeX. The missing numerical histories still limit
+independent numerical reproduction, as recorded in the layout report.
 
-**Retained-source limitation:** original M1 and increment-trajectory graphics
-cannot be fully regenerated without their raw source coordinates. Their
-embedded fonts are retained, not represented as having passed the new
-interpreter/font checks. Figure 2 is no longer in this category: its audited
-deterministic mesh-only generator is available and has passed the exact T3,
-T6-node and four-window COD-sampling fingerprints.
-The wide increment asset is a verified graphical variant of the same accepted
-4/2/1-mm histories, not a substituted numerical family. This limitation is
-recorded for review rather than concealed by numerical reconstruction.
+Figure 2 is separate: its audited deterministic mesh-only generator has
+passed the exact T3, T6-node and four-window COD-sampling fingerprints.
+No mesh generator is called by either plotting workflow.
 
 Scientific values, accepted evidence snapshots, numerical solver sources and
 acceptance gates are unchanged. Panel letters are generated by LaTeX, and all

@@ -31,7 +31,7 @@ for j=1:3
     xlim(ax,[0,100]);xlabel(ax,'$a$ [mm]','Interpreter','latex');ylabel(ax,lab,'Interpreter','latex');
     if j==1,location='northeast';else,location='northwest';end
     legend(ax,'Location',location,'Interpreter','latex','Box','off');box(ax,'on');
-    publication_export_axis(ax,fullfile(out,[names{j} '.pdf']),fullfile(out,[names{j} '.png']),'third');
+    publication_export_lower_panel(ax,fullfile(out,[names{j} '.pdf']),fullfile(out,[names{j} '.png']));
     clear cleanup
 end
 S=struct('status','regenerated from saved plot records','source',file,'regeneratedPanels',{names}, ...

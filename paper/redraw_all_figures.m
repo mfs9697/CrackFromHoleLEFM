@@ -9,26 +9,33 @@ Report=struct('plotOnly',true,'physicalSolves',0,'meshStudies',0,'EDIReplays',0,
     'retainedGraphics',struct([]));
 Report.specimen=plot_specimen_geometry('OutputDir',fullfile(output,'geometry_loading'));
 Report.reference=plot_existing_manuscript_figures('OutputRoot',output);close all
-Report.isolated=plot_tip2h0_vs_reference_publication('OutputDir',fullfile(output,'tip_resolution_sensitivity'));close all
-% Preserve known verified graphics if original raw data are absent.
-m1=fullfile(root,'verification','crack_path','m1_independent_run','trajectory','path_run_state.mat');
-if exist(m1,'file')==2
-    Report.exterior=plot_m1_vs_reference_publication('OutputDir',fullfile(output,'m1_mesh_sensitivity'));close all
-else
-    retain('m1_mesh_sensitivity',{'trajectory','vertical_deviation','direction_deviation','mode_mixity'}, ...
-        'M1 raw history unavailable; no numerical reconstruction; native font sizes retained');
-end
-base=fullfile(root,'verification','crack_path','increment_sensitivity_coarse');
-if all(cellfun(@(d)exist(fullfile(base,d,'increment_study_summary.mat'),'file')==2,{'da_4mm','da_2mm','da_1mm'}))
-    Report.increment=plot_increment_sensitivity_coarse_publication('OutputDir',fullfile(output,'increment_sensitivity'));close all
-else
-    retain('increment_sensitivity',{'trajectory'},'Full native vertex histories unavailable; retain actual trajectory graphic');
-    records=fullfile(paper,'data','increment_plot_records.mat');
-    if exist(records,'file')==2
-        Report.increment=plot_saved_increment_records(records,fullfile(output,'increment_sensitivity'));
-    else
-        retain('increment_sensitivity',{'vertical_deviation','direction_deviation','turn_density'}, ...
-            'Increment histories/plot records unavailable; no incomplete or two-level substitution');
+% One layout path for all sensitivity figures. Immutable original PDFs are
+% wrapped when histories are unavailable; no fallback to historical data.
+R=review_figures_7_9();close all
+Report.sensitivity=R;
+Report.isolated=R.figure7Source;Report.exterior=R.figure8;Report.increment=R.figure9Source;
+sources={'figure7_tip_resolution','figure8_M1_exterior','figure9_increment'};
+targets={'tip_resolution_sensitivity','m1_mesh_sensitivity','increment_sensitivity'};
+for k=1:3
+    dest=fullfile(output,targets{k});if ~isfolder(dest),mkdir(dest);end
+    names={'trajectory','vertical_deviation','direction_deviation','mode_mixity'};
+    if k==3,names{4}='turn_density';end
+    for j=1:numel(names)
+        for ext={'.pdf','.png','.layout.json'}
+            name=[names{j} ext{1}];
+            copyfile(fullfile(R.outputRoot,sources{k},name),fullfile(dest,name),'f');
+        end
+    end
+    for j=1:numel(names)
+        info=jsondecode(fileread(fullfile(dest,[names{j} '.layout.json'])));
+        if isfield(info,'source_sha256')
+            row=struct('file',fullfile(dest,[names{j} '.pdf']), ...
+                'source',info.source,'sha256',info.source_sha256, ...
+                'status','retained vector content, layout normalized', ...
+                'reason','Exact numerical history unavailable; original plotting commands preserved', ...
+                'fontTargetVerified',false);
+            if isempty(Report.retainedGraphics),Report.retainedGraphics=row;else,Report.retainedGraphics(end+1)=row;end
+        end
     end
 end
 retain('mesh_levels',{'tip_mesh_H2','tip_mesh_H1','tip_mesh_H0'}, ...
