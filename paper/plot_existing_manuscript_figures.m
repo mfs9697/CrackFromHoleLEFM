@@ -388,7 +388,7 @@ function files=local_export_trajectory_equalwidth(ax,outDir,name)
     drawnow;
     print(fig,pdfFile,'-dpdf','-painters');
     print(fig,pngFile,'-dpng','-r220');
-    fprintf('Figure 3 %-11s: PDF width %.3f cm, plot width %.3f cm, height %.3f cm\\n', ...
+    fprintf('Figure 3 %-11s: PDF width %.3f cm, plot width %.3f cm, height %.3f cm\n', ...
         name,pageWidth_cm,plotWidth_cm,pageHeight_cm);
     files={pdfFile,pngFile};
 end
