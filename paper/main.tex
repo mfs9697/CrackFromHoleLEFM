@@ -77,10 +77,9 @@ continues to increase under fixed remote traction. Independently
 propagated 4-, 2-, and 1-mm paths, refined together with their
 numerical length scales, exhibit contracting geometric and
 directional differences and nearly constant increment-normalized
-turning measures. The results support the characteristic trajectory
-events within the tested numerical families, without establishing
-a smooth-path convergence theorem or isolating the influence of
-the approaching free boundary.
+turning measures. The characteristic turning sequence persists under the tested mesh
+changes, while coupled refinement clarifies the dependence of
+mode mixity and turning density on the extension increment.
 \end{abstract}
 \noindent\textbf{Keywords:} crack trajectory; circular hole; linear elastic
 fracture mechanics; maximum tangential stress; mode mixity; interaction
@@ -177,12 +176,10 @@ then test changes in exterior-mesh density and structured-tip
 resolution. A separate family with 4-, 2-, and 1-mm increments
 also refines the numerical length scales, so that it examines
 coupled increment/discretization sensitivity rather than the
-increment in isolation. Of particular interest are the positive
-maximum and subsequent sign reversal of the signed mode-mixity
-ratio, the associated reversal of the MTS turn, and the
-increment-normalized turning measures. Their interpretation
-is kept distinct from proof of a smooth limiting trajectory
-or an isolated free-boundary mechanism.
+increment in isolation. We examine the positive maximum and subsequent sign reversal
+of mode mixity, their effect on the MTS turning direction,
+and the behavior of increment-normalized turning measures
+under coupled refinement.
 
 Sections~\ref{sec:problem} and \ref{sec:recurrence} define the
 physical problem and the incremental MTS construction.
@@ -491,9 +488,8 @@ numerical scales are
 \end{equation}
 For this 4-mm increment these give $h_{\mathrm{tip}}=0.027012$ mm,
 $r_{\mathrm{in}}=0.4$ mm, $r_{\mathrm{out}}=2.6$ mm, and $r_{\mathrm{core}}=3$ mm. The grading transition is
-4 mm and the far-field size cap is 2.5 mm. The paired core contains 12678
-T3 triangles. All primary FE-nodal integration support lies inside this
-core, with 11316 participating elements.
+4 mm and the far-field size cap is 2.5 mm. The structured core contains 12678 T3 triangles, of which
+11316 contribute to the interaction-integral evaluation.
 
 Every candidate mesh is checked for retention of the physical boundary,
 separate crack faces, preservation of the intact ligament, and conforming
@@ -681,8 +677,8 @@ case one Krylov restart from the returned iterate is permitted, using the
 same matrix, right-hand side, SGS factors, tolerance, and iteration limit.
 The final PCG and independently recomputed residual gates are unchanged;
 a restart therefore resets the recurrence but does not relax acceptance.
-Only an accepted elastic field is checkpointed, before SIF/COD/MTS
-postprocessing.
+SIF extraction and MTS direction selection are performed
+only on fields satisfying these residual criteria.
 
 As a separate test of the extraction procedure, nodal
 displacements are prescribed from analytical pure-I, pure-II, and
@@ -831,15 +827,14 @@ slope estimate
  F'(0)\approx-0.11415.
  \label{eq:symmetric-multiplier}
 \end{equation}
-Within this prescribed two-segment family, the next-segment angular
-response reverses sign and is approximately 8.8 times smaller than
-the imposed perturbation. The fitted slope characterizes this prescribed family of
-two-segment geometries at $\Delta a=4$ mm. Later steps change the
-entire crack geometry and cannot be described by repeated
-application of the same scalar map $F$. The control therefore
-verifies the expected symmetry and the local signed EDI--MTS
-response; it does not establish stability of the evolving
-crack trajectory.
+For these two-segment geometries at $\Delta a=4$ mm,
+the next-segment angular response changes sign and is
+approximately 8.8 times smaller than the imposed perturbation.
+Because later steps change the complete crack geometry,
+they cannot be interpreted as repeated applications of
+the same scalar map $F$. The fitted slope therefore
+characterizes the local one-step response, not stability
+of the evolving trajectory.
 
 \section{Crack-trajectory results}
 \label{sec:results}
@@ -1057,12 +1052,11 @@ EDI ratio by $\CODNearZeroPercent$\%, although the
 corresponding turning-angle difference is only
 $\CODNearZeroTurnDiff^\circ$. The relative discrepancy
 is consequently sensitive to the small denominator in
-the comparison. These results corroborate the sign-change
-bracket across extraction procedures but cannot provide an
-independent accuracy bound on the elastic solution: COD and
-EDI are applied to the same FE displacement field.
-Their variation also does not represent a statistical
-uncertainty interval.
+the comparison. The two extraction methods thus agree on the sign-change
+bracket, although their common displacement solution
+precludes an independent estimate of the finite-element
+error. The differences among COD fits measure sensitivity
+to the extrapolation procedure, not statistical uncertainty.
 
 % Figure environment maintained inline in main.tex; graphics remain separate PDFs.
 \begin{figure}[tbp]
@@ -1634,15 +1628,12 @@ an extraction test and is not part of the coupled refinement
 sequence.
 
 \subsection{Last accepted state and physical scope}
-The accepted crack history ends at $P_{23}$. Although the
-proposed $P_{23}P_{24}$ extension satisfies the geometrical and
-prescribed-field checks, its 96-mm geometry has no accepted
-physical elastic solution. The attempted PCG solve did not
-satisfy the strict residual criterion, and the compact saved
-record does not include a failure trace from which its
-stagnation could be quantified. It would therefore be
-incorrect to interpret this numerical stopping point as
-fracture arrest or contact with the outer boundary.
+The accepted crack history ends at $P_{23}$. The proposed
+$P_{23}P_{24}$ extension satisfies geometrical and
+prescribed-field checks, but the attempted elastic solution
+for the 96-mm crack did not meet the PCG residual criterion.
+The resulting numerical stopping point cannot be interpreted
+as fracture arrest or contact with the right boundary.
 
 The model treats one active crack in a homogeneous,
 linearly elastic plate and supplies only the directions
