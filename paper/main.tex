@@ -1667,84 +1667,81 @@ Isolated-core $2h_0$ & 0.12760 & 0.12800 & 0.24539 & $2.65\times10^{-7}$ & $-0.0
 \end{tabular}
 \end{table}
 
-The remaining numerical questions are therefore narrower. Controlled
-interaction-domain-radius variation is still needed to quantify
-extraction-domain sensitivity.
-Likewise, local reflection pairing, synthetic recovery, residual gates, and
-element-quality gates establish numerical acceptance but do not by
-themselves bound every physical discretization error. The historical 8-mm
-verification remains a separate extraction test and is not used as a point
-in the trajectory-convergence sequence.
+Further tests should vary the interaction-domain radii while
+holding the physical crack geometry and other numerical parameters
+fixed. The existing mesh-quality, residual, and prescribed-field
+checks establish admissibility of the numerical calculations, but
+they do not provide a comprehensive error bound on the physical
+SIFs or trajectory. The earlier 8-mm diagnostic is retained as
+an extraction test and is not part of the coupled refinement
+sequence.
 
-\subsection{Last accepted state and model scope}
-The geometry ending at $P_{24}$, with total polyline length 96 mm, passes
-geometric and prescribed-field qualification. It has no accepted physical
-record. The reported attempted PCG solution did not satisfy the strict
-acceptance criterion; the available compact archive does not retain a
-failure trace that would quantify its stagnation. The physical history
-therefore ends at $P_{23}$, without retrospectively relaxing the gate.
-This is a numerical limitation, not evidence of fracture arrest or boundary
-intersection.
+\subsection{Last accepted state and physical scope}
+The accepted crack history ends at $P_{23}$. Although the
+proposed $P_{23}P_{24}$ extension satisfies the geometrical and
+prescribed-field checks, its 96-mm geometry has no accepted
+physical elastic solution. The attempted PCG solve did not
+satisfy the strict residual criterion, and the compact saved
+record does not include a failure trace from which its
+stagnation could be quantified. It would therefore be
+incorrect to interpret this numerical stopping point as
+fracture arrest or contact with the outer boundary.
 
-The model is quasi-static and linearly elastic. Crack advances are imposed
-for direction selection; no fracture-toughness growth law, dynamic
-instability, branching rule, plastic-zone assessment, or subsequent
-multicrack initiation calculation is provided. These restrictions define
-the scope of the present trajectory rather than mechanisms excluded by
-the results.
+The model treats one active crack in a homogeneous,
+linearly elastic plate and supplies only the directions
+of imposed quasi-static extensions. The stress-based
+initiation rule is not a subsequent propagation threshold,
+and the calculation does not determine growth loads,
+rates, or arrest. Nor does it model branching, competing
+initiation, plasticity, or dynamic fracture. These processes
+remain outside the formulation rather than being ruled out
+by the computed path.
 
 \section{Conclusions}
 \label{sec:conclusions}
-A stress-selected circular-hole point and one prescribed normal segment
-provide the initial state for an incremental LEFM trajectory whose later
-directions are determined by interaction-integral SIFs at the current tip
-and the MTS rule. The 4-mm reference history reaches 92 mm. Positive mode mixity reaches a maximum at
-$P_{17}$ and changes sign between the solved
-states $P_{21}$ and $P_{22}$ while
-$K_{\mathrm{I}}$ continues to increase.
-This sign reversal changes the incremental
-MTS turning sense and reduces the negative
-inclination of the final accepted segment.
+An incremental LEFM procedure has been used to obtain the
+trajectory of a single crack emanating from an asymmetrically
+located circular hole. The uncracked-hole stress field selects
+the initiation point, and a prescribed outward-normal first
+segment establishes the initial crack geometry. All subsequent
+directions follow from current-tip interaction-integral SIFs
+and the MTS criterion, with the entire previous path retained
+in each elastic problem. The accepted 4-mm history extends to
+92 mm; the next qualified geometry has no accepted physical
+solution.
 
-The numerical evidence separates several aspects of this recursive path
-construction. A centered-hole control recovers the straight symmetric response
-to numerical accuracy; its fitted one-step angular slope of
-approximately $-0.11415$ describes attenuation of small prescribed
-perturbations, not attraction of a complete evolving trajectory. An independently propagated exterior-
-mesh perturbation preserves the characteristic mode-mixity events and
-differs from the reference path by at most $0.0674~\mu\mathrm{m}$ at
-corresponding tips. A separate structured-tip resolution study likewise
-preserves the mode-mixity maximum and sign reversal; its independent
-$2h_0$ path differs by at most $0.128~\mu\mathrm{m}$. The structured-tip comparison keeps the requested exterior sizing
-law fixed, although the conforming exterior connectivity can
-differ between resolutions.
+The trajectory exhibits a characteristic change in its
+mixed-mode response. While $K_{\mathrm{I}}$ increases under
+the fixed reference traction, positive mode mixity reaches
+a maximum at $P_{17}$ and subsequently changes sign
+between $P_{21}$ and $P_{22}$. The associated reversal
+of the MTS turn reduces the negative inclination of
+the last accepted segment. The calculations identify
+this directional mechanism, without isolating the
+contribution of the approaching free boundary.
 
-The three-level crack-increment study provides the most direct
-evidence of trajectory sensitivity to coupled increment and mesh
-refinement. Independent 4-, 2-, and 1-mm paths were generated to the same
-92-mm length using one dimensionless coarse numerical family. Successive
-halving of the increment reduces the maximum corresponding-tip separation
-from $35.47$ to $18.29~\mu\mathrm{m}$ and the maximum direction difference
-from $214.93$ to $127.39$ millidegrees. The interpolated local-symmetry
-location moves from 84.149 to 83.550 to 83.268 mm, with successive shifts
-of 0.599 and 0.282 mm. At the same time, the peak raw mode mixity decreases
-almost linearly with the increment, whereas $q_{\mathrm{K},\max}/\Delta a$ and the
-associated turning density vary by less than 1\% across the 4-to-1-mm
-refinement. These trends are consistent with the conditional
-smooth-path interpretation of the MTS recurrence, in which both the
-mode-mixity correction and the incremental turn scale with
-$\Delta a$; they do not by themselves establish a unique
-smooth limiting trajectory.
+The numerical comparisons support the persistence of
+these characteristic events under the tested
+near-tip and exterior-mesh changes. A centered-hole
+control verifies the one-step response under reflection
+symmetry but does not establish stability of the
+evolving path. In the independently propagated
+4/2/1-mm family, the geometric and directional
+differences contract as the increment and numerical
+length scales decrease together. The nearly
+proportional reduction in raw mode mixity and the
+relative stability of increment-normalized turning
+measures are consistent with a conditional smooth-path
+interpretation, not a proven continuum-convergence
+result.
 
-These findings support interpretation of the computed trajectory as a
-robust consequence of the evolving elastic field rather than a particular
-mesh or finite-step artifact within the tested ranges. The conclusions
-remain limited to quasi-static LEFM direction selection. The qualified
-unsolved extension is kept separate from the accepted physical history, and
-no claims are made about arrest, branching, plasticity, dynamic instability,
-or subsequent competing crack initiation. Further numerical work should examine interaction-domain-radius
-sensitivity; a controlled boundary-distance study would be needed to isolate
-the physical cause of the late redirection.
+The present findings concern LEFM direction selection
+for prescribed quasi-static increments, without a
+fracture-growth or arrest criterion. Interaction-domain
+sensitivity and controlled boundary-distance
+comparisons remain useful next steps for separating
+numerical extraction effects from the physical origin
+of late crack redirection.
 
 \bibliographystyle{unsrt}
 \bibliography{references}
