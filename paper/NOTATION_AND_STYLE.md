@@ -1,6 +1,6 @@
 # Scientific notation and editorial style — Crack Trajectory
 
-Status: **Batch 1 working convention** (2026-10-11). This is an editorial guide, not a source of numerical evidence. The authoritative numerical results remain in the accepted saved records and the manuscript's cited verification reports. The approved Figures 1–9 and their graphical provenance are not changed by this guide.
+Status: **Editorial convention through Batch 2** (2026-10-11). This is an editorial guide, not a source of numerical evidence. The authoritative numerical results remain in the accepted saved records and the manuscript's cited verification reports. The approved Figures 1–9 and their graphical provenance are not changed by this guide.
 
 ## Principles
 
@@ -66,7 +66,13 @@ It is acceptable to write \(K_{\mathrm{II}}/K_{\mathrm{I}}\) at the point of def
 | M1 | Coarser exterior-sizing law with the production structured core retained |
 | \(\delta y,\delta r,\delta\theta\) | Differences of matched-tip position and absolute segment direction between propagated trajectories; define their direction at first use |
 
-Descriptive scale factors such as \(\eta_c\) and \(\eta_e\) should appear only if they meaningfully simplify the relevant numerical family definition; otherwise state the actual changed and fixed quantities.
+The manuscript uses actual tip spacings and the requested exterior sizing law rather than additional scale-factor aliases. This reduces notation without changing the implementation variables or saved numerical records.
+
+## Numerical verification hierarchy
+
+The manuscript distinguishes three experimental designs. **Fixed-geometry** comparisons evaluate SIF extraction and prescribed mesh changes without advancing the crack. **Independently propagated** exterior (M1) and structured-tip (\(2h_0\)) trajectories solve their own \(P_1\) fields and recursively recompute all subsequent directions; no accepted reference vertices after \(P_1\) are imposed. The **4/2/1-mm family** varies \(\Delta a\), the structured-core size, and the interaction-domain and exterior scales together. It is a coupled increment/discretization refinement study, not isolated crack-increment convergence.
+
+The centered-hole control checks reflection symmetry and the restricted one-step map \(F(\theta_2)=\theta_3\); its fitted slope does not establish full evolving-trajectory stability. The table is intentionally placed after the defining equation in the manuscript source.
 
 ## Required scientific distinctions
 
