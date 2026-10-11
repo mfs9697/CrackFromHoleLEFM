@@ -1233,7 +1233,7 @@ also changes when the core is remeshed.
   \begin{minipage}{0.8\textwidth}
   \centering
 
-  \begin{subfigure}[t][86mm][t]{0.94\linewidth}
+  \begin{subfigure}[t]{0.94\linewidth}
     \centering
     \includegraphics[width=\linewidth]{figures/tip_resolution_sensitivity/trajectory.pdf}
     \caption{Trajectories with structured-tip spacings $h_0$ and $2h_0$.}
@@ -1242,7 +1242,7 @@ also changes when the core is remeshed.
 
   \par\smallskip
 
-  \begin{subfigure}[t][83mm][t]{0.315\linewidth}
+  \begin{subfigure}[t]{0.315\linewidth}
     \centering
     \includegraphics[width=\linewidth]{figures/tip_resolution_sensitivity/vertical_deviation.pdf}
     \caption{Accumulated vertical tip-coordinate difference,
@@ -1250,7 +1250,7 @@ also changes when the core is remeshed.
     \label{fig:tipres-dy}
   \end{subfigure}
   \hfill
-  \begin{subfigure}[t][83mm][t]{0.315\linewidth}
+  \begin{subfigure}[t]{0.315\linewidth}
     \centering
     \includegraphics[width=\linewidth]{figures/tip_resolution_sensitivity/direction_deviation.pdf}
     \caption{Difference in the absolute crack direction in the frozen initiation frame,
@@ -1258,7 +1258,7 @@ also changes when the core is remeshed.
     \label{fig:tipres-dtheta}
   \end{subfigure}
   \hfill
-  \begin{subfigure}[t][83mm][t]{0.315\linewidth}
+  \begin{subfigure}[t]{0.315\linewidth}
     \centering
     \includegraphics[width=\linewidth]{figures/tip_resolution_sensitivity/mode_mixity.pdf}
     \caption{Mode-mixity ratio $K_{\mathrm{II}}/K_{\mathrm{I}}$ along the two independently
@@ -1317,32 +1317,32 @@ general mesh independence.
   \begin{minipage}{0.8\textwidth}
   \centering
 
-  \begin{subfigure}[t][86mm][t]{0.94\linewidth}
+  \begin{subfigure}[t]{0.94\linewidth}
     \centering
     \includegraphics[width=\linewidth]{figures/m1_mesh_sensitivity/trajectory.pdf}
-    \caption{Crack trajectories with the reference and M1 exterior meshes.}
+    \caption{Crack trajectories with the M0 and M1 exterior sizing laws.}
     \label{fig:m1mesh-trajectory}
   \end{subfigure}
 
   \par\smallskip
 
-  \begin{subfigure}[t][83mm][t]{0.315\linewidth}
+  \begin{subfigure}[t]{0.315\linewidth}
     \centering
     \includegraphics[width=\linewidth]{figures/m1_mesh_sensitivity/vertical_deviation.pdf}
     \caption{Accumulated vertical tip-coordinate difference,
-    $y_{\mathrm{M1}}-y_{\mathrm{ref}}$.}
+    $y_{\mathrm{M1}}-y_{\mathrm{M0}}$.}
     \label{fig:m1mesh-dy}
   \end{subfigure}
   \hfill
-  \begin{subfigure}[t][83mm][t]{0.315\linewidth}
+  \begin{subfigure}[t]{0.315\linewidth}
     \centering
     \includegraphics[width=\linewidth]{figures/m1_mesh_sensitivity/direction_deviation.pdf}
     \caption{Difference in the absolute crack direction in the frozen initiation frame,
-    $\theta_{\mathrm{M1}}-\theta_{\mathrm{ref}}$.}
+    $\theta_{\mathrm{M1}}-\theta_{\mathrm{M0}}$.}
     \label{fig:m1mesh-dtheta}
   \end{subfigure}
   \hfill
-  \begin{subfigure}[t][83mm][t]{0.315\linewidth}
+  \begin{subfigure}[t]{0.315\linewidth}
     \centering
     \includegraphics[width=\linewidth]{figures/m1_mesh_sensitivity/mode_mixity.pdf}
     \caption{Mode-mixity ratio $K_{\mathrm{II}}/K_{\mathrm{I}}$ along the two independently
@@ -1352,7 +1352,7 @@ general mesh independence.
 
   \end{minipage}
   \caption{Effect of exterior-mesh coarsening on the crack path.
-  The reference and M1 trajectories are propagated separately with
+  The M0 and M1 trajectories are propagated separately with
   identical near-tip discretizations and interaction-domain radii.
   The diamond marks the interpolated mode-mixity zero of the
   reference path.}

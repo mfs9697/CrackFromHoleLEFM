@@ -1,0 +1,1 @@
+MATLAB R2023a executed: internal legend export; constant-line collision handling; unchanged viewport; tight PDF/PNG route; retained M0/M1 exporter; recommended 31-panel review entry point. All passed. No numerical histories read or physical solves performed.

@@ -1,0 +1,47 @@
+{
+  "source": "paper/data/retained_figure_7_9/increment_trajectory.pdf",
+  "source_sha256": "562cf7b2f445e7d6b8a70604d8ad195c157e25d9b7a392d6557a8c4ed053c2f9",
+  "panelClass": "top",
+  "page_mm": [
+    152.28,
+    90
+  ],
+  "axes_mm": [
+    15,
+    16,
+    133.28,
+    56.5430303030303
+  ],
+  "graphTransform": [
+    1.1087763360203577,
+    0,
+    0,
+    1.1087763360203577,
+    22.53257077129274,
+    15.404512649388678
+  ],
+  "xlim": [
+    135,
+    300
+  ],
+  "ylim": [
+    -55,
+    15
+  ],
+  "originalGraphOperations_sha256": "a69d64cc1fd4be5d41e2a6ce1ed4ab13c1872dabeb8512d0419463b3998122a1",
+  "originalGraphOperationCount": 2585,
+  "legend": {
+    "bounds_pt": [
+      42.51968503937008,
+      213.5196530329119,
+      131.92364386005931,
+      247.11026822693069
+    ],
+    "scale": 1.2418300653594772,
+    "originalOperations_sha256": "34130283e0f9bd4c7ebff3d3133cbc606f5a996248769e4309400becc437367c",
+    "originalOperationCount": 276
+  },
+  "numericalReconstruction": false,
+  "rasterization": false,
+  "sourceTypography": "Original legend glyphs retained; axes plate uses shared MATLAB style"
+}

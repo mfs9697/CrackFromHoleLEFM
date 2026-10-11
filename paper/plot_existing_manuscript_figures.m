@@ -418,8 +418,11 @@ function files=local_export_trajectory_equalwidth(ax,outDir,name)
         'PaperPosition',[0 0 pageWidth_cm pageHeight_cm], ...
         'PaperPositionMode','manual');
     drawnow;
+    for lg=findall(fig,'Type','legend').'
+        publication_place_internal_legend(ax,lg);
+    end
     print(fig,pdfFile,'-dpdf','-painters');
-    print(fig,pngFile,'-dpng','-r220');
+    publication_finalize_axis(ax,pdfFile);
     fprintf('Figure 3 %-11s: PDF width %.3f cm, plot width %.3f cm, height %.3f cm\n', ...
         name,pageWidth_cm,plotWidth_cm,pageHeight_cm);
     files={pdfFile,pngFile};
@@ -468,8 +471,11 @@ function files=local_export_cod_grid(ax,outDir,name)
         'PaperPosition',[0 0 pageWidth_cm pageHeight_cm], ...
         'PaperPositionMode','manual');
     drawnow;
+    for lg=findall(fig,'Type','legend').'
+        publication_place_internal_legend(ax,lg);
+    end
     print(fig,pdfFile,'-dpdf','-painters');
-    print(fig,pngFile,'-dpng','-r220');
+    publication_finalize_axis(ax,pdfFile);
     fprintf('Figure 6 %-17s: PDF %.3f x %.3f cm\n', ...
         name,pageWidth_cm,pageHeight_cm);
     files={pdfFile,pngFile};
@@ -516,8 +522,11 @@ function files=local_export_late_pair(ax,outDir,name)
         'PaperPosition',[0 0 pageWidth_cm pageHeight_cm], ...
         'PaperPositionMode','manual');
     drawnow;
+    for lg=findall(fig,'Type','legend').'
+        publication_place_internal_legend(ax,lg);
+    end
     print(fig,pdfFile,'-dpdf','-painters');
-    print(fig,pngFile,'-dpng','-r220');
+    publication_finalize_axis(ax,pdfFile);
     fprintf('Figure 5 %-11s: PDF %.3f x %.3f cm, plot %.3f x %.3f cm\n', ...
         name,pageWidth_cm,pageHeight_cm,plotWidth_cm,plotHeight_cm);
     files={pdfFile,pngFile};
@@ -563,8 +572,11 @@ function files=local_export_intensities_triptych(ax,outDir,name)
         'PaperPosition',[0 0 pageWidth_cm pageHeight_cm], ...
         'PaperPositionMode','manual');
     drawnow;
+    for lg=findall(fig,'Type','legend').'
+        publication_place_internal_legend(ax,lg);
+    end
     print(fig,pdfFile,'-dpdf','-painters');
-    print(fig,pngFile,'-dpng','-r220');
+    publication_finalize_axis(ax,pdfFile);
     fprintf('Figure 4 %-5s: PDF %.3f x %.3f cm, plot %.3f x %.3f cm\n', ...
         name,pageWidth_cm,pageHeight_cm,plotWidth_cm,plotHeight_cm);
     files={pdfFile,pngFile};
