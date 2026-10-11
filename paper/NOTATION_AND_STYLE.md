@@ -1,6 +1,6 @@
 # Scientific notation and editorial style — Crack Trajectory
 
-Status: **Editorial convention through Batch 4** (2026-10-11). This is an editorial guide, not a source of numerical evidence. The authoritative numerical results remain in the accepted saved records and the manuscript's cited verification reports. The approved Figures 1–9 and their graphical provenance are not changed by this guide.
+Status: **Editorial convention through Batch 5** (2026-10-11). This is an editorial guide, not a source of numerical evidence. The authoritative numerical results remain in the accepted saved records and the manuscript's cited verification reports. The approved Figures 1–9 and their graphical provenance are not changed by this guide.
 
 ## Principles
 
@@ -86,6 +86,14 @@ The centered-hole control checks reflection symmetry and the restricted one-step
 - **Near free boundary:** shrinking ligament and rising \(K_{\mathrm I}\) are recorded; attributing redirection uniquely to boundary proximity requires a separate control.
 - **Accepted states:** the reference physical history ends at \(P_{23}\). The qualified \(P_{24}\) geometry has no accepted physical solution.
 - **First segment and initiation stress:** the initiation site is selected from the uncracked-hole tangential stress. The adopted threshold \(\sigma_{\mathrm{ini}}=300\) MPa determines the initiation load multiplier \(\Lambda_{\mathrm{ini}}\); it is not a CZM cohesive strength. The initial outward-normal segment is prescribed, not selected by MTS. No cohesive traction--separation law or subsequent strength-based propagation criterion is introduced; only one active crack is considered.
+
+## Introduction, Abstract, and bibliography conventions
+
+The Introduction should move from the distinction between stress-selected initiation and finite-crack propagation, through established LEFM direction criteria and numerical path methods, to the need to assess recursively accumulated extraction/discretization differences. State the specific scientific question and contribution without claiming a new fracture criterion or general continuum convergence.
+
+The Abstract should describe the method, characteristic mode-mixity sign reversal, and the tested numerical evidence. The 4/2/1-mm calculations vary the crack increment *and* the numerical length scales; do not call them an increment-only experiment. Do not describe COD and EDI as independent elastic solutions, a local-symmetry interpolation as a solved tip, or the nearing free boundary as an isolated causal mechanism.
+
+Citations must match populated `paper/references.bib` entries and retain documented DOI metadata. Use the published **article number**, not an invented page range, where the journal uses article identifiers. For the 2026 Bogdanov--Selivanov IJF reference, Springer identifies **volume 250, article 35** (DOI 10.1007/s10704-026-00930-1). An article number may be recorded in the BibTeX note for compatibility with the current bibliography style. Check all first-use abbreviations and retain US English.
 
 ## Discussion and conclusion conventions
 
