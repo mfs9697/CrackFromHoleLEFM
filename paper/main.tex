@@ -843,29 +843,37 @@ crack trajectory.
 \section{Crack-trajectory results}
 \label{sec:results}
 \subsection{Accepted path and direction history}
-The accepted first-tip SIFs at the stated unit traction are
+The prescribed radial segment $P_0P_1$ establishes the first
+crack-tip configuration. Under the unit reference traction, its
+opening- and sliding-mode SIFs are
 $K_{\mathrm{I}}^{(1)}=0.36648$ and
 $K_{\mathrm{II}}^{(1)}=4.1983\times10^{-6}$ MPa$\sqrt{\mathrm m}$,
-giving $\Delta\theta_2=\theta_2=-0.0013127^\circ$.
-The subsequent accepted elastic states are $P_2$ through $P_{23}$.
+respectively. Their small positive mode-mixity ratio gives an
+initial clockwise correction,
+$\Delta\theta_2=\theta_2=-0.0013127^\circ$.
+Each subsequent accepted crack direction is obtained from a newly
+solved elastic field, producing the history through $P_{23}$.
 
-Figure~\ref{fig:trajectory} distinguishes the accepted $P_0$--$P_{23}$
-polyline from the dashed, qualified but unsolved $P_{23}$--$P_{24}$
-extension. The accepted crack length is 92 mm. The last tip and its
+Figure~\ref{fig:trajectory} shows the resulting $P_0$--$P_{23}$
+polyline, with a solid line reserved for accepted crack geometry.
+The total accepted length is 92 mm. Its last tip and remaining
 horizontal clearance from the right boundary are
 \begin{equation}
  P_{23}=(\LastXMM,\LastYMM)\ \mathrm{mm},\qquad
  2A-x_{23}=\LastLigamentMM\ \mathrm{mm}.
 \end{equation}
-Directions vary gradually, although the
-finite-increment representation is piecewise linear rather than a
-continuously smooth curve.
+The next candidate segment, $P_{23}P_{24}$, is shown dashed
+because its geometry is qualified but the elastic problem at
+$P_{24}$ has not been solved to the acceptance criterion.
 
-The absolute direction becomes increasingly negative up to
-$\theta_{22}=\MinimumTheta^\circ$, then rotates toward a less negative
-inclination at $P_{23}$ (Fig.~\ref{fig:intensities}). A positive late turn
-does not imply an upward-moving tip: the accepted segments remain
-negatively inclined and their global $y$ coordinates continue to decrease.
+The polygonal path initially turns clockwise with increasing
+magnitude of its negative inclination. Its segment direction reaches
+$\theta_{22}=\MinimumTheta^\circ$ and becomes less negative at
+$P_{23}$ (Fig.~\ref{fig:intensities}). This change reflects a
+positive incremental turn, not a reversal of vertical motion:
+the final accepted segment still points below the horizontal.
+The trajectory is piecewise linear, and no continuously curved
+path has been solved independently.
 
 % Figure environment maintained inline in main.tex; graphics remain separate PDFs.
 \begin{figure}[tbp]
@@ -899,19 +907,26 @@ negatively inclined and their global $y$ coordinates continue to decrease.
 \end{figure}
 
 
-\subsection{Mode intensities and the positive maximum}
-Figure~\ref{fig:intensities} shows monotonically increasing $K_{\mathrm{I}}$, from
-0.36648 at $P_1$ to 1.2444 at $P_{23}$. The initially very small positive
-$K_{\mathrm{II}}$ grows to its positive maximum at $P_{17}$, where $a=68$ mm,
-$K_{\mathrm{II}}=0.0025484$, and $\qmix=K_{\mathrm{II}}/K_{\mathrm{I}}=0.0032389$.
-The positive mode-mixity maximum occurs at the same state. It is not the
-maximum \emph{absolute} mode-II intensity: the negative mode-II magnitude
-at the last accepted tip is larger.
+\subsection{Evolution of stress-intensity factors and mode mixity}
+The opening-mode intensity increases monotonically along the
+accepted 4-mm history, from $K_{\mathrm{I}}=0.36648$ at
+$P_1$ to $1.2444$ at $P_{23}$
+(Fig.~\ref{fig:intensities}). These values are evaluated under
+the same unit remote traction, so the increase reflects the
+changing elastic geometry rather than an applied-load history.
 
-From $P_{17}$ through $P_{21}$, $K_{\mathrm{II}}$ remains positive but decreases.
-Accordingly the negative incremental MTS turn becomes smaller in
-magnitude (Fig.~\ref{fig:late}). This change in turning response accompanies
-an increasing opening-mode intensity, not unloading.
+The sliding-mode intensity begins close to zero and reaches its
+largest positive value, $K_{\mathrm{II}}=0.0025484$,
+at $P_{17}$ ($a=68$ mm). The signed mode-mixity ratio
+defined in Eq.~\eqref{eq:mode-mixity} attains its positive
+maximum, $q_{\mathrm{K}}=0.0032389$, at the same state.
+This is a positive maximum, not a maximum of
+$|K_{\mathrm{II}}|$: the negative sliding-mode magnitude at
+the last accepted tip is larger. After $P_{17}$,
+$K_{\mathrm{II}}$ decreases while $K_{\mathrm{I}}$ continues
+to rise. The resulting decrease in positive mode mixity
+reduces the magnitude of the clockwise MTS turn through
+$P_{21}$ (Fig.~\ref{fig:late}).
 
 % Figure environment maintained inline in main.tex; graphics remain separate PDFs.
 \begin{figure}[tbp]
@@ -945,24 +960,40 @@ an increasing opening-mode intensity, not unloading.
 \end{figure}
 
 
-\subsection{Local-symmetry crossing and late turning reversal}
-At $P_{21}$ ($a=84$ mm), $\qmix=+8.134267\times10^{-5}$; at $P_{22}$
-($a=88$ mm), $\qmix=-0.0021416$. The sign change is therefore bracketed
-by two solved states. For visualization only, linear interpolation gives
+\subsection{Mode-mixity sign change and turning reversal}
+The mode-mixity ratio remains positive at
+$P_{21}$ ($a=84$ mm), where
+$q_{\mathrm{K}}^{(21)}=+8.134267\times10^{-5}$,
+but is negative at $P_{22}$ ($a=88$ mm), where
+$q_{\mathrm{K}}^{(22)}=-0.0021416$. Thus the
+sign reversal is established between two independently solved
+accepted states, although neither has zero mode mixity.
+For the graphical marker in Figs.~\ref{fig:trajectory-late}
+and \ref{fig:late}, linear interpolation between their
+values gives
 \begin{equation}
  a_{\mathrm{LS}}=a_{21}
  -\frac{\qmix^{(21)}}{\qmix^{(22)}-\qmix^{(21)}}(a_{22}-a_{21})
  \simeq\LSLengthMM\ \mathrm{mm}.\label{eq:zeroestimate}
 \end{equation}
-This estimate is not an independently solved local-symmetry state and does
-not quantify interpolation or increment-size error.
+Here $a_{\mathrm{LS}}$ denotes only an interpolated estimate of
+the crack length at which local symmetry
+($K_{\mathrm{II}}=0$) would occur. It is not a solved
+zero-mode-II state, and the interpolation does not establish
+the physical location with sub-increment accuracy.
 
-Mode II is negative at $P_{22}$ and $P_{23}$, so the next turning increments
-are positive. The last accepted state has $K_{\mathrm{I}}=1.2444$,
-$K_{\mathrm{II}}=-0.0067803$, and $\qmix=-0.0054488$. It predicts
-$\Delta\theta_{24}=0.62435^\circ$ and
-$\theta_{24}=-2.7762^\circ$. The latter defines the next qualified
-geometry, not a physical solution at $P_{24}$.
+The sign change has an immediate directional consequence.
+At $P_{21}$ the MTS turn toward $P_{22}$ is still
+clockwise, whereas the negative mode mixity at $P_{22}$
+produces a counterclockwise turn toward the accepted
+$P_{23}$ segment (Fig.~\ref{fig:late}). At that
+last solved state, $K_{\mathrm{I}}=1.2444$,
+$K_{\mathrm{II}}=-0.0067803$, and
+$q_{\mathrm{K}}=-0.0054488$; the MTS rule then
+predicts $\Delta\theta_{24}=0.62435^\circ$
+and $\theta_{24}=-2.7762^\circ$.
+This final prediction specifies the qualified extension,
+not an accepted elastic solution at $P_{24}$.
 
 \begin{table}[tbp]\centering\small\setlength{\tabcolsep}{3.5pt}
 \caption{Characteristic accepted states. SIFs have units MPa$\sqrt{\mathrm m}$;
@@ -1001,27 +1032,34 @@ Interpolated & \LSLengthMM & --- & --- & $0$ & --- & ---\\
 
 
 \subsection{COD comparison and extraction sensitivity}
-The COD-based estimates provide a check on the sign of mode mixity
-and its dependence on the extraction procedure. All eight fitting
-definitions give positive mode mixity at $P_{21}$ and negative
-mode mixity at $P_{22}$, consistent with the EDI sign-change
-bracket. Their values nevertheless depend on the fitting
-definition, as illustrated in Fig.~\ref{fig:cod}. Across 176 fits,
-the largest absolute COD--EDI turning difference is $\MaxCODError^\circ$,
-at $P_{23}$ for a linear fit over $[0.12,0.30]\Delta a$.
-The quadratic-fit turns at $P_{23}$ range from $\CODQuadMin^\circ$ to
-$\CODQuadMax^\circ$, compared with the EDI value $0.62435^\circ$.
+Because the sign reversal of mode mixity changes the MTS turning
+direction, its persistence under another SIF extraction procedure
+is particularly relevant. Each of the eight COD fits gives
+$q_{\mathrm{K}}>0$ at $P_{21}$ and $q_{\mathrm{K}}<0$
+at $P_{22}$, in agreement with the EDI sign-change bracket.
+The quantitative differences depend on the chosen fitting
+window and polynomial degree (Fig.~\ref{fig:cod}).
+Across 176 fits, the greatest absolute difference between
+the COD- and EDI-based MTS turns is
+$\MaxCODError^\circ$, at $P_{23}$ for the
+linear fit over $[0.12,0.30]\Delta a$.
+The quadratic COD turns at that state range from
+$\CODQuadMin^\circ$ to $\CODQuadMax^\circ$,
+compared with the EDI prediction of $0.62435^\circ$.
 
-Near local symmetry, relative differences can be large despite small
-absolute errors. At $P_{21}$ the same rear-window linear fit gives mode
-mixity about $\CODNearZeroPercent$\% above EDI, while its turning-angle
-difference is only $\CODNearZeroTurnDiff^\circ$. Agreement over the full crack history therefore does not
-by itself establish accuracy near the sign change. The observed
-differences measure sensitivity to postprocessing choices rather
-than a statistical uncertainty interval for the crack trajectory.
-Because the COD and EDI estimates use the same computed
-displacement field, they do not independently validate the
-underlying elastic solution.
+The distinction between the sign and magnitude of a small
+mode-mixity ratio is important close to local symmetry.
+At $P_{21}$, the rear-window linear fit exceeds the
+EDI ratio by $\CODNearZeroPercent$\%, although the
+corresponding turning-angle difference is only
+$\CODNearZeroTurnDiff^\circ$. The relative discrepancy
+is consequently sensitive to the small denominator in
+the comparison. These results corroborate the sign-change
+bracket across extraction procedures but cannot provide an
+independent accuracy bound on the elastic solution: COD and
+EDI are applied to the same FE displacement field.
+Their variation also does not represent a statistical
+uncertainty interval.
 
 % Figure environment maintained inline in main.tex; graphics remain separate PDFs.
 \begin{figure}[tbp]
