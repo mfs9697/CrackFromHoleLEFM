@@ -1567,91 +1567,81 @@ smooth limit.
 
 \section{Discussion}
 \label{sec:discussion}
-\subsection{Interpretation of late redirection}
-The late reorientation follows directly from the signed
-mode-mixity ratio in the MTS relation
-[Eqs.~\eqref{eq:trt}--\eqref{eq:angleupdate}].
-At the reference unit traction, $K_{\mathrm{I}}$
-continues to increase while $K_{\mathrm{II}}$
-decreases through zero and becomes negative.
-The latter change reverses the sense of the
-incremental turn, despite the continued growth of
-the opening-mode intensity.
+\subsection{Mechanical interpretation of the turning reversal}
+The turning sense of each new segment follows from the current-tip
+mode-mixity ratio through the MTS criterion. Positive
+$q_{\mathrm{K}}$ produces a clockwise correction under the adopted
+sign convention; when $q_{\mathrm{K}}$ becomes negative, the correction
+is counterclockwise. The positive mode-mixity maximum at $P_{17}$,
+followed by the sign change between $P_{21}$ and $P_{22}$, therefore
+explains the changes in turning direction along the accepted
+trajectory. At the same time, $K_{\mathrm{I}}$ increases under the
+fixed unit remote traction. The reversal is consequently a change in
+the relative sliding-mode contribution, not a decrease in the
+opening-mode intensity or a reversal of the crack's vertical
+displacement.
 
-As the crack approaches the right edge, the
-remaining horizontal ligament decreases to
-$\LastLigamentMM$ mm at $P_{23}$. An increasing
-influence of that traction-free boundary is
-mechanically plausible, but it has not been
-separated from the effects of crack length and
-the accumulated curved geometry. Establishing
-its contribution would require a controlled
-boundary-distance comparison. The MTS mechanism
-of the observed turn is therefore identified,
-whereas its unique geometric cause is not.
+The remaining horizontal ligament is only $\LastLigamentMM$ mm at
+$P_{23}$, suggesting that the approaching traction-free right
+boundary may contribute to the late mixed-mode response. That
+influence cannot, however, be identified separately from the
+increasing crack length and the evolving crack geometry in the
+present calculations. A controlled comparison at different
+boundary distances would be needed to determine its contribution.
+The computed SIFs establish the MTS turning mechanism, but not
+a unique physical cause for their evolution.
 
-\subsection{Discretization, increment size, and boundary proximity}
-The prescribed increment defines both the successive
-geometries and the scale at which the updated elastic
-problem is sampled. In the 4/2/1-mm study, the
-absolute near-tip and exterior mesh sizes and
-interaction-domain radii are also reduced
-proportionally. The observed contraction in
-corresponding-tip and direction differences
-therefore belongs to this \emph{coupled}
-refinement, not to increment length alone.
-The interpolated sign-change locations likewise
-show decreasing differences between successive
-levels. These trends complement the two-increment
-comparison of Fang et al.~\cite{FangEtAl2020}
-but do not establish a formal convergence order
-or the existence of a smooth limiting path.
+\subsection{Numerical sensitivity and the smooth-path interpretation}
+The verification studies address different sources of uncertainty.
+Prescribed asymptotic fields test the implementation of SIF
+extraction, whereas COD fitting and the interaction integral
+provide two estimates derived from the same finite-element
+displacement field. Their agreement near the mode-mixity sign
+change lends support to the extracted turning sense, but cannot
+serve as an independent validation of the underlying elastic
+solution. Likewise, the centered-hole test establishes the
+expected reflection symmetry and a small one-step angular
+response, without implying attraction of an entire evolving
+trajectory.
 
-The mode-mixity history complements the geometric comparisons.
-Although the positive maximum of $q_{\mathrm{K}}$ approximately
-halves with $\Delta a$, the increment-normalized maximum varies by
-only about $0.71\%$ from 4 to 1 mm, and the turning density at the
-corresponding characteristic states changes comparably little.
-Equation~\eqref{eq:mts-small-mixity} relates these quantities,
-while Eq.~\eqref{eq:curvature-mts} gives a conditional
-interpretation in terms of smooth-path curvature. The mode mixity
-obtained at a tip of a finite-step calculation should not,
-therefore, be identified directly with an increment-independent
-measure of curvature. The three-level comparison supports this
-interpretation without establishing a continuum limit.
+The independently propagated mesh studies examine whether
+discretization differences alter the recursive path construction.
+Coarsening the exterior mesh in M1 preserves the paired near-tip
+core and interaction-domain support; changing the structured-tip
+spacing preserves the requested exterior sizing law, though
+conforming remeshing can change the exterior connectivity.
+Both propagated alternatives retain the positive mode-mixity
+maximum and the $P_{21}$--$P_{22}$ sign-change bracket.
+Their maximum corresponding-tip separations, $0.0674$ and
+$0.128~\mu\mathrm{m}$, respectively, are small relative to
+the crack increments. These observations demonstrate low
+sensitivity to the two tested mesh perturbations, not
+independence of the solution from all discretization choices.
 
-The centered-hole control addresses a separate aspect of the
-directional procedure. The symmetric configuration is recovered
-to numerical accuracy, and the fitted slope
-$F'(0)\approx-0.11415$ measures attenuation of small angular
-perturbations in a prescribed two-segment family. This one-step
-response does not establish stability of the complete evolving
-path. The effect of accumulated numerical perturbations on the
-asymmetric trajectory is instead assessed by independently
-propagated mesh and increment studies.
+The 4/2/1-mm trajectories probe a different aspect of the
+algorithm. In that family, the crack increment, structured-tip
+spacing, interaction-domain radii, and exterior mesh scales
+decrease together. Successive differences in tip position and
+direction contract, while the positive maximum of
+$q_{\mathrm{K}}$ decreases approximately in proportion to
+$\Delta a$. Its increment-normalized value and the
+corresponding turning density remain comparatively stable.
+The small-mixity MTS expansion thus provides a plausible
+connection to the signed curvature of a smooth limiting
+trajectory [Eq.~\eqref{eq:curvature-mts}], provided such a
+limit exists and the discrete turning densities converge.
+Neither a formal convergence order nor the separate
+contribution of crack-increment error follows from these
+three coupled refinement levels. This distinction also
+limits direct comparison with studies that vary the
+increment alone, including the two-level comparison of
+Fang et al.~\cite{FangEtAl2020}.
 
-The mesh tests answer a different question. In M1,
-the requested exterior sizing law is coarsened
-while the paired tip core and EDI support are
-retained. In the structured-tip study,
-the local tip spacing changes while the requested
-exterior sizing law is held fixed, although the
-conforming exterior connectivity may change.
-Independent propagation of M1 and $2h_0$
-preserves the positive maximum and sign-change
-bracket, with maximum corresponding-tip separations
-of $0.0674$ and $0.128~\mu\mathrm{m}$,
-respectively.
-
-Table~\ref{tab:independent-sensitivity} compares
-these propagated mesh families. Their submicrometer
-differences are much smaller than those observed
-between the coupled 4/2/1-mm paths.
-Because the latter study changes several numerical
-length scales simultaneously, this comparison
-does not identify a separate crack-increment
-error or rank the contributions of individual
-sources of discretization error.
+Table~\ref{tab:independent-sensitivity} summarizes the two
+independently propagated mesh comparisons. The table concerns
+sensitivity to selected discretization changes; the larger
+differences in the coupled 4/2/1-mm study cannot be used
+to rank independent error sources.
 
 \begin{table}[tbp]
 \centering
