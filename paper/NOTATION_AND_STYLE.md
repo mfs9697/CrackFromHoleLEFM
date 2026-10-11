@@ -1,6 +1,6 @@
 # Scientific notation and editorial style — Crack Trajectory
 
-Status: **Editorial convention through Batch 2** (2026-10-11). This is an editorial guide, not a source of numerical evidence. The authoritative numerical results remain in the accepted saved records and the manuscript's cited verification reports. The approved Figures 1–9 and their graphical provenance are not changed by this guide.
+Status: **Editorial convention through Batch 3** (2026-10-11). This is an editorial guide, not a source of numerical evidence. The authoritative numerical results remain in the accepted saved records and the manuscript's cited verification reports. The approved Figures 1–9 and their graphical provenance are not changed by this guide.
 
 ## Principles
 
@@ -64,6 +64,7 @@ It is acceptable to write \(K_{\mathrm{II}}/K_{\mathrm{I}}\) at the point of def
 | \(L_{\mathrm{tr}}\) | Grading transition length |
 | \(2h_0,h_0,h_0/2\) | Physically evaluated structured-tip resolution family on prescribed crack geometries |
 | M1 | Coarser exterior-sizing law with the production structured core retained |
+| Native crack-face node pair | Corresponding existing upper and lower T6 nodes at the same distance behind the current crack tip; COD uses their displacement jump without inserting additional sampling locations |
 | \(\delta y,\delta r,\delta\theta\) | Differences of matched-tip position and absolute segment direction between propagated trajectories; define their direction at first use |
 
 The manuscript uses actual tip spacings and the requested exterior sizing law rather than additional scale-factor aliases. This reduces notation without changing the implementation variables or saved numerical records.
@@ -73,6 +74,8 @@ The manuscript uses actual tip spacings and the requested exterior sizing law ra
 The manuscript distinguishes three experimental designs. **Fixed-geometry** comparisons evaluate SIF extraction and prescribed mesh changes without advancing the crack. **Independently propagated** exterior (M1) and structured-tip (\(2h_0\)) trajectories solve their own \(P_1\) fields and recursively recompute all subsequent directions; no accepted reference vertices after \(P_1\) are imposed. The **4/2/1-mm family** varies \(\Delta a\), the structured-core size, and the interaction-domain and exterior scales together. It is a coupled increment/discretization refinement study, not isolated crack-increment convergence.
 
 The centered-hole control checks reflection symmetry and the restricted one-step map \(F(\theta_2)=\theta_3\); its fitted slope does not establish full evolving-trajectory stability. The table is intentionally placed after the defining equation in the manuscript source.
+
+**COD sampling:** The four overlapping intervals in normalized rear-tip distance \(r/\Delta a\) are \([0.04,0.20]\), \([0.04,0.30]\), \([0.08,0.30]\), and \([0.12,0.30]\). Counts refer to native crack-face node pairs in that order; overlapping counts are not additive. The existing qualification requires at least 12 pairs in each interval. The illustrative \(4h_0\) core has 10/15/12/9 pairs and is excluded from the physical SIF/MTS comparisons. Keep the authoritative counts in \`paper/main.tex\` and the historical verification records; do not regenerate or interpolate missing samples.
 
 ## Required scientific distinctions
 
