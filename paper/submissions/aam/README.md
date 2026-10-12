@@ -91,6 +91,34 @@ If the new TeX class conflicts with `subcaption`, `placeins`, or another
 package, capture the log and fix the compatibility issue rather than
 silently altering scientific material.
 
+## First full-manuscript compilation issue (2026-10-12)
+
+The official December 2024 `sn-jnl.cls` redefines `table` with an internal
+`center` and `threeparttable` environment. Its wrapper fails when the
+`float` package's forced `[H]` placement is used. In a minimal test with the
+same class and packages, a table using `[H]` failed at `\\end{table}`; the
+same table with `[htbp]` compiled successfully.
+
+Two original tables used `[H]`: the centered-hole one-step directional map
+and the incremental-path pairwise comparison. **Only in the journal candidate**
+these two placements are changed to `[htbp]`. The freeze checker reverses
+those exact two journal-only changes before byte-comparing all scientific
+content to `paper/main.tex`. No entries or numerical values were changed.
+
+The `Extra }` / `threeparttable` errors from the first table cause LaTeX to
+remain inside an environment, producing misleading downstream `Not in outer
+par mode` errors and a terminal `center` mismatch. Fixing the first
+environments should eliminate the cascade; assess any remaining errors in a
+**fresh** log, not the previous failed log.
+
+After a clean pdfLaTeX run, process citations with BibTeX using **the same
+build basename** (`manuscript`) and then run pdfLaTeX twice. Undefined
+references and `No file manuscript.bbl` from the *failed* LaTeX run do not
+by themselves imply a bibliography defect. If the post-BibTeX run still
+reports errors, send the first error and the relevant `.blg` lines.
+
+
+
 ## Author decisions still required — do not infer
 
 - **Funding confirmed:** regular institutional funding of the S.P. Timoshenko Institute of Mechanics, National Academy of Sciences of Ukraine; no specific grant. The candidate now includes this Funding declaration.
