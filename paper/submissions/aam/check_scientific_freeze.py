@@ -201,7 +201,7 @@ def check() -> dict:
     assert "fract@inmech.kyiv.ua" in dst
     assert r"\usepackage{amsmath,amssymb,bm,booktabs}" in dst, "Wrong/missing amssymb package"
     assert "pdfauthor={Danylo Selivanov}" in dst, "Missing PDF author metadata"
-    assert "pdftitle={Incremental LEFM Prediction of a Crack Trajectory from a Circular Hole}" in dst, "Missing PDF title metadata"
+    assert "pdftitle={Incremental LEFM Crack-Path Prediction from an Off-Center Circular Hole: Mode-Mixity Reversal and Numerical Sensitivity}" in dst, "Missing PDF title metadata"
     assert r"\documentclass[pdflatex,sn-mathphys-num]{sn-jnl}" in dst
     assert r"\bibliographystyle{sn-basic}" not in dst
     assert r"\bibliographystyle{sn-mathphys-num}" not in dst
