@@ -1,0 +1,70 @@
+{
+  "removedDecorationPaints": [],
+  "legend": null,
+  "ylabelReplacement": null,
+  "protectedScientificPaintCount": 3,
+  "preservedBodyOperations_sha256": "656380bab2dc766ee0eb1db25844147c72fca83448e8a78a7669cf03a8728915",
+  "bodyTransform": [
+    1,
+    0,
+    0,
+    1,
+    0,
+    0
+  ],
+  "asset": "figures/intensities/KI.pdf",
+  "source_sha256": "5fcae546abe4544052e82f4ea0a64376c2709d2c3099046ebeeb63bb153d2b11",
+  "output_sha256": "8bf485d916d81ee7e1debecfd7fc780374779e62802b540dbe9295fef8f7cf80",
+  "oldPage_pt": [
+    145,
+    204
+  ],
+  "newPage_pt": [
+    142.73507812984653,
+    204.22765391752907
+  ],
+  "oldAxes_pt": [
+    42.01509725,
+    31.119955079999983,
+    135.64874254999998,
+    190.79388203591577
+  ],
+  "axes_pt": [
+    39.11809137720135,
+    34.76873952155832,
+    132.75173667720134,
+    194.44266647747412
+  ],
+  "oldVisibleContent_pt": [
+    8.566297211381327,
+    2.02052564702435,
+    139.9627926640625,
+    194.90957238738804
+  ],
+  "visibleContent_pt": [
+    5.6692913385826795,
+    5.669310088582687,
+    137.06578679126386,
+    198.5583568289464
+  ],
+  "safetyMargin_mm": 2,
+  "margins_mm": [
+    2.0000000000000004,
+    2.0000066145833366,
+    1.9999999999999962,
+    2.0000020284722235
+  ],
+  "layoutGroup": "intensities",
+  "vector": true,
+  "raster": false,
+  "sourceToOutput": [
+    1,
+    0,
+    0,
+    1,
+    -2.8970058727986476,
+    3.6487844415583375
+  ],
+  "plotGeometryUnchanged": true,
+  "axisLimitsAndValuesUnchanged": true
+}

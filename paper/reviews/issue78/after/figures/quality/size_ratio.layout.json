@@ -1,0 +1,70 @@
+{
+  "removedDecorationPaints": [],
+  "legend": null,
+  "ylabelReplacement": null,
+  "protectedScientificPaintCount": 4,
+  "preservedBodyOperations_sha256": "3ac25fe89bdf18d319a547982ca56c211e912cc4394c9ad0d3c7795eb8567b1c",
+  "bodyTransform": [
+    1,
+    0,
+    0,
+    1,
+    0,
+    0
+  ],
+  "asset": "figures/quality/size_ratio.pdf",
+  "source_sha256": "8796d2261e28825b458effa76b08530e933b90c076c8ca51373d30749202ecfb",
+  "output_sha256": "639c213cb2ab09d3d8b68f41db657631f03d53efaa31987aae3bb31df19eaeda",
+  "oldPage_pt": [
+    223,
+    164
+  ],
+  "newPage_pt": [
+    226.49655124722486,
+    142.0145843317768
+  ],
+  "oldAxes_pt": [
+    44.4235581775,
+    36.92881856752267,
+    214.31365228874998,
+    152.5576802363859
+  ],
+  "axes_pt": [
+    46.62237741856407,
+    19.01235599559624,
+    216.51247152981406,
+    134.64121766445948
+  ],
+  "oldVisibleContent_pt": [
+    3.4704720988175186,
+    23.585993071736432,
+    218.6284406675781,
+    154.26172804309834
+  ],
+  "visibleContent_pt": [
+    5.669291339881594,
+    5.669530499810005,
+    220.8272599086422,
+    136.34526547117193
+  ],
+  "safetyMargin_mm": 2,
+  "margins_mm": [
+    2.000000000458229,
+    2.000084370766307,
+    1.9999999999999962,
+    2.0000097091578306
+  ],
+  "layoutGroup": "quality",
+  "vector": true,
+  "raster": false,
+  "sourceToOutput": [
+    1,
+    0,
+    0,
+    1,
+    2.1988192410640757,
+    -17.916462571926427
+  ],
+  "plotGeometryUnchanged": true,
+  "axisLimitsAndValuesUnchanged": true
+}

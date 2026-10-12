@@ -1,0 +1,115 @@
+{
+  "removedDecorationPaints": [
+    3808,
+    3822,
+    3834,
+    3854,
+    3861,
+    3875,
+    3886,
+    3902,
+    3909,
+    3930,
+    3937,
+    3954,
+    3961,
+    3978
+  ],
+  "legend": {
+    "bounds_pt": [
+      261.90303723230545,
+      124.11497559637351,
+      413.6388339694059,
+      192.97838635928554
+    ],
+    "location": "northeast",
+    "insideAxes": true,
+    "collisionCount": 0,
+    "font_pt": 10.5,
+    "entryCount": 5,
+    "context": null,
+    "relabeling": [
+      [
+        "reference",
+        "M0"
+      ],
+      [
+        "reference q max: P17",
+        "M0 q max: P17"
+      ]
+    ],
+    "method": "original vector keys/glyphs; M0 uses existing retained font cmap",
+    "oldBounds_pt": [
+      264.33349416926865,
+      132.51840645839258,
+      416.0692909063691,
+      201.3818172213046
+    ]
+  },
+  "ylabelReplacement": null,
+  "protectedScientificPaintCount": 5,
+  "preservedBodyOperations_sha256": "2af3f6dfa8c9efb26f9734940c92fa5488c548c9b13b3564f858f924bc21af13",
+  "bodyTransform": [
+    1,
+    0,
+    0,
+    1,
+    0,
+    0
+  ],
+  "asset": "figures/m1_mesh_sensitivity/trajectory.pdf",
+  "source_sha256": "6fbf6d213c6818504d9cc986ca72de94eee9eb52fc0433153d0143fc52370308",
+  "output_sha256": "fb578075fa0a99349c1ce89dd98fb1baf7ff7b86e9a416ea35d6f5c287d06a15",
+  "oldPage_pt": [
+    431.659843,
+    255.11811
+  ],
+  "newPage_pt": [
+    430.354100562036,
+    206.67766197502
+  ],
+  "oldAxes_pt": [
+    42.519684989219776,
+    45.354330498850175,
+    420.3212594103061,
+    205.6337857252416
+  ],
+  "axes_pt": [
+    40.08922805225659,
+    36.9508996368311,
+    417.8908024733429,
+    197.23035486322254
+  ],
+  "oldVisibleContent_pt": [
+    8.099748275545863,
+    14.07272220060175,
+    427.1152661604165,
+    247.73491484751057
+  ],
+  "visibleContent_pt": [
+    5.669291338582678,
+    5.669291338582678,
+    424.6848092234533,
+    201.00837063643732
+  ],
+  "safetyMargin_mm": 2,
+  "margins_mm": [
+    2.0,
+    2.0,
+    2.000000000000006,
+    1.9999999999999962
+  ],
+  "layoutGroup": "sensitivity_top",
+  "vector": true,
+  "raster": false,
+  "sourceToOutput": [
+    1,
+    0,
+    0,
+    1,
+    -2.4304569369631857,
+    -8.403430862019071
+  ],
+  "plotGeometryUnchanged": true,
+  "axisLimitsAndValuesUnchanged": true
+}

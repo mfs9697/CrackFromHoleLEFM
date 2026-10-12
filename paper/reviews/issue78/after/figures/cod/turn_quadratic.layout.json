@@ -1,0 +1,99 @@
+{
+  "removedDecorationPaints": [
+    1354,
+    1375,
+    1410,
+    1428,
+    1491
+  ],
+  "legend": null,
+  "ylabelReplacement": null,
+  "protectedScientificPaintCount": 7,
+  "preservedBodyOperations_sha256": "058bffe3eb8a6d05227161f13a86adc38ba3a2c62fe5a97499c438d9559882a6",
+  "bodyTransform": [
+    1,
+    0,
+    0,
+    1,
+    0,
+    0
+  ],
+  "exponentInsideAxes": {
+    "oldBounds_pt": [
+      45.839934240878904,
+      155.77391598838335,
+      69.51678925141458,
+      163.86388065880465
+    ],
+    "bounds_pt": [
+      179.97244741561386,
+      122.29904135123795,
+      203.64930242614952,
+      130.38900602165924
+    ],
+    "location": "northeast",
+    "collisionCount": 0
+  },
+  "ylabelAlignment": {
+    "translation_pt": [
+      -4.752528000000005,
+      0
+    ],
+    "scientificCurveMovement": false
+  },
+  "asset": "figures/cod/turn_quadratic.pdf",
+  "source_sha256": "f76dcfd641cb28ddcdb0b386f818ab11db14c5a124be3aa4d145978d09cb0edb",
+  "output_sha256": "cb39967e39a52580c32d53f01eeda67547fd2f5195dba5a5f5d312e60b1f07c5",
+  "oldPage_pt": [
+    223,
+    164
+  ],
+  "newPage_pt": [
+    217.88535064749732,
+    142.01458359146815
+  ],
+  "oldAxes_pt": [
+    44.4235581775,
+    36.928956478749996,
+    214.31365228874998,
+    152.55758375875
+  ],
+  "axes_pt": [
+    38.01117681883656,
+    19.012347245596235,
+    207.90127093008653,
+    134.64097452559625
+  ],
+  "oldVisibleContent_pt": [
+    16.834200697246125,
+    23.58590057173644,
+    218.6284406675781,
+    163.86388065880465
+  ],
+  "visibleContent_pt": [
+    5.669291338582681,
+    5.669291338582678,
+    212.21605930891465,
+    136.34529225288549
+  ],
+  "safetyMargin_mm": 2,
+  "margins_mm": [
+    2.0000000000000013,
+    2.0,
+    1.9999999999999962,
+    1.9999999999999962
+  ],
+  "layoutGroup": "cod",
+  "vector": true,
+  "raster": false,
+  "sourceToOutput": [
+    1,
+    0,
+    0,
+    1,
+    -6.412381358663442,
+    -17.91660923315376
+  ],
+  "plotGeometryUnchanged": true,
+  "axisLimitsAndValuesUnchanged": true
+}
