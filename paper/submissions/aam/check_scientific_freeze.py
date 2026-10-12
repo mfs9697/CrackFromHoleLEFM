@@ -98,6 +98,28 @@ def scientific_body(s: str, is_candidate: bool) -> str:
                 "Unexpected Table 1 layout change in AAM candidate"
             )
             body = body.replace(journal_layout, original_layout, 1)
+        # Reverse three exact table-header line breaks used to bring
+        # Tables 5 and 6 inside the journal text column. No header
+        # content, units, or tabulated data may change.
+        table_header_layout = (
+            (
+                r"\shortstack[c]{$q_{\mathrm{K},\max}/\Delta a$\\{}[mm$^{-1}$]}",
+                r"$q_{\mathrm{K},\max}/\Delta a$ [mm$^{-1}$]",
+            ),
+            (
+                r"\shortstack[c]{$(\Delta\theta/\Delta a)_{q_{\max}}$\\{}[deg/mm]}",
+                r"$(\Delta\theta/\Delta a)_{q_{\max}}$ [deg/mm]",
+            ),
+            (
+                r"\shortstack[c]{$\max|\delta\theta|$\\{}[mdeg]}",
+                r"$\max|\delta\theta|$ [mdeg]",
+            ),
+        )
+        for journal_header, original_header in table_header_layout:
+            assert body.count(journal_header) == 1, (
+                "Unexpected Table 5/6 heading change in AAM candidate"
+            )
+            body = body.replace(journal_header, original_header, 1)
         # These are the only permitted journal-specific changes in the body.
         swaps = (
             ("% The sn-mathphys-num class option selects sn-mathphys-num.bst automatically.\n"
@@ -153,6 +175,8 @@ def check() -> dict:
     assert r"\author*[1]{\fnm{Danylo} \sur{Selivanov}}" in dst
     assert "fract@inmech.kyiv.ua" in dst
     assert r"\usepackage{amsmath,amssymb,bm,booktabs}" in dst, "Wrong/missing amssymb package"
+    assert "pdfauthor={Danylo Selivanov}" in dst, "Missing PDF author metadata"
+    assert "pdftitle={Incremental LEFM Prediction of a Crack Trajectory from a Circular Hole}" in dst, "Missing PDF title metadata"
     assert r"\documentclass[pdflatex,sn-mathphys-num]{sn-jnl}" in dst
     assert r"\bibliographystyle{sn-basic}" not in dst
     assert r"\bibliographystyle{sn-mathphys-num}" not in dst
