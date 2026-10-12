@@ -28,7 +28,7 @@ language and terminology pass was made **on the same draft branch**:
   coupled crack-increment/mesh refinement isolates increment effects.
   No numerical value, formula, table, citation or accepted figure was changed.
 - The reproducibility guard `verify_final_typesetting.py` now carries
-  **22 exact, uniquely matched, authorized prose substitutions**; after
+  **25 exact, uniquely matched, authorized prose substitutions**; after
   reversing those and the previously approved material-domain correction,
   all remaining nonfigure prose must exactly match the original PR #80
   baseline. Its numerical token checker no longer treats a numeric
@@ -46,6 +46,26 @@ editorial commits. A fresh local LaTeX compilation, visual check and
 rerun of the preservation script are **required before merging**.
 Do not interpret the historical zero-warning PDF log below as a compile
 of the latest manuscript source.
+
+## Follow-up: accumulated crack length and software-neutral PCG description
+
+The author identified a remaining `MATLAB` mention after locally compiling
+the Codex worktree. On the active PR #81 branch, Section 4.6 now describes
+finite-precision PCG stagnation and the permitted single Krylov restart
+without referring to a specific software package. Section 3.3 no longer
+redefines `\Delta a`, which was introduced in Section 2.2, and now
+states that `a_k=k\Delta a` is the accumulated crack-path length from
+`P_0`, not the horizontal tip coordinate.
+
+All three paragraph-level changes are included in the strict 25-entry
+authorized-prose whitelist. Comparison against the PR #80 scientific
+baseline establishes identical display equations, numerical tables,
+citations, graphic paths, and the entire numeric-token sequence. This
+follow-up has **not yet been compiled into a new local PDF**; the
+committed `paper/main.pdf` is a historical typesetting proof, not
+a proof of the current source. A fresh compilation is required before
+merge. The choice of computational implementation can remain in the
+public reproducibility documentation rather than in this methods paragraph.
 
 ## Corrections
 
