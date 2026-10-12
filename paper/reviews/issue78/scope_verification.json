@@ -1,0 +1,11 @@
+{
+  "passed": true,
+  "baseCommit": "2e4cf7e39693a45470545f27e08678606ac84b80",
+  "unchangedSourceDataAndAcceptedAssets": 105,
+  "all31GraphicsReferencesAndLabelsPreserved": true,
+  "onlyApprovedM0CaptionAndLayoutEdits": true,
+  "scientificTablesFormulasClaimsAuthorAffiliationUnchanged": true,
+  "physicalSolves": 0,
+  "publicationPromotion": false,
+  "preExistingProseVerifierFailureConfirmedOnBase": true
+}

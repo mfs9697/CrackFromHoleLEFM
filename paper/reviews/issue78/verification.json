@@ -1,0 +1,16 @@
+{
+  "passed": true,
+  "panelCount": 31,
+  "checks": 54,
+  "unchangedOriginalPaintedPrimitives": 14860,
+  "sourceMismatchRejected": true,
+  "vectorPanels": 31,
+  "legendInsideAxes": true,
+  "legendCollisions": 0,
+  "marginRange_mm": [
+    2,
+    3
+  ],
+  "physicalSolves": 0,
+  "dataHistoriesReconstructed": false
+}

@@ -1,0 +1,291 @@
+{
+  "baseCommit": "2e4cf7e39693a45470545f27e08678606ac84b80",
+  "assets": [
+    {
+      "asset": "figures/geometry_loading/specimen_geometry.pdf",
+      "sha256": "3a52d54ffcb80270c91af1cf5a9358d1ae07b0c21fa3a6e17f25d0f7c43eabbf",
+      "page_pt": [
+        358,
+        261
+      ]
+    },
+    {
+      "asset": "figures/mesh_levels/tip_mesh_H2.pdf",
+      "sha256": "e22ec92f2a7ddfbc72cbd25c075d157c0c0b8735a7234e558ec94c3d20dd0fc7",
+      "page_pt": [
+        145,
+        128
+      ]
+    },
+    {
+      "asset": "figures/mesh_levels/tip_mesh_H1.pdf",
+      "sha256": "d6e87d6e03f40036f00a4b89292819ba927ed4b16979b59884f6734ab941ee5f",
+      "page_pt": [
+        145,
+        128
+      ]
+    },
+    {
+      "asset": "figures/mesh_levels/tip_mesh_H0.pdf",
+      "sha256": "9b4be674873e94aa4af69e6f084cc9ab2d528f54e213127c5ad286e81a2573e3",
+      "page_pt": [
+        145,
+        128
+      ]
+    },
+    {
+      "asset": "figures/trajectory/overview.pdf",
+      "sha256": "c1de609e3dfb11638a7fdbb0763c33469add4ddf2fec4fa7ac2220028b334dc9",
+      "page_pt": [
+        432,
+        194
+      ]
+    },
+    {
+      "asset": "figures/trajectory/late_detail.pdf",
+      "sha256": "7bffdf62ddc63006b6a539a365c81cf0f3a9a51561b102e880ae67ccab82d4b2",
+      "page_pt": [
+        432,
+        107
+      ]
+    },
+    {
+      "asset": "figures/intensities/KI.pdf",
+      "sha256": "5fcae546abe4544052e82f4ea0a64376c2709d2c3099046ebeeb63bb153d2b11",
+      "page_pt": [
+        145,
+        204
+      ]
+    },
+    {
+      "asset": "figures/intensities/KII.pdf",
+      "sha256": "e189a6955f95f7dc7e9d351824c5e452d6a85b9bc71b6d19709721a19def9b42",
+      "page_pt": [
+        145,
+        204
+      ]
+    },
+    {
+      "asset": "figures/intensities/theta.pdf",
+      "sha256": "25927a4679a42d6a6fbe947d5cf6a7e1fc0a99320ba6c927ef09d56c6bcfb145",
+      "page_pt": [
+        145,
+        204
+      ]
+    },
+    {
+      "asset": "figures/late/mode_mixity.pdf",
+      "sha256": "1c4d4177ba679693b816b5416fb83b48cf975e73898315786750a803687c32fd",
+      "page_pt": [
+        223,
+        204
+      ]
+    },
+    {
+      "asset": "figures/late/turn.pdf",
+      "sha256": "927687d9a61db96cea3b0c78c7b7e7f6001cb549f2c5ae14514cc3d519709e26",
+      "page_pt": [
+        223,
+        204
+      ]
+    },
+    {
+      "asset": "figures/cod/turn_linear.pdf",
+      "sha256": "f9a5bca4bbb7670efa88a47f4d54a2fe38e73f0ce2a01bfe695e1765cedaed0c",
+      "page_pt": [
+        223,
+        164
+      ]
+    },
+    {
+      "asset": "figures/cod/turn_quadratic.pdf",
+      "sha256": "f76dcfd641cb28ddcdb0b386f818ab11db14c5a124be3aa4d145978d09cb0edb",
+      "page_pt": [
+        223,
+        164
+      ]
+    },
+    {
+      "asset": "figures/cod/mixity_linear.pdf",
+      "sha256": "6cfc2a3948cb4d3edf0210873fdb8285b87b8814d65c5c2683cfb2ef3c894fb3",
+      "page_pt": [
+        223,
+        164
+      ]
+    },
+    {
+      "asset": "figures/cod/mixity_quadratic.pdf",
+      "sha256": "7ea0d7cead484a83e3a24a9bb69ae5dc408180dffc5f4fa490f5aa795bcc65e3",
+      "page_pt": [
+        223,
+        164
+      ]
+    },
+    {
+      "asset": "figures/tip_resolution_sensitivity/trajectory.pdf",
+      "sha256": "cb29d652f3d5e5436ba1f65d29a3e8e5cb56e74cb110edab2bf1f0113ad1849a",
+      "page_pt": [
+        431.659843,
+        255.11811
+      ],
+      "layoutMetadata_sha256": "95cb5e1f35f6e8f3d5083bd9c40f9afe0ac47c5c016035f035ba068b99db6c84"
+    },
+    {
+      "asset": "figures/tip_resolution_sensitivity/vertical_deviation.pdf",
+      "sha256": "4d67f58cf512ac8822bcd3d9fe29f696ca282a152633ea7f6120eb1f1821c874",
+      "page_pt": [
+        144.651969,
+        235.275591
+      ],
+      "layoutMetadata_sha256": "d3fc5cbb319269766f1ba89b34b11d5f6bd0c912488c743ba6a744d870654cb3"
+    },
+    {
+      "asset": "figures/tip_resolution_sensitivity/direction_deviation.pdf",
+      "sha256": "3de7290deabddd7a132252e3461e9ad48a9189bfeb87d5ec03ba954675905595",
+      "page_pt": [
+        144.651969,
+        235.275591
+      ],
+      "layoutMetadata_sha256": "724218bdbdc14c68f81d5f13214c85b8f379960abcd5998822c64c7f467c2d40"
+    },
+    {
+      "asset": "figures/tip_resolution_sensitivity/mode_mixity.pdf",
+      "sha256": "24a7d5365e3674084d2b52189ffad64bc68ffd8d0db47902caa47452ef89826a",
+      "page_pt": [
+        144.651969,
+        235.275591
+      ],
+      "layoutMetadata_sha256": "ecdc2d56e7a40e7073540438e2fa904c08a5badd8a86d842ce5499aba1af01e4"
+    },
+    {
+      "asset": "figures/m1_mesh_sensitivity/trajectory.pdf",
+      "sha256": "6fbf6d213c6818504d9cc986ca72de94eee9eb52fc0433153d0143fc52370308",
+      "page_pt": [
+        431.659843,
+        255.11811
+      ],
+      "layoutMetadata_sha256": "41f8fcb6cf269ff24060a5026878b8f2eff9264cb2626361e806ddbe8b3ec830"
+    },
+    {
+      "asset": "figures/m1_mesh_sensitivity/vertical_deviation.pdf",
+      "sha256": "e908ef60f683cb2b11a81b246982b3c1acd43efb0d6db3cd774ce530ecc21e9d",
+      "page_pt": [
+        144.651969,
+        235.275591
+      ],
+      "layoutMetadata_sha256": "700682a9032a448e99777c6f775d7ec86d45bcad08a8c7acc0c9cb4d4e18ac5a"
+    },
+    {
+      "asset": "figures/m1_mesh_sensitivity/direction_deviation.pdf",
+      "sha256": "b35ca00905106e24ab1d3f091e64393364b0ba36fb3f562592a87fee7caac45e",
+      "page_pt": [
+        144.651969,
+        235.275591
+      ],
+      "layoutMetadata_sha256": "92c4a5fa1adf19ad17d70c8c3d37e2c9f7f0565a1822f61f60b6d05fc75006f1"
+    },
+    {
+      "asset": "figures/m1_mesh_sensitivity/mode_mixity.pdf",
+      "sha256": "08ffd494bff504438306fc43649570a35e5b9ad2c0fa5cc8835e499e55f27536",
+      "page_pt": [
+        144.651969,
+        235.275591
+      ],
+      "layoutMetadata_sha256": "65d7744d5553b077977af68f9fc7a31af1de759afa22ce2bc92b53eb711be043"
+    },
+    {
+      "asset": "figures/increment_sensitivity/trajectory.pdf",
+      "sha256": "f30b3b0bfccda72ac79895113a1c4e39db1191fd95ed53d9192e68fe1f4fc721",
+      "page_pt": [
+        431.659843,
+        255.11811
+      ],
+      "layoutMetadata_sha256": "ae2f9e33c5d3e7ee5b843b593b60afba7558268001bc9f2fe3960a7b99830569"
+    },
+    {
+      "asset": "figures/increment_sensitivity/vertical_deviation.pdf",
+      "sha256": "d5e66812baaf90ff6bc98066a78b69386968f10be707a6a063df35207be34dbc",
+      "page_pt": [
+        144.651969,
+        235.275591
+      ],
+      "layoutMetadata_sha256": "75c15e88084f67406124537cf43827b790ce0e827907c46e1172adaffd44edf9"
+    },
+    {
+      "asset": "figures/increment_sensitivity/direction_deviation.pdf",
+      "sha256": "46a0e8610c19051cea7eb35985d67ecb5fb43d3b28a09deef1a7725fec2db2be",
+      "page_pt": [
+        144.651969,
+        235.275591
+      ],
+      "layoutMetadata_sha256": "c3e5753c0f7e3c4d55dea909f3334b05a7aee1bae209f9b005a3e350907bae62"
+    },
+    {
+      "asset": "figures/increment_sensitivity/turn_density.pdf",
+      "sha256": "bdd1d50bd3586e3bd1f82b2583a8e33b97bdf622b652e8c1b72cf1f22c205c7c",
+      "page_pt": [
+        144.651969,
+        235.275591
+      ],
+      "layoutMetadata_sha256": "9a9a0f287f813ff216c58f948be700beee0bcba93e17eb8fe9eb591942cd9fe2"
+    },
+    {
+      "asset": "figures/quality/min_angle.pdf",
+      "sha256": "7c552f5a84ccb4891d5e4c11e0e17756319996d4844ca3217f69175f3a115126",
+      "page_pt": [
+        223,
+        164
+      ]
+    },
+    {
+      "asset": "figures/quality/size_ratio.pdf",
+      "sha256": "8796d2261e28825b458effa76b08530e933b90c076c8ca51373d30749202ecfb",
+      "page_pt": [
+        223,
+        164
+      ]
+    },
+    {
+      "asset": "figures/quality/iterations.pdf",
+      "sha256": "43beabc77df517c79cd29cf9c49d3f13bbd0b020346c9290d6566b32d3548547",
+      "page_pt": [
+        223,
+        164
+      ]
+    },
+    {
+      "asset": "figures/quality/true_residual.pdf",
+      "sha256": "b68db23e4e84aed72c3765ad7988f324bcb3ec1cfad7876f8f7d1515ad88b305",
+      "page_pt": [
+        223,
+        164
+      ]
+    }
+  ],
+  "protectedData": {
+    "paper/data/accepted_stage1_source.mat": "93bf96d515b8719258f8fbd5fdfeffa1d009e17c286f10fe4dc4e19c02e64a17",
+    "paper/data/accepted_states.csv": "0cfb080eed703c37bf1cf146987b6ae9281f188124c376f13c61dcfa58d57733",
+    "paper/data/cod_fits.csv": "169da1bfd1cf637baccb04aa7aa0b7c6de8398bd15dae68d7cba5ad98afd4972",
+    "paper/data/derived_metrics.json": "dd3e1028403d996072f5f97f3cdde14ab1fc498e4995a4b188b44c4af50f531d",
+    "paper/data/evidence.json": "db7c5908e2cad5c749c7914f4eb742b28d1d404b4124a03107f35b94ad013bd3",
+    "paper/data/evidence_exact.mat": "7aba562a423eec46355f13cc486cea6b21b8349717ee0a8d64e429d2648ef5e7",
+    "paper/data/increment_plot_records.mat": "a36b6f9b641023ad6f1ca63362b0e6ff95902aac505c5bd95993dcba0d147bbc",
+    "paper/data/isolated_tip_fixed.csv": "8a6e106148adb2978e1aa4c406011ba54e5ee3b453c38746432e0e1a2186968c",
+    "paper/data/isolated_tip_resolution.json": "c8e559b88efe38b5360683579a160a18d39ad8ee494f8a2f8f263198162512cb",
+    "paper/data/isolated_tip_resolution_manifest.json": "d6e6ef49256136fb701243a80cba6eed3c10b0a181b6546870aa945553bac259",
+    "paper/data/isolated_tip_states.csv": "936af0b422060f36d011e86d9523c13938a5721eb0005b1fa9cefb35b802bb1b",
+    "paper/data/manuscript_checks.json": "d0540d9385867cc18f45a7f48d6c55e5ec5ffe924d6428cd4785ed038539c799",
+    "paper/data/pdf_checks.json": "3407532a50a4834d89d6f30d5eba862fdfbf713120479bf23f72360d55fc4404",
+    "paper/data/qualification.csv": "b202b51e694c6f307ecadb0ee2ea8982812cae23d27b33bb82b686183e6d1131",
+    "paper/data/source_manifest.csv": "426aded20d9e55e4306ad466fd350eb2b1e64dd6a80d0a2bf8d264f4ca64c22e",
+    "paper/data/tip2h0_states.csv": "b0591995938f2296e7df6ca52224825e2d82639e4ffefe247e6ff212afcf41bf",
+    "paper/data/retained_figure_7_9/increment_trajectory.pdf": "562cf7b2f445e7d6b8a70604d8ad195c157e25d9b7a392d6557a8c4ed053c2f9",
+    "paper/data/retained_figure_7_9/m1_direction_deviation.pdf": "e05616ce0d72a396a4e6cdfaf84d69959da3ba229297f90c2934b29676206b20",
+    "paper/data/retained_figure_7_9/m1_mode_mixity.pdf": "47d6e70bde884b2c79c2cafd5d25af364ee94638562b8d99137d17614e01338e",
+    "paper/data/retained_figure_7_9/m1_trajectory.pdf": "c0cf18c3d6e8ba1e935e049e785832ef0f6b4bf0b6534d2fbb406d9aa01d1e58",
+    "paper/data/retained_figure_7_9/m1_vertical_deviation.pdf": "06f3d677063551b7232aaf127bb8dd53ad9ecc36a0674f078749184c7e397786",
+    "paper/data/retained_figure_7_9/profiles.json": "8361f798b1471741bb3cc3f7d0db510ae5747ce2098af59c0404d6649badbede",
+    "paper/data/retained_figure_7_9/README.md": "2a874cfe39a0429b330a6590fa0d7dcd3c5982c40a3a0c1f8189807079d8530a"
+  },
+  "manuscript_sha256": "15d96444650901385be5990f0fffd1e81b40a2deb92e13bf1878cbc4094855c1"
+}
