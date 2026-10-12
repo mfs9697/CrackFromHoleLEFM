@@ -100,6 +100,7 @@ def check() -> dict:
     )
     assert r"\author*[1]{\fnm{Danylo} \sur{Selivanov}}" in dst
     assert "fract@inmech.kyiv.ua" in dst
+    assert r"\usepackage{amsmath,amssymb,bm,booktabs}" in dst, "Wrong/missing amssymb package"
     assert r"\documentclass[pdflatex,sn-mathphys-num]{sn-jnl}" in dst
     assert r"\bibliographystyle{sn-basic}" not in dst
     assert r"\bibliographystyle{sn-mathphys-num}" not in dst
