@@ -121,7 +121,8 @@ def check(pdf_path=None):
     changed = git('diff', '--name-only', BASE, '--').decode().splitlines()
     allowed = {'paper/main.tex', 'paper/main.pdf', '.gitignore',
                'paper/verify_final_typesetting.py', 'paper/FINAL_TYPESETTING_REVIEW.md',
-               'paper/NOTATION_AND_STYLE.md', 'paper/review_final_typesetting.py'}
+               'paper/NOTATION_AND_STYLE.md', 'paper/review_final_typesetting.py',
+               'paper/verify_pdf_source_match.py'}
     require('no_unapproved_tracked_changes', all(p in allowed or p.startswith('paper/reviews/final_typesetting/') for p in changed), changed)
     protected = git('ls-tree', '-r', '--name-only', BASE, 'paper/data', 'paper/figures').decode().splitlines()
     hashes = {}
@@ -167,6 +168,17 @@ def check(pdf_path=None):
     links = [str(a.get_object()['/A']['/D']) for p in pdf.pages for a in p.get('/Annots', [])
              if a.get_object().get('/A', {}).get('/S') == '/GoTo']
     require('all_internal_links_resolve', all(d in pdf.named_destinations for d in links), len(links))
+    # Unlike metadata-only checks, this fails closed for a stale PDF:
+    # approved final wording must be present and source/PDF/figure hashes
+    # must match the committed build manifest.
+    from verify_pdf_source_match import check as verify_pdf_source
+    correspondence = verify_pdf_source(
+        PAPER / 'main.tex', Path(pdf_path),
+        PAPER / 'reviews/final_typesetting/pdf_source_manifest.json'
+    )
+    require('committed_PDF_matches_current_TeX_and_approved_graphics',
+            correspondence['main_tex_sha256'] ==
+            digest((PAPER / 'main.tex').read_bytes()), True)
     results['compiled_pdf_sha256'] = digest(pdf_path.read_bytes())
     results['pages'] = len(pdf.pages)
     results['baseline_commit'] = BASE
