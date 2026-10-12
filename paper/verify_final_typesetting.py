@@ -127,9 +127,14 @@ def check(pdf_path=None):
     protected = git('ls-tree', '-r', '--name-only', BASE, 'paper/data', 'paper/figures').decode().splitlines()
     hashes = {}
     for path in protected:
-        raw = (ROOT / path).read_bytes()
-        require('protected:' + path, raw == git('show', f'{BASE}:{path}'))
-        hashes[path] = digest(raw)
+        # Compare the Git-cleaned worktree blob, not raw working-tree bytes.
+        # Windows core.autocrlf may turn LF into CRLF without changing the
+        # tracked file, especially JSON under paper/figures/.
+        expected_blob = git('rev-parse', f'{BASE}:{path}').decode().strip()
+        actual_blob = git('hash-object', '--path=' + path, path).decode().strip()
+        require('protected:' + path, actual_blob == expected_blob)
+        # Record the baseline canonical bytes, never platform-local CRLF.
+        hashes[path] = digest(git('show', f'{BASE}:{path}'))
     require('portable_data_and_vector_evidence_byte_identical', True, hashes)
     approved = PAPER / 'reviews/issue78/after'
     for path in paths(new):
