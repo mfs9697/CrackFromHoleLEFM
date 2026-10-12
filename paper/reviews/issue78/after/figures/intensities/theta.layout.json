@@ -1,0 +1,77 @@
+{
+  "removedDecorationPaints": [],
+  "legend": null,
+  "ylabelReplacement": null,
+  "protectedScientificPaintCount": 3,
+  "preservedBodyOperations_sha256": "834d2d860e97ce0b0a9b34aa9f988512808cc7bc1026aa5487c6ede07da55641",
+  "bodyTransform": [
+    1,
+    0,
+    0,
+    1,
+    0,
+    0
+  ],
+  "ylabelAlignment": {
+    "translation_pt": [
+      -5.966207462458783,
+      0
+    ],
+    "scientificCurveMovement": false
+  },
+  "asset": "figures/intensities/theta.pdf",
+  "source_sha256": "25927a4679a42d6a6fbe947d5cf6a7e1fc0a99320ba6c927ef09d56c6bcfb145",
+  "output_sha256": "0c39915f6da323ab60a81cfda0b26c9a14c381c0df2e2a39b02232dd1b99675a",
+  "oldPage_pt": [
+    145,
+    204
+  ],
+  "newPage_pt": [
+    142.73507812984653,
+    204.22765391752907
+  ],
+  "oldAxes_pt": [
+    42.01509725,
+    31.119955079999983,
+    135.64874254999998,
+    190.7938854575
+  ],
+  "axes_pt": [
+    39.11809137720135,
+    34.76873952155832,
+    132.75173667720134,
+    194.44266989905836
+  ],
+  "oldVisibleContent_pt": [
+    14.53250467384011,
+    2.02052564702435,
+    139.9627926640625,
+    194.90957588738803
+  ],
+  "visibleContent_pt": [
+    5.669291341041463,
+    5.669310088582687,
+    137.06578679126386,
+    198.55836032894638
+  ],
+  "safetyMargin_mm": 2,
+  "margins_mm": [
+    2.000000000867405,
+    2.0000066145833366,
+    1.9999999999999962,
+    2.0000007937500044
+  ],
+  "layoutGroup": "intensities",
+  "vector": true,
+  "raster": false,
+  "sourceToOutput": [
+    1,
+    0,
+    0,
+    1,
+    -2.8970058727986476,
+    3.6487844415583375
+  ],
+  "plotGeometryUnchanged": true,
+  "axisLimitsAndValuesUnchanged": true
+}

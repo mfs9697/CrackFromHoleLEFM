@@ -1,0 +1,99 @@
+{
+  "removedDecorationPaints": [
+    1798,
+    1819,
+    1854,
+    1872,
+    1935
+  ],
+  "legend": null,
+  "ylabelReplacement": null,
+  "protectedScientificPaintCount": 4,
+  "preservedBodyOperations_sha256": "35de7290b76a21a2374d24278f2328f1e13fb49de3e362db79ef438b3f225d24",
+  "bodyTransform": [
+    1,
+    0,
+    0,
+    1,
+    0,
+    0
+  ],
+  "exponentInsideAxes": {
+    "oldBounds_pt": [
+      43.43123110820312,
+      193.99978161191757,
+      67.10403641767397,
+      202.06349091138534
+    ],
+    "bounds_pt": [
+      43.37005988113836,
+      182.12699437670972,
+      67.0428651906092,
+      190.1907036761775
+    ],
+    "location": "northwest",
+    "collisionCount": 0
+  },
+  "ylabelAlignment": {
+    "translation_pt": [
+      -4.223767162740362,
+      0
+    ],
+    "scientificCurveMovement": false
+  },
+  "asset": "figures/intensities/KII.pdf",
+  "source_sha256": "e189a6955f95f7dc7e9d351824c5e452d6a85b9bc71b6d19709721a19def9b42",
+  "output_sha256": "cd777217983f07e4400ce43cea5da6d8a9ba55b36b3a2e10ee72063de8747f58",
+  "oldPage_pt": [
+    145,
+    204
+  ],
+  "newPage_pt": [
+    142.73507812984653,
+    204.22765391752907
+  ],
+  "oldAxes_pt": [
+    42.01509725,
+    31.119955079999983,
+    135.64874254999998,
+    190.79388773855615
+  ],
+  "axes_pt": [
+    39.11809137720135,
+    34.76873952155832,
+    132.75173667720134,
+    194.4426721801145
+  ],
+  "oldVisibleContent_pt": [
+    12.790064374121688,
+    2.0205068970243403,
+    139.9627926640625,
+    202.06349091138534
+  ],
+  "visibleContent_pt": [
+    5.669291341323039,
+    5.669291338582678,
+    137.06578679126386,
+    198.5583625789464
+  ],
+  "safetyMargin_mm": 2,
+  "margins_mm": [
+    2.0000000009667382,
+    2.0,
+    1.9999999999999962,
+    1.9999999999999962
+  ],
+  "layoutGroup": "intensities",
+  "vector": true,
+  "raster": false,
+  "sourceToOutput": [
+    1,
+    0,
+    0,
+    1,
+    -2.8970058727986476,
+    3.6487844415583375
+  ],
+  "plotGeometryUnchanged": true,
+  "axisLimitsAndValuesUnchanged": true
+}

@@ -1,5 +1,7 @@
 # Final publication figure workflow
 
+> Historical layout note: Issue #78 supersedes the outside-axes legend policy described below. The active pipeline uses internal, collision-checked legends and 2-mm vector crop envelopes. See [ISSUE78_FIGURE_PIPELINE.md](ISSUE78_FIGURE_PIPELINE.md); candidates remain in a separate review directory until author approval.
+
 Work continues on PR #69's source branch so the approved specimen drawing,
 symbolic formulation and inline figure environments are preserved. All figure
 environments remain in `main.tex`; no `figure.tex` wrapper is reintroduced.
