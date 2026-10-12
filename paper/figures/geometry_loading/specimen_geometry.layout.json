@@ -1,0 +1,60 @@
+{
+  "removedDecorationPaints": [],
+  "legend": null,
+  "ylabelReplacement": null,
+  "protectedScientificPaintCount": 0,
+  "preservedBodyOperations_sha256": "bbd8d3275f992063a0af52d29d600ac2bc1ca938a7c30499caaa7a507956c903",
+  "bodyTransform": [
+    1,
+    0,
+    0,
+    1,
+    0,
+    0
+  ],
+  "asset": "figures/geometry_loading/specimen_geometry.pdf",
+  "source_sha256": "3a52d54ffcb80270c91af1cf5a9358d1ae07b0c21fa3a6e17f25d0f7c43eabbf",
+  "output_sha256": "c2e347cd003a4bfcf08da1d26e333b3549606aefd51a7dc61c4fb4a0ce070700",
+  "oldPage_pt": [
+    358,
+    261
+  ],
+  "newPage_pt": [
+    324.30360183957583,
+    244.03057876435287
+  ],
+  "oldAxes_pt": null,
+  "axes_pt": null,
+  "oldVisibleContent_pt": [
+    25.689202236149264,
+    13.603865016202292,
+    338.65422139855974,
+    246.29586110338983
+  ],
+  "visibleContent_pt": [
+    5.669291338582678,
+    5.669291338582678,
+    318.63431050099314,
+    238.3612874257702
+  ],
+  "safetyMargin_mm": 2,
+  "margins_mm": [
+    2.0,
+    2.0,
+    2.000000000000006,
+    1.9999999999999962
+  ],
+  "layoutGroup": null,
+  "vector": true,
+  "raster": false,
+  "sourceToOutput": [
+    1,
+    0,
+    0,
+    1,
+    -20.019910897566586,
+    -7.934573677619614
+  ],
+  "plotGeometryUnchanged": true,
+  "axisLimitsAndValuesUnchanged": true
+}
