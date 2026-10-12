@@ -50,7 +50,7 @@ def scientific_body(s: str, is_candidate: bool) -> str:
             "\\renewcommand{\\theHfigure}{S\\arabic{figure}}\n"
             "\\setcounter{figure}{0}\n"
         )
-        body = body.replace(anchor, anchor + "\n" + appendix_figure_reset, 1)
+        body = body.replace(anchor + "\n", anchor + "\n" + appendix_figure_reset, 1)
     else:
         body = body.split(r"\end{document}", 1)[0]
     return body.strip()
