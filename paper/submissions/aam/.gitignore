@@ -1,0 +1,13 @@
+# Author-supplied official Springer Nature template; do not commit vendor files.
+/sn-jnl.cls
+/sn-mathphys-num.bst
+# Disposable LaTeX build outputs for the journal candidate.
+/manuscript.pdf
+/manuscript.aux
+/manuscript.bbl
+/manuscript.blg
+/manuscript.fls
+/manuscript.fdb_latexmk
+/manuscript.log
+/manuscript.out
+/manuscript.synctex.gz
