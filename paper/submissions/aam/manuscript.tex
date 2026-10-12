@@ -1,6 +1,6 @@
 % Archive of Applied Mechanics authoring CANDIDATE (not yet submission-ready).
 % Editorial transformation of ../../main.tex (frozen, verified scientific baseline).
-% Requires the OFFICIAL Springer Nature sn-jnl.cls and sn-basic.bst.
+% Requires the OFFICIAL Springer Nature sn-jnl.cls and sn-mathphys-num.bst.
 % Place official template files beside this manuscript or on the LaTeX search path.
 % Journal guidance currently conflicts on [iicol] vs single-column;
 % this first build deliberately uses the safer single-column layout.
@@ -1727,6 +1727,14 @@ numerical extraction effects from the physical origin
 of late crack redirection.
 
 \FloatBarrier
+% BEGIN AAM AUTHOR-CONFIRMED FUNDING
+\section*{Declarations}
+\noindent\textbf{Funding.}
+This research was supported by the regular institutional funding
+of the S.P. Timoshenko Institute of Mechanics,
+National Academy of Sciences of Ukraine.
+No specific research grant was awarded for this work.
+% END AAM AUTHOR-CONFIRMED FUNDING
 \appendix
 \section{Additional numerical diagnostics}
 The accepted solver and mesh checks are summarized in Fig.~\ref{fig:quality}.
@@ -1777,7 +1785,7 @@ estimate of the discretization error in the trajectory.
 \end{figure}
 
 \FloatBarrier
-\bibliographystyle{sn-basic}
+% The sn-mathphys-num class option selects sn-mathphys-num.bst automatically.
 \bibliography{../../references}
 
 % EDITORIAL HOLD: mandatory funding, competing interests, data/code availability,
