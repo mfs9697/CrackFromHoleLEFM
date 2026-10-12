@@ -13,6 +13,14 @@ Status: **Editorial convention through Batch 6** (2026-10-11). This is an editor
 7. Reserve **local-symmetry point** for a solved state where \(K_{\mathrm{II}}=0\); in the current evidence, \(a_{\mathrm{LS}}\) is only a **linearly interpolated sign-change estimate**.
 8. State clearly that the COD and EDI SIF estimates are different postprocessing methods applied to the same FEM displacement field; they are not independent physical solutions.
 
+## Academic English and baseline terminology (October 12, 2026)
+
+- Use **M0** and **M1** for the named *exterior mesh-sizing laws*. In comparisons between the reference/production exterior law and the coarser law, refer to the **M0 path** and **M1 path**, respectively.
+- In a structured-tip comparison under the same M0 exterior law, distinguish the **$h_0$ path** from the **$2h_0$ path**. Naming one of them "M0" without identifying tip resolution is ambiguous.
+- The word **reference** remains appropriate for the **unit reference tensile traction/loading**, which is independent of mesh choice. Use **production** or **baseline** for the 4-mm production calculation and its dimensionless tip spacing where "reference" might be confused with an exterior mesh law.
+- Write **finite-element** with a hyphen when used attributively (finite-element mesh, finite-element solution, finite-element method). The manuscript uses this form consistently; the standalone abbreviation **FE** offers no advantage with so few occurrences. **FEM** is acceptable when explicitly introduced as an abbreviation for *finite element method* and then used consistently, but it is not necessary here.
+- Write results and limitations in terms of the tested parameter changes; coupled increment/mesh refinement **cannot isolate** the effect of the crack increment. Prefer **"persists under the tested perturbations"** to generalized convergence or mesh-independence claims.
+
 ## Geometry and propagation
 
 | Symbol | Meaning / convention |

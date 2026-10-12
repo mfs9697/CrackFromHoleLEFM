@@ -1,0 +1,136 @@
+{
+  "baseline_commit": "799f2e190fa90dd41b7fee178763d66ffcaada29",
+  "inputs": [
+    {
+      "role": "Author-supplied PDF (local stale Figure 8d)",
+      "sha256": "64bf83a440bd856b25ff8c82698134d16d98b638836af3e23bcd2bcf879201b6",
+      "pages": 24
+    },
+    {
+      "role": "Issue #78 approved review",
+      "sha256": "df91ea5c52c01fb71bad70745f153d6667bffca2d764a275f1c7b62ccbf56cb7",
+      "pages": 24
+    },
+    {
+      "role": "Final typesetting / PR #80 graphics",
+      "sha256": "4300c38cd916fd57d915e9626412a476f86f4c93b44b7a03ad5b62a098de10ce",
+      "pages": 23
+    }
+  ],
+  "comparison_rows": [
+    {
+      "defect": "Introduction compound-word overflow",
+      "supplied_page": 2,
+      "reviewed_page": 2,
+      "final_page": 2
+    },
+    {
+      "defect": "Figure 2 and interaction-integral flow",
+      "supplied_page": 7,
+      "reviewed_page": 7,
+      "final_page": 7
+    },
+    {
+      "defect": "Material-domain notation and adjacent definitions",
+      "supplied_page": 8,
+      "reviewed_page": 8,
+      "final_page": 8
+    },
+    {
+      "defect": "Characteristic states / late-response figure",
+      "supplied_page": 13,
+      "reviewed_page": 13,
+      "final_page": 13
+    },
+    {
+      "defect": "COD figure flow",
+      "supplied_page": 14,
+      "reviewed_page": 14,
+      "final_page": 14
+    },
+    {
+      "defect": "Tip-resolution discussion and table",
+      "supplied_page": 15,
+      "reviewed_page": 15,
+      "final_page": 15
+    },
+    {
+      "defect": "Figure 7 captions and complete exterior-mesh discussion",
+      "supplied_page": 16,
+      "reviewed_page": 16,
+      "final_page": 16
+    },
+    {
+      "defect": "Figure 8 approved M0/M1 asset and captions",
+      "supplied_page": 17,
+      "reviewed_page": 17,
+      "final_page": 17
+    },
+    {
+      "defect": "Figure 9 captions and definitions",
+      "supplied_page": 18,
+      "reviewed_page": 18,
+      "final_page": 18
+    },
+    {
+      "defect": "Section 5.7 ending",
+      "supplied_page": 19,
+      "reviewed_page": 19,
+      "final_page": 19
+    },
+    {
+      "defect": "Discussion begins without a detached Section 5.7 sentence",
+      "supplied_page": 20,
+      "reviewed_page": 20,
+      "final_page": 20
+    },
+    {
+      "defect": "Conclusion / appendix ordering",
+      "supplied_page": 21,
+      "reviewed_page": 21,
+      "final_page": 21
+    },
+    {
+      "defect": "Figure S1 precedes References",
+      "supplied_page": 24,
+      "reviewed_page": 24,
+      "final_page": 22
+    },
+    {
+      "defect": "References conclude the article",
+      "supplied_page": 23,
+      "reviewed_page": 23,
+      "final_page": 23
+    }
+  ],
+  "baseline_warnings": {
+    "compiler": "tectonic",
+    "final_pass_underfull_boxes": [
+      "Underfull \\hbox (badness 10000) in paragraph at lines 1265--1265",
+      "Underfull \\hbox (badness 10000) in paragraph at lines 1265--1265",
+      "Underfull \\hbox (badness 10000) in paragraph at lines 1265--1265",
+      "Underfull \\hbox (badness 10000) in paragraph at lines 1349--1349",
+      "Underfull \\hbox (badness 10000) in paragraph at lines 1349--1349",
+      "Underfull \\hbox (badness 10000) in paragraph at lines 1349--1349",
+      "Underfull \\hbox (badness 10000) in paragraph at lines 1394--1394",
+      "Underfull \\hbox (badness 10000) in paragraph at lines 1394--1394",
+      "Underfull \\hbox (badness 10000) in paragraph at lines 1394--1394",
+      "Underfull \\hbox (badness 10000) in paragraph at lines 1394--1394",
+      "Underfull \\hbox (badness 5133) in paragraph at lines 1410--1410"
+    ],
+    "final_pass_overfull_boxes": [
+      "Overfull \\hbox (1.32713pt too wide) in paragraph at lines 176--190"
+    ],
+    "final_pass_latex_warnings": [],
+    "transient_undefined_citation_warnings": 4
+  },
+  "final_warnings": {
+    "compiler": "tectonic",
+    "final_pass_underfull_boxes": [],
+    "final_pass_overfull_boxes": [],
+    "final_pass_latex_warnings": [],
+    "transient_undefined_citation_warnings": 22
+  },
+  "comparison_sha256": "5d7664d03f5503ffbf2a17ba8ba08cab76f0b2c0fc93063beb5d61c10aaa9315",
+  "physical_calculations": 0
+}

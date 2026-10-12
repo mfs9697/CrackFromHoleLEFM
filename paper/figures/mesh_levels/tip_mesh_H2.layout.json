@@ -1,0 +1,70 @@
+{
+  "removedDecorationPaints": [],
+  "legend": null,
+  "ylabelReplacement": null,
+  "protectedScientificPaintCount": 3,
+  "preservedBodyOperations_sha256": "40c4b23cce000b0eff60f22be9e1386e7c6601baf44181c18d09313692766acc",
+  "bodyTransform": [
+    1,
+    0,
+    0,
+    1,
+    0,
+    0
+  ],
+  "asset": "figures/mesh_levels/tip_mesh_H2.pdf",
+  "source_sha256": "e22ec92f2a7ddfbc72cbd25c075d157c0c0b8735a7234e558ec94c3d20dd0fc7",
+  "output_sha256": "9989f4b92ff14a5275f9561919a2c524939fcb43bf5319c9fe7d110ec6338fe8",
+  "oldPage_pt": [
+    145,
+    128
+  ],
+  "newPage_pt": [
+    143.7508859347993,
+    127.37315617249436
+  ],
+  "oldAxes_pt": [
+    34.81250686918043,
+    32.165249298255574,
+    139.2500366,
+    118.53836674845452
+  ],
+  "axes_pt": [
+    32.5996865898187,
+    34.283801174320104,
+    137.03721632063827,
+    120.65691862451905
+  ],
+  "oldVisibleContent_pt": [
+    7.882111617944405,
+    3.5507394625181536,
+    140.29441487557835,
+    119.58531295784715
+  ],
+  "visibleContent_pt": [
+    5.6692913385826795,
+    5.6692913385826795,
+    138.08159459621663,
+    121.70386483391168
+  ],
+  "safetyMargin_mm": 2,
+  "margins_mm": [
+    2.0000000000000004,
+    2.0000000000000004,
+    1.9999999999999962,
+    2.0000000000000013
+  ],
+  "layoutGroup": "mesh",
+  "vector": true,
+  "raster": false,
+  "sourceToOutput": [
+    1,
+    0,
+    0,
+    1,
+    -2.2128202793617255,
+    2.118551876064526
+  ],
+  "plotGeometryUnchanged": true,
+  "axisLimitsAndValuesUnchanged": true
+}
