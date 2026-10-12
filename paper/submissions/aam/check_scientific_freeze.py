@@ -120,6 +120,18 @@ def scientific_body(s: str, is_candidate: bool) -> str:
                 "Unexpected Table 5/6 heading change in AAM candidate"
             )
             body = body.replace(journal_header, original_header, 1)
+        # Revert a 0.2-pt per-side padding reduction in Table 3
+        # needed for a 1.292-pt Springer text-column overrun.
+        tip_table_spacing = (
+            r"\setlength{\tabcolsep}{2.6pt}" + "\n"
+            + r"\caption{Structured-tip sensitivity at fixed",
+            r"\setlength{\tabcolsep}{2.8pt}" + "\n"
+            + r"\caption{Structured-tip sensitivity at fixed",
+        )
+        assert body.count(tip_table_spacing[0]) == 1, (
+            "Unexpected Table 3 padding change in AAM candidate"
+        )
+        body = body.replace(*tip_table_spacing, 1)
         # These are the only permitted journal-specific changes in the body.
         swaps = (
             ("% The sn-mathphys-num class option selects sn-mathphys-num.bst automatically.\n"
