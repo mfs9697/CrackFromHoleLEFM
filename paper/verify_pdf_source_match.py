@@ -50,11 +50,16 @@ def sha256(path: Path) -> str:
 
 
 def tokens(text: str) -> str:
-    """Ignore TeX/PDF typography, whitespace, hyphenation and ligatures."""
+    """Normalize TeX/PDF typography, hyphenation and math/text spacing.
+
+    PDF extractors can return "Theh0" for the rendered "The $h_0$".
+    Match long, distinctive source/PDF sentinels after collapsing these
+    typographic boundaries. Exact file hashes are checked separately.
+    """
     text = unicodedata.normalize("NFKC", text).lower()
-    # TeX subscript notation h_0 tokenizes in the same way as the PDF h0.
+    # TeX subscript notation h_0 tokenizes in the same way as PDF h0.
     text = text.replace("_", "")
-    return " ".join(re.findall(r"[a-z0-9]+", text))
+    return "".join(re.findall(r"[a-z0-9]+", text))
 
 
 def validate(tex_path: Path, pdf_path: Path) -> tuple[dict, list[str]]:
