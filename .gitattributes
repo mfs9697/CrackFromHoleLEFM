@@ -1,2 +1,8 @@
 # Auto detect text files and perform LF normalization
 * text=auto
+
+# Keep signed numerical text and original vector-review metadata portable.
+paper/data/*.csv text eol=lf
+paper/data/*.json text eol=lf
+paper/data/retained_figure_7_9/*.json text eol=lf
+paper/reviews/issue78/before/** -text

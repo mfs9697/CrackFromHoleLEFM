@@ -24,7 +24,7 @@ for obj=texts(:).'
 end
 for lg=findall(fig,'Type','legend').'
     set(lg,'Interpreter','latex','FontName',P.fontName,'FontSize',P.legend_pt);
-    if numel(lg.String)==4,lg.NumColumns=1;lg.Location='northwest';end
+    lg.NumColumns=1;
 end
 for line=findall(ax,'Type','line').'
     if ~strcmp(line.LineStyle,'none'),line.LineWidth=P.lineWidth_pt;end
@@ -35,12 +35,10 @@ set(fig,'PaperUnits','centimeters','PaperSize',[width height], ...
     'PaperPosition',[0 0 width height],'PaperPositionMode','manual','Renderer','painters');
 drawnow;
 for lg=findall(fig,'Type','legend').'
-    lg.Units='normalized';position=lg.Position;
-    position(1)=min(position(1),.98-position(3));
-    position(2)=min(position(2),.98-position(4));lg.Position=position;
+    publication_place_internal_legend(ax,lg);
 end
 print(fig,pdf,'-dpdf','-painters');
-if nargin>=3&&~isempty(png),print(fig,png,'-dpng','-r220');end
+publication_finalize_axis(ax,pdf);
 info=struct('pdf',pdf,'width_cm',width,'height_cm',height, ...
     'label_pt',P.label_pt,'tick_pt',P.tick_pt,'legend_pt',P.legend_pt, ...
     'interpreter','latex','fixedPageExport',true);

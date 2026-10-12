@@ -1,37 +1,107 @@
 {
-  "source": "paper/data/retained_figure_7_9/m1_direction_deviation.pdf",
-  "source_sha256": "e05616ce0d72a396a4e6cdfaf84d69959da3ba229297f90c2934b29676206b20",
-  "panelClass": "lower",
-  "page_mm": [
-    51.03,
-    83
+  "removedDecorationPaints": [
+    1339,
+    1375,
+    1396,
+    1414,
+    1464,
+    1499,
+    1539,
+    1579,
+    1595,
+    1652,
+    1698,
+    1738,
+    1810,
+    1826
   ],
-  "axes_mm": [
-    16.3296,
-    18,
-    32.1489,
-    46.2
-  ],
-  "graphTransform": [
-    0.7481998370893295,
-    0,
-    0,
-    0.6148386304424976,
-    21.340846170137276,
-    35.08585186456426
-  ],
-  "xlim": [
-    0,
-    100
-  ],
-  "ylim": [
-    0,
-    0.08
-  ],
-  "originalGraphOperations_sha256": "c400afb2b2420e3cee8f475f90d556205a6b9378acb9ed79166bb2bb7d9288ed",
-  "originalGraphOperationCount": 784,
   "legend": null,
-  "numericalReconstruction": false,
-  "rasterization": false,
-  "sourceTypography": "Original legend glyphs retained; axes plate uses shared MATLAB style"
+  "ylabelReplacement": {
+    "source": "m1_direction_label.pdf",
+    "bounds_pt": [
+      8.858539616632084,
+      59.29883968252228,
+      19.600356005009818,
+      139.7573584897843
+    ],
+    "oldBounds_pt": [
+      10.15910600132908,
+      76.57891216861071,
+      20.950905475690863,
+      155.51928077885822
+    ],
+    "label": "M1 minus M0"
+  },
+  "protectedScientificPaintCount": 4,
+  "preservedBodyOperations_sha256": "83f115e29134112aa54658ab8c546e673b1f25a1d3166d85f80d1a8c35d3f8f7",
+  "bodyTransform": [
+    1,
+    0,
+    0,
+    1,
+    0,
+    0
+  ],
+  "ylabelAlignment": {
+    "translation_pt": [
+      -3.189248316931838,
+      0
+    ],
+    "scientificCurveMovement": false
+  },
+  "asset": "figures/m1_mesh_sensitivity/direction_deviation.pdf",
+  "source_sha256": "b35ca00905106e24ab1d3f091e64393364b0ba36fb3f562592a87fee7caac45e",
+  "output_sha256": "67ca2e408088d9b23879e457191a70db785be11cdf0d152e3492986bd2afb7c0",
+  "oldPage_pt": [
+    144.651969,
+    235.275591
+  ],
+  "newPage_pt": [
+    148.54858677842256,
+    175.25138313535152
+  ],
+  "oldAxes_pt": [
+    46.2886301244306,
+    51.02362202570086,
+    137.41937068174815,
+    181.9842473374295
+  ],
+  "axes_pt": [
+    44.96307219674158,
+    34.502624638119705,
+    136.09381275405912,
+    165.46324994984835
+  ],
+  "oldVisibleContent_pt": [
+    10.15910600132908,
+    22.19028886159251,
+    144.20485327387922,
+    186.1030839746812
+  ],
+  "visibleContent_pt": [
+    5.669291340421488,
+    5.669291474011356,
+    142.8792953461902,
+    169.58208658710004
+  ],
+  "safetyMargin_mm": 2,
+  "margins_mm": [
+    2.0000000006486913,
+    2.0000000477762283,
+    2.0000000330375305,
+    2.0000018378553834
+  ],
+  "layoutGroup": "sensitivity_lower",
+  "vector": true,
+  "raster": false,
+  "sourceToOutput": [
+    1,
+    0,
+    0,
+    1,
+    -1.3255579276890224,
+    -16.520997387581154
+  ],
+  "plotGeometryUnchanged": true,
+  "axisLimitsAndValuesUnchanged": true
 }

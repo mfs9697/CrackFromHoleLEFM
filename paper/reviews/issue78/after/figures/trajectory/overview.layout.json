@@ -1,0 +1,137 @@
+{
+  "removedDecorationPaints": [
+    3965,
+    4003,
+    4041,
+    4081,
+    4126,
+    4157,
+    4197,
+    4243,
+    4295,
+    4330,
+    4342,
+    4394,
+    4440,
+    4503,
+    4516,
+    4528,
+    4548,
+    4615,
+    4652,
+    4708,
+    4730,
+    4762,
+    4816,
+    4856,
+    4902,
+    4926,
+    4963,
+    5003,
+    5056,
+    5093,
+    5115,
+    5145,
+    5185,
+    5231,
+    5271,
+    5319,
+    5350,
+    5390,
+    5430,
+    5483,
+    5515,
+    5552,
+    5592,
+    5605,
+    5620
+  ],
+  "legend": {
+    "bounds_pt": [
+      207.27892257337078,
+      152.96489172682834,
+      403.1669035841314,
+      182.12488308923636
+    ],
+    "location": "northeast",
+    "insideAxes": true,
+    "collisionCount": 0,
+    "font_pt": 10.5,
+    "entryCount": 2,
+    "context": null,
+    "relabeling": [],
+    "method": "original vector keys/glyphs; M0 uses existing retained font cmap",
+    "oldBounds_pt": [
+      214.1819875164358,
+      145.11576254311362,
+      410.0699685271964,
+      174.27575390552164
+    ]
+  },
+  "ylabelReplacement": null,
+  "protectedScientificPaintCount": 4,
+  "preservedBodyOperations_sha256": "79e313b6def14ec3300fcc0d5b5c233524b75e4d71f9ef2cad48508bc36c9192",
+  "bodyTransform": [
+    1,
+    0,
+    0,
+    1,
+    0,
+    0
+  ],
+  "asset": "figures/trajectory/overview.pdf",
+  "source_sha256": "c1de609e3dfb11638a7fdbb0763c33469add4ddf2fec4fa7ac2220028b334dc9",
+  "output_sha256": "cdbc41fba1a4cb8097f700d842dab0d1f899388e1182e5d8a2da478dd325761d",
+  "oldPage_pt": [
+    432,
+    194
+  ],
+  "newPage_pt": [
+    419.62557950653536,
+    198.59756194545793
+  ],
+  "oldAxes_pt": [
+    46.87776667979989,
+    29.10899302749999,
+    417.15658270042474,
+    181.36236807875
+  ],
+  "axes_pt": [
+    39.97470173673484,
+    36.95812221121472,
+    410.2535177573597,
+    189.21149726246472
+  ],
+  "oldVisibleContent_pt": [
+    12.572356281657706,
+    -2.1798378451320506,
+    420.8593531110177,
+    185.07914142316054
+  ],
+  "visibleContent_pt": [
+    5.669291338592663,
+    5.669291338582678,
+    413.95628816795266,
+    192.92827060687526
+  ],
+  "safetyMargin_mm": 2,
+  "margins_mm": [
+    2.0000000000035225,
+    2.0,
+    2.000000000000006,
+    1.9999999999999962
+  ],
+  "layoutGroup": "reference_path",
+  "vector": true,
+  "raster": false,
+  "sourceToOutput": [
+    1,
+    0,
+    0,
+    1,
+    -6.9030649430650435,
+    7.849129183714728
+  ],
+  "plotGeometryUnchanged": true,
+  "axisLimitsAndValuesUnchanged": true
+}

@@ -1,1 +1,109 @@
-{"class":"lower","page_mm":[51.03,83],"axes_mm":[16.3296,18,32.1489,46.2],"legendStrip_mm":[16.3296,67,32.1489,15],"legendPolicy":"Reserved strip above axes; never inside the data rectangle","dataChanged":false,"xlim":[0,100],"ylim":[-150,250],"legendBounds_mm":[16.3296,69.8830210402409,16.002373432126603,9.233957919518101]}
+{
+  "removedDecorationPaints": [
+    2912,
+    2930,
+    2962,
+    2975,
+    2995,
+    3016,
+    3034,
+    3080,
+    3093,
+    3108
+  ],
+  "legend": {
+    "bounds_pt": [
+      49.215040700678585,
+      139.54856586442506,
+      98.21673562247103,
+      161.2112860115113
+    ],
+    "location": "northwest",
+    "insideAxes": true,
+    "collisionCount": 0,
+    "font_pt": 10.5,
+    "entryCount": 2,
+    "context": null,
+    "relabeling": [],
+    "method": "original vector keys/glyphs; M0 uses existing retained font cmap",
+    "oldBounds_pt": [
+      50.540598628367604,
+      156.06956325200622,
+      99.54229355016005,
+      177.73228339909247
+    ]
+  },
+  "ylabelReplacement": null,
+  "protectedScientificPaintCount": 5,
+  "preservedBodyOperations_sha256": "17703b3f7b534c1095d6eddbb8c4c2d9a9ea9e0a68ddfcfa5c559f8b34b6a0a7",
+  "bodyTransform": [
+    1,
+    0,
+    0,
+    1,
+    0,
+    0
+  ],
+  "ylabelAlignment": {
+    "translation_pt": [
+      -2.63689155113115,
+      0
+    ],
+    "scientificCurveMovement": false
+  },
+  "asset": "figures/increment_sensitivity/direction_deviation.pdf",
+  "source_sha256": "46a0e8610c19051cea7eb35985d67ecb5fb43d3b28a09deef1a7725fec2db2be",
+  "output_sha256": "cdcba3ba38889b643fe054c124577a882fdcd1515ef45bea3ed633bd517acc32",
+  "oldPage_pt": [
+    144.651969,
+    235.275591
+  ],
+  "newPage_pt": [
+    148.54858677842256,
+    175.25138313535152
+  ],
+  "oldAxes_pt": [
+    46.2886301244306,
+    51.02362202570086,
+    137.41937068174815,
+    181.98425190302947
+  ],
+  "axes_pt": [
+    44.96307219674158,
+    34.502624638119705,
+    136.09381275405912,
+    165.4632545154483
+  ],
+  "oldVisibleContent_pt": [
+    9.631740822309826,
+    22.190307628586,
+    144.20485327387922,
+    221.48459503416385
+  ],
+  "visibleContent_pt": [
+    5.669291344620802,
+    5.6693102410048475,
+    142.8792953461902,
+    166.77286099444265
+  ],
+  "safetyMargin_mm": 2,
+  "margins_mm": [
+    2.000000002130116,
+    2.0000066683544877,
+    2.0000000330375305,
+    2.991034199709516
+  ],
+  "layoutGroup": "sensitivity_lower",
+  "vector": true,
+  "raster": false,
+  "sourceToOutput": [
+    1,
+    0,
+    0,
+    1,
+    -1.3255579276890224,
+    -16.520997387581154
+  ],
+  "plotGeometryUnchanged": true,
+  "axisLimitsAndValuesUnchanged": true
+}

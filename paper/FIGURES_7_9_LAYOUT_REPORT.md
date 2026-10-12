@@ -1,5 +1,7 @@
 # Figures 7--9 layout normalization (2026-10-11)
 
+> Historical layout note: Issue #78 supersedes the outside-axes legend policy described below. The active pipeline uses internal, collision-checked legends and 2-mm vector crop envelopes. See [ISSUE78_FIGURE_PIPELINE.md](ISSUE78_FIGURE_PIPELINE.md); candidates remain in a separate review directory until author approval.
+
 Scope: layout and plotting only, on the existing
 `paper-figure2-mesh-typography` checkout. No scientific evidence, solver,
 qualification gate, EDI/COD result, numerical table, caption text, or accepted

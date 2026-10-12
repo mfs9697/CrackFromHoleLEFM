@@ -1,0 +1,92 @@
+{
+  "removedDecorationPaints": [
+    1318,
+    1339,
+    1374,
+    1392,
+    1455
+  ],
+  "legend": null,
+  "ylabelReplacement": null,
+  "protectedScientificPaintCount": 7,
+  "preservedBodyOperations_sha256": "e805d554fc7b92d426f860661f47b75ee1de038451f3a3b7d5c0b8f752b71c8d",
+  "bodyTransform": [
+    1,
+    0,
+    0,
+    1,
+    0,
+    0
+  ],
+  "exponentInsideAxes": {
+    "oldBounds_pt": [
+      45.839934240878904,
+      155.77391713838335,
+      69.51678925141458,
+      163.86388180880465
+    ],
+    "bounds_pt": [
+      179.97244741561386,
+      122.29904249547957,
+      203.64930242614952,
+      130.38900716590086
+    ],
+    "location": "northeast",
+    "collisionCount": 0
+  },
+  "asset": "figures/cod/turn_linear.pdf",
+  "source_sha256": "f9a5bca4bbb7670efa88a47f4d54a2fe38e73f0ce2a01bfe695e1765cedaed0c",
+  "output_sha256": "872f25275b03a43fce3f52fceaaa0af3444db581d1217405a090fed9c6cef114",
+  "oldPage_pt": [
+    223,
+    164
+  ],
+  "newPage_pt": [
+    217.88535064749732,
+    142.01458359146815
+  ],
+  "oldAxes_pt": [
+    44.4235581775,
+    36.928956478749996,
+    214.31365228874998,
+    152.55758490299164
+  ],
+  "axes_pt": [
+    38.01117681883656,
+    19.012347245596235,
+    207.90127093008653,
+    134.64097566983787
+  ],
+  "oldVisibleContent_pt": [
+    12.081672697246123,
+    23.58591057173644,
+    218.6284406675781,
+    163.86388180880465
+  ],
+  "visibleContent_pt": [
+    5.669291338582681,
+    5.669301338582681,
+    212.21605930891465,
+    136.34529225288549
+  ],
+  "safetyMargin_mm": 2,
+  "margins_mm": [
+    2.0000000000000013,
+    2.000003527777779,
+    1.9999999999999962,
+    1.9999999999999962
+  ],
+  "layoutGroup": "cod",
+  "vector": true,
+  "raster": false,
+  "sourceToOutput": [
+    1,
+    0,
+    0,
+    1,
+    -6.412381358663442,
+    -17.91660923315376
+  ],
+  "plotGeometryUnchanged": true,
+  "axisLimitsAndValuesUnchanged": true
+}

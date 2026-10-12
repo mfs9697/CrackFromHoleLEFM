@@ -1,0 +1,14 @@
+{
+  "PR80_baseline": {
+    "status": "pre-existing prose assertion failure",
+    "file": "verify_isolated_tip_correction.py",
+    "line": 71,
+    "assertion": "assert r'$\\eta_e=1$' in text and 'connectivity need not be identical' in text"
+  },
+  "final_typesetting": {
+    "status": "pre-existing prose assertion failure",
+    "file": "verify_isolated_tip_correction.py",
+    "line": 71,
+    "assertion": "assert r'$\\eta_e=1$' in text and 'connectivity need not be identical' in text"
+  }
+}
