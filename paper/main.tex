@@ -387,9 +387,8 @@ unapproximated MTS root.
 
 \subsection{Finite-increment recurrence}
 The unit direction of a segment is expressed in the frozen initiation
-basis. With $\Delta a$ denoting the prescribed segment length, the
-incremental turning angle, the absolute direction of the new segment,
-and its tip position satisfy
+basis. The incremental turning angle, the absolute direction of the new
+segment, and its tip position satisfy
 \begin{align}
  \bm e(\theta)&=\cos\theta\,\bm n_{\mathrm{mat}}
                  +\sin\theta\,\bm t,\label{eq:direction}\\
@@ -400,9 +399,9 @@ and its tip position satisfy
  P_{k+1}&=P_k+\Delta a\,\bm e(\theta_{k+1}).\label{eq:pointupdate}
 \end{align}
 Here $\theta_k$ is measured relative to the fixed outward normal at
-the initiation point. The accumulated crack length is
-$a_k=k\Delta a$; throughout the numerical results, $a$ denotes
-this length rather than the horizontal tip coordinate. The accepted
+the initiation point. The accumulated crack-path length, measured from the initiation
+point $P_0$, is $a_k=k\Delta a$. Throughout the numerical results,
+$a$ denotes this length rather than the horizontal coordinate of the crack tip. The accepted
 elastic solution for each current geometry determines the following
 segment, so the propagation history enters recursively through the
 boundary-value problem.
@@ -704,9 +703,10 @@ tolerance is $10^{-10}$, the maximum iteration count is 5000, and
 the independently calculated true-relative-residual acceptance
 criterion is $5\times10^{-10}$. Prescribed displacement
 constraints are enforced exactly.
-For the finer fixed-geometry sensitivity meshes only, MATLAB PCG can report
-finite-precision stagnation immediately above the stated tolerance. In that
-case one Krylov restart from the returned iterate is permitted, using the
+For the finer fixed-geometry sensitivity meshes only, the PCG iteration
+may stagnate at a residual level slightly above the prescribed tolerance
+because of finite-precision effects. In that case, one Krylov restart
+from the returned iterate is permitted, using the
 same matrix, right-hand side, SGS factors, tolerance, and iteration limit.
 The final PCG and independently recomputed residual gates are unchanged;
 a restart therefore resets the recurrence but does not relax acceptance.
