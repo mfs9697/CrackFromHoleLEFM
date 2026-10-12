@@ -46,6 +46,19 @@ def scientific_body(s: str, is_candidate: bool) -> str:
         )
         assert body.count(funding) == 1, "Funding statement edited without authorization"
         body = body.replace(funding, "", 1)
+        # Reverse the exact, author-confirmed non-financial and financial
+        # competing-interests declaration, without affecting scientific prose.
+        competing_interests = (
+            "% BEGIN AAM AUTHOR-CONFIRMED COMPETING INTERESTS\n"
+            "\\par\\medskip\n"
+            "\\noindent\\textbf{Competing interests.}\n"
+            "The author declares that he has no financial or non-financial competing interests.\n"
+            "% END AAM AUTHOR-CONFIRMED COMPETING INTERESTS\n"
+        )
+        assert body.count(competing_interests) == 1, (
+            "Competing-interests statement edited without authorization"
+        )
+        body = body.replace(competing_interests, "", 1)
         # Springer 3.1's table wrapper (center + threeparttable) cannot
         # close reliably with the float package's forced [H] placement.
         # Restore the exact two original [H] choices solely for comparison.
@@ -188,7 +201,7 @@ def check() -> dict:
     assert "fract@inmech.kyiv.ua" in dst
     assert r"\usepackage{amsmath,amssymb,bm,booktabs}" in dst, "Wrong/missing amssymb package"
     assert "pdfauthor={Danylo Selivanov}" in dst, "Missing PDF author metadata"
-    assert "pdftitle={Incremental LEFM Prediction of a Crack Trajectory from a Circular Hole}" in dst, "Missing PDF title metadata"
+    assert "pdftitle={Incremental LEFM Crack-Path Prediction from an Off-Center Circular Hole: Mode-Mixity Reversal and Numerical Sensitivity}" in dst, "Missing PDF title metadata"
     assert r"\documentclass[pdflatex,sn-mathphys-num]{sn-jnl}" in dst
     assert r"\bibliographystyle{sn-basic}" not in dst
     assert r"\bibliographystyle{sn-mathphys-num}" not in dst

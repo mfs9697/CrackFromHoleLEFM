@@ -7,7 +7,7 @@
 
 Dear Editor-in-Chief,
 
-I would like to submit the manuscript entitled **“Incremental LEFM Prediction of a Crack Trajectory from a Circular Hole”** for consideration as an original research article in *Archive of Applied Mechanics*.
+I would like to submit the manuscript entitled **“Incremental LEFM Crack-Path Prediction from an Off-Center Circular Hole: Mode-Mixity Reversal and Numerical Sensitivity”** for consideration as an original research article in *Archive of Applied Mechanics*.
 
 The paper addresses the prediction and numerical assessment of a crack trajectory emanating from an initially uncracked circular hole in an elastically loaded plate. The initiation location is selected from the uncracked-hole stress field; after a prescribed outward-normal first segment, each successive crack direction is computed from the maximum tangential stress criterion using the mixed-mode stress-intensity factors of the complete current crack geometry.
 

@@ -1,7 +1,7 @@
 # Archive of Applied Mechanics — submission preparation
 
 **Journal:** Archive of Applied Mechanics (Springer Nature)  
-**Article:** *Incremental LEFM Prediction of a Crack Trajectory from a Circular Hole*  
+**Article:** *Incremental LEFM Crack-Path Prediction from an Off-Center Circular Hole: Mode-Mixity Reversal and Numerical Sensitivity*  
 **Author and corresponding author:** Danylo Selivanov, `fract@inmech.kyiv.ua`  
 **Source baseline:** `paper-crack-trajectory` at `1b8dd5f43dcc5e43205d34cc526523832fc852e7`
 
@@ -162,7 +162,7 @@ publisher-template build and full proof audit pass.
 ## Author decisions still required — do not infer
 
 - **Funding confirmed:** regular institutional funding of the S.P. Timoshenko Institute of Mechanics, National Academy of Sciences of Ukraine; no specific grant. The candidate now includes this Funding declaration.
-- Competing interests: full financial/non-financial disclosure for Danylo.
+- **Competing interests confirmed:** Danylo states that he has no financial or non-financial competing interests. The AAM candidate now includes this declaration.
 - Data/code availability: precise repository URL and version/commit; accurately
   describe retained evidence and unavailable raw histories.
 - Author's ORCID if any, and confirmation of the official English affiliation.
