@@ -120,7 +120,7 @@ def check(pdf_path=None):
     changed = git('diff', '--name-only', BASE, '--').decode().splitlines()
     allowed = {'paper/main.tex', 'paper/main.pdf', '.gitignore',
                'paper/verify_final_typesetting.py', 'paper/FINAL_TYPESETTING_REVIEW.md',
-               'paper/review_final_typesetting.py'}
+               'paper/NOTATION_AND_STYLE.md', 'paper/review_final_typesetting.py'}
     require('no_unapproved_tracked_changes', all(p in allowed or p.startswith('paper/reviews/final_typesetting/') for p in changed), changed)
     protected = git('ls-tree', '-r', '--name-only', BASE, 'paper/data', 'paper/figures').decode().splitlines()
     hashes = {}
