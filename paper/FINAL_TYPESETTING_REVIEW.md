@@ -6,6 +6,47 @@ Based on PR #80 head `799f2e190fa90dd41b7fee178763d66ffcaada29` on
 No PR was merged. No physical calculations, plotting, figure promotion,
 mesh reconstruction, or changes to numerical evidence were performed.
 
+## Additional academic-language review (2026-10-12)
+
+Following the initial PR #81 typesetting commit, a separate, author-requested
+language and terminology pass was made **on the same draft branch**:
+
+- Audited all 24 occurrences of *reference* in the typesetting manuscript:
+  18 ambiguous numerical-baseline/comparison occurrences were replaced by
+  **M0**, **production**, **baseline**, or **$h_0$**, according to meaning.
+  The remaining six occurrences describe the **unit reference traction/loading**,
+  not the M0 exterior-mesh law, and are intentionally retained.
+- Figure 7 now names the **$h_0$ path** when discussing the interpolated
+  crossing; Figure 8 names the **M0 path**. M0/M1 is reserved for
+  alternative **exterior mesh-sizing laws**, not tip-resolution labels.
+- Checked all seven uses of *finite-element*. They are appropriate
+  hyphenated adjectives (mesh, displacement field, method, etc.);
+  the standalone abbreviation **FE** is not used or needed. No
+  abbreviations were introduced merely to shorten the manuscript.
+- Tightened the Abstract and selected introductory and results
+  passages. In particular, the Abstract now avoids implying that
+  coupled crack-increment/mesh refinement isolates increment effects.
+  No numerical value, formula, table, citation or accepted figure was changed.
+- The reproducibility guard `verify_final_typesetting.py` now carries
+  **22 exact, uniquely matched, authorized prose substitutions**; after
+  reversing those and the previously approved material-domain correction,
+  all remaining nonfigure prose must exactly match the original PR #80
+  baseline. Its numerical token checker no longer treats a numeric
+  **symbolic subscript** (such as `h_0`) as a measurement. With this
+  refinement, both baseline and revised manuscripts contain the same
+  **708 numerical tokens in the same order**; this is not a change to
+  any scientific datum.
+
+**Verification status:** The source-level equivalence of all 22 prose
+substitutions and the 708-token numerical sequence was checked before
+updating the preservation script. The original compiled `paper/main.pdf`
+and the review artifacts below correspond to the **initial PR #81
+typesetting version** and have **not** been recompiled for these later
+editorial commits. A fresh local LaTeX compilation, visual check and
+rerun of the preservation script are **required before merging**.
+Do not interpret the historical zero-warning PDF log below as a compile
+of the latest manuscript source.
+
 ## Corrections
 
 | Defect | Result |
