@@ -68,7 +68,7 @@ def scientific_body(s: str, is_candidate: bool) -> str:
         for journal_placement, original_placement in placements:
             assert body.count(journal_placement) == 1, "Approved table placement changed"
             body = body.replace(journal_placement, original_placement, 1)
-        assert r"\begin{table}[H]" not in dst, (
+        assert r"\begin{table}[H]" not in s, (
             "Springer Nature class does not support [H] on its wrapped tables"
         )
         # These are the only permitted journal-specific changes in the body.
