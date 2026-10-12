@@ -95,7 +95,7 @@ def check() -> dict:
     keyword_match = re.search(r"\\keywords\{([^}]*)\}", dst, re.DOTALL)
     assert keyword_match is not None, "Missing journal keyword field"
     keywords = keyword_match.group(1).replace("\n", " ")
-    assert len([x.strip() for x in keywords.split(";") if x.strip()]) == 6, (
+    assert len([x.strip() for x in keywords.split(",") if x.strip()]) == 6, (
         "Archive of Applied Mechanics requires 4–6 keywords"
     )
     assert r"\author*[1]{\fnm{Danylo} \sur{Selivanov}}" in dst
