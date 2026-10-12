@@ -71,6 +71,33 @@ def scientific_body(s: str, is_candidate: bool) -> str:
         assert r"\begin{table}[H]" not in s, (
             "Springer Nature class does not support [H] on its wrapped tables"
         )
+        # Reverse the single Springer table-caption width correction.
+        # Springer wraps table captions in threeparttable; the natural
+        # narrow tabular width otherwise produces a cramped caption.
+        # These two substitutions change no caption, header, or data.
+        table_one_layout = (
+            (
+                r"\begin{tabular*}{0.64\linewidth}{@{\extracolsep{\fill}}rr}"
+                + "\n" + r"\toprule" + "\n"
+                + r"$\theta_2$ [deg] & $F(\theta_2)=\theta_3$ [deg]",
+                r"\begin{tabular}{rr}"
+                + "\n" + r"\toprule" + "\n"
+                + r"$\theta_2$ [deg] & $F(\theta_2)=\theta_3$ [deg]",
+            ),
+            (
+                r"\bottomrule" + "\n" + r"\end{tabular*}"
+                + "\n" + r"\end{table}"
+                + "\n\nThe opening-mode intensity",
+                r"\bottomrule" + "\n" + r"\end{tabular}"
+                + "\n" + r"\end{table}"
+                + "\n\nThe opening-mode intensity",
+            ),
+        )
+        for journal_layout, original_layout in table_one_layout:
+            assert body.count(journal_layout) == 1, (
+                "Unexpected Table 1 layout change in AAM candidate"
+            )
+            body = body.replace(journal_layout, original_layout, 1)
         # These are the only permitted journal-specific changes in the body.
         swaps = (
             ("% The sn-mathphys-num class option selects sn-mathphys-num.bst automatically.\n"
