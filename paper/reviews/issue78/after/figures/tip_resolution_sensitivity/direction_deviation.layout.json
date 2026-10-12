@@ -1,0 +1,70 @@
+{
+  "removedDecorationPaints": [],
+  "legend": null,
+  "ylabelReplacement": null,
+  "protectedScientificPaintCount": 4,
+  "preservedBodyOperations_sha256": "a45f2eb5df5f49af938c9e3bafddc9df581a3606cb14fc12efa79ed4d3e93a5b",
+  "bodyTransform": [
+    1,
+    0,
+    0,
+    1,
+    0,
+    0
+  ],
+  "asset": "figures/tip_resolution_sensitivity/direction_deviation.pdf",
+  "source_sha256": "3de7290deabddd7a132252e3461e9ad48a9189bfeb87d5ec03ba954675905595",
+  "output_sha256": "75af69808070f7b8f9b20415b17247243aa1de306ed3d35e9ebda363c955f950",
+  "oldPage_pt": [
+    144.651969,
+    235.275591
+  ],
+  "newPage_pt": [
+    148.54858677842256,
+    175.25138313535152
+  ],
+  "oldAxes_pt": [
+    46.2886301244306,
+    51.02362202570086,
+    137.41937068174815,
+    181.98425190302947
+  ],
+  "axes_pt": [
+    44.96307219674158,
+    34.502624638119705,
+    136.09381275405912,
+    165.4632545154483
+  ],
+  "oldVisibleContent_pt": [
+    6.994849393303333,
+    22.19028886159251,
+    144.20485327387922,
+    186.10308860387292
+  ],
+  "visibleContent_pt": [
+    5.669291465614311,
+    5.669291474011356,
+    142.8792953461902,
+    169.58209121629176
+  ],
+  "safetyMargin_mm": 2,
+  "margins_mm": [
+    2.0000000448139374,
+    2.0000000477762283,
+    2.0000000330375305,
+    2.0000002047794148
+  ],
+  "layoutGroup": "sensitivity_lower",
+  "vector": true,
+  "raster": false,
+  "sourceToOutput": [
+    1,
+    0,
+    0,
+    1,
+    -1.3255579276890224,
+    -16.520997387581154
+  ],
+  "plotGeometryUnchanged": true,
+  "axisLimitsAndValuesUnchanged": true
+}

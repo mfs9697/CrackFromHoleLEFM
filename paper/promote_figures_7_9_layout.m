@@ -1,7 +1,10 @@
-function P=promote_figures_7_9_layout(Review)
+function P=promote_figures_7_9_layout(Review,varargin)
 % Copy only the twelve visually reviewed panels and their layout metadata.
 % Numerical data, metrics, captions and all other figures are untouched.
 root=Review.outputRoot;
+ip=inputParser;addParameter(ip,'AuthorApproved',false,@(x)islogical(x)&&isscalar(x));parse(ip,varargin{:});
+assert(ip.Results.AuthorApproved,'publication:AuthorApprovalRequired', ...
+    'Issue #78 requires author inspection/approval before promotion. https://github.com/mfs9697/CrackFromHoleLEFM/issues/78');
 audit=jsondecode(fileread(fullfile(root,'layout_verification.json')));
 assert(audit.passed&&numel(audit.panels)==12,'fig789:UnverifiedReview','Layout checks must pass before promotion.');
 paper=fileparts(mfilename('fullpath'));

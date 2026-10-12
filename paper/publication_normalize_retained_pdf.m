@@ -11,8 +11,10 @@ if strcmp(p.class,'top')
 else
     xlim(ax,[0 100]);xlabel(ax,'$a$ [mm]','Interpreter','latex');
 end
-ylabel(ax,p.ylabel,'Interpreter','latex');
-publication_export_sensitivity(ax,plate,'',p.class);
+label=p.ylabel;
+if startsWith(key,'m1_'),label=strrep(label,'\mathrm{ref}','\mathrm{M0}');end
+ylabel(ax,label,'Interpreter','latex');
+publication_export_sensitivity(ax,plate,'',p.class,true);
 publication_pdf_tool({'--key',key,'--plate',plate,'--output',target});
 info=jsondecode(fileread(strrep(target,'.pdf','.layout.json')));
 end
