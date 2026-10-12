@@ -86,8 +86,8 @@ propagated 4-, 2-, and 1-mm paths, refined together with their
 numerical length scales, exhibit contracting geometric and
 directional differences and nearly constant increment-normalized
 turning measures. The characteristic turning sequence persists under the tested mesh
-changes, while coupled refinement clarifies the dependence of
-mode mixity and turning density on the extension increment.
+changes; coupled refinement reveals trends in mode mixity and
+turning density without isolating the effect of the increment.
 \end{abstract}
 \noindent\textbf{Keywords:} crack trajectory; circular hole; linear elastic
 fracture mechanics; maximum tangential stress; mode mixity; interaction
@@ -142,10 +142,9 @@ the range of available methods, but visual agreement between
 trajectories alone does not quantify the sensitivity of their
 successive direction updates.
 
-The latter question is particularly important because numerical
-stress-intensity factors are not merely outputs of an incremental
-calculation: they determine the next geometry and therefore
-influence all subsequent solutions. Interaction integrals offer
+Sensitivity to SIF extraction matters because the calculated
+intensities determine the next crack geometry and thus influence
+all subsequent elastic solutions. Interaction integrals offer
 a means of separating the mixed-mode contributions
 \cite{YauWangCorten1980}, while displacement-extrapolation
 estimates are sensitive to near-tip element arrangements
@@ -161,7 +160,7 @@ later crack geometries. Accuracy checks for a prescribed tip
 must therefore be distinguished from comparisons of
 independently propagated trajectories.
 
-Here we examine this distinction for a single crack initiating
+We investigate this question for a single crack initiating
 at an asymmetric circular hole in a finite plate. The maximum
 tensile tangential stress of the uncracked-hole solution determines
 the initiation point and its outward material-side normal.
@@ -169,10 +168,10 @@ Only the first crack segment is prescribed along that normal.
 At each subsequent step, the current elastic boundary-value
 problem is solved for the complete accumulated crack geometry,
 and the next direction is selected from the current-tip SIFs
-using the MTS criterion. The objective is not to introduce a
-new fracture criterion, but to establish which features of the
-resulting numerical trajectory remain stable under the
-investigated changes in extraction and discretization.
+using the MTS criterion. Our objective is to identify which features of the
+calculated trajectory persist under the tested changes
+in SIF extraction and discretization, rather than
+to introduce a new fracture criterion.
 
 % Permit small emergency stretch only within this paragraph.
 \begingroup
@@ -477,7 +476,7 @@ includes 2- and 1-mm steps. Unless otherwise indicated, SIFs are
 reported for unit reference traction in MPa$\sqrt{\mathrm m}$.
 
 \subsection{Geometry and paired tip discretization}
-At each increment the finite-element geometry contains the complete
+At each increment, the finite-element mesh represents the complete
 crack polyline, including previous kinks. During mesh generation,
 a narrow auxiliary notch (meshing channel) is merged with the circular
 hole to represent the two crack faces. After meshing, the opposing
@@ -485,8 +484,8 @@ notch faces are collapsed onto the crack polyline while retaining
 distinct upper and lower nodal identities. This approach is related
 to the auxiliary meshing channel used in the cohesive crack-kinking
 formulation of Bogdanov and Selivanov~\cite{BogdanovSelivanov2026}.
-Here the collapsed faces are traction-free; no cohesive
-traction--separation law is introduced.
+The resulting crack faces are traction-free; no cohesive
+traction--separation law is used.
 
 The current-tip region has a structured mesh with characteristic
 spacing $h_{\mathrm{tip}}$, paired by reflection across the last
@@ -1292,7 +1291,7 @@ the M1 discretization from the common first segment $P_0P_1$.
 All later crack directions follow from the M1 solutions
 rather than from the M0 path.
 
-The two trajectories are nearly coincident at specimen scale
+The two trajectories are nearly coincident at the specimen scale
 [Fig.~\ref{fig:m1mesh-trajectory}]. Their small separation becomes
 apparent in the coordinate and angular differences in
 Fig.~\ref{fig:m1-mesh-sensitivity}. The maximum vertical-coordinate
@@ -1316,8 +1315,8 @@ sensitivity diagnostic; neither interpolated value has physical precision
 at the micrometer scale.
 
 \begin{samepage}
-The characteristic event sequence is therefore insensitive
-to the tested coarsening of the \emph{exterior} mesh.
+The characteristic event sequence remains unchanged
+under the tested coarsening of the \emph{exterior} mesh.
 Because the near-tip discretization and interaction-domain
 radii are unchanged, the comparison does not establish
 general mesh independence.
