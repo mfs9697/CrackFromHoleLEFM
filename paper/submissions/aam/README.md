@@ -162,7 +162,7 @@ publisher-template build and full proof audit pass.
 ## Author decisions still required — do not infer
 
 - **Funding confirmed:** regular institutional funding of the S.P. Timoshenko Institute of Mechanics, National Academy of Sciences of Ukraine; no specific grant. The candidate now includes this Funding declaration.
-- Competing interests: full financial/non-financial disclosure for Danylo.
+- **Competing interests confirmed:** Danylo states that he has no financial or non-financial competing interests. The AAM candidate now includes this declaration.
 - Data/code availability: precise repository URL and version/commit; accurately
   describe retained evidence and unavailable raw histories.
 - Author's ORCID if any, and confirmation of the official English affiliation.
