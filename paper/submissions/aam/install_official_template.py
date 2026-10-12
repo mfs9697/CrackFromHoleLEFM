@@ -1,4 +1,4 @@
-"""Install the exact official Springer Nature template files from an author ZIP.
+r"""Install the exact official Springer Nature template files from an author ZIP.
 
 Usage:
     python paper/submissions/aam/install_official_template.py "C:\path\to\official-template.zip"
