@@ -46,6 +46,19 @@ def scientific_body(s: str, is_candidate: bool) -> str:
         )
         assert body.count(funding) == 1, "Funding statement edited without authorization"
         body = body.replace(funding, "", 1)
+        # Reverse the exact, author-confirmed non-financial and financial
+        # competing-interests declaration, without affecting scientific prose.
+        competing_interests = (
+            "% BEGIN AAM AUTHOR-CONFIRMED COMPETING INTERESTS\n"
+            "\\par\\medskip\n"
+            "\\noindent\\textbf{Competing interests.}\n"
+            "The author declares that he has no financial or non-financial competing interests.\n"
+            "% END AAM AUTHOR-CONFIRMED COMPETING INTERESTS\n"
+        )
+        assert body.count(competing_interests) == 1, (
+            "Competing-interests statement edited without authorization"
+        )
+        body = body.replace(competing_interests, "", 1)
         # Springer 3.1's table wrapper (center + threeparttable) cannot
         # close reliably with the float package's forced [H] placement.
         # Restore the exact two original [H] choices solely for comparison.
