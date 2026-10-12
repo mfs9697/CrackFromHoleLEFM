@@ -33,10 +33,24 @@ def scientific_body(s: str, is_candidate: bool) -> str:
         if body.count(end) != 1:
             raise AssertionError("Candidate missing editorial-hold terminator")
         body = body.split(end, 1)[0]
+        # Restore only the precise, author-confirmed funding addition.
+        funding = (
+            "% BEGIN AAM AUTHOR-CONFIRMED FUNDING\n"
+            "\\section*{Declarations}\n"
+            "\\noindent\\textbf{Funding.}\n"
+            "This research was supported by the regular institutional funding\n"
+            "of the S.P. Timoshenko Institute of Mechanics,\n"
+            "National Academy of Sciences of Ukraine.\n"
+            "No specific research grant was awarded for this work.\n"
+            "% END AAM AUTHOR-CONFIRMED FUNDING\n"
+        )
+        assert body.count(funding) == 1, "Funding statement edited without authorization"
+        body = body.replace(funding, "", 1)
         # These are the only permitted journal-specific changes in the body.
         swaps = (
-            (r"\bibliographystyle{sn-basic}", r"\bibliographystyle{unsrt}"),
-            (r"\bibliography{../../references}", r"\bibliography{references}"),
+            ("% The sn-mathphys-num class option selects sn-mathphys-num.bst automatically.\n"
+             + r"\bibliography{../../references}",
+             r"\bibliographystyle{unsrt}" + "\n" + r"\bibliography{references}"),
             (r"\section{Additional numerical diagnostics}",
              r"\section{Supplementary numerical diagnostics}"),
         )
@@ -87,7 +101,9 @@ def check() -> dict:
     assert r"\author*[1]{\fnm{Danylo} \sur{Selivanov}}" in dst
     assert "fract@inmech.kyiv.ua" in dst
     assert r"\documentclass[pdflatex,sn-mathphys-num]{sn-jnl}" in dst
-    assert r"\bibliographystyle{sn-basic}" in dst
+    assert r"\bibliographystyle{sn-basic}" not in dst
+    assert r"\bibliographystyle{sn-mathphys-num}" not in dst
+    assert r"\documentclass[pdflatex,sn-mathphys-num]{sn-jnl}" in dst
     assert src.count(r"\cite{") == dst.count(r"\cite{"), "Citation calls differ"
     return {"graphics": len(df), "keywords": 6, "scientific_body": "exact",
             "numerical_macros": "exact", "abstract": "exact"}
