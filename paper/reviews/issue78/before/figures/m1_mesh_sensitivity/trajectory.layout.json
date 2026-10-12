@@ -1,0 +1,47 @@
+{
+  "source": "paper/data/retained_figure_7_9/m1_trajectory.pdf",
+  "source_sha256": "c0cf18c3d6e8ba1e935e049e785832ef0f6b4bf0b6534d2fbb406d9aa01d1e58",
+  "panelClass": "top",
+  "page_mm": [
+    152.28,
+    90
+  ],
+  "axes_mm": [
+    15,
+    16,
+    133.28,
+    56.5430303030303
+  ],
+  "graphTransform": [
+    0.8296038094052474,
+    0,
+    0,
+    0.8296038094052474,
+    19.16819840374093,
+    21.402964881778956
+  ],
+  "xlim": [
+    135,
+    300
+  ],
+  "ylim": [
+    -55,
+    15
+  ],
+  "originalGraphOperations_sha256": "866f5d2fbc5223af1184ab4072c179ceea4b2030e5b01cf6e410f1b56e9ad66f",
+  "originalGraphOperationCount": 1222,
+  "legend": {
+    "bounds_pt": [
+      42.51968503937008,
+      212.89500735263894,
+      318.0991268986838,
+      247.73491390720358
+    ],
+    "scale": 1.2418300653594772,
+    "originalOperations_sha256": "fa082e13aee6b20fe0af701fa975643298fa539aff4a2c166c8edaa18eb43a54",
+    "originalOperationCount": 178
+  },
+  "numericalReconstruction": false,
+  "rasterization": false,
+  "sourceTypography": "Original legend glyphs retained; axes plate uses shared MATLAB style"
+}

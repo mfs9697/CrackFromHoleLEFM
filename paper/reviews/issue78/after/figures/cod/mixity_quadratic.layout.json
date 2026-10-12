@@ -1,0 +1,163 @@
+{
+  "removedDecorationPaints": [
+    3226,
+    3261,
+    3278,
+    3313,
+    3345,
+    3369,
+    3404,
+    3421,
+    3467,
+    3502,
+    3518,
+    3543,
+    3592,
+    3605,
+    3617,
+    3637,
+    3653,
+    3688,
+    3705,
+    3740,
+    3772,
+    3796,
+    3831,
+    3848,
+    3911,
+    3946,
+    3962,
+    3987,
+    4036,
+    4049,
+    4060,
+    4076,
+    4092,
+    4127,
+    4144,
+    4179,
+    4236,
+    4260,
+    4295,
+    4312,
+    4375,
+    4410,
+    4426,
+    4451,
+    4500,
+    4513,
+    4523,
+    4538,
+    4554,
+    4589,
+    4606,
+    4627,
+    4673,
+    4697,
+    4732,
+    4749,
+    4812,
+    4847,
+    4863,
+    4888,
+    4937,
+    4950,
+    4961,
+    4977
+  ],
+  "legend": {
+    "bounds_pt": [
+      42.26314532277357,
+      87.2206405725762,
+      157.09826873880215,
+      146.34251411522436
+    ],
+    "location": "northwest",
+    "insideAxes": true,
+    "collisionCount": 0,
+    "font_pt": 10.5,
+    "entryCount": 4,
+    "context": null,
+    "relabeling": [],
+    "method": "original vector keys/glyphs; M0 uses existing retained font cmap",
+    "oldBounds_pt": [
+      48.675526681437006,
+      89.18374171216485,
+      163.5106500974656,
+      148.305615254813
+    ]
+  },
+  "ylabelReplacement": null,
+  "protectedScientificPaintCount": 7,
+  "preservedBodyOperations_sha256": "34251a60291c5cab28c3a03e0fc103fd01058d191ca07cc1fe2544b2d300279c",
+  "bodyTransform": [
+    1,
+    0,
+    0,
+    1,
+    0,
+    0
+  ],
+  "ylabelAlignment": {
+    "translation_pt": [
+      -4.752532230862059,
+      0
+    ],
+    "scientificCurveMovement": false
+  },
+  "asset": "figures/cod/mixity_quadratic.pdf",
+  "source_sha256": "7ea0d7cead484a83e3a24a9bb69ae5dc408180dffc5f4fa490f5aa795bcc65e3",
+  "output_sha256": "e0f10bf129d2d567e8bc3b36f1d4d119d07005efb174fc2ec04ae8b2fc10b99a",
+  "oldPage_pt": [
+    223,
+    164
+  ],
+  "newPage_pt": [
+    217.88535064749732,
+    168.5989432089014
+  ],
+  "oldAxes_pt": [
+    44.4235581775,
+    36.928956478749996,
+    214.31365228874998,
+    152.55758375875
+  ],
+  "axes_pt": [
+    38.01117681883656,
+    34.96585533916135,
+    207.90127093008653,
+    150.59448261916137
+  ],
+  "oldVisibleContent_pt": [
+    15.748065628650199,
+    7.632392478171317,
+    218.6284406675781,
+    164.89275300990738
+  ],
+  "visibleContent_pt": [
+    5.669291339444737,
+    5.669291338582676,
+    212.21605930891465,
+    162.92965187031874
+  ],
+  "safetyMargin_mm": 2,
+  "margins_mm": [
+    2.0000000003041154,
+    1.9999999999999993,
+    1.9999999999999962,
+    1.9999999999999962
+  ],
+  "layoutGroup": "cod",
+  "vector": true,
+  "raster": false,
+  "sourceToOutput": [
+    1,
+    0,
+    0,
+    1,
+    -6.412381358663442,
+    -1.963101139588641
+  ],
+  "plotGeometryUnchanged": true,
+  "axisLimitsAndValuesUnchanged": true
+}

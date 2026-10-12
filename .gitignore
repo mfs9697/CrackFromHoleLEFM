@@ -22,3 +22,10 @@ Thumbs.db
 # Scratch figures: keep reviewed publication PDFs, not proof exports
 /paper/figures_review/
 /paper/figures/mesh_levels_review/
+
+# Issue #78: retain contact sheets/PDF proofs, omit synthetic smoke graphics
+/paper/reviews/issue78/matlab_smoke/
+/paper/reviews/issue78/manuscript_after-*.png
+
+# Final typesetting: keep the compiled article and comparison proof, not scratch renders.
+/build/final-typesetting/

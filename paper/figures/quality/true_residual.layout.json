@@ -1,0 +1,77 @@
+{
+  "removedDecorationPaints": [],
+  "legend": null,
+  "ylabelReplacement": null,
+  "protectedScientificPaintCount": 4,
+  "preservedBodyOperations_sha256": "14617e6b68849a10255ca3a046ccb51a0bb1eb15c1010b401ce8e3b76568c6e2",
+  "bodyTransform": [
+    1,
+    0,
+    0,
+    1,
+    0,
+    0
+  ],
+  "ylabelAlignment": {
+    "translation_pt": [
+      -9.139248934890254,
+      0
+    ],
+    "scientificCurveMovement": false
+  },
+  "asset": "figures/quality/true_residual.pdf",
+  "source_sha256": "b68db23e4e84aed72c3765ad7988f324bcb3ec1cfad7876f8f7d1515ad88b305",
+  "output_sha256": "d14577ded719a4ea94cf40e0844ccc91da2bcc6b1fdac9f8352bed97c0714779",
+  "oldPage_pt": [
+    223,
+    164
+  ],
+  "newPage_pt": [
+    226.49655124722486,
+    158.31117099032897
+  ],
+  "oldAxes_pt": [
+    44.4235581775,
+    36.928956478749996,
+    214.31365228874998,
+    152.55758604723326
+  ],
+  "axes_pt": [
+    46.62237741856407,
+    34.96585533916135,
+    216.51247152981406,
+    150.5944849076446
+  ],
+  "oldVisibleContent_pt": [
+    12.60972103370777,
+    7.632392478171317,
+    218.6284406675781,
+    154.2619037745225
+  ],
+  "visibleContent_pt": [
+    5.669291344771844,
+    5.669291338582676,
+    220.8272599086422,
+    152.29880263493385
+  ],
+  "safetyMargin_mm": 2,
+  "margins_mm": [
+    2.0000000021834006,
+    1.9999999999999993,
+    1.9999999999999962,
+    2.1210299475977243
+  ],
+  "layoutGroup": "quality",
+  "vector": true,
+  "raster": false,
+  "sourceToOutput": [
+    1,
+    0,
+    0,
+    1,
+    2.1988192410640757,
+    -1.963101139588641
+  ],
+  "plotGeometryUnchanged": true,
+  "axisLimitsAndValuesUnchanged": true
+}

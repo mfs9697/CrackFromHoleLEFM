@@ -1,0 +1,77 @@
+{
+  "removedDecorationPaints": [],
+  "legend": null,
+  "ylabelReplacement": null,
+  "protectedScientificPaintCount": 3,
+  "preservedBodyOperations_sha256": "65e2c90e21ea4b83ae445c2e4ca0b96c5f8a79b9801b82972fa576b029e551de",
+  "bodyTransform": [
+    1,
+    0,
+    0,
+    1,
+    0,
+    0
+  ],
+  "ylabelAlignment": {
+    "translation_pt": [
+      -0.0028679327900178464,
+      0
+    ],
+    "scientificCurveMovement": false
+  },
+  "asset": "figures/trajectory/late_detail.pdf",
+  "source_sha256": "7bffdf62ddc63006b6a539a365c81cf0f3a9a51561b102e880ae67ccab82d4b2",
+  "output_sha256": "1ab21b0532afa581063d8cf0658ec620b7ccc6f0c7fd91073c3a78f243864cbf",
+  "oldPage_pt": [
+    432,
+    107
+  ],
+  "newPage_pt": [
+    419.62557950653536,
+    111.58949633573337
+  ],
+  "oldAxes_pt": [
+    47.02009224700987,
+    29.16893827624999,
+    417.01423866776554,
+    94.32983403934382
+  ],
+  "axes_pt": [
+    39.97470173673484,
+    37.03582574923875,
+    409.9688481574905,
+    102.19672151233257
+  ],
+  "oldVisibleContent_pt": [
+    12.717549781657704,
+    -2.197596134406078,
+    420.7142284694831,
+    98.05331752416194
+  ],
+  "visibleContent_pt": [
+    5.6692913385826795,
+    5.669291338582678,
+    413.6688379592081,
+    105.92020499715069
+  ],
+  "safetyMargin_mm": 2,
+  "margins_mm": [
+    2.0000000000000004,
+    2.0,
+    2.10140604586268,
+    2.0000000000000013
+  ],
+  "layoutGroup": "reference_path",
+  "vector": true,
+  "raster": false,
+  "sourceToOutput": [
+    1,
+    0,
+    0,
+    1,
+    -7.045390510275023,
+    7.866887472988756
+  ],
+  "plotGeometryUnchanged": true,
+  "axisLimitsAndValuesUnchanged": true
+}
