@@ -46,6 +46,31 @@ def scientific_body(s: str, is_candidate: bool) -> str:
         )
         assert body.count(funding) == 1, "Funding statement edited without authorization"
         body = body.replace(funding, "", 1)
+        # Springer 3.1's table wrapper (center + threeparttable) cannot
+        # close reliably with the float package's forced [H] placement.
+        # Restore the exact two original [H] choices solely for comparison.
+        placements = (
+            (
+                "\\begin{table}[htbp]\n\\centering\n\\small\n"
+                "\\caption{One-step directional map for the centered-hole symmetric control.",
+                "\\begin{table}[H]\n\\centering\n\\small\n"
+                "\\caption{One-step directional map for the centered-hole symmetric control.",
+            ),
+            (
+                "\\begin{table}[htbp]\n\\centering\n\\small\n"
+                "\\setlength{\\tabcolsep}{4.0pt}\n"
+                "\\caption{Successive differences between independently propagated paths in",
+                "\\begin{table}[H]\n\\centering\n\\small\n"
+                "\\setlength{\\tabcolsep}{4.0pt}\n"
+                "\\caption{Successive differences between independently propagated paths in",
+            ),
+        )
+        for journal_placement, original_placement in placements:
+            assert body.count(journal_placement) == 1, "Approved table placement changed"
+            body = body.replace(journal_placement, original_placement, 1)
+        assert r"\begin{table}[H]" not in s, (
+            "Springer Nature class does not support [H] on its wrapped tables"
+        )
         # These are the only permitted journal-specific changes in the body.
         swaps = (
             ("% The sn-mathphys-num class option selects sn-mathphys-num.bst automatically.\n"
@@ -100,6 +125,7 @@ def check() -> dict:
     )
     assert r"\author*[1]{\fnm{Danylo} \sur{Selivanov}}" in dst
     assert "fract@inmech.kyiv.ua" in dst
+    assert r"\usepackage{amsmath,amssymb,bm,booktabs}" in dst, "Wrong/missing amssymb package"
     assert r"\documentclass[pdflatex,sn-mathphys-num]{sn-jnl}" in dst
     assert r"\bibliographystyle{sn-basic}" not in dst
     assert r"\bibliographystyle{sn-mathphys-num}" not in dst
