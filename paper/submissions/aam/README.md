@@ -119,6 +119,46 @@ reports errors, send the first error and the relevant `.blg` lines.
 
 
 
+## Typesetting audit after the first full PDF (2026-10-12)
+
+The author-supplied 29-page `manuscript.pdf` was visually checked. A follow-up
+coordinate audit identified two table overhangs into the right text margin
+(on PDF pp. 23 and 25), in addition to the overly narrow Table 1 caption
+(on PDF p. 13). No clipping at the physical paper edge was observed.
+
+The active AAM candidate now contains **journal-only, reversible** changes:
+- **Table 1:** a 0.64\\linewidth `tabular*` gives the long caption a
+  readable width. The numerical table cells are unchanged.
+- **Table 5:** the units under the mode-mixity ratio and turning-density
+  headers are wrapped onto second lines, preserving both formulas and units.
+- **Table 6:** the angular-difference unit is wrapped onto a second line.
+- **PDF metadata:** explicit document title and Danylo Selivanov author.
+
+A standalone threeparttable/LaTeX layout prototype was compiled to check
+Table 1 caption behavior and the proposed Table 5/6 header widths.
+**The exact Springer 3.1 manuscript has NOT been recompiled after these
+changes; final line breaks and margin conformity still require author
+verification under the official class.** The scientific-freeze checker
+reverses only the listed formatting changes.
+
+### Author's next local verification
+
+1. Pull branch `paper-aam-template-compatibility`, then from
+   `paper/submissions/aam/` run `python check_scientific_freeze.py`.
+2. In TeXstudio, rebuild `manuscript.tex` using
+   pdfLaTeX → BibTeX → pdfLaTeX → pdfLaTeX.
+3. Inspect the **newly rebuilt** PDF: Table 1 on/near p. 13; Tables 5
+   and 6 on/near pp. 23 and 25 (pagination can change). All headings,
+   numerical cells, and captions must be legible and inside the text margins.
+4. Inspect the first genuine error/warning from `manuscript.log` and check
+   for `Overfull \\hbox` or unresolved citations/references; report any
+   overfull lines with their associated line numbers.
+5. Verify PDF document properties report a nonempty title and author.
+   Upload the new PDF and LaTeX log for final visual sign-off.
+
+Do not merge the draft PR or assemble the submission ZIP until the actual
+publisher-template build and full proof audit pass.
+
 ## Author decisions still required — do not infer
 
 - **Funding confirmed:** regular institutional funding of the S.P. Timoshenko Institute of Mechanics, National Academy of Sciences of Ukraine; no specific grant. The candidate now includes this Funding declaration.

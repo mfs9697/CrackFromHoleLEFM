@@ -71,6 +71,67 @@ def scientific_body(s: str, is_candidate: bool) -> str:
         assert r"\begin{table}[H]" not in s, (
             "Springer Nature class does not support [H] on its wrapped tables"
         )
+        # Reverse the single Springer table-caption width correction.
+        # Springer wraps table captions in threeparttable; the natural
+        # narrow tabular width otherwise produces a cramped caption.
+        # These two substitutions change no caption, header, or data.
+        table_one_layout = (
+            (
+                r"\begin{tabular*}{0.64\linewidth}{@{\extracolsep{\fill}}rr}"
+                + "\n" + r"\toprule" + "\n"
+                + r"$\theta_2$ [deg] & $F(\theta_2)=\theta_3$ [deg]",
+                r"\begin{tabular}{rr}"
+                + "\n" + r"\toprule" + "\n"
+                + r"$\theta_2$ [deg] & $F(\theta_2)=\theta_3$ [deg]",
+            ),
+            (
+                r"\bottomrule" + "\n" + r"\end{tabular*}"
+                + "\n" + r"\end{table}"
+                + "\n\nThe opening-mode intensity",
+                r"\bottomrule" + "\n" + r"\end{tabular}"
+                + "\n" + r"\end{table}"
+                + "\n\nThe opening-mode intensity",
+            ),
+        )
+        for journal_layout, original_layout in table_one_layout:
+            assert body.count(journal_layout) == 1, (
+                "Unexpected Table 1 layout change in AAM candidate"
+            )
+            body = body.replace(journal_layout, original_layout, 1)
+        # Reverse three exact table-header line breaks used to bring
+        # Tables 5 and 6 inside the journal text column. No header
+        # content, units, or tabulated data may change.
+        table_header_layout = (
+            (
+                r"\shortstack[c]{$q_{\mathrm{K},\max}/\Delta a$\\{}[mm$^{-1}$]}",
+                r"$q_{\mathrm{K},\max}/\Delta a$ [mm$^{-1}$]",
+            ),
+            (
+                r"\shortstack[c]{$(\Delta\theta/\Delta a)_{q_{\max}}$\\{}[deg/mm]}",
+                r"$(\Delta\theta/\Delta a)_{q_{\max}}$ [deg/mm]",
+            ),
+            (
+                r"\shortstack[c]{$\max|\delta\theta|$\\{}[mdeg]}",
+                r"$\max|\delta\theta|$ [mdeg]",
+            ),
+        )
+        for journal_header, original_header in table_header_layout:
+            assert body.count(journal_header) == 1, (
+                "Unexpected Table 5/6 heading change in AAM candidate"
+            )
+            body = body.replace(journal_header, original_header, 1)
+        # Revert a 0.2-pt per-side padding reduction in Table 3
+        # needed for a 1.292-pt Springer text-column overrun.
+        tip_table_spacing = (
+            r"\setlength{\tabcolsep}{2.6pt}" + "\n"
+            + r"\caption{Structured-tip sensitivity at fixed",
+            r"\setlength{\tabcolsep}{2.8pt}" + "\n"
+            + r"\caption{Structured-tip sensitivity at fixed",
+        )
+        assert body.count(tip_table_spacing[0]) == 1, (
+            "Unexpected Table 3 padding change in AAM candidate"
+        )
+        body = body.replace(*tip_table_spacing, 1)
         # These are the only permitted journal-specific changes in the body.
         swaps = (
             ("% The sn-mathphys-num class option selects sn-mathphys-num.bst automatically.\n"
@@ -126,6 +187,8 @@ def check() -> dict:
     assert r"\author*[1]{\fnm{Danylo} \sur{Selivanov}}" in dst
     assert "fract@inmech.kyiv.ua" in dst
     assert r"\usepackage{amsmath,amssymb,bm,booktabs}" in dst, "Wrong/missing amssymb package"
+    assert "pdfauthor={Danylo Selivanov}" in dst, "Missing PDF author metadata"
+    assert "pdftitle={Incremental LEFM Prediction of a Crack Trajectory from a Circular Hole}" in dst, "Missing PDF title metadata"
     assert r"\documentclass[pdflatex,sn-mathphys-num]{sn-jnl}" in dst
     assert r"\bibliographystyle{sn-basic}" not in dst
     assert r"\bibliographystyle{sn-mathphys-num}" not in dst

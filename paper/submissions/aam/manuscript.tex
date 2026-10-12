@@ -84,6 +84,10 @@ turning density without isolating the effect of the increment.
 }
 \keywords{crack trajectory, circular hole, linear elastic fracture mechanics,
  maximum tangential stress, mode mixity, interaction integral}
+\hypersetup{%
+  pdftitle={Incremental LEFM Prediction of a Crack Trajectory from a Circular Hole},%
+  pdfauthor={Danylo Selivanov}%
+}
 \maketitle
 
 \section{Introduction}
@@ -821,7 +825,7 @@ map summarized in Table~\ref{tab:symmetric-stability}.
 \caption{One-step directional map for the centered-hole symmetric control.
 The prescribed second-segment angle and the predicted third-segment direction are shown.}
 \label{tab:symmetric-stability}
-\begin{tabular}{rr}
+\begin{tabular*}{0.64\linewidth}{@{\extracolsep{\fill}}rr}
 \toprule
 $\theta_2$ [deg] & $F(\theta_2)=\theta_3$ [deg]\\
 \midrule
@@ -831,7 +835,7 @@ $0$     & $-7.13\times10^{-7}$\\
 $+0.05$ & $-0.005708$\\
 $+0.10$ & $-0.011415$\\
 \bottomrule
-\end{tabular}
+\end{tabular*}
 \end{table}
 
 The opening-mode intensity is approximately even in the
@@ -1162,7 +1166,7 @@ under the tested near-tip refinement.
 \begin{table}[htbp]
 \centering
 \small
-\setlength{\tabcolsep}{2.8pt}
+\setlength{\tabcolsep}{2.6pt}
 \caption{Structured-tip sensitivity at fixed $P_{21}$ and $P_{22}$
 geometries, with common interaction-domain radii and requested
 exterior sizing. The reported $a_{\mathrm{LS}}$ values are
@@ -1500,8 +1504,8 @@ between the two solved states bracketing $q_{\mathrm{K}}=0$.}
 $\Delta a$ [mm] &
 $a(q_{\mathrm{K},\max})$ [mm] &
 $q_{\mathrm{K},\max}$ &
-$q_{\mathrm{K},\max}/\Delta a$ [mm$^{-1}$] &
-$(\Delta\theta/\Delta a)_{q_{\max}}$ [deg/mm] &
+\shortstack[c]{$q_{\mathrm{K},\max}/\Delta a$\\{}[mm$^{-1}$]} &
+\shortstack[c]{$(\Delta\theta/\Delta a)_{q_{\max}}$\\{}[deg/mm]} &
 $a_{\rm LS}$ [mm]\\
 \midrule
 4 & 68 & $3.2394\times10^{-3}$ & $8.0984\times10^{-4}$ &
@@ -1642,7 +1646,7 @@ interpolated mode-mixity zeros between $P_{21}$ and $P_{22}$.}
 Perturbation &
 $\max|\delta y|$ [$\mu$m] &
 $\max\delta r$ [$\mu$m] &
-$\max|\delta\theta|$ [mdeg] &
+\shortstack[c]{$\max|\delta\theta|$\\{}[mdeg]} &
 $\max|\delta q_{\mathrm{K}}|$ &
 $\delta a_{\rm LS}$ [$\mu$m]\\
 \midrule
