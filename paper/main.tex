@@ -6,6 +6,7 @@
 \usepackage{graphicx}
 \usepackage{float}
 \usepackage{placeins}
+\usepackage{needspace}
 \usepackage{subcaption}
 \captionsetup{font=small}
 \captionsetup[subfigure]{font=footnotesize,skip=3pt}
@@ -173,6 +174,9 @@ new fracture criterion, but to establish which features of the
 resulting numerical trajectory remain stable under the
 investigated changes in extraction and discretization.
 
+% Permit small emergency stretch only within this paragraph.
+\begingroup
+\setlength{\emergencystretch}{1em}
 The assessment combines prescribed-field and fixed-geometry
 checks with independent crack-path calculations. Interaction-integral
 SIFs are compared with crack-opening-displacement (COD)
@@ -187,6 +191,7 @@ increment in isolation. We examine the positive maximum and subsequent sign reve
 of mode mixity, their effect on the MTS turning direction,
 and the behavior of increment-normalized turning measures
 under coupled refinement.
+\par\endgroup
 
 Sections~\ref{sec:problem} and \ref{sec:recurrence} define the
 physical problem and the incremental MTS construction.
@@ -611,6 +616,7 @@ Section~\ref{sec:cod-extraction}.
   satisfy the COD sampling criterion.}
   \label{fig:mesh-levels}
 \end{figure}
+\FloatBarrier
 
 \subsection{Interaction-integral extraction}
 The opening- and sliding-mode SIFs are obtained from the
@@ -620,8 +626,10 @@ auxiliary field. The component indices $i,j\in\{1,2\}$ refer
 to the current-tip frame and are summed when repeated;
 $\delta_{1j}$ is the Kronecker delta. For the actual stress,
 strain, and displacement fields
-$(\bm\sigma,\bm\varepsilon,\bm u)$, let $\Omega_k$ denote the integration
-domain around the current tip. Here $\dd\Omega$ is the area element,
+$(\bm\sigma,\bm\varepsilon,\bm u)$, the integral is evaluated over
+the material domain $\Omega_k$ defined in Section~\ref{sec:problem}.
+The gradient of the radial weight is nonzero only in the interaction
+annulus. Here $\dd\Omega$ is the area element,
 a comma followed by an index denotes partial differentiation in the
 local frame, and the colon denotes tensor contraction. The interaction
 integral reads
@@ -1019,7 +1027,7 @@ and $\theta_{24}=-2.7762^\circ$.
 This final prediction specifies the qualified extension,
 not an accepted elastic solution at $P_{24}$.
 
-\begin{table}[tbp]\centering\small\setlength{\tabcolsep}{3.5pt}
+\begin{table}[htbp]\centering\small\setlength{\tabcolsep}{3.5pt}
 \caption{Characteristic accepted states. SIFs have units MPa$\sqrt{\mathrm m}$;
 angles are in degrees. The interpolated row contains only a graphical
 zero estimate, not a solved stress field or crack direction.}
@@ -1031,7 +1039,7 @@ Interpolated & \LSLengthMM & --- & --- & $0$ & --- & ---\\
 \end{table}
 
 % Figure environment maintained inline in main.tex; graphics remain separate PDFs.
-\begin{figure}[tbp]
+\begin{figure}[htbp]
   \centering
   \begin{minipage}{0.8\textwidth}
   \centering
@@ -1055,6 +1063,7 @@ Interpolated & \LSLengthMM & --- & --- & $0$ & --- & ---\\
   proposed, physically unsolved next segment.}
   \label{fig:late}
 \end{figure}
+\FloatBarrier
 
 
 \subsection{COD comparison and extraction sensitivity}
@@ -1087,7 +1096,7 @@ error. The differences among COD fits measure sensitivity
 to the extrapolation procedure, not statistical uncertainty.
 
 % Figure environment maintained inline in main.tex; graphics remain separate PDFs.
-\begin{figure}[tbp]
+\begin{figure}[htbp]
   \centering
   \begin{minipage}{0.8\textwidth}
   \centering
@@ -1129,6 +1138,7 @@ to the extrapolation procedure, not statistical uncertainty.
   extraction methods, not a known exact solution.}
   \label{fig:cod}
 \end{figure}
+\FloatBarrier
 
 
 \subsection{Sensitivity to structured-tip resolution}
@@ -1158,7 +1168,7 @@ at $P_{21}$ and negative at $P_{22}$. The bracket
 and the corresponding change in MTS turning sense thus persist
 under the tested near-tip refinement.
 
-\begin{table}[tbp]
+\begin{table}[htbp]
 \centering
 \small
 \setlength{\tabcolsep}{2.8pt}
@@ -1207,6 +1217,52 @@ corresponding tips is $0.12800~\mu\mathrm{m}$, both at $P_{23}$. The
 maximum absolute direction difference is $0.24539$ millidegrees at
 $P_{22}$ [Figs.~\ref{fig:tipres-dy} and \ref{fig:tipres-dtheta}].
 
+% Figure environment maintained inline in main.tex; graphics remain separate PDFs.
+\begin{figure}[!t]
+  \centering
+  \captionsetup[subfigure]{justification=raggedright,singlelinecheck=false}
+  \begin{minipage}{0.8\textwidth}
+  \centering
+
+  \begin{subfigure}[t]{0.94\linewidth}
+    \centering
+    \includegraphics[width=\linewidth]{figures/tip_resolution_sensitivity/trajectory.pdf}
+    \caption{Trajectories with structured-tip spacings $h_0$ and $2h_0$.}
+    \label{fig:tipres-trajectory}
+  \end{subfigure}
+
+  \par\smallskip
+
+  \begin{subfigure}[t]{0.315\linewidth}
+    \centering
+    \includegraphics[width=\linewidth]{figures/tip_resolution_sensitivity/vertical_deviation.pdf}
+    \caption{Vertical tip-coordinate difference, $y_{2h_0}-y_{h_0}$.}
+    \label{fig:tipres-dy}
+  \end{subfigure}
+  \hfill
+  \begin{subfigure}[t]{0.315\linewidth}
+    \centering
+    \includegraphics[width=\linewidth]{figures/tip_resolution_sensitivity/direction_deviation.pdf}
+    \caption{Crack-direction difference, $\theta_{2h_0}-\theta_{h_0}$.}
+    \label{fig:tipres-dtheta}
+  \end{subfigure}
+  \hfill
+  \begin{subfigure}[t]{0.315\linewidth}
+    \centering
+    \includegraphics[width=\linewidth]{figures/tip_resolution_sensitivity/mode_mixity.pdf}
+    \caption{Mode-mixity histories for the two tip resolutions.}
+    \label{fig:tipres-q}
+  \end{subfigure}
+
+  \end{minipage}
+  \caption{Effect of structured-tip resolution on the propagated
+  trajectory. The $h_0$ and $2h_0$ paths share the interaction-domain
+  radii and the M0 exterior sizing law. Panel (d) shows
+  $K_{\mathrm{II}}/K_{\mathrm{I}}$. The diamond indicates the
+  interpolated mode-mixity zero of the reference path.}
+  \label{fig:tip-resolution-sensitivity}
+\end{figure}
+
 The two independently generated paths also retain the
 positive mode-mixity maximum at $P_{17}$ and the sign-change
 bracket between $P_{21}$ and $P_{22}$
@@ -1227,53 +1283,8 @@ $2h_0$ trajectory. This evidence concerns the stated
 mesh perturbations; the conforming exterior connectivity
 also changes when the core is remeshed.
 
-% Figure environment maintained inline in main.tex; graphics remain separate PDFs.
-\begin{figure}[tbp]
-  \centering
-  \begin{minipage}{0.8\textwidth}
-  \centering
-
-  \begin{subfigure}[t]{0.94\linewidth}
-    \centering
-    \includegraphics[width=\linewidth]{figures/tip_resolution_sensitivity/trajectory.pdf}
-    \caption{Trajectories with structured-tip spacings $h_0$ and $2h_0$.}
-    \label{fig:tipres-trajectory}
-  \end{subfigure}
-
-  \par\smallskip
-
-  \begin{subfigure}[t]{0.315\linewidth}
-    \centering
-    \includegraphics[width=\linewidth]{figures/tip_resolution_sensitivity/vertical_deviation.pdf}
-    \caption{Accumulated vertical tip-coordinate difference,
-    $y_{2h_0}-y_{h_0}$.}
-    \label{fig:tipres-dy}
-  \end{subfigure}
-  \hfill
-  \begin{subfigure}[t]{0.315\linewidth}
-    \centering
-    \includegraphics[width=\linewidth]{figures/tip_resolution_sensitivity/direction_deviation.pdf}
-    \caption{Difference in the absolute crack direction in the frozen initiation frame,
-    $\theta_{2h_0}-\theta_{h_0}$.}
-    \label{fig:tipres-dtheta}
-  \end{subfigure}
-  \hfill
-  \begin{subfigure}[t]{0.315\linewidth}
-    \centering
-    \includegraphics[width=\linewidth]{figures/tip_resolution_sensitivity/mode_mixity.pdf}
-    \caption{Mode-mixity ratio $K_{\mathrm{II}}/K_{\mathrm{I}}$ along the two independently
-    propagated trajectories.}
-    \label{fig:tipres-q}
-  \end{subfigure}
-
-  \end{minipage}
-  \caption{Effect of structured-tip resolution on the propagated
-  trajectory. The $h_0$ and $2h_0$ paths share the interaction-domain
-  radii and prescribed exterior sizing. The diamond indicates the
-  interpolated mode-mixity zero of the reference path.}
-  \label{fig:tip-resolution-sensitivity}
-\end{figure}
-
+% Keep the short exterior-mesh discussion together beside its figures.
+\Needspace{25\baselineskip}
 \subsection{Sensitivity to exterior-mesh density}
 Coarsening the exterior mesh has little effect on the SIFs
 of the fixed $P_{17}$ and $P_{22}$ geometries. We therefore
@@ -1305,15 +1316,18 @@ $84.146$ mm for M1, a difference of $0.000322$ mm
 sensitivity diagnostic; neither interpolated value has physical precision
 at the micrometer scale.
 
+\begin{samepage}
 The characteristic event sequence is therefore insensitive
 to the tested coarsening of the \emph{exterior} mesh.
 Because the near-tip discretization and interaction-domain
 radii are unchanged, the comparison does not establish
 general mesh independence.
+\end{samepage}
 
 % Figure environment maintained inline in main.tex; graphics remain separate PDFs.
-\begin{figure}[tbp]
+\begin{figure}[htbp]
   \centering
+  \captionsetup[subfigure]{justification=raggedright,singlelinecheck=false}
   \begin{minipage}{0.8\textwidth}
   \centering
 
@@ -1329,24 +1343,21 @@ general mesh independence.
   \begin{subfigure}[t]{0.315\linewidth}
     \centering
     \includegraphics[width=\linewidth]{figures/m1_mesh_sensitivity/vertical_deviation.pdf}
-    \caption{Accumulated vertical tip-coordinate difference,
-    $y_{\mathrm{M1}}-y_{\mathrm{M0}}$.}
+    \caption{Vertical tip-coordinate difference, $y_{\mathrm{M1}}-y_{\mathrm{M0}}$.}
     \label{fig:m1mesh-dy}
   \end{subfigure}
   \hfill
   \begin{subfigure}[t]{0.315\linewidth}
     \centering
     \includegraphics[width=\linewidth]{figures/m1_mesh_sensitivity/direction_deviation.pdf}
-    \caption{Difference in the absolute crack direction in the frozen initiation frame,
-    $\theta_{\mathrm{M1}}-\theta_{\mathrm{M0}}$.}
+    \caption{Crack-direction difference, $\theta_{\mathrm{M1}}-\theta_{\mathrm{M0}}$.}
     \label{fig:m1mesh-dtheta}
   \end{subfigure}
   \hfill
   \begin{subfigure}[t]{0.315\linewidth}
     \centering
     \includegraphics[width=\linewidth]{figures/m1_mesh_sensitivity/mode_mixity.pdf}
-    \caption{Mode-mixity ratio $K_{\mathrm{II}}/K_{\mathrm{I}}$ along the two independently
-    propagated trajectories.}
+    \caption{Mode-mixity histories for M0 and M1.}
     \label{fig:m1mesh-q}
   \end{subfigure}
 
@@ -1354,7 +1365,8 @@ general mesh independence.
   \caption{Effect of exterior-mesh coarsening on the crack path.
   The M0 and M1 trajectories are propagated separately with
   identical near-tip discretizations and interaction-domain radii.
-  The diamond marks the interpolated mode-mixity zero of the
+  Panel (d) shows $K_{\mathrm{II}}/K_{\mathrm{I}}$. The diamond marks
+  the interpolated mode-mixity zero of the
   reference path.}
   \label{fig:m1-mesh-sensitivity}
 \end{figure}
@@ -1372,8 +1384,9 @@ as specified in Section~\ref{sec:numerics}; hence the comparison
 concerns a coupled increment/discretization family.
 
 % Figure environment maintained inline in main.tex; graphics remain separate PDFs.
-\begin{figure}[tbp]
+\begin{figure}[htbp]
   \centering
+  \captionsetup[subfigure]{justification=raggedright,singlelinecheck=false}
   \begin{minipage}{0.8\textwidth}
   \centering
 
@@ -1388,26 +1401,21 @@ concerns a coupled increment/discretization family.
   \begin{subfigure}[t]{0.315\linewidth}
     \centering
     \includegraphics[width=\linewidth]{figures/increment_sensitivity/vertical_deviation.pdf}
-    \caption{Successive vertical-coordinate differences,
-    $y_{2\,\mathrm{mm}}-y_{4\,\mathrm{mm}}$ and
-    $y_{1\,\mathrm{mm}}-y_{2\,\mathrm{mm}}$, evaluated at exact
-    common crack lengths.}
+    \caption{Successive vertical tip-coordinate differences.}
     \label{fig:inc-dy}
   \end{subfigure}
   \hfill
   \begin{subfigure}[t]{0.315\linewidth}
     \centering
     \includegraphics[width=\linewidth]{figures/increment_sensitivity/direction_deviation.pdf}
-    \caption{Successive differences in absolute crack direction in the
-    frozen initiation frame.}
+    \caption{Successive crack-direction differences.}
     \label{fig:inc-dtheta}
   \end{subfigure}
   \hfill
   \begin{subfigure}[t]{0.315\linewidth}
     \centering
     \includegraphics[width=\linewidth]{figures/increment_sensitivity/turn_density.pdf}
-    \caption{Turning density $\Delta\theta/\Delta a$ along the three
-    independently propagated trajectories.}
+    \caption{Turning density along the three trajectories.}
     \label{fig:inc-turn-density}
   \end{subfigure}
 
@@ -1415,9 +1423,12 @@ concerns a coupled increment/discretization family.
   \par\medskip
   \caption{Coupled crack-increment and discretization refinement.
   The $4$-, $2$-, and $1$-mm paths share dimensionless mesh and
-  interaction-domain scales. Panels (b,c) compare paths at common
-  crack lengths; panel (d) shows turning density on each path's
-  native grid.}
+  interaction-domain scales within the scaled-M1 family.
+  Panel (b) shows $y_{2\,\mathrm{mm}}-y_{4\,\mathrm{mm}}$ and
+  $y_{1\,\mathrm{mm}}-y_{2\,\mathrm{mm}}$ at exact common crack lengths.
+  Panel (c) shows the corresponding differences of absolute directions
+  in the frozen initiation frame. Panel (d) shows
+  turning density $\Delta\theta/\Delta a$ on each path's native grid.}
   \label{fig:increment-sensitivity}
 \end{figure}
 \FloatBarrier
@@ -1540,13 +1551,16 @@ the solved states at 83 and 84 mm. None of these
 interpolated estimates is itself a solved
 zero-$K_{\mathrm{II}}$ state.
 
+\begin{samepage}
 The nearly proportional decrease of the raw mode-mixity
 maxima and the stability of the increment-normalized
 measures accord with the conditional MTS--curvature
 relation in Eq.~\eqref{eq:curvature-mts}. The available
 three-level evidence does not establish a unique smooth
 limiting trajectory.
+\end{samepage}
 
+\Needspace{14\baselineskip}
 \section{Discussion}
 \label{sec:discussion}
 \subsection{Mechanical interpretation of the turning reversal}
@@ -1624,7 +1638,7 @@ exterior-mesh and structured-tip perturbations. The larger
 differences observed in the coupled 4/2/1-mm family do
 not isolate the contribution of any individual numerical scale.
 
-\begin{table}[tbp]
+\begin{table}[htbp]
 \centering
 \small
 \setlength{\tabcolsep}{4.2pt}
@@ -1646,6 +1660,7 @@ Isolated-core $2h_0$ & 0.12760 & 0.12800 & 0.24539 & $2.65\times10^{-7}$ & $-0.0
 \bottomrule
 \end{tabular}
 \end{table}
+\FloatBarrier
 
 Further tests should vary the interaction-domain radii while
 holding the physical crack geometry and other numerical parameters
@@ -1720,10 +1735,7 @@ comparisons remain useful next steps for separating
 numerical extraction effects from the physical origin
 of late crack redirection.
 
-\bibliographystyle{unsrt}
-\bibliography{references}
-
-\clearpage
+\FloatBarrier
 \appendix
 \section{Supplementary numerical diagnostics}
 \renewcommand{\thefigure}{S\arabic{figure}}
@@ -1775,5 +1787,9 @@ estimate of the discretization error in the trajectory.
   $5\times10^{-10}$. No failed $P_{24}$ solve is plotted.}
   \label{fig:quality}
 \end{figure}
+
+\FloatBarrier
+\bibliographystyle{unsrt}
+\bibliography{references}
 
 \end{document}
