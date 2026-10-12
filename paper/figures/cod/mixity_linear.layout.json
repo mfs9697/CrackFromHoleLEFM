@@ -1,0 +1,77 @@
+{
+  "removedDecorationPaints": [],
+  "legend": null,
+  "ylabelReplacement": null,
+  "protectedScientificPaintCount": 7,
+  "preservedBodyOperations_sha256": "f57bc0e8f22da608b3b00f16822fc57edc9c34e4b989facece93b7316473db91",
+  "bodyTransform": [
+    1,
+    0,
+    0,
+    1,
+    0,
+    0
+  ],
+  "ylabelAlignment": {
+    "translation_pt": [
+      -3.1683424808620586,
+      0
+    ],
+    "scientificCurveMovement": false
+  },
+  "asset": "figures/cod/mixity_linear.pdf",
+  "source_sha256": "6cfc2a3948cb4d3edf0210873fdb8285b87b8814d65c5c2683cfb2ef3c894fb3",
+  "output_sha256": "b005f7d3bb7c52adbd9f96727289ae43a9a5ff2e3756fc9d98b73437d8a38f2a",
+  "oldPage_pt": [
+    223,
+    164
+  ],
+  "newPage_pt": [
+    217.88535064749732,
+    168.5989432089014
+  ],
+  "oldAxes_pt": [
+    44.4235581775,
+    36.928956478749996,
+    214.31365228874998,
+    152.55758375875
+  ],
+  "axes_pt": [
+    38.01117681883656,
+    34.96585533916135,
+    207.90127093008653,
+    150.59448261916137
+  ],
+  "oldVisibleContent_pt": [
+    14.163875878650199,
+    7.632392478171317,
+    218.6284406675781,
+    164.89275300990738
+  ],
+  "visibleContent_pt": [
+    5.669291339444737,
+    5.669291338582676,
+    212.21605930891465,
+    162.92965187031874
+  ],
+  "safetyMargin_mm": 2,
+  "margins_mm": [
+    2.0000000003041154,
+    1.9999999999999993,
+    1.9999999999999962,
+    1.9999999999999962
+  ],
+  "layoutGroup": "cod",
+  "vector": true,
+  "raster": false,
+  "sourceToOutput": [
+    1,
+    0,
+    0,
+    1,
+    -6.412381358663442,
+    -1.963101139588641
+  ],
+  "plotGeometryUnchanged": true,
+  "axisLimitsAndValuesUnchanged": true
+}

@@ -161,7 +161,7 @@ function S = plot_m1_vs_reference_publication(varargin)
     mm=1:opt.ShowMarkersEvery:numel(Xm);
     pr=plot(ax1,Xr,Yr,'-','Color',blue,'LineWidth',1.35, ...
         'Marker','o','MarkerIndices',mr,'MarkerSize',3.3, ...
-        'MarkerFaceColor','w','DisplayName','reference');
+        'MarkerFaceColor','w','DisplayName','M0');
     pm=plot(ax1,Xm,Ym,'--','Color',orange,'LineWidth',1.15, ...
         'Marker','s','MarkerIndices',mm,'MarkerSize',3.0, ...
         'MarkerFaceColor','w','DisplayName','M1');
@@ -169,7 +169,7 @@ function S = plot_m1_vs_reference_publication(varargin)
     % P17 / actual q maximum markers (computed, not assumed)
     scatter(ax1,1e3*Tr.tip_x_m(iMaxR),1e3*Tr.tip_y_m(iMaxR), ...
         45,'o','MarkerEdgeColor',purple,'LineWidth',1.3, ...
-        'DisplayName',sprintf('reference q max: P%d',kMaxR));
+        'DisplayName',sprintf('M0 q max: P%d',kMaxR));
     scatter(ax1,1e3*Tm.tip_x_m(iMaxM),1e3*Tm.tip_y_m(iMaxM), ...
         34,'o','MarkerEdgeColor',orange,'LineWidth',1.1, ...
         'HandleVisibility','off');
@@ -199,7 +199,7 @@ function S = plot_m1_vs_reference_publication(varargin)
         'MarkerSize',3,'MarkerFaceColor','w');
     yline(ax2,0,':','Color',gray,'HandleVisibility','off');
     xlabel(ax2,'$a$ [mm]','Interpreter','latex');
-    ylabel(ax2,'$y_{\mathrm{M1}}-y_{\mathrm{ref}}\;[\mu\mathrm{m}]$','Interpreter','latex');
+    ylabel(ax2,'$y_{\mathrm{M1}}-y_{\mathrm{M0}}\;[\mu\mathrm{m}]$','Interpreter','latex');
     % No title/panel label here: LaTeX supplies the subcaption.
 
     % --------------------------------------------------------------
@@ -210,7 +210,7 @@ function S = plot_m1_vs_reference_publication(varargin)
         'MarkerSize',3,'MarkerFaceColor','w');
     yline(ax3,0,':','Color',gray,'HandleVisibility','off');
     xlabel(ax3,'$a$ [mm]','Interpreter','latex');
-    ylabel(ax3,'$\theta_{\mathrm{M1}}-\theta_{\mathrm{ref}}$ [mdeg]','Interpreter','latex');
+    ylabel(ax3,'$\theta_{\mathrm{M1}}-\theta_{\mathrm{M0}}$ [mdeg]','Interpreter','latex');
     % No title/panel label here: LaTeX supplies the subcaption.
 
     % --------------------------------------------------------------
@@ -218,7 +218,7 @@ function S = plot_m1_vs_reference_publication(varargin)
     % --------------------------------------------------------------
     ax4=nexttile(tl); hold(ax4,'on'); box(ax4,'on');
     plot(ax4,a_mm,qr,'-o','Color',blue,'LineWidth',1.15, ...
-        'MarkerSize',3,'MarkerFaceColor','w','DisplayName','reference');
+        'MarkerSize',3,'MarkerFaceColor','w','DisplayName','M0');
     plot(ax4,a_mm,qm,'--s','Color',orange,'LineWidth',1.05, ...
         'MarkerSize',3,'MarkerFaceColor','w','DisplayName','M1');
     yline(ax4,0,':','Color',gray,'HandleVisibility','off');
@@ -355,8 +355,11 @@ function local_export_tiled_axis_copy(srcAx,pdfFile,pngFile,panelName)
     end
 
     drawnow;
-    if strcmp(panelName,'trajectory'),kind='spatial_full';else,kind='third';end
-    publication_export_axis(tmpAx,pdfFile,pngFile,kind);
+    if strcmp(panelName,'trajectory')
+        publication_export_wide_top(tmpAx,pdfFile,pngFile);
+    else
+        publication_export_lower_panel(tmpAx,pdfFile,pngFile);
+    end
 end
 
 function local_close_if_valid(h)
@@ -371,7 +374,8 @@ function S=local_committed_panel_fallback(root,m1File)
 % panels generated from that completed run are committed.  Reuse them
 % rather than reconstructing an unarchived 23-state history.
 
-    outDir=fullfile(root,'paper','figures','m1_mesh_sensitivity');
+    proof=review_issue78_figures();
+    outDir=fullfile(proof.figureRoot,'m1_mesh_sensitivity');
     panelNames={'trajectory','vertical_deviation', ...
         'direction_deviation','mode_mixity'};
     panelPdf=cell(4,1);

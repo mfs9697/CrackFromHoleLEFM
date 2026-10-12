@@ -15,6 +15,15 @@ function S = plot_existing_manuscript_figures(varargin)
 %
 % Optional:
 %   S = plot_existing_manuscript_figures('ShowFigures',true);
+%   S = plot_existing_manuscript_figures('OnlyTrajectory',true, ...
+%       'OutputRoot',fullfile(pwd,'paper','figures_review'));
+%   S = plot_existing_manuscript_figures('OnlyIntensities',true, ...
+%       'OutputRoot',fullfile(pwd,'paper','figures_review'));
+%   S = plot_existing_manuscript_figures('OnlyLate',true, ...
+%       'OutputRoot',fullfile(pwd,'paper','figures_review'));
+%   S = plot_existing_manuscript_figures('OnlyCOD',true, ...
+%       'OutputRoot',fullfile(pwd,'paper','figures_review'));
+%       % Isolated Figures 3, 4, 5 or 6 proof, without other overwrites.
 %
 % Output:
 %   paper/figures/trajectory/
@@ -27,8 +36,16 @@ function S = plot_existing_manuscript_figures(varargin)
     addParameter(ip,'EvidenceFile','',@(x)ischar(x)||isstring(x));
     addParameter(ip,'OutputRoot','',@(x)ischar(x)||isstring(x));
     addParameter(ip,'ShowFigures',false,@(x)islogical(x)&&isscalar(x));
+    addParameter(ip,'OnlyTrajectory',false,@(x)islogical(x)&&isscalar(x));
+    addParameter(ip,'OnlyIntensities',false,@(x)islogical(x)&&isscalar(x));
+    addParameter(ip,'OnlyLate',false,@(x)islogical(x)&&isscalar(x));
+    addParameter(ip,'OnlyCOD',false,@(x)islogical(x)&&isscalar(x));
     parse(ip,varargin{:});
     opt=ip.Results;
+    assert(sum([opt.OnlyTrajectory,opt.OnlyIntensities,opt.OnlyLate, ...
+                opt.OnlyCOD])<=1, ...
+        'paperfig:ExclusivePanelMode', ...
+        'Choose at most one of OnlyTrajectory, OnlyIntensities, OnlyLate or OnlyCOD.');
 
     paperDir=fileparts(mfilename('fullpath'));
     root=fileparts(paperDir);
@@ -79,7 +96,8 @@ function S = plot_existing_manuscript_figures(varargin)
     S.outputRoot=outRoot;
     S.files={};
 
-    %% Figure 1: trajectory and late detail
+    %% Manuscript Figure 3: accepted trajectory and late-tip detail
+    if ~opt.OnlyIntensities && ~opt.OnlyLate && ~opt.OnlyCOD
     out=fullfile(outRoot,'trajectory');
     local_mkdir(out);
 
@@ -111,7 +129,7 @@ function S = plot_existing_manuscript_figures(varargin)
     xlabel(ax,'$x$ [mm]','Interpreter','latex'); ylabel(ax,'$y$ [mm]','Interpreter','latex');
     legend(ax,'Location','northeast','Box','off','Interpreter','tex');
     local_style_axis(ax);
-    S.files{end+1}=local_export_axis(ax,out,'overview'); %#ok<AGROW>
+    S.files{end+1}=local_export_trajectory_equalwidth(ax,out,'overview'); %#ok<AGROW>
 
     f=local_figure(vis,[17.0 4.5]); ax=axes(f); hold(ax,'on');
     plot(ax,accepted(16:end,1),accepted(16:end,2),'-o','Color',C.blue, ...
@@ -122,74 +140,104 @@ function S = plot_existing_manuscript_figures(varargin)
     plot(ax,p17(1),p17(2),'o','Color',C.green,'LineWidth',1.2,'MarkerSize',5);
     plot(ax,pLS(1),pLS(2),'d','Color',C.purple,'LineWidth',1.2,'MarkerSize',5);
     plot(ax,p23(1),p23(2),'s','Color','k','MarkerFaceColor','k','MarkerSize',4);
-    text(ax,p17(1),p17(2),'  $P_{17}$','Interpreter','latex','VerticalAlignment','bottom','FontSize',8);
-    text(ax,pLS(1),pLS(2),'  $q_K=0$ estimate','Interpreter','latex','VerticalAlignment','bottom','FontSize',8);
-    text(ax,p23(1),p23(2),'  $P_{23}$','Interpreter','latex','VerticalAlignment','top','HorizontalAlignment','right','FontSize',8);
-    text(ax,p24(1),p24(2),'  $P_{24}$: unsolved','Interpreter','latex','Color',C.orange, ...
-        'VerticalAlignment','top','FontSize',8);
-    axis(ax,'equal'); xlim(ax,[258 302]); ylim(ax,[-27.3 -21.3]);
+    % The four labels are offset from the original data markers. Keep
+    % the late-path interpolation estimate clearly distinct from solved tips.
+    text(ax,p17(1)-0.65,p17(2)+0.48,'$P_{17}$', ...
+        'Interpreter','latex','HorizontalAlignment','center', ...
+        'VerticalAlignment','bottom');
+    text(ax,pLS(1)+0.2,pLS(2)+0.62,'$q_K=0$', ...
+        'Interpreter','latex','HorizontalAlignment','center', ...
+        'VerticalAlignment','bottom');
+    text(ax,p23(1)-0.35,p23(2)+0.35,'$P_{23}$', ...
+        'Interpreter','latex','HorizontalAlignment','right', ...
+        'VerticalAlignment','bottom');
+    % Keep the long P24 label below and to the left, since the extension
+    % terminates close to the physical right boundary.
+    text(ax,p24(1)-0.45,p24(2)-0.75,'$P_{24}$ unsolved', ...
+        'Interpreter','latex','Color',C.orange, ...
+        'HorizontalAlignment','right','VerticalAlignment','top');
+    % Use the same FINAL y-limits as the earlier published export, whose
+    % lower bound was extended from -27.3 to -29 mm for label clearance.
+    axis(ax,'equal'); xlim(ax,[258 302]); ylim(ax,[-29 -21.3]);
     xlabel(ax,'$x$ [mm]','Interpreter','latex'); ylabel(ax,'$y$ [mm]','Interpreter','latex');
     local_style_axis(ax);
-    S.files{end+1}=local_export_axis(ax,out,'late_detail'); %#ok<AGROW>
+    S.files{end+1}=local_export_trajectory_equalwidth(ax,out,'late_detail'); %#ok<AGROW>
+    if opt.OnlyTrajectory
+        % Do not redraw or overwrite unrelated manuscript figures.
+        return;
+    end
+    end % Figure 3: skip for isolated Figure 4 review.
 
-    %% Figure 2: KI, KII, absolute direction
+    %% Manuscript Figure 4: KI, KII, absolute direction
+    if ~opt.OnlyLate && ~opt.OnlyCOD
     out=fullfile(outRoot,'intensities');
     local_mkdir(out);
     a=T.crack_length_mm;
 
-    f=local_figure(vis,[13.4 4.0]); ax=axes(f);
+    f=local_figure(vis,[5.103 7.2]); ax=axes(f);
     plot(ax,a,T.KI_unit,'-o','Color',C.blue,'LineWidth',1.2, ...
         'MarkerSize',3.1,'MarkerFaceColor','w');
-    xlim(ax,[4 92]); xticks(ax,[4 20 36 52 68 84 92]);
-    xlabel(ax,'Crack length $a$ [mm]','Interpreter','latex'); ylabel(ax,'$K_I\;[\mathrm{MPa}\,\mathrm{m}^{1/2}]$','Interpreter','latex');
+    xlim(ax,[4 92]); xticks(ax,[4 24 44 64 92]);
+    xlabel(ax,'$a$ [mm]','Interpreter','latex'); ylabel(ax,'$K_I\;[\mathrm{MPa}\,\mathrm{m}^{1/2}]$','Interpreter','latex');
     local_style_axis(ax);
-    S.files{end+1}=local_export_axis(ax,out,'KI'); %#ok<AGROW>
+    S.files{end+1}=local_export_intensities_triptych(ax,out,'KI'); %#ok<AGROW>
 
-    f=local_figure(vis,[13.4 4.0]); ax=axes(f); hold(ax,'on');
+    f=local_figure(vis,[5.103 7.2]); ax=axes(f); hold(ax,'on');
     plot(ax,a,T.KII_unit,'-o','Color',C.blue,'LineWidth',1.2, ...
         'MarkerSize',3.1,'MarkerFaceColor','w');
     yline(ax,0,'--','Color',C.gray,'HandleVisibility','off');
-    xlim(ax,[4 92]); xticks(ax,[4 20 36 52 68 84 92]);
-    xlabel(ax,'Crack length $a$ [mm]','Interpreter','latex'); ylabel(ax,'$K_{II}\;[\mathrm{MPa}\,\mathrm{m}^{1/2}]$','Interpreter','latex');
+    xlim(ax,[4 92]); xticks(ax,[4 24 44 64 92]);
+    xlabel(ax,'$a$ [mm]','Interpreter','latex'); ylabel(ax,'$K_{II}\;[\mathrm{MPa}\,\mathrm{m}^{1/2}]$','Interpreter','latex');
     local_style_axis(ax);
-    S.files{end+1}=local_export_axis(ax,out,'KII'); %#ok<AGROW>
+    S.files{end+1}=local_export_intensities_triptych(ax,out,'KII'); %#ok<AGROW>
 
-    f=local_figure(vis,[13.4 4.0]); ax=axes(f);
+    f=local_figure(vis,[5.103 7.2]); ax=axes(f);
     plot(ax,a,T.theta_deg,'-o','Color',C.blue,'LineWidth',1.2, ...
         'MarkerSize',3.1,'MarkerFaceColor','w');
-    xlim(ax,[4 92]); xticks(ax,[4 20 36 52 68 84 92]);
-    xlabel(ax,'Crack length $a$ [mm]','Interpreter','latex'); ylabel(ax,'$\theta_k$ [deg]','Interpreter','latex');
+    xlim(ax,[4 92]); xticks(ax,[4 24 44 64 92]);
+    xlabel(ax,'$a$ [mm]','Interpreter','latex'); ylabel(ax,'$\theta_k$ [deg]','Interpreter','latex');
     local_style_axis(ax);
-    S.files{end+1}=local_export_axis(ax,out,'theta'); %#ok<AGROW>
+    S.files{end+1}=local_export_intensities_triptych(ax,out,'theta'); %#ok<AGROW>
+    if opt.OnlyIntensities
+        % Avoid modifying Figure 5 and later publication graphics.
+        return;
+    end
+    end % Skip the three Figure 4 panels in isolated Figure 5 mode.
 
-    %% Figure 3: late mode mixity and MTS turn
+    %% Manuscript Figure 5: late mode mixity and MTS turn
+    if ~opt.OnlyCOD
     out=fullfile(outRoot,'late');
     local_mkdir(out);
     late=T.crack_length_mm>=60;
     aLate=T.crack_length_mm(late);
     aLS=E.interpolatedZeroLength_mm;
 
-    f=local_figure(vis,[13.4 4.2]); ax=axes(f); hold(ax,'on');
+    f=local_figure(vis,[7.857 7.2]); ax=axes(f); hold(ax,'on');
     plot(ax,aLate,1e3*T.KII_over_KI(late),'-o','Color',C.blue,'LineWidth',1.2, ...
         'MarkerSize',3.1,'MarkerFaceColor','w');
     yline(ax,0,'--','Color',C.gray,'HandleVisibility','off');
     xline(ax,aLS,':','Color',C.purple,'LineWidth',1.0,'HandleVisibility','off');
-    xlim(ax,[60 92]); xticks(ax,[60 68 76 84 88 92]);
-    xlabel(ax,'Crack length $a$ [mm]','Interpreter','latex'); ylabel(ax,'$10^3 K_{II}/K_I$','Interpreter','latex');
+    xlim(ax,[60 94]); xticks(ax,[60 68 76 84 92]);
+    xlabel(ax,'$a$ [mm]','Interpreter','latex'); ylabel(ax,'$10^3 K_{II}/K_I$','Interpreter','latex');
     local_style_axis(ax);
-    S.files{end+1}=local_export_axis(ax,out,'mode_mixity'); %#ok<AGROW>
+    S.files{end+1}=local_export_late_pair(ax,out,'mode_mixity'); %#ok<AGROW>
 
-    f=local_figure(vis,[13.4 4.2]); ax=axes(f); hold(ax,'on');
+    f=local_figure(vis,[7.857 7.2]); ax=axes(f); hold(ax,'on');
     plot(ax,aLate,T.delta_theta_next_deg(late),'-o','Color',C.blue,'LineWidth',1.2, ...
         'MarkerSize',3.1,'MarkerFaceColor','w');
     yline(ax,0,'--','Color',C.gray,'HandleVisibility','off');
     xline(ax,aLS,':','Color',C.purple,'LineWidth',1.0,'HandleVisibility','off');
-    xlim(ax,[60 92]); xticks(ax,[60 68 76 84 88 92]);
-    xlabel(ax,'Crack length $a$ [mm]','Interpreter','latex'); ylabel(ax,'$\Delta\theta_{k+1}$ [deg]','Interpreter','latex');
+    xlim(ax,[60 94]); xticks(ax,[60 68 76 84 92]);
+    xlabel(ax,'$a$ [mm]','Interpreter','latex'); ylabel(ax,'$\Delta\theta_{k+1}$ [deg]','Interpreter','latex');
     local_style_axis(ax);
-    S.files{end+1}=local_export_axis(ax,out,'turn'); %#ok<AGROW>
+    S.files{end+1}=local_export_late_pair(ax,out,'turn'); %#ok<AGROW>
+    if opt.OnlyLate
+        % Regenerate only Figure 5; preserve Figures 6 and later.
+        return;
+    end
+    end % Skip Figure 5 entirely in Figure 6-only review mode.
 
-    %% Figure 4: COD--EDI sensitivity, all four windows and both degrees
+    %% Manuscript Figure 6: COD--EDI differences, four windows and two degrees
     out=fullfile(outRoot,'cod');
     local_mkdir(out);
     codLate=COD.crack_length_mm>=60;
@@ -208,6 +256,10 @@ function S = plot_existing_manuscript_figures(varargin)
         '$10^5$ (COD--EDI mode mixity)','mixity_linear',out,vis,windows,labels,cols,marks,false,true); %#ok<AGROW>
     S.files{end+1}=local_plot_cod_panel(D,2,'ratio_error',1e5, ...
         '$10^5$ (COD--EDI mode mixity)','mixity_quadratic',out,vis,windows,labels,cols,marks,true,true); %#ok<AGROW>
+    if opt.OnlyCOD
+        % Stop after Figure 6: do not overwrite supplemental panels.
+        return;
+    end
 
     %% Figure S1: numerical quality
     out=fullfile(outRoot,'quality');
@@ -261,7 +313,8 @@ end
 
 function out=local_plot_cod_panel(D,degree,varName,scale,yLab,fileName,outDir,vis, ...
         windows,labels,cols,marks,showLegend,showXLabel)
-    f=local_figure(vis,[7.5 5.2]); ax=axes(f); hold(ax,'on');
+    P=publication_style();
+    f=local_figure(vis,[P.halfWidth_cm 6.6]); ax=axes(f); hold(ax,'on');
     for j=1:size(windows,1)
         use=D.degree==degree & ...
             abs(D.lower_r_over_DeltaA-windows(j,1))<1e-12 & ...
@@ -273,16 +326,16 @@ function out=local_plot_cod_panel(D,degree,varName,scale,yLab,fileName,outDir,vi
             'MarkerSize',3.0,'MarkerFaceColor','w','DisplayName',labels{j});
     end
     yline(ax,0,'--','Color',[0.45 0.45 0.45],'HandleVisibility','off');
-    xlim(ax,[60 92]); xticks(ax,[60 76 92]);
+    xlim(ax,[60 94]); xticks(ax,[60 76 92]);
     if showXLabel
-        xlabel(ax,'Crack length $a$ [mm]','Interpreter','latex');
+        xlabel(ax,'$a$ [mm]','Interpreter','latex');
     end
-    ylabel(ax,yLab);
+    ylabel(ax,yLab,'Interpreter','latex');
     if showLegend
-        legend(ax,'Location','best','Box','off','FontSize',7.2,'Interpreter','latex');
+        legend(ax,'Location','best','Box','off','FontSize',9.0,'Interpreter','latex');
     end
     local_style_axis(ax);
-    out=local_export_axis(ax,outDir,fileName);
+    out=local_export_cod_grid(ax,outDir,fileName);
 end
 
 function f=local_figure(vis,szcm)
@@ -296,6 +349,239 @@ function local_style_axis(ax)
     grid(ax,'off');
 end
 
+function files=local_export_trajectory_equalwidth(ax,outDir,name)
+% Exact SAME printed width for both stacked manuscript Figure 3 panels.
+% The existing PDFs already shared a page width, but axis equal shrank
+% the overview plot box because its data range has a different aspect.
+% Derive the panel height from the numerical x/y spans so the plot BOX
+% also occupies precisely the same physical width, without distortion.
+% Only layout/typography is touched; the audited vertices are unchanged.
+    P=publication_style();
+    pageWidth_cm=P.fullWidth_cm; % 0.94 * manuscript text width
+    left_cm=1.65;
+    right_cm=0.50;
+    bottom_cm=1.05;
+    top_cm=0.45;
+    plotWidth_cm=pageWidth_cm-left_cm-right_cm;
+
+    oldXLim=ax.XLim;
+    oldYLim=ax.YLim;
+    xRange=diff(oldXLim);
+    yRange=diff(oldYLim);
+    assert(xRange>0&&yRange>0,'paperfig:InvalidTrajectoryLimits', ...
+        'Figure 3 axis limits must be strictly increasing.');
+    plotHeight_cm=plotWidth_cm*yRange/xRange;
+    pageHeight_cm=bottom_cm+plotHeight_cm+top_cm;
+
+    fig=ancestor(ax,'figure');
+    set(fig,'Units','centimeters', ...
+        'Position',[2 2 pageWidth_cm pageHeight_cm], ...
+        'Color','w','Renderer','painters');
+    set(ax,'Units','centimeters', ...
+        'Position',[left_cm bottom_cm plotWidth_cm plotHeight_cm], ...
+        'FontName',P.fontName,'FontSize',P.tick_pt, ...
+        'TickLabelInterpreter','latex','LineWidth',.8,'TickDir','out');
+    % The physical plot-box aspect is exactly xRange/yRange, allowing
+    % MATLAB's equal-data-aspect constraint to use the whole plot width.
+    axis(ax,'equal');
+    xlim(ax,oldXLim);
+    ylim(ax,oldYLim);
+
+    for obj=[ax.XLabel,ax.YLabel,ax.ZLabel,ax.Title]
+        set(obj,'Interpreter','latex','FontName',P.fontName, ...
+            'FontSize',P.label_pt);
+    end
+    annotations=findall(ax,'Type','text');
+    for obj=annotations(:).'
+        set(obj,'Interpreter','latex','FontName',P.fontName);
+        if ~ismember(obj,[ax.XLabel,ax.YLabel,ax.ZLabel,ax.Title])
+            obj.FontSize=P.annotation_pt;
+        end
+    end
+    for lg=findall(fig,'Type','legend').'
+        set(lg,'Interpreter','latex','FontName',P.fontName, ...
+            'FontSize',P.legend_pt);
+    end
+    for line=findall(ax,'Type','line').'
+        if ~strcmp(line.LineStyle,'none')
+            line.LineWidth=P.lineWidth_pt;
+        end
+        if ~strcmp(line.Marker,'none')
+            line.MarkerSize=P.markerSize_pt;
+        end
+    end
+
+    pdfFile=fullfile(outDir,[name '.pdf']);
+    pngFile=fullfile(outDir,[name '.png']);
+    set(fig,'PaperUnits','centimeters', ...
+        'PaperSize',[pageWidth_cm pageHeight_cm], ...
+        'PaperPosition',[0 0 pageWidth_cm pageHeight_cm], ...
+        'PaperPositionMode','manual');
+    drawnow;
+    for lg=findall(fig,'Type','legend').'
+        publication_place_internal_legend(ax,lg);
+    end
+    print(fig,pdfFile,'-dpdf','-painters');
+    publication_finalize_axis(ax,pdfFile);
+    fprintf('Figure 3 %-11s: PDF width %.3f cm, plot width %.3f cm, height %.3f cm\n', ...
+        name,pageWidth_cm,plotWidth_cm,pageHeight_cm);
+    files={pdfFile,pngFile};
+end
+
+function files=local_export_cod_grid(ax,outDir,name)
+% Figure 6: uniform 2-by-2 panel export. Never recomputes a COD fit.
+% The four exact saved extraction-window histories are drawn unchanged.
+    P=publication_style();
+    pageWidth_cm=P.halfWidth_cm; % 0.485\linewidth manuscript subfigure
+    pageHeight_cm=6.6;           % slightly taller than the former 5.8 cm
+    left_cm=1.55;
+    bottom_cm=1.03;
+    plotWidth_cm=pageWidth_cm-left_cm-0.37;
+    plotHeight_cm=pageHeight_cm-bottom_cm-0.40;
+    assert(plotWidth_cm>0&&plotHeight_cm>0,'paperfig:BadFigure6Size');
+    fig=ancestor(ax,'figure');
+    xlimits=ax.XLim;
+    ylimits=ax.YLim;
+    set(fig,'Units','centimeters', ...
+        'Position',[2 2 pageWidth_cm pageHeight_cm], ...
+        'Color','w','Renderer','painters');
+    set(ax,'Units','centimeters', ...
+        'Position',[left_cm bottom_cm plotWidth_cm plotHeight_cm], ...
+        'FontName',P.fontName,'FontSize',P.tick_pt, ...
+        'TickLabelInterpreter','latex','LineWidth',.8,'TickDir','out', ...
+        'Box','on');
+    grid(ax,'off');
+    xlim(ax,xlimits);ylim(ax,ylimits);
+    for obj=[ax.XLabel,ax.YLabel,ax.ZLabel,ax.Title]
+        set(obj,'Interpreter','latex','FontName',P.fontName, ...
+            'FontSize',P.label_pt);
+    end
+    for lg=findall(fig,'Type','legend').'
+        set(lg,'Interpreter','latex','FontName',P.fontName, ...
+            'FontSize',9,'NumColumns',1,'Box','off');
+    end
+    for line=findall(ax,'Type','line').'
+        if ~strcmp(line.LineStyle,'none'),line.LineWidth=P.lineWidth_pt;end
+        if ~strcmp(line.Marker,'none'),line.MarkerSize=P.markerSize_pt;end
+    end
+    pdfFile=fullfile(outDir,[name '.pdf']);
+    pngFile=fullfile(outDir,[name '.png']);
+    set(fig,'PaperUnits','centimeters', ...
+        'PaperSize',[pageWidth_cm pageHeight_cm], ...
+        'PaperPosition',[0 0 pageWidth_cm pageHeight_cm], ...
+        'PaperPositionMode','manual');
+    drawnow;
+    for lg=findall(fig,'Type','legend').'
+        publication_place_internal_legend(ax,lg);
+    end
+    print(fig,pdfFile,'-dpdf','-painters');
+    publication_finalize_axis(ax,pdfFile);
+    fprintf('Figure 6 %-17s: PDF %.3f x %.3f cm\n', ...
+        name,pageWidth_cm,pageHeight_cm);
+    files={pdfFile,pngFile};
+end
+
+function files=local_export_late_pair(ax,outDir,name)
+% Manuscript Figure 5: two identical narrow/tall, single-row vector panels.
+% Same fonts, line weights and page height as the approved Figure 4.
+% Plot data and physically qualified history are never modified.
+    P=publication_style();
+    pageWidth_cm=P.halfWidth_cm; % 0.485\linewidth in main.tex
+    pageHeight_cm=7.2;
+    left_cm=1.50;
+    bottom_cm=1.10;
+    plotWidth_cm=pageWidth_cm-left_cm-0.35;
+    plotHeight_cm=pageHeight_cm-bottom_cm-0.45;
+    assert(plotWidth_cm>0&&plotHeight_cm>0,'paperfig:BadFigure5Size');
+
+    fig=ancestor(ax,'figure');
+    xlimits=ax.XLim;
+    ylimits=ax.YLim;
+    set(fig,'Units','centimeters', ...
+        'Position',[2 2 pageWidth_cm pageHeight_cm], ...
+        'Color','w','Renderer','painters');
+    set(ax,'Units','centimeters', ...
+        'Position',[left_cm bottom_cm plotWidth_cm plotHeight_cm], ...
+        'FontName',P.fontName,'FontSize',P.tick_pt, ...
+        'TickLabelInterpreter','latex','LineWidth',.8,'TickDir','out', ...
+        'Box','on');
+    grid(ax,'off');
+    xlim(ax,xlimits);ylim(ax,ylimits);
+    for obj=[ax.XLabel,ax.YLabel,ax.ZLabel,ax.Title]
+        set(obj,'Interpreter','latex','FontSize',P.label_pt, ...
+            'FontName',P.fontName);
+    end
+    for line=findall(ax,'Type','line').'
+        if ~strcmp(line.LineStyle,'none'),line.LineWidth=P.lineWidth_pt;end
+        if ~strcmp(line.Marker,'none'),line.MarkerSize=P.markerSize_pt;end
+    end
+    pdfFile=fullfile(outDir,[name '.pdf']);
+    pngFile=fullfile(outDir,[name '.png']);
+    set(fig,'PaperUnits','centimeters', ...
+        'PaperSize',[pageWidth_cm pageHeight_cm], ...
+        'PaperPosition',[0 0 pageWidth_cm pageHeight_cm], ...
+        'PaperPositionMode','manual');
+    drawnow;
+    for lg=findall(fig,'Type','legend').'
+        publication_place_internal_legend(ax,lg);
+    end
+    print(fig,pdfFile,'-dpdf','-painters');
+    publication_finalize_axis(ax,pdfFile);
+    fprintf('Figure 5 %-11s: PDF %.3f x %.3f cm, plot %.3f x %.3f cm\n', ...
+        name,pageWidth_cm,pageHeight_cm,plotWidth_cm,plotHeight_cm);
+    files={pdfFile,pngFile};
+end
+
+function files=local_export_intensities_triptych(ax,outDir,name)
+% Figure 4: identical narrow/tall vector PDFs for a three-column row.
+% Only presentation changes; the 23 accepted states are not recalculated.
+    P=publication_style();
+    pageWidth_cm=P.thirdWidth_cm; % exactly 0.315\linewidth
+    pageHeight_cm=7.2;
+    left_cm=1.48;
+    bottom_cm=1.10;
+    plotWidth_cm=pageWidth_cm-left_cm-0.32;
+    plotHeight_cm=pageHeight_cm-bottom_cm-0.45;
+    assert(plotWidth_cm>0&&plotHeight_cm>0,'paperfig:BadFigure4Size');
+
+    fig=ancestor(ax,'figure');
+    xlimits=ax.XLim;
+    ylimits=ax.YLim;
+    set(fig,'Units','centimeters', ...
+        'Position',[2 2 pageWidth_cm pageHeight_cm], ...
+        'Color','w','Renderer','painters');
+    set(ax,'Units','centimeters', ...
+        'Position',[left_cm bottom_cm plotWidth_cm plotHeight_cm], ...
+        'FontName',P.fontName,'FontSize',P.tick_pt, ...
+        'TickLabelInterpreter','latex','LineWidth',.8,'TickDir','out', ...
+        'Box','on');
+    grid(ax,'off');
+    xlim(ax,xlimits);ylim(ax,ylimits);
+    for obj=[ax.XLabel,ax.YLabel,ax.ZLabel,ax.Title]
+        set(obj,'Interpreter','latex','FontSize',P.label_pt, ...
+            'FontName',P.fontName);
+    end
+    for line=findall(ax,'Type','line').'
+        if ~strcmp(line.LineStyle,'none'),line.LineWidth=P.lineWidth_pt;end
+        if ~strcmp(line.Marker,'none'),line.MarkerSize=P.markerSize_pt;end
+    end
+    pdfFile=fullfile(outDir,[name '.pdf']);
+    pngFile=fullfile(outDir,[name '.png']);
+    set(fig,'PaperUnits','centimeters', ...
+        'PaperSize',[pageWidth_cm pageHeight_cm], ...
+        'PaperPosition',[0 0 pageWidth_cm pageHeight_cm], ...
+        'PaperPositionMode','manual');
+    drawnow;
+    for lg=findall(fig,'Type','legend').'
+        publication_place_internal_legend(ax,lg);
+    end
+    print(fig,pdfFile,'-dpdf','-painters');
+    publication_finalize_axis(ax,pdfFile);
+    fprintf('Figure 4 %-5s: PDF %.3f x %.3f cm, plot %.3f x %.3f cm\n', ...
+        name,pageWidth_cm,pageHeight_cm,plotWidth_cm,plotHeight_cm);
+    files={pdfFile,pngFile};
+end
+
 function files=local_export_axis(ax,outDir,name)
     pdfFile=fullfile(outDir,[name '.pdf']);
     pngFile=fullfile(outDir,[name '.png']);
@@ -303,15 +589,8 @@ function files=local_export_axis(ax,outDir,name)
     if fig.Position(3)>10,kind='full';else,kind='half';end
     if strcmp(name,'overview'),kind='spatial_full';end
     if strcmp(name,'late_detail')
-        for tx=findall(ax,'Type','text').'
-            if contains(tx.String,'unsolved')
-                tx.HorizontalAlignment='right';tx.VerticalAlignment='top';tx.Position(2)=tx.Position(2)-.3;
-            elseif contains(tx.String,'P_{23}')
-                tx.VerticalAlignment='bottom';
-            elseif contains(tx.String,'estimate')
-                tx.HorizontalAlignment='right';
-            end
-        end
+        % The original publication bottom margin is retained, but all
+        % annotation positions are final before the export helper runs.
         limits=ax.YLim;limits(1)=min(limits(1),-29);ylim(ax,limits);
     end
     publication_export_axis(ax,pdfFile,pngFile,kind);

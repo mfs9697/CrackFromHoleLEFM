@@ -363,8 +363,11 @@ function local_export_tiled_axis_copy(srcAx,pdfFile,pngFile,panelName)
     end
 
     drawnow;
-    if strcmp(panelName,'trajectory'),kind='spatial_full';else,kind='third';end
-    publication_export_axis(tmpAx,pdfFile,pngFile,kind);
+    if strcmp(panelName,'trajectory')
+        publication_export_wide_top(tmpAx,pdfFile,pngFile);
+    else
+        publication_export_lower_panel(tmpAx,pdfFile,pngFile);
+    end
 end
 
 function local_close_if_valid(h)

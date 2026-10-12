@@ -1,0 +1,32 @@
+{
+  "m1_trajectory": {
+    "sha256": "c0cf18c3d6e8ba1e935e049e785832ef0f6b4bf0b6534d2fbb406d9aa01d1e58",
+    "class": "top", "graph": [637, 1859], "legend": [1859, 2037],
+    "circle_bbox_topdown_pt": [41.94775724375, 18.72915054875, 207.54775724375, 184.32915261875],
+    "ylim": [-55, 15], "ylabel": "$y$ [mm]"
+  },
+  "m1_vertical_deviation": {
+    "sha256": "06f3d677063551b7232aaf127bb8dd53ad9ecc36a0674f078749184c7e397786",
+    "class": "lower", "graph": [623, 1407], "legend": null,
+    "axes_bbox_topdown_pt": [33.09375019125, 3.07812224125, 166.29375019125, 216.07812490375],
+    "ylim": [0, 0.07], "ylabel": "$y_{\\mathrm{M1}}-y_{\\mathrm{ref}}$ [$\\mu$m]"
+  },
+  "m1_direction_deviation": {
+    "sha256": "e05616ce0d72a396a4e6cdfaf84d69959da3ba229297f90c2934b29676206b20",
+    "class": "lower", "graph": [546, 1330], "legend": null,
+    "axes_bbox_topdown_pt": [33.34374389625, 3.07812224125, 155.14374389625, 216.07812490375],
+    "ylim": [0, 0.08], "ylabel": "$\\theta_{\\mathrm{M1}}-\\theta_{\\mathrm{ref}}$ [mdeg]"
+  },
+  "m1_mode_mixity": {
+    "sha256": "47d6e70bde884b2c79c2cafd5d25af364ee94638562b8d99137d17614e01338e",
+    "class": "lower", "graph": [725, 2178], "legend": [2178, 2280],
+    "axes_bbox_topdown_pt": [25.45, 10.73437224125, 152.65, 223.73437490375],
+    "ylim": [-0.006, 0.004], "ylabel": "$K_{II}/K_I$"
+  },
+  "increment_trajectory": {
+    "sha256": "562cf7b2f445e7d6b8a70604d8ad195c157e25d9b7a392d6557a8c4ed053c2f9",
+    "class": "top", "graph": [669, 3254], "legend": [3254, 3530],
+    "circle_bbox_topdown_pt": [28.351657423262836, 14.758513166537654, 152.25616942845642, 138.66303151946232],
+    "ylim": [-55, 15], "ylabel": "$y$ [mm]"
+  }
+}

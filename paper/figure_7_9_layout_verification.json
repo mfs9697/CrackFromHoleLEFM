@@ -1,0 +1,212 @@
+{
+  "panels": [
+    {
+      "asset": "figures/tip_resolution_sensitivity/trajectory.pdf",
+      "page_mm": [
+        151.81936325382938,
+        72.91128630785427
+      ],
+      "axes_pt": [
+        40.08922805225659,
+        36.9508996368311,
+        417.8908024733429,
+        197.23035486322254
+      ],
+      "legendInsideAxes": true,
+      "legendCollisionCount": 0,
+      "vector": true,
+      "output_sha256": "14514a478554b36f6064a7649427ef8e2593deda1a609ca1ce19970c3b0882f8"
+    },
+    {
+      "asset": "figures/tip_resolution_sensitivity/vertical_deviation.pdf",
+      "page_mm": [
+        52.40464033572129,
+        61.82479349497123
+      ],
+      "axes_pt": [
+        44.96307219674158,
+        34.502624638119705,
+        136.09381275405912,
+        165.4632551557868
+      ],
+      "legendInsideAxes": null,
+      "legendCollisionCount": 0,
+      "vector": true,
+      "output_sha256": "dfda3062c50bce233045940c223dc30672036c8675c6296279ef7252eab04b5f"
+    },
+    {
+      "asset": "figures/tip_resolution_sensitivity/direction_deviation.pdf",
+      "page_mm": [
+        52.40464033572129,
+        61.82479349497123
+      ],
+      "axes_pt": [
+        44.96307219674158,
+        34.502624638119705,
+        136.09381275405912,
+        165.4632545154483
+      ],
+      "legendInsideAxes": null,
+      "legendCollisionCount": 0,
+      "vector": true,
+      "output_sha256": "75af69808070f7b8f9b20415b17247243aa1de306ed3d35e9ebda363c955f950"
+    },
+    {
+      "asset": "figures/tip_resolution_sensitivity/mode_mixity.pdf",
+      "page_mm": [
+        52.40464033572129,
+        61.82479349497123
+      ],
+      "axes_pt": [
+        44.96307219674158,
+        34.502624638119705,
+        136.09381275405912,
+        165.4632551557868
+      ],
+      "legendInsideAxes": true,
+      "legendCollisionCount": 0,
+      "vector": true,
+      "output_sha256": "75ee7d9e61b93612a63d6486d27c60cac030d54390a4203f26f2d91ee6e7b9a1"
+    },
+    {
+      "asset": "figures/m1_mesh_sensitivity/trajectory.pdf",
+      "page_mm": [
+        151.81936325382938,
+        72.91128630785427
+      ],
+      "axes_pt": [
+        40.08922805225659,
+        36.9508996368311,
+        417.8908024733429,
+        197.23035486322254
+      ],
+      "legendInsideAxes": true,
+      "legendCollisionCount": 0,
+      "vector": true,
+      "output_sha256": "fb578075fa0a99349c1ce89dd98fb1baf7ff7b86e9a416ea35d6f5c287d06a15"
+    },
+    {
+      "asset": "figures/m1_mesh_sensitivity/vertical_deviation.pdf",
+      "page_mm": [
+        52.4046403357213,
+        61.82479349497123
+      ],
+      "axes_pt": [
+        44.96307219674158,
+        34.502624638119705,
+        136.0938129007416,
+        165.46325438001963
+      ],
+      "legendInsideAxes": null,
+      "legendCollisionCount": 0,
+      "vector": true,
+      "output_sha256": "775f841eb48229dc620699dad30d152d68a03ae77676c6dd3542798914c96355"
+    },
+    {
+      "asset": "figures/m1_mesh_sensitivity/direction_deviation.pdf",
+      "page_mm": [
+        52.40464033572129,
+        61.82479349497123
+      ],
+      "axes_pt": [
+        44.96307219674158,
+        34.502624638119705,
+        136.09381275405912,
+        165.46324994984835
+      ],
+      "legendInsideAxes": null,
+      "legendCollisionCount": 0,
+      "vector": true,
+      "output_sha256": "67ca2e408088d9b23879e457191a70db785be11cdf0d152e3492986bd2afb7c0"
+    },
+    {
+      "asset": "figures/m1_mesh_sensitivity/mode_mixity.pdf",
+      "page_mm": [
+        52.40464033572129,
+        61.82479349497123
+      ],
+      "axes_pt": [
+        44.96307219674158,
+        34.502624638119705,
+        136.09381275405912,
+        165.4632551557868
+      ],
+      "legendInsideAxes": true,
+      "legendCollisionCount": 0,
+      "vector": true,
+      "output_sha256": "dd1f8b5dc91ef05b97567f14f4e41b04a4eefd0a877a27fd188550d43b695098"
+    },
+    {
+      "asset": "figures/increment_sensitivity/trajectory.pdf",
+      "page_mm": [
+        151.81936325382938,
+        72.91128630785427
+      ],
+      "axes_pt": [
+        40.08922805225659,
+        36.9508996368311,
+        417.8908024733429,
+        197.23035486322254
+      ],
+      "legendInsideAxes": true,
+      "legendCollisionCount": 0,
+      "vector": true,
+      "output_sha256": "1ced112c6c973c1c949ac6f6160c1a5fa46ddf4fcc6d45f842c7258c31fde761"
+    },
+    {
+      "asset": "figures/increment_sensitivity/vertical_deviation.pdf",
+      "page_mm": [
+        52.40464033572129,
+        61.82479349497123
+      ],
+      "axes_pt": [
+        44.96307219674158,
+        34.502624638119705,
+        136.09381275405912,
+        165.4632545154483
+      ],
+      "legendInsideAxes": true,
+      "legendCollisionCount": 0,
+      "vector": true,
+      "output_sha256": "0a0e894f173b05ce9004bd26360a31cf5546b24af22241994dd21f38a080b997"
+    },
+    {
+      "asset": "figures/increment_sensitivity/direction_deviation.pdf",
+      "page_mm": [
+        52.40464033572129,
+        61.82479349497123
+      ],
+      "axes_pt": [
+        44.96307219674158,
+        34.502624638119705,
+        136.09381275405912,
+        165.4632545154483
+      ],
+      "legendInsideAxes": true,
+      "legendCollisionCount": 0,
+      "vector": true,
+      "output_sha256": "cdcba3ba38889b643fe054c124577a882fdcd1515ef45bea3ed633bd517acc32"
+    },
+    {
+      "asset": "figures/increment_sensitivity/turn_density.pdf",
+      "page_mm": [
+        52.40464033572129,
+        61.82479349497123
+      ],
+      "axes_pt": [
+        44.96307219674158,
+        34.502624638119705,
+        136.09381275405912,
+        165.4632545154483
+      ],
+      "legendInsideAxes": true,
+      "legendCollisionCount": 0,
+      "vector": true,
+      "output_sha256": "e4272255f2f6f2ccdf6bc7680bb3983c9852c345ed7d74009a9c4502aca0854a"
+    }
+  ],
+  "legendPolicy": "inside own axes, collision-checked",
+  "sourceReport": "reviews/issue78/geometry_report.json",
+  "promotionPendingAuthorApproval": true,
+  "passed": true
+}
