@@ -12,6 +12,29 @@ and PCG revisions. It is **not a valid proof of the current manuscript**.
 The existing old PDF and old visual-review JSON remain historical until a
 rebuild is completed. Do not label either one as final.
 
+## User-compiled PDF received and independently inspected (2026-10-12)
+
+Candidate: `main(8).pdf` (uploaded to the project chat, **not yet
+committed to GitHub**).
+
+- SHA-256: `acf0eb6f9064405570aac4df10cf2a4fa0842c2c3ab703ceb79115317370f63c`
+- 1,835,723 bytes; 23 A4 pages; MiKTeX pdfTeX, Danylo Selivanov author
+  metadata and correct manuscript title.
+- All seven explicit current-wording sentinels match the extracted PDF
+  after math/spacing normalization; the software name `MATLAB` is absent.
+- Figures 1–9 and supplementary Figure S1 are present; M0/M1 labels in
+  Figure 8 are visible. Visual spot checks of revised §3.3, revised §4.6,
+  Figures 7–9, and the terminal references revealed no overlap/clipping.
+  The automatic page-bounds audit found zero text spans outside A4.
+- This evidence verifies the **uploaded candidate PDF** only. It does not
+  yet prove that the PDF in the GitHub PR is current; the PR remains
+  blocked until the exact compiled candidate (or a freshly built
+  equivalent) and a matching manifest are committed together.
+
+The correspondence checker was adjusted to accept PDF extractors joining
+math and adjacent words (e.g. `Theh0`), while keeping all seven long
+wording sentinels and cryptographic file-hash checks mandatory.
+
 ## Rebuild from current source (Windows / TeXstudio)
 
 1. Preserve any modified local \`paper/main.pdf\` before changing worktrees.
