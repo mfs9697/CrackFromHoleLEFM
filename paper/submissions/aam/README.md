@@ -57,14 +57,28 @@ graphic assets, preferably in a flat upload directory to avoid path issues.
 
 ## First local typesetting test
 
-1. Download the **official** Springer Nature LaTeX template package. Do not
-   use a third-party modified `sn-jnl.cls`. The class/style files are
-   intentionally not copied into this Git repository.
-2. In a local development copy of this directory, place `sn-jnl.cls` and
-   `sn-mathphys-num.bst` from the official December 2024 (v3.1) package beside `manuscript.tex`. The style file is under `sn-article-template/bst/`; the `sn-mathphys-num` class option chooses the corresponding bibliography style automatically, so **do not add a separate bibliography-style command**.
-3. Open `paper/submissions/aam/manuscript.tex` in TeXstudio and set the
-   working directory to `paper/submissions/aam/`.
-4. Compile using pdfLaTeX, BibTeX, pdfLaTeX, pdfLaTeX. Review the log and
+1. Use the author's attached **official December 2024, version 3.1**
+   template ZIP. Do not substitute a third-party class file.
+2. From the repository root, run the verified local installer with the
+   **actual path** where you saved the ZIP:
+
+   ```powershell
+   python paper/submissions/aam/install_official_template.py "C:\path\to\springer-template.zip"
+   ```
+
+   It extracts only `sn-jnl.cls` and `sn-mathphys-num.bst` beside
+   `manuscript.tex`. Files are ignored by Git and never overwritten
+   silently. The class option `sn-mathphys-num` selects the bibliography
+   style automatically; do not add a manual `\\bibliographystyle` command.
+3. Before typesetting, run the scientific preservation check:
+
+   ```powershell
+   python paper/submissions/aam/check_scientific_freeze.py
+   ```
+
+4. Open `paper/submissions/aam/manuscript.tex` in TeXstudio, set the
+   working directory to `paper/submissions/aam/`, and compile with
+   pdfLaTeX, BibTeX, pdfLaTeX, pdfLaTeX. Review the log and
    all pages; do **not** treat the earlier 23-page `paper/main.pdf` as the
    Springer proof.
 5. Review wide figures, subcaptions, numbering, bibliography links, long tables,
