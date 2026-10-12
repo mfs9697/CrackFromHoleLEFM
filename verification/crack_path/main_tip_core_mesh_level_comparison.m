@@ -51,13 +51,15 @@ function R = main_tip_core_mesh_level_comparison(varargin)
              'using optional Euclid mode. The default ''FontMode'',''latex'' ' ...
              'matches the approved Figure 1 typography.']);
     end
+    % Add the repository before calling helpers from paper/; this
+    % entry point must also work when launched from verification/crack_path.
+    root=fileparts(fileparts(fileparts(mfilename('fullpath'))));
+    addpath(genpath(root));
+
     Pub=publication_style();
     % Exactly the final physical width of each 0.315\linewidth panel.
     panelWidth_cm=Pub.thirdWidth_cm;
     panelHeight_cm=4.50;
-
-    root=fileparts(fileparts(fileparts(mfilename('fullpath'))));
-    addpath(genpath(root));
 
     outDir=char(opt.OutputDir);
     if isempty(outDir)
