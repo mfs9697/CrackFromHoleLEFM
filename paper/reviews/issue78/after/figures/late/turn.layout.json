@@ -1,0 +1,70 @@
+{
+  "removedDecorationPaints": [],
+  "legend": null,
+  "ylabelReplacement": null,
+  "protectedScientificPaintCount": 4,
+  "preservedBodyOperations_sha256": "0ad718821622f11787ede8574d6a718fb577fb1867529a37cef503b8b9c869ef",
+  "bodyTransform": [
+    1,
+    0,
+    0,
+    1,
+    0,
+    0
+  ],
+  "asset": "figures/late/turn.pdf",
+  "source_sha256": "927687d9a61db96cea3b0c78c7b7e7f6001cb549f2c5ae14514cc3d519709e26",
+  "output_sha256": "5dafefb090503f71c0b587154e91fb8ea7db9c0b269fad3bd9ec7ed0e1d94abd",
+  "oldPage_pt": [
+    223,
+    204
+  ],
+  "newPage_pt": [
+    218.52206794010357,
+    204.33567904252905
+  ],
+  "oldAxes_pt": [
+    42.62260311625,
+    31.119955079999983,
+    213.11301558124998,
+    190.79388659802808
+  ],
+  "axes_pt": [
+    40.657480422694945,
+    34.87676577155831,
+    211.14789288769492,
+    194.55069728958642
+  ],
+  "oldVisibleContent_pt": [
+    7.634414033328232,
+    1.9124806470243456,
+    214.81789929507596,
+    194.90957701238804
+  ],
+  "visibleContent_pt": [
+    5.669291339773176,
+    5.669291338582678,
+    212.8527766015209,
+    198.66638770394638
+  ],
+  "safetyMargin_mm": 2,
+  "margins_mm": [
+    2.0000000004199814,
+    2.0,
+    1.9999999999999962,
+    1.9999999999999962
+  ],
+  "layoutGroup": "late",
+  "vector": true,
+  "raster": false,
+  "sourceToOutput": [
+    1,
+    0,
+    0,
+    1,
+    -1.965122693555056,
+    3.756810691558332
+  ],
+  "plotGeometryUnchanged": true,
+  "axisLimitsAndValuesUnchanged": true
+}
