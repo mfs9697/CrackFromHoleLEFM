@@ -1,71 +1,76 @@
 function [theta_k, theta_deg, sigma_tt_val] = kink_angle_LEFM_MTS(KI, KII)
-%KINK_ANGLE_LEFM_MTS  LEFM kinking angle for a 1-leg crack (MTS criterion).
+%KINK_ANGLE_LEFM_MTS Signed tensile maximum tangential stress direction.
+% [theta_k,theta_deg,sigma_tt_val]=kink_angle_LEFM_MTS(KI,KII)
 %
-%   [theta_k, theta_deg, sigma_tt_val] = kink_angle_LEFM_MTS(KI, KII)
+% theta_k is measured from the last crack tangent (radians).
+% Uses true stationary roots of
+%     KI*sin(theta)+KII*(3*cos(theta)-1) = 0
+% and selects the largest *positive local tensile maximum* in the original
+% [-80,80] degree forward search sector. The two stationary roots are not
+% in general related by reflection theta -> -theta.
 %
-%   theta_k     - rad, measured from the original crack plane
-%   theta_deg   - deg
-%   sigma_tt_val- circumferential stress (up to 1/sqrt(r) factor)
-%                 at theta = theta_k
+% No physically admissible tensile interior root -> returns NaN triplet
+% (warns), rather than supplying a spurious propagation direction.
+% In particular negative pure Mode I is NOT assigned theta=0.
+% No FEM, SIF evaluation, mesh change or geometry solve performed here.
+%
+% This helper does NOT determine whether a material growth threshold
+% has been satisfied; the caller must separately apply that condition.
 
-    % special cases
-    if abs(KII) < 1e-12
-        theta_k      = 0.0;
-        theta_deg    = 0.0;
-        sigma_tt_val = KI;
-        return;
-    end
-
-    if abs(KI) < 1e-12
-        % nearly pure mode II; use known ~70.5 deg as initial guess
-        theta_guess = sign(KII) * deg2rad(70.5);
+if ~(isscalar(KI)&&isscalar(KII)&&isreal(KI)&&isreal(KII)&& ...
+        isfinite(KI)&&isfinite(KII))
+    error('kink_angle_LEFM_MTS:NonfiniteOrNonscalarSIF', ...
+        'KI and KII must be finite, real scalar signed SIFs.');
+end
+theta_k=NaN;theta_deg=NaN;sigma_tt_val=NaN;
+thetaBound=80*pi/180;
+scale=max(1,hypot(KI,KII));
+if abs(KII)<=1e-14*scale
+    if KI>0
+        theta_k=0;theta_deg=0;sigma_tt_val=KI;
     else
-        % small-angle estimate: tau_rt ~ KI*theta/2 + KII => theta ~ -2*KII/KI
-        theta_guess = -2.0 * KII / KI;
-        theta_guess = max(min(theta_guess, pi/2), -pi/2);
+        warning('kink_angle_LEFM_MTS:NoTensileStationaryRoot', ...
+            'No tensile forward MTS direction for pure compressive or zero Mode I.');
     end
-
-    % stress components in polar coords (r factor omitted)
-    function s_tt = sigma_tt(theta)
-        c = cos(theta/2);
-        s = sin(theta/2);
-        s_tt = KI * c.^3 - 3.0 * KII .* s .* c.^2;
+    return;
+end
+D=hypot(KI,sqrt(8)*KII);
+den=KI+D;
+% Numerically stable branch for KI>=0 plus the complementary root.
+% For extreme KI<0 with loss of significance in den, the finite
+% complementary root remains available. Nonfinite candidates are ignored.
+if den>0
+    t1=-2*KII/den;
+else
+    t1=sign(-KII)*Inf;
+end
+t2=den/(4*KII);
+candidates=2*atan([t1 t2]);
+rootAccepted=false(size(candidates));
+peak=-Inf(size(candidates));
+for k=1:numel(candidates)
+    theta=candidates(k);
+    if ~isfinite(theta)||abs(theta)>thetaBound
+        continue
     end
-
-    function t_rt = tau_rt(theta)
-        c = cos(theta/2);
-        s = sin(theta/2);
-        t_rt = KI .* s .* c.^2 + KII .* c .* (1.0 - 3.0 * s.^2);
+    c=cos(theta/2); s=sin(theta/2);
+    stationaryResidual=KI*sin(theta)+KII*(3*cos(theta)-1);
+    stress=KI*c^3-3*KII*s*c^2;
+    % Exact curvature of leading sigma_tt at a stationary root:
+    curvature=-.75*c*(KI*cos(theta)-3*KII*sin(theta));
+    if abs(stationaryResidual)<=1e-11*scale&& ...
+            stress>1e-12*scale&&curvature<0
+        rootAccepted(k)=true;
+        peak(k)=stress;
     end
-
-    % solve tau_rt(theta) = 0 in a reasonable interval
-    th_min = deg2rad(-80);
-    th_max = deg2rad( 80);
-
-    theta0 = min(max(theta_guess, th_min+1e-3), th_max-1e-3);
-    tau_fun = @(th) tau_rt(th);
-
-    dth = deg2rad(10);
-    a = max(th_min, theta0 - dth);
-    b = min(th_max, theta0 + dth);
-    if sign(tau_fun(a)) * sign(tau_fun(b)) > 0
-        a = th_min; b = th_max;
-    end
-
-    theta_k = fzero(tau_fun, [a, b]);
-    sigma_tt_val = sigma_tt(theta_k);
-
-    % if compressive, try opposite symmetric root (optional safeguard)
-    if sigma_tt_val < 0
-        theta_alt = -theta_k;
-        if theta_alt > th_min && theta_alt < th_max
-            sigma_tt_alt = sigma_tt(theta_alt);
-            if sigma_tt_alt > sigma_tt_val
-                theta_k      = theta_alt;
-                sigma_tt_val = sigma_tt_alt;
-            end
-        end
-    end
-
-    theta_deg = rad2deg(theta_k);
+end
+if ~any(rootAccepted)
+    warning('kink_angle_LEFM_MTS:NoTensileStationaryRoot', ...
+        'No admissible tensile stationary maximum in +/-80 deg; MTS is undefined.');
+    return
+end
+[~,idx]=max(peak);
+theta_k=candidates(idx);
+theta_deg=theta_k*180/pi;
+sigma_tt_val=peak(idx);
 end
