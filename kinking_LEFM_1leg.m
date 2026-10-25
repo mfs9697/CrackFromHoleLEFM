@@ -60,7 +60,13 @@ function [theta_k, theta_deg, KI, KII] = kinking_LEFM_1leg(C,sigma0)
     [KI, KII] = SIF_LEFM_circle2(mesh, U, V, mat, rI);
 
     % ---------- MTS kinking angle ----------
-    [theta_k, theta_deg] = kink_angle_LEFM_MTS(KI, KII);
+    [theta_k, theta_deg, sigma_tt_val] = kink_angle_LEFM_MTS(KI, KII);
+    if ~isfinite(theta_k) || ~isfinite(theta_deg) || ...
+            ~(sigma_tt_val>0)
+        error('kinking_LEFM_1leg:NoAdmissibleTensileMTS', ...
+            ['No admissible forward tensile MTS maximum for signed ', ...
+             'KI=%g and KII=%g. Do not advance the crack.'],KI,KII);
+    end
 
     fprintf('LEFM SIFs: KI = %.4g, KII = %.4g (units MPa*sqrt(m))\n', KI, KII);
     fprintf('MTS kink angle: %.3f rad = %.2f deg\n', theta_k, theta_deg);
