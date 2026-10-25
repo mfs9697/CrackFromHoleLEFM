@@ -51,8 +51,11 @@ code must handle that status and separately enforce
 a fracture initiation/growth condition.
 
 The original three-output public MATLAB function signature
-is preserved. **This revision alters only angle-root selection;
-it does not change any SIF calculation or mesh routine.**
+is preserved. The existing `kinking_LEFM_1leg.m` call site is also
+guarded: if the MTS helper reports NaN or a non-tensile stationary
+state, it raises `kinking_LEFM_1leg:NoAdmissibleTensileMTS`
+instead of passing an undefined angle downstream.
+**No SIF calculation, material model, FEM solve or mesh routine changes.**
 
 ## Pure theory regression
 
