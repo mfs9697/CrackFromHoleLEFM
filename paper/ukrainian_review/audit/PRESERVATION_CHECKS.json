@@ -1,0 +1,52 @@
+{
+  "checks": {
+    "audited_macro_definitions": true,
+    "all_math_tokens": true,
+    "display_math_blocks": true,
+    "table_numerical_cells_and_signs": true,
+    "table_units": true,
+    "all_labels_and_references": true,
+    "citation_groups": true,
+    "graphics_identity_and_order": true,
+    "table_and_figure_environments": true,
+    "section_hierarchy": true,
+    "appendix_structure": true,
+    "explicit_numerical_lexemes": true,
+    "abstract_numbers": true,
+    "abstract_math_and_citations": true,
+    "bibliography_bytes": true,
+    "protected_paths_unchanged": true,
+    "all_graphic_hashes": true
+  },
+  "negative_controls": {
+    "numerical_value": {
+      "detected": true,
+      "check": "all_math_tokens"
+    },
+    "math_sign": {
+      "detected": true,
+      "check": "all_math_tokens"
+    },
+    "missing_citation": {
+      "detected": true,
+      "check": "citation_groups"
+    },
+    "missing_figure": {
+      "detected": true,
+      "check": "graphics_identity_and_order"
+    }
+  },
+  "allowed_translations_inside_math": {
+    "\\text{in }": "\\text{в }"
+  },
+  "number_of_inline_and_display_math_spans": 502,
+  "body_citation_groups": 21,
+  "number_of_bibliography_entries": 19,
+  "number_of_tables": 6,
+  "number_of_figures": 10,
+  "number_of_graphics": 31,
+  "numbered_environments": 22,
+  "numbered_equations": 28,
+  "unnumbered_display_equations": 7,
+  "equation_labels": 27
+}

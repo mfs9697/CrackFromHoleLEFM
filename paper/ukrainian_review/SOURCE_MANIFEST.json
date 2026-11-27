@@ -1,0 +1,1499 @@
+{
+  "base_commit": "7597cba1a378e6f436a3bfab304f85702902ee4e",
+  "english_manuscript": {
+    "path": "paper/submissions/aam/manuscript.tex",
+    "git_blob_sha": "3f418857f7d54b351b1d62e4a003c199c3c7bc9d",
+    "sha256": "a4e2007b76fd2241323790974187ee882a40c1142c91197b9ec22959a17b7591"
+  },
+  "author_metadata": {
+    "title": "Incremental LEFM Prediction of a Crack Trajectory from a Circular Hole",
+    "author": "Danylo Selivanov",
+    "email": "fract@inmech.kyiv.ua",
+    "affiliation": "S.P. Timoshenko Institute of Mechanics, National Academy of Sciences of Ukraine, Kyiv, Ukraine"
+  },
+  "companion_sources": [
+    {
+      "path": "paper/submissions/aam/README.md",
+      "git_blob_sha": "a19586b7eef0e1193106cb2994f57ea3bb0519f0",
+      "sha256": "ca7007419a881c85615e39fb12033dfa2de1b5d8c6566f4f12454364fd065227"
+    },
+    {
+      "path": "paper/submissions/aam/check_scientific_freeze.py",
+      "git_blob_sha": "ce6de5f922ee1151a53b6dffb6256f973b430dea",
+      "sha256": "c0a780a968a23c37e2c94d32506c20f2ff5c012c0ce8e33188868ffcd54854cf"
+    },
+    {
+      "path": "paper/main.tex",
+      "git_blob_sha": "0c65ee7fcb76154ca7d5a9f0b3513ddac1a97e04",
+      "sha256": "0cb57138cda4aee83f17a83bca1191e28ac5e325a1899b977386d707704be230"
+    },
+    {
+      "path": "paper/references.bib",
+      "git_blob_sha": "e925c2610a5adc510d71230af6ff79e66d5953b9",
+      "sha256": "d48b510db8e638270bd395c29916a6178e6c299a5750ae2ef187671e62a7b648"
+    },
+    {
+      "path": "paper/ISSUE78_FIGURE_PIPELINE.md",
+      "git_blob_sha": "537e8d22001dc2214a6eccad5e40a209348b92cd",
+      "sha256": "04bf38507f985ae147ba843bc15711a08c1016675d0ce316391303356f191299"
+    },
+    {
+      "path": "paper/FINAL_FIGURE_WORKFLOW.md",
+      "git_blob_sha": "3e3b98190b93a63a20f2914a8403121f455b7ad5",
+      "sha256": "e40db000e33ae17369c07919dc89ca1db360607e2daa14f4a9dfc4b90b1a8d2c"
+    },
+    {
+      "path": "paper/FIGURE_CONSISTENCY_AUDIT.md",
+      "git_blob_sha": "7eb52fbf58aa460cba4f8b0e7806d89ceb51c40e",
+      "sha256": "09e3364348d1906614b5da92ae4909c52d1d32cf13ed9db396febbda64b7f629"
+    },
+    {
+      "path": "paper/FIGURES_7_9_LAYOUT_REPORT.md",
+      "git_blob_sha": "10f69c280323a7f55edccce226a0274326f6f15d",
+      "sha256": "43739f96b0e33ffecb2128348602c2bcf9864e0d5157f00d477e643dd7b9c17f"
+    },
+    {
+      "path": "paper/EVIDENCE_AND_PROVENANCE.md",
+      "git_blob_sha": "97565ebb0351af3bca0033ca3dbbbf7c5f115894",
+      "sha256": "990c49bce4cc1ceb424440ce6f821162166a31b5df4cd60df7a07f1d746545e2"
+    },
+    {
+      "path": "paper/FINAL_TYPESETTING_REVIEW.md",
+      "git_blob_sha": "893fcca35703236ba9c00e599a072806a4a62a72",
+      "sha256": "1e866637a7830819f1cf5c16132673c1a452128fa4543a893d65874214056af8"
+    }
+  ],
+  "audited_macros_latex": "\\newcommand{\\PlateAMM}{300}\n\\newcommand{\\PlateBMM}{100}\n\\newcommand{\\HoleCxMM}{170}\n\\newcommand{\\HoleCyMM}{-20}\n\\newcommand{\\HoleRMM}{30}\n\\newcommand{\\PhiStar}{-1.5606}\n\\newcommand{\\MouthX}{0.199989}\n\\newcommand{\\MouthY}{-0.0208170}\n\\newcommand{\\NormalX}{0.999629}\n\\newcommand{\\NormalY}{-0.0272345}\n\\newcommand{\\PeakStress}{3.7141}\n\\newcommand{\\LoadFactor}{80.774}\n\\newcommand{\\LastXMM}{291.840}\n\\newcommand{\\LastYMM}{-25.579}\n\\newcommand{\\LSLengthMM}{84.15}\n\\newcommand{\\LastLigamentMM}{8.16}\n\\newcommand{\\MinimumTheta}{-3.646}\n\\newcommand{\\MaxCODError}{0.01024}\n\\newcommand{\\CODQuadMin}{0.6204}\n\\newcommand{\\CODQuadMax}{0.6225}\n\\newcommand{\\CODNearZeroPercent}{26.3}\n\\newcommand{\\CODNearZeroTurnDiff}{0.00245}\n\\newcommand{\\SyntheticRelativeError}{3.86\\times10^{-8}}\n\\newcommand{\\MaxTrueResidual}{1.00\\times10^{-10}}\n\\newcommand{\\CharacteristicRows}{$P_{1}$ & 4 & 0.36648 & $4.198\\times10^{-6}$ & $1.146\\times10^{-5}$ & 0.0000 & -0.00131 \\\\\n$P_{17}$ & 68 & 0.78679 & $2.548\\times10^{-3}$ & $3.239\\times10^{-3}$ & -2.4444 & -0.37115 \\\\\n$P_{21}$ & 84 & 0.96631 & $7.860\\times10^{-5}$ & $8.134\\times10^{-5}$ & -3.6366 & -0.00932 \\\\\n$P_{22}$ & 88 & 1.0667 & $-2.284\\times10^{-3}$ & $-2.142\\times10^{-3}$ & -3.6460 & +0.24541 \\\\\n$P_{23}$ & 92 & 1.2444 & $-6.780\\times10^{-3}$ & $-5.449\\times10^{-3}$ & -3.4006 & +0.62435 \\\\}",
+  "sections": [
+    {
+      "command": "section",
+      "title": "Introduction"
+    },
+    {
+      "command": "section",
+      "title": "Problem formulation"
+    },
+    {
+      "command": "subsection",
+      "title": "Geometry, material, and loading"
+    },
+    {
+      "command": "subsection",
+      "title": "Stress-selected initiation and the frozen frame"
+    },
+    {
+      "command": "section",
+      "title": "Incremental crack-path formulation"
+    },
+    {
+      "command": "subsection",
+      "title": "Current-tip frame and stress-intensity factors"
+    },
+    {
+      "command": "subsection",
+      "title": "The implemented MTS rule"
+    },
+    {
+      "command": "subsection",
+      "title": "Finite-increment recurrence"
+    },
+    {
+      "command": "section",
+      "title": "Numerical implementation and verification"
+    },
+    {
+      "command": "subsection",
+      "title": "Numerical parameters and initiation state"
+    },
+    {
+      "command": "subsection",
+      "title": "Geometry and paired tip discretization"
+    },
+    {
+      "command": "subsection",
+      "title": "Structured-tip resolution tests"
+    },
+    {
+      "command": "subsection",
+      "title": "Interaction-integral extraction"
+    },
+    {
+      "command": "subsection",
+      "title": "COD-based extraction comparison"
+    },
+    {
+      "command": "subsection",
+      "title": "Numerical acceptance and extraction checks"
+    },
+    {
+      "command": "subsection",
+      "title": "Crack-increment refinement family"
+    },
+    {
+      "command": "subsection",
+      "title": "Centered-hole symmetric control"
+    },
+    {
+      "command": "section",
+      "title": "Crack-trajectory results"
+    },
+    {
+      "command": "subsection",
+      "title": "Accepted path and direction history"
+    },
+    {
+      "command": "subsection",
+      "title": "Evolution of stress-intensity factors and mode mixity"
+    },
+    {
+      "command": "subsection",
+      "title": "Mode-mixity sign change and turning reversal"
+    },
+    {
+      "command": "subsection",
+      "title": "COD comparison and extraction sensitivity"
+    },
+    {
+      "command": "subsection",
+      "title": "Sensitivity to structured-tip resolution"
+    },
+    {
+      "command": "subsection",
+      "title": "Sensitivity to exterior-mesh density"
+    },
+    {
+      "command": "subsection",
+      "title": "Coupled crack-increment and discretization refinement"
+    },
+    {
+      "command": "section",
+      "title": "Discussion"
+    },
+    {
+      "command": "subsection",
+      "title": "Mechanical interpretation of the turning reversal"
+    },
+    {
+      "command": "subsection",
+      "title": "Numerical sensitivity and the smooth-path interpretation"
+    },
+    {
+      "command": "subsection",
+      "title": "Last accepted state and physical scope"
+    },
+    {
+      "command": "section",
+      "title": "Conclusions"
+    },
+    {
+      "command": "section*",
+      "title": "Declarations"
+    },
+    {
+      "command": "section",
+      "title": "Additional numerical diagnostics"
+    }
+  ],
+  "display_equations": [
+    {
+      "numbered_environment": null,
+      "latex": "\\[\n  \\Omega_{\\mathrm{rect}}=[0,2A]\\times[-B/2,B/2].\n\\]",
+      "labels": []
+    },
+    {
+      "numbered_environment": "align",
+      "latex": "\\begin{align}\n \\nabla\\!\\cdot\\bm{\\sigma}&=\\bm0 &&\\text{in }\\Omega_k,\\label{eq:equilibrium}\\\\\n \\bm{\\varepsilon}&=\\tfrac12(\\nabla\\bm u+\\nabla\\bm u^{\\mathsf T}),\\qquad\n \\varepsilon_{33}=0,\\label{eq:strain}\\\\\n \\bm{\\sigma}&=2\\mu\\bm{\\varepsilon}\n       +\\lambda\\,\\operatorname{tr}(\\bm{\\varepsilon})\\bm I,\n \\quad \\mu=\\frac{E}{2(1+\\nu)},\\quad\n \\lambda=\\frac{E\\nu}{(1+\\nu)(1-2\\nu)}.\\label{eq:constitutive}\n\\end{align}",
+      "labels": [
+        "eq:equilibrium",
+        "eq:strain",
+        "eq:constitutive"
+      ]
+    },
+    {
+      "numbered_environment": "equation",
+      "latex": "\\begin{equation}\n \\phi_* = \\mathop{\\operatorname{arg\\,max}}_\\phi\n      \\sigma_{tt}^{+}(\\phi;\\sigma),\\qquad\n \\Lambda_{\\mathrm{ini}}=\n      \\frac{\\sigma_{\\mathrm{ini}}}{\\max_\\phi\\sigma_{tt}^{+}(\\phi;\\sigma)},\n \\quad \\sigma_{tt}^{+}=\\max(\\sigma_{tt},0).\\label{eq:initiation}\n\\end{equation}",
+      "labels": [
+        "eq:initiation"
+      ]
+    },
+    {
+      "numbered_environment": "equation",
+      "latex": "\\begin{equation}\n P_0=\\begin{bmatrix}x_{\\mathrm{c}}+R\\cos\\phi_*\\\\\n                     y_{\\mathrm{c}}-B/2+R\\sin\\phi_*\n     \\end{bmatrix}.\n \\label{eq:mouth}\n\\end{equation}",
+      "labels": [
+        "eq:mouth"
+      ]
+    },
+    {
+      "numbered_environment": "equation",
+      "latex": "\\begin{equation}\n \\bm n_{\\mathrm{mat}}=\n  \\begin{bmatrix}\\cos\\phi_*\\\\\\sin\\phi_*\\end{bmatrix},\n \\qquad\n \\bm t=\\begin{bmatrix}-n_{\\mathrm{mat},y}\\\\n_{\\mathrm{mat},x}\\end{bmatrix}.\n \\label{eq:frozenframe}\n\\end{equation}",
+      "labels": [
+        "eq:frozenframe"
+      ]
+    },
+    {
+      "numbered_environment": "equation",
+      "latex": "\\begin{equation}\n \\theta_1=0,\\qquad\n P_1=P_0+\\Delta a\\,\\bm n_{\\mathrm{mat}}.\\label{eq:first}\n\\end{equation}",
+      "labels": [
+        "eq:first"
+      ]
+    },
+    {
+      "numbered_environment": "equation",
+      "latex": "\\begin{equation}\n K_{\\mathrm{I}}^{(k)}=\\lim_{r\\to0^+}\\sqrt{2\\pi r}\\,\\sigma_{22}(r,0),\n \\qquad\n K_{\\mathrm{II}}^{(k)}=\\lim_{r\\to0^+}\\sqrt{2\\pi r}\\,\\sigma_{12}(r,0).\n \\label{eq:sifdefinition}\n\\end{equation}",
+      "labels": [
+        "eq:sifdefinition"
+      ]
+    },
+    {
+      "numbered_environment": "equation",
+      "latex": "\\begin{equation}\n q_{\\mathrm{K}}^{(k)}\n =\\frac{K_{\\mathrm{II}}^{(k)}}{K_{\\mathrm{I}}^{(k)}},\n \\qquad K_{\\mathrm{I}}^{(k)}>0.\n \\label{eq:mode-mixity}\n\\end{equation}",
+      "labels": [
+        "eq:mode-mixity"
+      ]
+    },
+    {
+      "numbered_environment": "align",
+      "latex": "\\begin{align}\n S(\\alpha)&=K_{\\mathrm{I}}^{(k)}c^3\n             -3K_{\\mathrm{II}}^{(k)}s c^2,\\label{eq:stt}\\\\\n T(\\alpha)&=K_{\\mathrm{I}}^{(k)}s c^2\n             +K_{\\mathrm{II}}^{(k)}c(1-3s^2).\n \\label{eq:trt}\n\\end{align}",
+      "labels": [
+        "eq:stt",
+        "eq:trt"
+      ]
+    },
+    {
+      "numbered_environment": "equation",
+      "latex": "\\begin{equation}\n \\alpha_{\\mathrm{MTS}}\n =-2q_{\\mathrm{K}}^{(k)}\n  +\\frac{14}{3}\\bigl(q_{\\mathrm{K}}^{(k)}\\bigr)^3\n  +O\\bigl((q_{\\mathrm{K}}^{(k)})^5\\bigr),\n \\label{eq:mts-small-mixity}\n\\end{equation}",
+      "labels": [
+        "eq:mts-small-mixity"
+      ]
+    },
+    {
+      "numbered_environment": "align",
+      "latex": "\\begin{align}\n \\bm e(\\theta)&=\\cos\\theta\\,\\bm n_{\\mathrm{mat}}\n                 +\\sin\\theta\\,\\bm t,\\label{eq:direction}\\\\\n \\Delta\\theta_{k+1}\n   &=\\alpha_{\\mathrm{MTS}}(K_{\\mathrm{I}}^{(k)},K_{\\mathrm{II}}^{(k)}),\n     \\label{eq:turn}\\\\\n \\theta_{k+1}&=\\theta_k+\\Delta\\theta_{k+1},\\label{eq:angleupdate}\\\\\n P_{k+1}&=P_k+\\Delta a\\,\\bm e(\\theta_{k+1}).\\label{eq:pointupdate}\n\\end{align}",
+      "labels": [
+        "eq:direction",
+        "eq:turn",
+        "eq:angleupdate",
+        "eq:pointupdate"
+      ]
+    },
+    {
+      "numbered_environment": "equation",
+      "latex": "\\begin{equation}\n \\frac{q_{\\mathrm{K}}^{(k)}}{\\Delta a}\n =-\\frac12\\frac{\\Delta\\theta_{k+1}}{\\Delta a}\n  +O((\\Delta a)^2)\n \\longrightarrow-\\frac12\\frac{\\dd\\theta}{\\dd a}.\n \\label{eq:curvature-mts}\n\\end{equation}",
+      "labels": [
+        "eq:curvature-mts"
+      ]
+    },
+    {
+      "numbered_environment": "equation",
+      "latex": "\\begin{equation}\n \\frac{h_{\\mathrm{tip}}}{\\Delta a}=0.00675308135,\\quad\n \\frac{r_{\\mathrm{in}}}{\\Delta a}=0.10,\\quad\n \\frac{r_{\\mathrm{out}}}{\\Delta a}=0.65,\\quad\n \\frac{r_{\\mathrm{core}}}{\\Delta a}=0.75.\\label{eq:meshscales}\n\\end{equation}",
+      "labels": [
+        "eq:meshscales"
+      ]
+    },
+    {
+      "numbered_environment": "equation",
+      "latex": "\\begin{equation}\n 2h_0=0.054025\\ \\mathrm{mm},\\qquad\n h_0=0.027012\\ \\mathrm{mm},\\qquad\n h_0/2=0.013506\\ \\mathrm{mm}.\n \\label{eq:tiplevels}\n\\end{equation}",
+      "labels": [
+        "eq:tiplevels"
+      ]
+    },
+    {
+      "numbered_environment": "equation",
+      "latex": "\\begin{equation}\n I^{(m)}=\\int_{\\Omega_k}\n \\left[-(\\bm\\sigma^{(m)}\\!:\\bm\\varepsilon)\\delta_{1j}\n +\\sigma_{ij}u^{(m)}_{i,1}\n +\\sigma^{(m)}_{ij}u_{i,1}\\right]w_{,j}\\,\\dd\\Omega,\n \\qquad i,j\\in\\{1,2\\}.\\label{eq:interaction}\n\\end{equation}",
+      "labels": [
+        "eq:interaction"
+      ]
+    },
+    {
+      "numbered_environment": "equation",
+      "latex": "\\begin{equation}\n K_m=\\frac{E'}{2K_{\\mathrm{aux}}}I^{(m)},\\qquad\n E'=\\frac{E}{1-\\nu^2},\\qquad m\\in\\{I,II\\}.\\label{eq:normalization}\n\\end{equation}",
+      "labels": [
+        "eq:normalization"
+      ]
+    },
+    {
+      "numbered_environment": "equation",
+      "latex": "\\begin{equation}\n \\begin{bmatrix}K_{\\mathrm{I}}^{\\mathrm{app}}(r)\\\\K_{\\mathrm{II}}^{\\mathrm{app}}(r)\\end{bmatrix}\n =\\frac{\\mu}{\\kappa+1}\\sqrt{\\frac{2\\pi}{r}}\n \\begin{bmatrix}{[\\![u_2]\\!]}\\\\{[\\![u_1]\\!]}\\end{bmatrix},\n \\qquad \\kappa=3-4\\nu.\\label{eq:cod}\n\\end{equation}",
+      "labels": [
+        "eq:cod"
+      ]
+    },
+    {
+      "numbered_environment": null,
+      "latex": "\\[\n \\Delta a\\in\\{4,2,1\\}\\ \\mathrm{mm}.\n\\]",
+      "labels": []
+    },
+    {
+      "numbered_environment": "equation",
+      "latex": "\\begin{equation}\n \\frac{h_{\\rm tip}}{\\Delta a}\n =2(0.00675308135),\\qquad\n \\frac{r_{\\mathrm{in}}}{\\Delta a}=0.10,\\qquad\n \\frac{r_{\\mathrm{out}}}{\\Delta a}=0.65,\\qquad\n \\frac{r_{\\mathrm{core}}}{\\Delta a}=0.75.\n \\label{eq:increment-family}\n\\end{equation}",
+      "labels": [
+        "eq:increment-family"
+      ]
+    },
+    {
+      "numbered_environment": null,
+      "latex": "\\[\n \\frac{h_{\\mathrm{far}}}{\\Delta a}=1.25,\\qquad\n \\frac{L_{\\mathrm{tr}}}{\\Delta a}=1.00,\n\\]",
+      "labels": []
+    },
+    {
+      "numbered_environment": null,
+      "latex": "\\[\n P_0=(0.180,0)\\ \\mathrm m,\n \\qquad\n P_1=(0.184,0)\\ \\mathrm m,\n\\]",
+      "labels": []
+    },
+    {
+      "numbered_environment": null,
+      "latex": "\\[\n \\theta_2\\in\\{-0.10^\\circ,-0.05^\\circ,0,\n                 +0.05^\\circ,+0.10^\\circ\\},\n\\]",
+      "labels": []
+    },
+    {
+      "numbered_environment": "equation",
+      "latex": "\\begin{equation}\n F(\\theta_2)=\\theta_3\n =\\theta_2+\n \\alpha_{\\mathrm{MTS}}\\!\\left(K_{\\mathrm{I}}(\\theta_2),K_{\\mathrm{II}}(\\theta_2)\\right).\n \\label{eq:symmetric-map}\n\\end{equation}",
+      "labels": [
+        "eq:symmetric-map"
+      ]
+    },
+    {
+      "numbered_environment": null,
+      "latex": "\\[\n K_{\\mathrm{I}}(0)=0.42541\\ \\mathrm{MPa}\\sqrt{\\mathrm m},\n \\qquad\n \\frac{K_{\\mathrm{II}}(0)}{K_{\\mathrm{I}}(0)}=6.22\\times10^{-9},\n\\]",
+      "labels": []
+    },
+    {
+      "numbered_environment": null,
+      "latex": "\\[\n \\frac{F(+0.05^\\circ)-F(-0.05^\\circ)}{0.10^\\circ}\n =-0.11416,\n \\qquad\n \\frac{F(+0.10^\\circ)-F(-0.10^\\circ)}{0.20^\\circ}\n =-0.11415,\n\\]",
+      "labels": []
+    },
+    {
+      "numbered_environment": "equation",
+      "latex": "\\begin{equation}\n F'(0)\\approx-0.11415.\n \\label{eq:symmetric-multiplier}\n\\end{equation}",
+      "labels": [
+        "eq:symmetric-multiplier"
+      ]
+    },
+    {
+      "numbered_environment": "equation",
+      "latex": "\\begin{equation}\n P_{23}=(\\LastXMM,\\LastYMM)\\ \\mathrm{mm},\\qquad\n 2A-x_{23}=\\LastLigamentMM\\ \\mathrm{mm}.\n\\end{equation}",
+      "labels": []
+    },
+    {
+      "numbered_environment": "equation",
+      "latex": "\\begin{equation}\n a_{\\mathrm{LS}}=a_{21}\n -\\frac{\\qmix^{(21)}}{\\qmix^{(22)}-\\qmix^{(21)}}(a_{22}-a_{21})\n \\simeq\\LSLengthMM\\ \\mathrm{mm}.\\label{eq:zeroestimate}\n\\end{equation}",
+      "labels": [
+        "eq:zeroestimate"
+      ]
+    },
+    {
+      "numbered_environment": "equation",
+      "latex": "\\begin{equation}\n q_{\\mathrm{K}}=O(\\Delta a),\\qquad\n \\Delta\\theta=O(\\Delta a),\n \\label{eq:increment-scaling}\n\\end{equation}",
+      "labels": [
+        "eq:increment-scaling"
+      ]
+    }
+  ],
+  "equation_counts": {
+    "numbered_environments": 22,
+    "numbered_equations": 28,
+    "unnumbered_display_equations": 7,
+    "equation_labels": 27
+  },
+  "tables": [
+    {
+      "start_line": 822,
+      "latex": "\\begin{table}[htbp]\n\\centering\n\\small\n\\caption{One-step directional map for the centered-hole symmetric control.\nThe prescribed second-segment angle and the predicted third-segment direction are shown.}\n\\label{tab:symmetric-stability}\n\\begin{tabular*}{0.64\\linewidth}{@{\\extracolsep{\\fill}}rr}\n\\toprule\n$\\theta_2$ [deg] & $F(\\theta_2)=\\theta_3$ [deg]\\\\\n\\midrule\n$-0.10$ & $+0.011415$\\\\\n$-0.05$ & $+0.005708$\\\\\n$0$     & $-7.13\\times10^{-7}$\\\\\n$+0.05$ & $-0.005708$\\\\\n$+0.10$ & $-0.011415$\\\\\n\\bottomrule\n\\end{tabular*}\n\\end{table}"
+    },
+    {
+      "start_line": 1025,
+      "latex": "\\begin{table}[htbp]\\centering\\small\\setlength{\\tabcolsep}{3.5pt}\n\\caption{Characteristic accepted states. SIFs have units MPa$\\sqrt{\\mathrm m}$;\nangles are in degrees. The interpolated row contains only a graphical\nzero estimate, not a solved stress field or crack direction.}\n\\begin{tabular}{lrrrrrr}\\toprule\nState & $a$ [mm] & $K_{\\mathrm{I}}$ & $K_{\\mathrm{II}}$ & $K_{\\mathrm{II}}/K_{\\mathrm{I}}$ & $\\theta_k$ & $\\Delta\\theta_{k+1}$\\\\\\midrule\n\\CharacteristicRows\nInterpolated & \\LSLengthMM & --- & --- & $0$ & --- & ---\\\\\n\\bottomrule\\end{tabular}\\label{tab:states}\n\\end{table}"
+    },
+    {
+      "start_line": 1166,
+      "latex": "\\begin{table}[htbp]\n\\centering\n\\small\n\\setlength{\\tabcolsep}{2.6pt}\n\\caption{Structured-tip sensitivity at fixed $P_{21}$ and $P_{22}$\ngeometries, with common interaction-domain radii and requested\nexterior sizing. The reported $a_{\\mathrm{LS}}$ values are\ninterpolated sign-change estimates, not independently solved\nzero-mode-II states.}\n\\label{tab:tipmesh}\n\\begin{tabular}{lrrrrrr}\n\\toprule\nResolution & $h_{\\rm tip}$ [mm] &\n$q_{\\mathrm{K}}(P_{21})$ & $\\Delta\\theta_{22}$ [deg] &\n$q_{\\mathrm{K}}(P_{22})$ & $\\Delta\\theta_{23}$ [deg] &\n$a_{\\rm LS}$ [mm]\\\\\n\\midrule\n$2h_0$ & 0.054025 & $+7.7957\\times10^{-5}$ & $-0.008933$ &\n$-2.1451\\times10^{-3}$ & $+0.245805$ & 84.14027\\\\\n$h_0$ & 0.027012 & $+8.1343\\times10^{-5}$ & $-0.009321$ &\n$-2.1416\\times10^{-3}$ & $+0.245406$ & 84.14637\\\\\n$h_0/2$ & 0.013506 & $+8.3031\\times10^{-5}$ & $-0.009515$ &\n$-2.1399\\times10^{-3}$ & $+0.245207$ & 84.14941\\\\\n\\bottomrule\n\\end{tabular}\n\\end{table}"
+    },
+    {
+      "start_line": 1441,
+      "latex": "\\begin{table}[htbp]\n\\centering\n\\small\n\\setlength{\\tabcolsep}{4.0pt}\n\\caption{Successive differences between independently propagated paths in\nthe dimensionless crack-increment refinement family. Comparisons use exact\ncommon crack lengths; no path interpolation is used.}\n\\label{tab:increment-pairwise}\n\\begin{tabular}{lrrrr}\n\\toprule\nComparison &\n$\\max|\\delta y|$ [$\\mu$m] &\n$\\max\\delta r$ [$\\mu$m] &\n$\\max|\\delta\\theta|$ [mdeg] &\n$\\max|\\delta q_{\\mathrm{K}}|$\\\\\n\\midrule\n2 mm $-$ 4 mm & 35.4181 & 35.4721 & 214.931 & $2.48578\\times10^{-3}$\\\\\n1 mm $-$ 2 mm & 18.2629 & 18.2911 & 127.391 & $1.41618\\times10^{-3}$\\\\\n\\bottomrule\n\\end{tabular}\n\\end{table}"
+    },
+    {
+      "start_line": 1494,
+      "latex": "\\begin{table}[tbp]\n\\centering\n\\small\n\\setlength{\\tabcolsep}{3.6pt}\n\\caption{Characteristic quantities in the crack-increment refinement\nfamily. The local-symmetry location is obtained by linear interpolation\nbetween the two solved states bracketing $q_{\\mathrm{K}}=0$.}\n\\label{tab:increment-characteristic}\n\\begin{tabular}{rrrrrr}\n\\toprule\n$\\Delta a$ [mm] &\n$a(q_{\\mathrm{K},\\max})$ [mm] &\n$q_{\\mathrm{K},\\max}$ &\n\\shortstack[c]{$q_{\\mathrm{K},\\max}/\\Delta a$\\\\{}[mm$^{-1}$]} &\n\\shortstack[c]{$(\\Delta\\theta/\\Delta a)_{q_{\\max}}$\\\\{}[deg/mm]} &\n$a_{\\rm LS}$ [mm]\\\\\n\\midrule\n4 & 68 & $3.2394\\times10^{-3}$ & $8.0984\\times10^{-4}$ &\n$-0.092799$ & 84.148913\\\\\n2 & 66 & $1.6127\\times10^{-3}$ & $8.0633\\times10^{-4}$ &\n$-0.092398$ & 83.550120\\\\\n1 & 66 & $8.0407\\times10^{-4}$ & $8.0407\\times10^{-4}$ &\n$-0.092139$ & 83.268112\\\\\n\\bottomrule\n\\end{tabular}\n\\end{table}"
+    },
+    {
+      "start_line": 1636,
+      "latex": "\\begin{table}[htbp]\n\\centering\n\\small\n\\setlength{\\tabcolsep}{4.2pt}\n\\caption{Trajectory sensitivity to exterior-mesh and structured-tip\nresolution. Differences in $a_{\\mathrm{LS}}$ compare linearly\ninterpolated mode-mixity zeros between $P_{21}$ and $P_{22}$.}\n\\label{tab:independent-sensitivity}\n\\begin{tabular}{lrrrrr}\n\\toprule\nPerturbation &\n$\\max|\\delta y|$ [$\\mu$m] &\n$\\max\\delta r$ [$\\mu$m] &\n\\shortstack[c]{$\\max|\\delta\\theta|$\\\\{}[mdeg]} &\n$\\max|\\delta q_{\\mathrm{K}}|$ &\n$\\delta a_{\\rm LS}$ [$\\mu$m]\\\\\n\\midrule\nCoarser exterior M1 & 0.06734 & 0.06742 & 0.07304 & $2.89\\times10^{-7}$ & $-0.322$\\\\\nIsolated-core $2h_0$ & 0.12760 & 0.12800 & 0.24539 & $2.65\\times10^{-7}$ & $-0.094$\\\\\n\\bottomrule\n\\end{tabular}\n\\end{table}"
+    }
+  ],
+  "table_numerical_cells": [
+    [
+      [
+        [
+          "$",
+          "-",
+          "0.10",
+          "$"
+        ]
+      ],
+      [
+        [
+          "$",
+          "+",
+          "0.011415",
+          "$"
+        ]
+      ],
+      [
+        [
+          "$",
+          "-",
+          "0.05",
+          "$"
+        ]
+      ],
+      [
+        [
+          "$",
+          "+",
+          "0.005708",
+          "$"
+        ]
+      ],
+      [
+        [
+          "$",
+          "0",
+          "$"
+        ]
+      ],
+      [
+        [
+          "$",
+          "-",
+          "7.13",
+          "\\times",
+          "10",
+          "^",
+          "{",
+          "-",
+          "7",
+          "}",
+          "$"
+        ]
+      ],
+      [
+        [
+          "$",
+          "+",
+          "0.05",
+          "$"
+        ]
+      ],
+      [
+        [
+          "$",
+          "-",
+          "0.005708",
+          "$"
+        ]
+      ],
+      [
+        [
+          "$",
+          "+",
+          "0.10",
+          "$"
+        ]
+      ],
+      [
+        [
+          "$",
+          "-",
+          "0.011415",
+          "$"
+        ]
+      ]
+    ],
+    [
+      [
+        [
+          "$",
+          "P",
+          "_",
+          "{",
+          "1",
+          "}",
+          "$"
+        ]
+      ],
+      [
+        "4"
+      ],
+      [
+        "0.36648"
+      ],
+      [
+        [
+          "$",
+          "4.198",
+          "\\times",
+          "10",
+          "^",
+          "{",
+          "-",
+          "6",
+          "}",
+          "$"
+        ]
+      ],
+      [
+        [
+          "$",
+          "1.146",
+          "\\times",
+          "10",
+          "^",
+          "{",
+          "-",
+          "5",
+          "}",
+          "$"
+        ]
+      ],
+      [
+        "0.0000"
+      ],
+      [
+        "-0.00131"
+      ],
+      [
+        [
+          "$",
+          "P",
+          "_",
+          "{",
+          "17",
+          "}",
+          "$"
+        ]
+      ],
+      [
+        "68"
+      ],
+      [
+        "0.78679"
+      ],
+      [
+        [
+          "$",
+          "2.548",
+          "\\times",
+          "10",
+          "^",
+          "{",
+          "-",
+          "3",
+          "}",
+          "$"
+        ]
+      ],
+      [
+        [
+          "$",
+          "3.239",
+          "\\times",
+          "10",
+          "^",
+          "{",
+          "-",
+          "3",
+          "}",
+          "$"
+        ]
+      ],
+      [
+        "-2.4444"
+      ],
+      [
+        "-0.37115"
+      ],
+      [
+        [
+          "$",
+          "P",
+          "_",
+          "{",
+          "21",
+          "}",
+          "$"
+        ]
+      ],
+      [
+        "84"
+      ],
+      [
+        "0.96631"
+      ],
+      [
+        [
+          "$",
+          "7.860",
+          "\\times",
+          "10",
+          "^",
+          "{",
+          "-",
+          "5",
+          "}",
+          "$"
+        ]
+      ],
+      [
+        [
+          "$",
+          "8.134",
+          "\\times",
+          "10",
+          "^",
+          "{",
+          "-",
+          "5",
+          "}",
+          "$"
+        ]
+      ],
+      [
+        "-3.6366"
+      ],
+      [
+        "-0.00932"
+      ],
+      [
+        [
+          "$",
+          "P",
+          "_",
+          "{",
+          "22",
+          "}",
+          "$"
+        ]
+      ],
+      [
+        "88"
+      ],
+      [
+        "1.0667"
+      ],
+      [
+        [
+          "$",
+          "-",
+          "2.284",
+          "\\times",
+          "10",
+          "^",
+          "{",
+          "-",
+          "3",
+          "}",
+          "$"
+        ]
+      ],
+      [
+        [
+          "$",
+          "-",
+          "2.142",
+          "\\times",
+          "10",
+          "^",
+          "{",
+          "-",
+          "3",
+          "}",
+          "$"
+        ]
+      ],
+      [
+        "-3.6460"
+      ],
+      [
+        "+0.24541"
+      ],
+      [
+        [
+          "$",
+          "P",
+          "_",
+          "{",
+          "23",
+          "}",
+          "$"
+        ]
+      ],
+      [
+        "92"
+      ],
+      [
+        "1.2444"
+      ],
+      [
+        [
+          "$",
+          "-",
+          "6.780",
+          "\\times",
+          "10",
+          "^",
+          "{",
+          "-",
+          "3",
+          "}",
+          "$"
+        ]
+      ],
+      [
+        [
+          "$",
+          "-",
+          "5.449",
+          "\\times",
+          "10",
+          "^",
+          "{",
+          "-",
+          "3",
+          "}",
+          "$"
+        ]
+      ],
+      [
+        "-3.4006"
+      ],
+      [
+        "+0.62435"
+      ],
+      [],
+      [
+        "\\LSLengthMM"
+      ],
+      [],
+      [],
+      [
+        [
+          "$",
+          "0",
+          "$"
+        ]
+      ],
+      [],
+      []
+    ],
+    [
+      [
+        [
+          "$",
+          "2",
+          "h",
+          "_",
+          "0",
+          "$"
+        ]
+      ],
+      [
+        "0.054025"
+      ],
+      [
+        [
+          "$",
+          "+",
+          "7.7957",
+          "\\times",
+          "10",
+          "^",
+          "{",
+          "-",
+          "5",
+          "}",
+          "$"
+        ]
+      ],
+      [
+        [
+          "$",
+          "-",
+          "0.008933",
+          "$"
+        ]
+      ],
+      [
+        [
+          "$",
+          "-",
+          "2.1451",
+          "\\times",
+          "10",
+          "^",
+          "{",
+          "-",
+          "3",
+          "}",
+          "$"
+        ]
+      ],
+      [
+        [
+          "$",
+          "+",
+          "0.245805",
+          "$"
+        ]
+      ],
+      [
+        "84.14027"
+      ],
+      [
+        [
+          "$",
+          "h",
+          "_",
+          "0",
+          "$"
+        ]
+      ],
+      [
+        "0.027012"
+      ],
+      [
+        [
+          "$",
+          "+",
+          "8.1343",
+          "\\times",
+          "10",
+          "^",
+          "{",
+          "-",
+          "5",
+          "}",
+          "$"
+        ]
+      ],
+      [
+        [
+          "$",
+          "-",
+          "0.009321",
+          "$"
+        ]
+      ],
+      [
+        [
+          "$",
+          "-",
+          "2.1416",
+          "\\times",
+          "10",
+          "^",
+          "{",
+          "-",
+          "3",
+          "}",
+          "$"
+        ]
+      ],
+      [
+        [
+          "$",
+          "+",
+          "0.245406",
+          "$"
+        ]
+      ],
+      [
+        "84.14637"
+      ],
+      [
+        [
+          "$",
+          "h",
+          "_",
+          "0",
+          "/",
+          "2",
+          "$"
+        ]
+      ],
+      [
+        "0.013506"
+      ],
+      [
+        [
+          "$",
+          "+",
+          "8.3031",
+          "\\times",
+          "10",
+          "^",
+          "{",
+          "-",
+          "5",
+          "}",
+          "$"
+        ]
+      ],
+      [
+        [
+          "$",
+          "-",
+          "0.009515",
+          "$"
+        ]
+      ],
+      [
+        [
+          "$",
+          "-",
+          "2.1399",
+          "\\times",
+          "10",
+          "^",
+          "{",
+          "-",
+          "3",
+          "}",
+          "$"
+        ]
+      ],
+      [
+        [
+          "$",
+          "+",
+          "0.245207",
+          "$"
+        ]
+      ],
+      [
+        "84.14941"
+      ]
+    ],
+    [
+      [
+        [
+          "$",
+          "-",
+          "$"
+        ],
+        "2",
+        "4"
+      ],
+      [
+        "35.4181"
+      ],
+      [
+        "35.4721"
+      ],
+      [
+        "214.931"
+      ],
+      [
+        [
+          "$",
+          "2.48578",
+          "\\times",
+          "10",
+          "^",
+          "{",
+          "-",
+          "3",
+          "}",
+          "$"
+        ]
+      ],
+      [
+        [
+          "$",
+          "-",
+          "$"
+        ],
+        "1",
+        "2"
+      ],
+      [
+        "18.2629"
+      ],
+      [
+        "18.2911"
+      ],
+      [
+        "127.391"
+      ],
+      [
+        [
+          "$",
+          "1.41618",
+          "\\times",
+          "10",
+          "^",
+          "{",
+          "-",
+          "3",
+          "}",
+          "$"
+        ]
+      ]
+    ],
+    [
+      [
+        "4"
+      ],
+      [
+        "68"
+      ],
+      [
+        [
+          "$",
+          "3.2394",
+          "\\times",
+          "10",
+          "^",
+          "{",
+          "-",
+          "3",
+          "}",
+          "$"
+        ]
+      ],
+      [
+        [
+          "$",
+          "8.0984",
+          "\\times",
+          "10",
+          "^",
+          "{",
+          "-",
+          "4",
+          "}",
+          "$"
+        ]
+      ],
+      [
+        [
+          "$",
+          "-",
+          "0.092799",
+          "$"
+        ]
+      ],
+      [
+        "84.148913"
+      ],
+      [
+        "2"
+      ],
+      [
+        "66"
+      ],
+      [
+        [
+          "$",
+          "1.6127",
+          "\\times",
+          "10",
+          "^",
+          "{",
+          "-",
+          "3",
+          "}",
+          "$"
+        ]
+      ],
+      [
+        [
+          "$",
+          "8.0633",
+          "\\times",
+          "10",
+          "^",
+          "{",
+          "-",
+          "4",
+          "}",
+          "$"
+        ]
+      ],
+      [
+        [
+          "$",
+          "-",
+          "0.092398",
+          "$"
+        ]
+      ],
+      [
+        "83.550120"
+      ],
+      [
+        "1"
+      ],
+      [
+        "66"
+      ],
+      [
+        [
+          "$",
+          "8.0407",
+          "\\times",
+          "10",
+          "^",
+          "{",
+          "-",
+          "4",
+          "}",
+          "$"
+        ]
+      ],
+      [
+        [
+          "$",
+          "8.0407",
+          "\\times",
+          "10",
+          "^",
+          "{",
+          "-",
+          "4",
+          "}",
+          "$"
+        ]
+      ],
+      [
+        [
+          "$",
+          "-",
+          "0.092139",
+          "$"
+        ]
+      ],
+      [
+        "83.268112"
+      ]
+    ],
+    [
+      [],
+      [
+        "0.06734"
+      ],
+      [
+        "0.06742"
+      ],
+      [
+        "0.07304"
+      ],
+      [
+        [
+          "$",
+          "2.89",
+          "\\times",
+          "10",
+          "^",
+          "{",
+          "-",
+          "7",
+          "}",
+          "$"
+        ]
+      ],
+      [
+        [
+          "$",
+          "-",
+          "0.322",
+          "$"
+        ]
+      ],
+      [
+        [
+          "$",
+          "2",
+          "h",
+          "_",
+          "0",
+          "$"
+        ]
+      ],
+      [
+        "0.12760"
+      ],
+      [
+        "0.12800"
+      ],
+      [
+        "0.24539"
+      ],
+      [
+        [
+          "$",
+          "2.65",
+          "\\times",
+          "10",
+          "^",
+          "{",
+          "-",
+          "7",
+          "}",
+          "$"
+        ]
+      ],
+      [
+        [
+          "$",
+          "-",
+          "0.094",
+          "$"
+        ]
+      ]
+    ]
+  ],
+  "figures": [
+    {
+      "start_line": 222,
+      "latex": "\\begin{figure}[htbp]\n  \\centering\n  \\includegraphics[width=0.78\\textwidth]{figures/geometry_loading/specimen_geometry.pdf}\n  \\caption{Plate geometry and tensile loading. Hole-center coordinates\n  $(x_{\\mathrm{c}},y_{\\mathrm{c}})$ are measured from the lower-left corner;\n  the computational ordinate is shifted by $-B/2$. The horizontal\n  edges carry outward tensile tractions of magnitude $\\sigma$,\n  while the remaining boundaries and crack faces are traction-free.\n  The curved crack is schematic; dimensions are not to scale.}\n  \\label{fig:geometry-loading}\n\\end{figure}"
+    },
+    {
+      "start_line": 581,
+      "latex": "\\begin{figure}[tbp]\n  \\centering\n  \\begin{minipage}{0.8\\textwidth}\n  \\centering\n  \\begin{subfigure}[t]{0.315\\linewidth}\n    \\centering\n    \\includegraphics[width=\\linewidth]{figures/mesh_levels/tip_mesh_H2.pdf}\n    \\caption{$4h_0$}\n    \\label{fig:mesh-level-H2}\n  \\end{subfigure}\n  \\hfill\n  \\begin{subfigure}[t]{0.315\\linewidth}\n    \\centering\n    \\includegraphics[width=\\linewidth]{figures/mesh_levels/tip_mesh_H1.pdf}\n    \\caption{$2h_0$}\n    \\label{fig:mesh-level-H1}\n  \\end{subfigure}\n  \\hfill\n  \\begin{subfigure}[t]{0.315\\linewidth}\n    \\centering\n    \\includegraphics[width=\\linewidth]{figures/mesh_levels/tip_mesh_H0.pdf}\n    \\caption{$h_0$}\n    \\label{fig:mesh-level-H0}\n  \\end{subfigure}\n\n  \\end{minipage}\n  \\caption{Structured-tip meshes with a common core radius\n  $r_{\\mathrm{core}}=3$ mm. The production spacing is\n  $h_0=0.027012$ mm; the illustrative $4h_0$ level does not\n  satisfy the COD sampling criterion.}\n  \\label{fig:mesh-levels}\n\\end{figure}"
+    },
+    {
+      "start_line": 906,
+      "latex": "\\begin{figure}[tbp]\n  \\centering\n  \\begin{minipage}{0.8\\textwidth}\n  \\centering\n  \\begin{subfigure}[t]{0.94\\linewidth}\n    \\centering\n    \\includegraphics[width=\\linewidth]{figures/trajectory/overview.pdf}\n    \\caption{Accepted trajectory and proposed extension.}\n    \\label{fig:trajectory-overview}\n  \\end{subfigure}\n\n  \\medskip\n\n  \\begin{subfigure}[t]{0.94\\linewidth}\n    \\centering\n    \\includegraphics[width=\\linewidth]{figures/trajectory/late_detail.pdf}\n    \\caption{Late-path detail and characteristic locations.}\n    \\label{fig:trajectory-late}\n  \\end{subfigure}\n\n  \\end{minipage}\n  \\caption{Crack trajectory from the asymmetric hole.\n  Each panel has equal horizontal and vertical scales. The solid line ends at the\n  last accepted tip $P_{23}$; the dashed $P_{23}P_{24}$ extension\n  has no accepted elastic solution. The diamond marks the\n  interpolated mode-mixity zero, not a solved crack tip.}\n  \\label{fig:trajectory}\n\\end{figure}"
+    },
+    {
+      "start_line": 958,
+      "latex": "\\begin{figure}[tbp]\n  \\centering\n  \\begin{minipage}{0.8\\textwidth}\n  \\centering\n  \\begin{subfigure}[t]{0.315\\linewidth}\n    \\centering\n    \\includegraphics[width=\\linewidth]{figures/intensities/KI.pdf}\n    \\caption{Opening-mode factor $K_{\\mathrm{I}}$.}\n    \\label{fig:intensities-KI}\n  \\end{subfigure}\\hfill\n  \\begin{subfigure}[t]{0.315\\linewidth}\n    \\centering\n    \\includegraphics[width=\\linewidth]{figures/intensities/KII.pdf}\n    \\caption{Sliding-mode factor $K_{\\mathrm{II}}$.}\n    \\label{fig:intensities-KII}\n  \\end{subfigure}\\hfill\n  \\begin{subfigure}[t]{0.315\\linewidth}\n    \\centering\n    \\includegraphics[width=\\linewidth]{figures/intensities/theta.pdf}\n    \\caption{Absolute direction $\\theta_k$.}\n    \\label{fig:intensities-theta}\n  \\end{subfigure}\n\n  \\end{minipage}\n  \\caption{Opening- and sliding-mode SIFs (MPa$\\sqrt{\\mathrm m}$)\n  and segment direction (degrees) versus accumulated crack length\n  $a$ (mm), under unit remote traction. The segment direction\n  reaches its minimum at $P_{22}$ and becomes less negative at $P_{23}$.}\n  \\label{fig:intensities}\n\\end{figure}"
+    },
+    {
+      "start_line": 1037,
+      "latex": "\\begin{figure}[htbp]\n  \\centering\n  \\begin{minipage}{0.8\\textwidth}\n  \\centering\n  \\begin{subfigure}[t]{0.485\\linewidth}\n    \\centering\n    \\includegraphics[width=\\linewidth]{figures/late/mode_mixity.pdf}\n    \\caption{Late mode-mixity history.}\n    \\label{fig:late-mixity}\n  \\end{subfigure}\\hfill\n  \\begin{subfigure}[t]{0.485\\linewidth}\n    \\centering\n    \\includegraphics[width=\\linewidth]{figures/late/turn.pdf}\n    \\caption{Incremental MTS turn.}\n    \\label{fig:late-turn}\n  \\end{subfigure}\n\n  \\end{minipage}\n  \\caption{Mode-mixity sign change and reversal of the MTS turn.\n  The dotted line denotes the interpolated mode-mixity zero.\n  The turn computed at $P_{23}$ ($a=92$ mm) predicts the\n  proposed, physically unsolved next segment.}\n  \\label{fig:late}\n\\end{figure}"
+    },
+    {
+      "start_line": 1094,
+      "latex": "\\begin{figure}[htbp]\n  \\centering\n  \\begin{minipage}{0.8\\textwidth}\n  \\centering\n  \\begin{subfigure}[t]{0.485\\linewidth}\n    \\centering\n    \\includegraphics[width=\\linewidth]{figures/cod/turn_linear.pdf}\n    \\caption{Turning-angle differences for linear COD fits.}\n    \\label{fig:cod-turn-linear}\n  \\end{subfigure}\n  \\hfill\n  \\begin{subfigure}[t]{0.485\\linewidth}\n    \\centering\n    \\includegraphics[width=\\linewidth]{figures/cod/turn_quadratic.pdf}\n    \\caption{Turning-angle differences for quadratic COD fits.}\n    \\label{fig:cod-turn-quadratic}\n  \\end{subfigure}\n\n  \\medskip\n\n  \\begin{subfigure}[t]{0.485\\linewidth}\n    \\centering\n    \\includegraphics[width=\\linewidth]{figures/cod/mixity_linear.pdf}\n    \\caption{Mode-mixity differences for linear COD fits.}\n    \\label{fig:cod-mixity-linear}\n  \\end{subfigure}\n  \\hfill\n  \\begin{subfigure}[t]{0.485\\linewidth}\n    \\centering\n    \\includegraphics[width=\\linewidth]{figures/cod/mixity_quadratic.pdf}\n    \\caption{Mode-mixity differences for quadratic COD fits.}\n    \\label{fig:cod-mixity-quadratic}\n  \\end{subfigure}\n\n  \\end{minipage}\n  \\caption{COD--EDI differences along the late crack path for\n  four normalized COD fitting windows and linear or quadratic\n  extrapolation. Upper panels compare MTS turns; lower panels\n  compare mode-mixity ratios. Zero denotes agreement of the\n  extraction methods, not a known exact solution.}\n  \\label{fig:cod}\n\\end{figure}"
+    },
+    {
+      "start_line": 1216,
+      "latex": "\\begin{figure}[!t]\n  \\centering\n  \\captionsetup[subfigure]{justification=raggedright,singlelinecheck=false}\n  \\begin{minipage}{0.8\\textwidth}\n  \\centering\n\n  \\begin{subfigure}[t]{0.94\\linewidth}\n    \\centering\n    \\includegraphics[width=\\linewidth]{figures/tip_resolution_sensitivity/trajectory.pdf}\n    \\caption{Trajectories with structured-tip spacings $h_0$ and $2h_0$.}\n    \\label{fig:tipres-trajectory}\n  \\end{subfigure}\n\n  \\par\\smallskip\n\n  \\begin{subfigure}[t]{0.315\\linewidth}\n    \\centering\n    \\includegraphics[width=\\linewidth]{figures/tip_resolution_sensitivity/vertical_deviation.pdf}\n    \\caption{Vertical tip-coordinate difference, $y_{2h_0}-y_{h_0}$.}\n    \\label{fig:tipres-dy}\n  \\end{subfigure}\n  \\hfill\n  \\begin{subfigure}[t]{0.315\\linewidth}\n    \\centering\n    \\includegraphics[width=\\linewidth]{figures/tip_resolution_sensitivity/direction_deviation.pdf}\n    \\caption{Crack-direction difference, $\\theta_{2h_0}-\\theta_{h_0}$.}\n    \\label{fig:tipres-dtheta}\n  \\end{subfigure}\n  \\hfill\n  \\begin{subfigure}[t]{0.315\\linewidth}\n    \\centering\n    \\includegraphics[width=\\linewidth]{figures/tip_resolution_sensitivity/mode_mixity.pdf}\n    \\caption{Mode-mixity histories for the two tip resolutions.}\n    \\label{fig:tipres-q}\n  \\end{subfigure}\n\n  \\end{minipage}\n  \\caption{Effect of structured-tip resolution on the propagated\n  trajectory. The $h_0$ and $2h_0$ paths share the interaction-domain\n  radii and the M0 exterior sizing law. Panel (d) shows\n  $K_{\\mathrm{II}}/K_{\\mathrm{I}}$. The diamond indicates the\n  interpolated mode-mixity zero of the $h_0$ path.}\n  \\label{fig:tip-resolution-sensitivity}\n\\end{figure}"
+    },
+    {
+      "start_line": 1323,
+      "latex": "\\begin{figure}[htbp]\n  \\centering\n  \\captionsetup[subfigure]{justification=raggedright,singlelinecheck=false}\n  \\begin{minipage}{0.8\\textwidth}\n  \\centering\n\n  \\begin{subfigure}[t]{0.94\\linewidth}\n    \\centering\n    \\includegraphics[width=\\linewidth]{figures/m1_mesh_sensitivity/trajectory.pdf}\n    \\caption{Crack trajectories with the M0 and M1 exterior sizing laws.}\n    \\label{fig:m1mesh-trajectory}\n  \\end{subfigure}\n\n  \\par\\smallskip\n\n  \\begin{subfigure}[t]{0.315\\linewidth}\n    \\centering\n    \\includegraphics[width=\\linewidth]{figures/m1_mesh_sensitivity/vertical_deviation.pdf}\n    \\caption{Vertical tip-coordinate difference, $y_{\\mathrm{M1}}-y_{\\mathrm{M0}}$.}\n    \\label{fig:m1mesh-dy}\n  \\end{subfigure}\n  \\hfill\n  \\begin{subfigure}[t]{0.315\\linewidth}\n    \\centering\n    \\includegraphics[width=\\linewidth]{figures/m1_mesh_sensitivity/direction_deviation.pdf}\n    \\caption{Crack-direction difference, $\\theta_{\\mathrm{M1}}-\\theta_{\\mathrm{M0}}$.}\n    \\label{fig:m1mesh-dtheta}\n  \\end{subfigure}\n  \\hfill\n  \\begin{subfigure}[t]{0.315\\linewidth}\n    \\centering\n    \\includegraphics[width=\\linewidth]{figures/m1_mesh_sensitivity/mode_mixity.pdf}\n    \\caption{Mode-mixity histories for M0 and M1.}\n    \\label{fig:m1mesh-q}\n  \\end{subfigure}\n\n  \\end{minipage}\n  \\caption{Effect of exterior-mesh coarsening on the crack path.\n  The M0 and M1 trajectories are propagated separately with\n  identical near-tip discretizations and interaction-domain radii.\n  Panel (d) shows $K_{\\mathrm{II}}/K_{\\mathrm{I}}$. The diamond marks\n  the interpolated mode-mixity zero of the\n  M0 path.}\n  \\label{fig:m1-mesh-sensitivity}\n\\end{figure}"
+    },
+    {
+      "start_line": 1382,
+      "latex": "\\begin{figure}[htbp]\n  \\centering\n  \\captionsetup[subfigure]{justification=raggedright,singlelinecheck=false}\n  \\begin{minipage}{0.8\\textwidth}\n  \\centering\n\n  \\begin{subfigure}[t]{0.94\\linewidth}\n    \\centering\n    \\includegraphics[width=\\linewidth]{figures/increment_sensitivity/trajectory.pdf}\n    \\caption{Independently propagated crack trajectories for\n    $\\Delta a=4$, 2, and 1 mm, all continued to 92 mm.}\n    \\label{fig:inc-trajectory}\n  \\end{subfigure}\n  \\par\\smallskip\n  \\begin{subfigure}[t]{0.315\\linewidth}\n    \\centering\n    \\includegraphics[width=\\linewidth]{figures/increment_sensitivity/vertical_deviation.pdf}\n    \\caption{Successive vertical tip-coordinate differences.}\n    \\label{fig:inc-dy}\n  \\end{subfigure}\n  \\hfill\n  \\begin{subfigure}[t]{0.315\\linewidth}\n    \\centering\n    \\includegraphics[width=\\linewidth]{figures/increment_sensitivity/direction_deviation.pdf}\n    \\caption{Successive crack-direction differences.}\n    \\label{fig:inc-dtheta}\n  \\end{subfigure}\n  \\hfill\n  \\begin{subfigure}[t]{0.315\\linewidth}\n    \\centering\n    \\includegraphics[width=\\linewidth]{figures/increment_sensitivity/turn_density.pdf}\n    \\caption{Turning density along the three trajectories.}\n    \\label{fig:inc-turn-density}\n  \\end{subfigure}\n\n  \\end{minipage}\n  \\par\\medskip\n  \\caption{Coupled crack-increment and discretization refinement.\n  The $4$-, $2$-, and $1$-mm paths share dimensionless mesh and\n  interaction-domain scales within the scaled-M1 family.\n  Panel (b) shows $y_{2\\,\\mathrm{mm}}-y_{4\\,\\mathrm{mm}}$ and\n  $y_{1\\,\\mathrm{mm}}-y_{2\\,\\mathrm{mm}}$ at exact common crack lengths.\n  Panel (c) shows the corresponding differences of absolute directions\n  in the frozen initiation frame. Panel (d) shows\n  turning density $\\Delta\\theta/\\Delta a$ on each path's native grid.}\n  \\label{fig:increment-sensitivity}\n\\end{figure}"
+    },
+    {
+      "start_line": 1748,
+      "latex": "\\begin{figure}[htbp]\n  \\centering\n  \\begin{minipage}{0.8\\textwidth}\n  \\centering\n  \\begin{subfigure}[t]{0.485\\linewidth}\n    \\centering\n    \\includegraphics[width=\\linewidth]{figures/quality/min_angle.pdf}\n    \\caption{Minimum triangle-angle check.}\n    \\label{fig:quality-angle}\n  \\end{subfigure}\n  \\hfill\n  \\begin{subfigure}[t]{0.485\\linewidth}\n    \\centering\n    \\includegraphics[width=\\linewidth]{figures/quality/size_ratio.pdf}\n    \\caption{Adjacent element-size-ratio check.}\n    \\label{fig:quality-ratio}\n  \\end{subfigure}\n\n  \\medskip\n\n  \\begin{subfigure}[t]{0.485\\linewidth}\n    \\centering\n    \\includegraphics[width=\\linewidth]{figures/quality/iterations.pdf}\n    \\caption{PCG iterations for accepted physical solves.}\n    \\label{fig:quality-iterations}\n  \\end{subfigure}\n  \\hfill\n  \\begin{subfigure}[t]{0.485\\linewidth}\n    \\centering\n    \\includegraphics[width=\\linewidth]{figures/quality/true_residual.pdf}\n    \\caption{True relative residual normalized by its acceptance gate.}\n    \\label{fig:quality-residual}\n  \\end{subfigure}\n\n  \\end{minipage}\n  \\caption{Diagnostics for accepted $P_2$--$P_{23}$ states. Dashed lines are\n  the $20^\\circ$ minimum-angle gate, 1.8 adjacent-size-ratio gate, and normalized\n  true-residual gate of one. The separately enforced reported-PCG tolerance\n  is $10^{-10}$; the true-residual acceptance denominator is\n  $5\\times10^{-10}$. No failed $P_{24}$ solve is plotted.}\n  \\label{fig:quality}\n\\end{figure}"
+    }
+  ],
+  "graphic_assets": [
+    {
+      "path": "paper/figures/geometry_loading/specimen_geometry.pdf",
+      "git_blob_sha": "ec724884f7890f384e2f28dbc8a310fdb9e0096d",
+      "sha256": "c2e347cd003a4bfcf08da1d26e333b3549606aefd51a7dc61c4fb4a0ce070700"
+    },
+    {
+      "path": "paper/figures/mesh_levels/tip_mesh_H2.pdf",
+      "git_blob_sha": "856a46fd11a9c9714840501c3cb349370723783f",
+      "sha256": "9989f4b92ff14a5275f9561919a2c524939fcb43bf5319c9fe7d110ec6338fe8"
+    },
+    {
+      "path": "paper/figures/mesh_levels/tip_mesh_H1.pdf",
+      "git_blob_sha": "b7138b1c5915b0de7d8d6b600c48e3b35ceefd11",
+      "sha256": "7a17571b8397e83d96644d4ef178ea1b73fc8b2a1e38061b7fc9776247efc6fb"
+    },
+    {
+      "path": "paper/figures/mesh_levels/tip_mesh_H0.pdf",
+      "git_blob_sha": "cd4ae4f3fd6988766cbcc9c72c58bf5f2ef72e55",
+      "sha256": "e9f4f60b7371b27fe7a7274f0fd6b6ad4e32d7a83d30178d5b46a66062daefc5"
+    },
+    {
+      "path": "paper/figures/trajectory/overview.pdf",
+      "git_blob_sha": "7de82706d7f02ddc2e4dfafd9a4a2e19f8e4f28d",
+      "sha256": "cdbc41fba1a4cb8097f700d842dab0d1f899388e1182e5d8a2da478dd325761d"
+    },
+    {
+      "path": "paper/figures/trajectory/late_detail.pdf",
+      "git_blob_sha": "623b83de311fe038ed6c2bc21fc467d2693e4b6b",
+      "sha256": "1ab21b0532afa581063d8cf0658ec620b7ccc6f0c7fd91073c3a78f243864cbf"
+    },
+    {
+      "path": "paper/figures/intensities/KI.pdf",
+      "git_blob_sha": "cb320b02fc93bc998d85e34dd87855b12d3fd334",
+      "sha256": "8bf485d916d81ee7e1debecfd7fc780374779e62802b540dbe9295fef8f7cf80"
+    },
+    {
+      "path": "paper/figures/intensities/KII.pdf",
+      "git_blob_sha": "0add148227cb30dafd178724cdd992144b7ea70d",
+      "sha256": "cd777217983f07e4400ce43cea5da6d8a9ba55b36b3a2e10ee72063de8747f58"
+    },
+    {
+      "path": "paper/figures/intensities/theta.pdf",
+      "git_blob_sha": "ec9c515016bce81a40d680c84e04ad7efd495b8c",
+      "sha256": "0c39915f6da323ab60a81cfda0b26c9a14c381c0df2e2a39b02232dd1b99675a"
+    },
+    {
+      "path": "paper/figures/late/mode_mixity.pdf",
+      "git_blob_sha": "a3dac02dc878a5e581e628382d36da467e932af6",
+      "sha256": "9a61eeb6d2295017362985857917cd8eee5581ab121913ce5bfbeda54bf30229"
+    },
+    {
+      "path": "paper/figures/late/turn.pdf",
+      "git_blob_sha": "da2600cdbdee3c5dbea76260ba1a7d8c3b03eef8",
+      "sha256": "5dafefb090503f71c0b587154e91fb8ea7db9c0b269fad3bd9ec7ed0e1d94abd"
+    },
+    {
+      "path": "paper/figures/cod/turn_linear.pdf",
+      "git_blob_sha": "b0ca70dbb87429b6a039f418f1dbf0d2e4c817e3",
+      "sha256": "872f25275b03a43fce3f52fceaaa0af3444db581d1217405a090fed9c6cef114"
+    },
+    {
+      "path": "paper/figures/cod/turn_quadratic.pdf",
+      "git_blob_sha": "44da0d427434229e15f19a547e575fa95ccad0c3",
+      "sha256": "cb39967e39a52580c32d53f01eeda67547fd2f5195dba5a5f5d312e60b1f07c5"
+    },
+    {
+      "path": "paper/figures/cod/mixity_linear.pdf",
+      "git_blob_sha": "126c2f6f58661d972717ad74542a804fc3e1ec42",
+      "sha256": "b005f7d3bb7c52adbd9f96727289ae43a9a5ff2e3756fc9d98b73437d8a38f2a"
+    },
+    {
+      "path": "paper/figures/cod/mixity_quadratic.pdf",
+      "git_blob_sha": "b37fcac75478d4c86b2f1c8bd6d8d47090188cae",
+      "sha256": "e0f10bf129d2d567e8bc3b36f1d4d119d07005efb174fc2ec04ae8b2fc10b99a"
+    },
+    {
+      "path": "paper/figures/tip_resolution_sensitivity/trajectory.pdf",
+      "git_blob_sha": "4220cca45cfc305150a99b2a9e8d0ceff235b954",
+      "sha256": "14514a478554b36f6064a7649427ef8e2593deda1a609ca1ce19970c3b0882f8"
+    },
+    {
+      "path": "paper/figures/tip_resolution_sensitivity/vertical_deviation.pdf",
+      "git_blob_sha": "8125285b85135867a66716cdcebe3a90a30414db",
+      "sha256": "dfda3062c50bce233045940c223dc30672036c8675c6296279ef7252eab04b5f"
+    },
+    {
+      "path": "paper/figures/tip_resolution_sensitivity/direction_deviation.pdf",
+      "git_blob_sha": "7422cbc070f657897cecc0d5e456c572eaa088fb",
+      "sha256": "75af69808070f7b8f9b20415b17247243aa1de306ed3d35e9ebda363c955f950"
+    },
+    {
+      "path": "paper/figures/tip_resolution_sensitivity/mode_mixity.pdf",
+      "git_blob_sha": "8bf01306c4d12ae574fc1accb24b3db0ccf6979a",
+      "sha256": "75ee7d9e61b93612a63d6486d27c60cac030d54390a4203f26f2d91ee6e7b9a1"
+    },
+    {
+      "path": "paper/figures/m1_mesh_sensitivity/trajectory.pdf",
+      "git_blob_sha": "cac747a7106c958a286db325f0a0abbe3116eaf9",
+      "sha256": "fb578075fa0a99349c1ce89dd98fb1baf7ff7b86e9a416ea35d6f5c287d06a15"
+    },
+    {
+      "path": "paper/figures/m1_mesh_sensitivity/vertical_deviation.pdf",
+      "git_blob_sha": "bf73b00265666642dd6212dbcb7362478b002056",
+      "sha256": "775f841eb48229dc620699dad30d152d68a03ae77676c6dd3542798914c96355"
+    },
+    {
+      "path": "paper/figures/m1_mesh_sensitivity/direction_deviation.pdf",
+      "git_blob_sha": "98800e3d3185a3c1677a50f7b4e89f6ded36e68d",
+      "sha256": "67ca2e408088d9b23879e457191a70db785be11cdf0d152e3492986bd2afb7c0"
+    },
+    {
+      "path": "paper/figures/m1_mesh_sensitivity/mode_mixity.pdf",
+      "git_blob_sha": "bb6ee9b0fd4507714b325d4344fe5403e121cf92",
+      "sha256": "dd1f8b5dc91ef05b97567f14f4e41b04a4eefd0a877a27fd188550d43b695098"
+    },
+    {
+      "path": "paper/figures/increment_sensitivity/trajectory.pdf",
+      "git_blob_sha": "3dc07b5ad0162a21db52eb932459424aae8a5571",
+      "sha256": "1ced112c6c973c1c949ac6f6160c1a5fa46ddf4fcc6d45f842c7258c31fde761"
+    },
+    {
+      "path": "paper/figures/increment_sensitivity/vertical_deviation.pdf",
+      "git_blob_sha": "ad5745350190ec5b6e767a2aa756052fe1f34b1e",
+      "sha256": "0a0e894f173b05ce9004bd26360a31cf5546b24af22241994dd21f38a080b997"
+    },
+    {
+      "path": "paper/figures/increment_sensitivity/direction_deviation.pdf",
+      "git_blob_sha": "7f84b89428b87ad8a937ef03288142b9d0b10852",
+      "sha256": "cdcba3ba38889b643fe054c124577a882fdcd1515ef45bea3ed633bd517acc32"
+    },
+    {
+      "path": "paper/figures/increment_sensitivity/turn_density.pdf",
+      "git_blob_sha": "b11943acb5a59db44f5f1e4d8fee5743834d376b",
+      "sha256": "e4272255f2f6f2ccdf6bc7680bb3983c9852c345ed7d74009a9c4502aca0854a"
+    },
+    {
+      "path": "paper/figures/quality/min_angle.pdf",
+      "git_blob_sha": "4e66c0c567b323b5364b39697165e021749cbb8d",
+      "sha256": "75dbe1fb654b0bd606e347009eca8f6ad7018473e400ca81c72eb57135e2fecb"
+    },
+    {
+      "path": "paper/figures/quality/size_ratio.pdf",
+      "git_blob_sha": "ff1720343e752324a473bf5d75f6377a838a73ab",
+      "sha256": "639c213cb2ab09d3d8b68f41db657631f03d53efaa31987aae3bb31df19eaeda"
+    },
+    {
+      "path": "paper/figures/quality/iterations.pdf",
+      "git_blob_sha": "7c910346f13c8259ff9f21d86be7faca59d857a8",
+      "sha256": "38659aae3d18064c38e9dd1becffd04dd36eee3a5cb00d369a67f383d5d00130"
+    },
+    {
+      "path": "paper/figures/quality/true_residual.pdf",
+      "git_blob_sha": "445d6962371ec42dc35773c6510b5ffaa1ae1cd3",
+      "sha256": "d14577ded719a4ea94cf40e0844ccc91da2bcc6b1fdac9f8352bed97c0714779"
+    }
+  ],
+  "citation_groups": [
+    "Bowie1956",
+    "WooWangCheung1989",
+    "XuEtAl2018",
+    "SaporaEtAl2018",
+    "SaporaCornetti2018",
+    "ErdoganSih1963",
+    "BouchardEtAl2003",
+    "BogdanovSelivanov2026",
+    "WangMeguidPapanikos1999",
+    "LiuLiXie2017",
+    "FangEtAl2020",
+    "YangEtAl2020",
+    "AhmedEtAl2021",
+    "AlshoaibiFageehi2022",
+    "YauWangCorten1980",
+    "GuineaPlanasElices2000",
+    "CourtinEtAl2005",
+    "QianEtAl2016",
+    "GhafooriAhangarVerreman2019",
+    "BogdanovSelivanov2026",
+    "FangEtAl2020"
+  ],
+  "cited_bibliography": {
+    "Bowie1956": "https://doi.org/10.1002/sapm195635160",
+    "WooWangCheung1989": "https://doi.org/10.1016/0013-7944(89)90300-7",
+    "XuEtAl2018": "https://doi.org/10.1111/ffe.12674",
+    "SaporaEtAl2018": "https://doi.org/10.1111/ffe.12801",
+    "SaporaCornetti2018": "https://doi.org/10.1007/s10704-018-0315-6",
+    "ErdoganSih1963": "https://doi.org/10.1115/1.3656897",
+    "BouchardEtAl2003": "https://doi.org/10.1016/S0045-7825(03)00391-8",
+    "BogdanovSelivanov2026": "https://doi.org/10.1007/s10704-026-00930-1",
+    "WangMeguidPapanikos1999": "https://doi.org/10.1016/S0013-7944(99)00067-3",
+    "LiuLiXie2017": "https://doi.org/10.1016/j.engfracmech.2017.01.010",
+    "FangEtAl2020": "https://doi.org/10.1016/j.tafmec.2020.102724",
+    "YangEtAl2020": "https://doi.org/10.1016/j.tafmec.2020.102559",
+    "AhmedEtAl2021": "https://doi.org/10.1111/ffe.13359",
+    "AlshoaibiFageehi2022": "https://doi.org/10.3390/ma15010363",
+    "YauWangCorten1980": "https://doi.org/10.1115/1.3153665",
+    "GuineaPlanasElices2000": "https://doi.org/10.1016/S0013-7944(00)00016-3",
+    "CourtinEtAl2005": "https://doi.org/10.1016/j.engfracmech.2005.02.003",
+    "QianEtAl2016": "https://doi.org/10.1016/j.engfracmech.2016.02.014",
+    "GhafooriAhangarVerreman2019": "https://doi.org/10.1007/s11668-018-0571-9"
+  }
+}
