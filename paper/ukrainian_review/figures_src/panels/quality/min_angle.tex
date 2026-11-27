@@ -1,0 +1,20 @@
+% Fig. 10(a): minimum triangle angle (deg) of each accepted mesh versus path length; dashed: 20 deg gate.
+% Data: fig10_mesh.csv (s_mm = 1e3*Q.path_length_m, min_angle_deg). Top row: no x label (as the English figure).
+\documentclass[border=0pt,multi=tikzpicture]{standalone}
+\input{../../ua_figstyle.tex}
+\input{../../data/ua_constants.tex}
+\newlength\uaAxW\newlength\uaAxH
+\begin{document}
+\setlength\uaAxW{\dimexpr\uaHalfP-20mm\relax}% L 16mm + axis + R 4mm
+\setlength\uaAxH{40mm}%
+\pgfplotstableread[col sep=comma]{../../data/fig10_mesh.csv}\T
+\begin{tikzpicture}[ua page={16mm}{4mm}]
+\begin{axis}[ua base,at={(0,0)},anchor=south west,width=\uaAxW,height=\uaAxH,
+  xmin=8,xmax=92,xtick={8,36,64,92},ymin=19,ymax=27,ytick={20,22,...,26},
+  ylabel={Мінімальний кут, град}]
+ \addplot[ua gate] coordinates {(8,\uaCMinAngleGateDeg) (92,\uaCMinAngleGateDeg)};
+ \addplot[ua single] table[x=s_mm,y=min_angle_deg]{\T};
+\end{axis}
+\uaPage{16mm}{6mm}{4mm}{1.5mm}
+\end{tikzpicture}
+\end{document}

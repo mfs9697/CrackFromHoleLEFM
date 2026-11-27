@@ -1,0 +1,28 @@
+% Fig. 3(b): late part of the accepted trajectory and characteristic points (equal x/y scale).
+% Data: fig03_vertices.csv (P15..P23 accepted, P23-P24 qualified unsolved extension), ua_constants.tex (P_LS, x = 2A).
+\documentclass[border=0pt,multi=tikzpicture]{standalone}
+\input{../../ua_figstyle.tex}
+\input{../../data/ua_constants.tex}
+\newlength\uaAxW\newlength\uaAxH
+\begin{document}
+\setlength\uaAxW{\dimexpr\uaWideP-16mm\relax}% slot 124.832 mm = L 14 mm + axis + R 2 mm
+\setlength\uaAxH{\dimexpr\uaAxW*77/440\relax}% equal scale: (-21.3 - -29) / (302 - 258) = 7.7/44
+\pgfplotstableread[col sep=comma]{../../data/fig03_vertices.csv}\V
+\begin{tikzpicture}[ua page={14mm}{2mm}]
+\begin{axis}[ua base,at={(0,0)},anchor=south west,width=\uaAxW,height=\uaAxH,
+  xmin=258,xmax=302,ymin=-29,ymax=-21.3,xtick={260,265,...,300},ytick={-28,-26,-24,-22},
+  xlabel={$x$, мм},ylabel={$y$, мм}]
+ \addplot[ua geom] coordinates {(\uaCRightBoundaryXMm,-27.3) (\uaCRightBoundaryXMm,-21.3)};
+ \addplot[ua ref] table[x=x_mm,y=y_mm,restrict expr to domain={\thisrow{k}}{15:23}]{\V};
+ \addplot[ua unsolved] table[x=x_mm,y=y_mm,restrict expr to domain={\thisrow{k}}{23:24}]{\V};
+ \addplot[ua qmax] table[x=x_mm,y=y_mm,restrict expr to domain={\thisrow{k}}{17:17}]{\V};
+ \addplot[ua ls] coordinates {(\uaCXlsMm,\uaCYlsMm)};
+ \addplot[ua last accepted] table[x=x_mm,y=y_mm,restrict expr to domain={\thisrow{k}}{23:23}]{\V};
+ \node[anchor=south,font=\uaNoteFont,inner sep=1pt] at (axis cs:267.279,-23.043) {$P_{17}$};
+ \node[anchor=south,font=\uaNoteFont,inner sep=1pt] at (axis cs:284.218,-24.263) {$q_{\mathrm{K}}=0$};
+ \node[anchor=south east,font=\uaNoteFont,inner sep=1pt] at (axis cs:291.490,-25.229) {$P_{23}$};
+ \node[anchor=north east,font=\uaNoteFont,inner sep=1pt,text=uaOrange] at (axis cs:295.379,-26.631) {$P_{24}$, без розв’язку};
+\end{axis}
+\uaPage{14mm}{10.5mm}{2mm}{1mm}
+\end{tikzpicture}
+\end{document}

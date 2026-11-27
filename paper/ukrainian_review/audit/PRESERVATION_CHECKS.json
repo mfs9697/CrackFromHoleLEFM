@@ -34,10 +34,32 @@
     "missing_figure": {
       "detected": true,
       "check": "graphics_identity_and_order"
+    },
+    "wrong_unit_in_display": {
+      "detected": true,
+      "check": "all_math_tokens"
+    },
+    "wrong_unit_in_text": {
+      "detected": true,
+      "check": "all_math_tokens"
+    },
+    "wrong_unit_in_table_header": {
+      "detected": true,
+      "check": "table_units"
+    },
+    "display_punctuation": {
+      "detected": true,
+      "check": "all_math_tokens"
     }
   },
   "allowed_translations_inside_math": {
-    "\\text{in }": "\\text{в }"
+    "\\text{in }": "\\text{в }",
+    "\\mathrm{mm}": "\\text{мм}",
+    "\\mu\\mathrm{m}": "\\text{мкм}",
+    "\\mathrm{MPa}": "\\text{МПа}",
+    "\\mathrm m": "\\text{м}",
+    "[$\\mu$m]": "[мкм]",
+    "\\frac{L_{\\mathrm{tr}}}{\\Delta a}=1.00,\n\\]": "\\frac{L_{\\mathrm{tr}}}{\\Delta a}=1.00.\n\\]"
   },
   "number_of_inline_and_display_math_spans": 502,
   "body_citation_groups": 21,

@@ -1,0 +1,21 @@
+% Fig. 10(b): largest adjacent-element size ratio of each accepted mesh versus path length; dashed: 1.8 gate.
+% Data: fig10_mesh.csv (s_mm, max_neighbor_ratio). Top row: no x label (as the English figure).
+\documentclass[border=0pt,multi=tikzpicture]{standalone}
+\input{../../ua_figstyle.tex}
+\input{../../data/ua_constants.tex}
+\newlength\uaAxW\newlength\uaAxH
+\begin{document}
+\setlength\uaAxW{\dimexpr\uaHalfP-20mm\relax}% L 16mm + axis + R 4mm
+\setlength\uaAxH{40mm}%
+\pgfplotstableread[col sep=comma]{../../data/fig10_mesh.csv}\T
+\begin{tikzpicture}[ua page={16mm}{4mm}]
+\begin{axis}[ua base,at={(0,0)},anchor=south west,width=\uaAxW,height=\uaAxH,
+  xmin=8,xmax=92,xtick={8,36,64,92},ymin=1.78,ymax=1.804,ytick={1.780,1.785,...,1.800},
+  yticklabel style={/pgf/number format/.cd,fixed,fixed zerofill,precision=3},
+  ylabel={Відношення розмірів}]
+ \addplot[ua gate] coordinates {(8,\uaCSizeRatioGate) (92,\uaCSizeRatioGate)};
+ \addplot[ua single] table[x=s_mm,y=max_neighbor_ratio]{\T};
+\end{axis}
+\uaPage{16mm}{6mm}{4mm}{1.5mm}
+\end{tikzpicture}
+\end{document}

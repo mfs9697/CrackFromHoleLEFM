@@ -1,0 +1,23 @@
+% Fig. 2(b): structured crack-tip mesh 2h0 -- RETAINED VECTOR LAYER. The mesh coordinates/connectivity were not saved and
+% remeshing is prohibited, so every mesh and crack stroke of the approved English panel (paper/figures/mesh_levels/
+% tip_mesh_H1.pdf) is kept unchanged; only the MATLAB frame/ticks, the outlined Computer Modern label glyphs and the white
+% backgrounds were neutralized (build_retained_layers.py, mode 'mesh'). Axes, ticks and labels are typeset anew in STIX Two.
+% Calibration: frame = generator limits x1 in [-3.15, 0.85] mm, x2 in [-1.65, 1.65] mm; tick marks cross-check at integers.
+\documentclass[border=0pt,multi=tikzpicture]{standalone}
+\input{../../ua_figstyle.tex}
+\input{../../retained/tip_mesh_H1_calib.tex}
+\newlength\uaAxW\newlength\uaAxH
+\begin{document}
+\setlength\uaAxW{\dimexpr\uaThird-17mm\relax}% L 14 mm + axis + R 3 mm
+\setlength\uaAxH{\dimexpr\uaAxW*33/40\relax}% equal scale: (1.65 - -1.65) / (0.85 - -3.15)
+\pgfmathsetlengthmacro\uaRW{(\uaRxR-\uaRxL)/(\uaRxmax-\uaRxmin)*\uaAxW}%
+\pgfmathsetlengthmacro\uaRH{(\uaRyT-\uaRyB)/(\uaRymax-\uaRymin)*\uaAxH}%
+\begin{tikzpicture}[ua page={14mm}{3mm}]
+\begin{axis}[ua base,at={(0,0)},anchor=south west,width=\uaAxW,height=\uaAxH,
+  xmin=\uaRxmin,xmax=\uaRxmax,ymin=\uaRymin,ymax=\uaRymax,xtick={-3,-2,-1,0},ytick={-1,0,1},
+  xlabel={$x_{1}$, мм},ylabel={$x_{2}$, мм}]
+ \node[anchor=south west,inner sep=0pt,outer sep=0pt] at (axis cs:\uaRxL,\uaRyB) {\includegraphics[width=\uaRW,height=\uaRH]{\uaRetainedLayer}};
+\end{axis}
+\uaPage{14mm}{10.5mm}{3mm}{1.5mm}
+\end{tikzpicture}
+\end{document}

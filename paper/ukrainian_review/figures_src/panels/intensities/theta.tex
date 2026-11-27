@@ -1,0 +1,18 @@
+% Fig. 4(c): absolute segment angle theta_k (deg) in the frozen frame (not a local MTS turn), P1..P23.
+% Data: fig04_states.csv (a_mm, theta_deg); no transformation.
+\documentclass[border=0pt,multi=tikzpicture]{standalone}
+\input{../../ua_figstyle.tex}
+\newlength\uaAxW\newlength\uaAxH
+\begin{document}
+\setlength\uaAxW{\dimexpr\uaThird-19.5mm\relax}% slot 52.29 mm = L 15.5 mm + axis + R 4 mm
+\setlength\uaAxH{42mm}%
+\pgfplotstableread[col sep=comma]{../../data/fig04_states.csv}\T
+\begin{tikzpicture}[ua page={15.5mm}{4mm}]
+\begin{axis}[ua base,at={(0,0)},anchor=south west,width=\uaAxW,height=\uaAxH,
+  xmin=4,xmax=92,xtick={4,24,44,64,92},ymin=-4,ymax=0.2,ytick={-4,-3,...,0},
+  xlabel={$a$, мм},ylabel={$\theta_k$, град}]
+ \addplot[ua single] table[x=a_mm,y=theta_deg]{\T};
+\end{axis}
+\uaPage{15.5mm}{10.5mm}{4mm}{1.5mm}
+\end{tikzpicture}
+\end{document}

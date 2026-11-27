@@ -1,0 +1,24 @@
+% Fig. 8(d): 1e3 x K_II/K_I for M0 and M1 -- RETAINED VECTOR LAYER (paper/data/retained_figure_7_9/m1_mode_mixity.pdf,
+% graph span unchanged incl. its green dashed local-symmetry line; source ticks are in units of 1e-3 -> new axis label
+% 10^3 K_II/K_I with the same tick values); axes, ticks, labels and legend typeset anew. Not digitized.
+\documentclass[border=0pt,multi=tikzpicture]{standalone}
+\input{../../ua_figstyle.tex}
+\input{../../retained/m1_mode_mixity_calib.tex}
+\newlength\uaAxW\newlength\uaAxH
+\begin{document}
+\setlength\uaAxW{\dimexpr\uaThird-21.5mm\relax}% L 17.5 mm + axis + R 4 mm
+\setlength\uaAxH{42mm}%
+\pgfmathsetlengthmacro\uaRW{(\uaRxR-\uaRxL)/(\uaRxmax-\uaRxmin)*\uaAxW}%
+\pgfmathsetlengthmacro\uaRH{(\uaRyT-\uaRyB)/(\uaRymax-\uaRymin)*\uaAxH}%
+\begin{tikzpicture}[ua page={17.5mm}{4mm}]
+\begin{axis}[ua base,at={(0,0)},anchor=south west,width=\uaAxW,height=\uaAxH,
+  xmin=\uaRxmin,xmax=\uaRxmax,ymin=\uaRymin,ymax=\uaRymax,xtick={0,50,100},ytick={-6,-4,...,4},
+  xlabel={$a$, мм},ylabel={$10^{3}\,K_{\mathrm{II}}/K_{\mathrm{I}}$},
+  legend style={at={(axis description cs:0.03,0.03)},anchor=south west}]
+ \node[anchor=south west,inner sep=0pt,outer sep=0pt] at (axis cs:\uaRxL,\uaRyB) {\includegraphics[width=\uaRW,height=\uaRH]{\uaRetainedLayer}};
+ \addlegendimage{ua ref}\addlegendentry{M0}
+ \addlegendimage{ua alt}\addlegendentry{M1}
+\end{axis}
+\uaPage{17.5mm}{10.5mm}{4mm}{1.5mm}
+\end{tikzpicture}
+\end{document}

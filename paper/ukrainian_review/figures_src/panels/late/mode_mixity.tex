@@ -1,0 +1,21 @@
+% Fig. 5(a): 1e3 x K_II/K_I on the late path (accepted states with a >= 60 mm); dotted line: interpolated a_LS.
+% Data: fig05_late.csv (a_mm, q_1e3 = 1e3*KII/KI); a_LS from ua_constants.tex (E.interpolatedZeroLength_mm).
+\documentclass[border=0pt,multi=tikzpicture]{standalone}
+\input{../../ua_figstyle.tex}
+\input{../../data/ua_constants.tex}
+\newlength\uaAxW\newlength\uaAxH
+\begin{document}
+\setlength\uaAxW{\dimexpr\uaHalfP-19mm\relax}% L 15mm + axis + R 4mm
+\setlength\uaAxH{44mm}%
+\pgfplotstableread[col sep=comma]{../../data/fig05_late.csv}\T
+\begin{tikzpicture}[ua page={15mm}{4mm}]
+\begin{axis}[ua base,at={(0,0)},anchor=south west,width=\uaAxW,height=\uaAxH,
+  xmin=60,xmax=94,xtick={60,68,...,92},ymin=-6,ymax=4,ytick={-6,-4,...,4},
+  xlabel={$a$, мм},ylabel={$10^{3}\,K_{\mathrm{II}}/K_{\mathrm{I}}$}]
+ \addplot[ua zero] coordinates {(60,0) (94,0)};
+ \addplot[ua lsline] coordinates {(\uaCAlsMm,-6) (\uaCAlsMm,4)};
+ \addplot[ua single] table[x=a_mm,y=q_1e3]{\T};
+\end{axis}
+\uaPage{15mm}{10.5mm}{4mm}{1.5mm}
+\end{tikzpicture}
+\end{document}

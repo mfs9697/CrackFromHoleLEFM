@@ -1,0 +1,83 @@
+% ua_figstyle.tex -- centralized graphical design system of the Ukrainian figures (AAM-UA7).
+% Every panel is a standalone XeLaTeX document designed at its FINAL printed width in main_ua.tex, so nominal
+% font sizes below are the effective printed sizes (main_ua.tex includes each panel at width=\linewidth, scale 1).
+% Text width 166 mm. Figures 3, 5, 6, 10 keep the inherited minipage of 0.8\textwidth (132.8 mm); figures with
+% three-panel rows (2, 4, 7, 8, 9) use the full \textwidth (AAM-UA7 layout decision, FIGURE_STYLE_GUIDE.md).
+% Fonts are identical to the manuscript: STIX Two Text (text, Cyrillic) and STIX Two Math (mathematics).
+\usepackage{fontspec}
+\setmainfont{STIXTwoText-Regular.otf}[BoldFont=STIXTwoText-Bold.otf,ItalicFont=STIXTwoText-Italic.otf,BoldItalicFont=STIXTwoText-BoldItalic.otf]
+\usepackage{unicode-math}
+\setmathfont{STIXTwoMath-Regular.otf}[Scale=1.0]
+\usepackage{pgfplots}
+\pgfplotsset{compat=1.18}
+\usetikzlibrary{plotmarks,calc}
+\usepgfplotslibrary{fillbetween}
+% ---------------------------------------------------------------- physical sizes (printed)
+\newlength\uaTextWidth   \setlength\uaTextWidth{166mm}
+\newlength\uaWide        \setlength\uaWide{156.04mm}   % 0.94 x 166 mm   (Figs. 7-9 trajectory panels)
+\newlength\uaThird       \setlength\uaThird{52.29mm}   % 0.315 x 166 mm  (Figs. 2, 4, 7-9 lower panels)
+\newlength\uaWideP       \setlength\uaWideP{124.832mm} % 0.94 x 132.8 mm (Fig. 3 panels)
+\newlength\uaHalfP       \setlength\uaHalfP{64.408mm}  % 0.485 x 132.8 mm (Figs. 5, 6, 10 panels)
+\newlength\uaGeom        \setlength\uaGeom{129.48mm}   % 0.78 x 166 mm   (Fig. 1)
+% font sizes (pt, printed): axis labels 11, ticks 10, legends 10, annotations 10
+\newcommand\uaLabelFont{\fontsize{11}{13}\selectfont}
+\newcommand\uaTickFont{\fontsize{10}{12}\selectfont}
+\newcommand\uaLegendFont{\fontsize{10}{12}\selectfont}
+\newcommand\uaNoteFont{\fontsize{10}{12}\selectfont}
+% ---------------------------------------------------------------- colours (MATLAB lines palette, as the English figures)
+\definecolor{uaBlue}{rgb}{0.0000,0.4470,0.7410}
+\definecolor{uaOrange}{rgb}{0.8500,0.3250,0.0980}
+\definecolor{uaGreen}{rgb}{0.4660,0.6740,0.1880}
+\definecolor{uaPurple}{rgb}{0.4940,0.1840,0.5560}
+\definecolor{uaGray}{rgb}{0.45,0.45,0.45}
+\definecolor{uaYellow}{rgb}{0.9290,0.6940,0.1250}
+% ---------------------------------------------------------------- line and marker identities
+% (width at printed scale; markers: radius in pt; open markers filled white so that grey prints separate)
+\pgfplotsset{
+  ua base/.style={
+    scale only axis, axis line style={line width=0.6pt}, every tick/.style={line width=0.6pt,black},
+    tick align=outside, major tick length=3pt, minor tick length=1.8pt, tick pos=both,
+    xticklabel style={font=\uaTickFont}, yticklabel style={font=\uaTickFont},
+    label style={font=\uaLabelFont},% automatic pgfplots placement outside the tick labels
+    xlabel style={inner sep=1pt},ylabel style={inner sep=1pt},
+    legend style={font=\uaLegendFont,draw=none,fill=white,fill opacity=0.85,text opacity=1,inner sep=1.5pt,row sep=-1pt,
+      legend cell align=left},
+    legend image post style={line width=0.9pt},
+    legend image code/.code={\draw[mark repeat=2,mark phase=2,##1] plot coordinates {(0cm,0cm) (0.225cm,0cm) (0.45cm,0cm)};},
+    /pgf/number format/.cd, use period, 1000 sep={}, fixed, % decimal point as in the manuscript text
+    /pgfplots/.cd,
+    % no clipping at the frame: every plotted value lies inside the axis limits (checked by the verifier), so end
+    % markers are drawn whole instead of being cut by the frame
+    scaled ticks=false, clip=false, enlargelimits=false,
+    every axis plot/.append style={line join=round},
+  },
+  % method / discretization identities (kept across related figures)
+  ua ref/.style={color=uaBlue,solid,line width=1.0pt,mark=o,mark size=1.55pt,mark options={solid,fill=white,line width=0.7pt}},
+  ua alt/.style={color=uaOrange,dashed,line width=1.0pt,mark=square,mark size=1.4pt,mark options={solid,fill=white,line width=0.7pt}},
+  ua third/.style={color=uaGreen,dash dot,line width=1.0pt,mark=triangle,mark size=1.75pt,mark options={solid,fill=white,line width=0.7pt}},
+  ua fourth/.style={color=uaPurple,densely dotted,line width=1.1pt,mark=diamond,mark size=1.75pt,mark options={solid,fill=white,line width=0.7pt}},
+  ua single/.style={color=uaBlue,solid,line width=1.0pt,mark=o,mark size=1.55pt,mark options={solid,fill=white,line width=0.7pt}},
+  ua diff/.style={color=uaPurple,solid,line width=1.0pt,mark=o,mark size=1.55pt,mark options={solid,fill=white,line width=0.7pt}},
+  % increment study identities, all SOLID as in the retained vector layer of Fig. 9(a):
+  % Delta a = 4 mm blue circle (= ua ref), 2 mm orange square, 1 mm yellow triangle; differences 2-4 / 1-2 follow 2 / 1
+  ua inc two/.style={color=uaOrange,solid,line width=1.0pt,mark=square,mark size=1.4pt,mark options={solid,fill=white,line width=0.7pt}},
+  ua inc one/.style={color=uaYellow,solid,line width=1.0pt,mark=triangle,mark size=1.75pt,mark options={solid,fill=white,line width=0.7pt}},
+  % state identities (harmonized with the retained M1 vector layer of Fig. 8(a): q max = purple circle,
+  % interpolated local symmetry = green diamond / green dashed line, last accepted state = blue square)
+  ua unsolved/.style={color=uaOrange,dashed,line width=1.0pt,mark=x,mark size=2.2pt,mark options={solid,line width=0.8pt}},
+  ua last accepted/.style={only marks,mark=square,mark size=2.2pt,uaBlue,mark options={line width=1.0pt,fill=white}},
+  ua qmax/.style={only marks,mark=o,mark size=2.6pt,uaPurple,mark options={line width=1.0pt}},
+  ua ls/.style={only marks,mark=diamond,mark size=2.8pt,uaGreen,mark options={line width=1.0pt,fill=white}},
+  % reference lines, gates, geometry
+  ua zero/.style={uaGray,dashed,line width=0.5pt,forget plot},
+  ua gate/.style={uaOrange,dash pattern=on 4pt off 2pt,line width=0.8pt,forget plot},
+  ua lsline/.style={uaGreen,dashed,line width=0.9pt,forget plot},
+  ua geom/.style={black,solid,line width=0.9pt,forget plot},
+}
+\tikzset{ua geom path/.style={black,solid,line width=0.9pt}}% geometry drawn with \draw (hole contour)
+\newcommand\uaNote[1]{{\uaNoteFont #1}}
+% exact page box: axis frame occupies (0,0)-(\uaAxW,\uaAxH); page = frame + margins (L,B,R,T).
+% Horizontal extent is fixed by TikZ trim left/right (natural label extents can never widen the page);
+% \uaPage fixes the vertical extent. Margins are chosen per panel so that no label is cut (checked by the verifier).
+\tikzset{ua page/.style 2 args={trim left={(-#1,0)},trim right={(\uaAxW+#2,0)}}}
+\newcommand\uaPage[4]{\pgfresetboundingbox\path (-#1,-#2) rectangle ($(\uaAxW,\uaAxH)+(#3,#4)$);}

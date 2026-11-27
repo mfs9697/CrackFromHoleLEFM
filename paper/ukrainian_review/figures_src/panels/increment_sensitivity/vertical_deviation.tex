@@ -1,0 +1,21 @@
+% Fig. 9(b): successive vertical tip differences (micrometres) at exact common crack lengths, 4/2/1-mm series.
+% Data: fig09_metrics.csv (dy_2m4_um, dy_1m2_um from Increment.metrics; no transformation).
+\documentclass[border=0pt,multi=tikzpicture]{standalone}
+\input{../../ua_figstyle.tex}
+\newlength\uaAxW\newlength\uaAxH
+\begin{document}
+\setlength\uaAxW{\dimexpr\uaThird-21.5mm\relax}% L 17.5mm + axis + R 4mm
+\setlength\uaAxH{42mm}%
+\pgfplotstableread[col sep=comma]{../../data/fig09_metrics.csv}\T
+\begin{tikzpicture}[ua page={17.5mm}{4mm}]
+\begin{axis}[ua base,at={(0,0)},anchor=south west,width=\uaAxW,height=\uaAxH,
+  xmin=0,xmax=100,xtick={0,50,100},ymin=-48,ymax=2,ytick={-40,-30,...,0},
+  xlabel={$a$, мм},ylabel={$\delta y$, мкм},
+  legend style={at={(axis description cs:0.03,0.03)},anchor=south west}]
+ \addplot[ua zero] coordinates {(0,0) (100,0)};
+ \addplot[ua inc two]   table[x=a_mm,y=dy_2m4_um]{\T};\addlegendentry{$y_{2\,\text{мм}}-y_{4\,\text{мм}}$}
+ \addplot[ua inc one] table[x=a_mm,y=dy_1m2_um]{\T};\addlegendentry{$y_{1\,\text{мм}}-y_{2\,\text{мм}}$}
+\end{axis}
+\uaPage{17.5mm}{10.5mm}{4mm}{1.5mm}
+\end{tikzpicture}
+\end{document}

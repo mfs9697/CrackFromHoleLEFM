@@ -1,0 +1,18 @@
+% Fig. 10(c): PCG iterations of the accepted (newly solved) states P2..P23 versus crack length.
+% Data: fig10_solver.csv (a_mm, pcg_iterations); no transformation.
+\documentclass[border=0pt,multi=tikzpicture]{standalone}
+\input{../../ua_figstyle.tex}
+\newlength\uaAxW\newlength\uaAxH
+\begin{document}
+\setlength\uaAxW{\dimexpr\uaHalfP-20mm\relax}% L 16mm + axis + R 4mm
+\setlength\uaAxH{40mm}%
+\pgfplotstableread[col sep=comma]{../../data/fig10_solver.csv}\T
+\begin{tikzpicture}[ua page={16mm}{4mm}]
+\begin{axis}[ua base,at={(0,0)},anchor=south west,width=\uaAxW,height=\uaAxH,
+  xmin=8,xmax=92,xtick={8,36,64,92},ymin=2400,ymax=3020,ytick={2400,2600,...,3000},
+  xlabel={$a$, мм},ylabel={Кількість ітерацій PCG}]
+ \addplot[ua single] table[x=a_mm,y=pcg_iterations]{\T};
+\end{axis}
+\uaPage{16mm}{10.5mm}{4mm}{1.5mm}
+\end{tikzpicture}
+\end{document}

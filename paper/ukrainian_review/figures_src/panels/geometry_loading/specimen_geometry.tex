@@ -1,0 +1,32 @@
+% Fig. 1: approved symbolic specimen schematic (no numerical parameters; illustrative crack) -- RETAINED GEOMETRY LAYER.
+% Every geometry path of the approved composition (paper/figures/geometry_loading/specimen_geometry.pdf) is kept
+% unchanged; only its outlined label glyphs were removed (build_retained_layers.py). The labels are typeset anew in
+% STIX Two at the centres of the original glyph groups (pt, measured from the top-left of the 324.3036 x 244.0306 pt
+% source page). Notation follows the manuscript caption: upright descriptive subscripts x_c, y_c.
+\documentclass[border=0pt,multi=tikzpicture]{standalone}
+\input{../../ua_figstyle.tex}
+\begin{document}
+\newlength\gu\setlength\gu{\dimexpr\uaGeom*10000/3243036\relax}% one source pt at the printed width 129.48 mm (exact integer arithmetic)
+\begin{tikzpicture}[x=\gu,y=-\gu]
+ \node[anchor=north west,inner sep=0pt,outer sep=0pt] at (0,0) {\includegraphics[width=\uaGeom]{../../retained/specimen_geometry_layer.pdf}};
+ \begin{scope}[every node/.style={inner sep=0pt,font=\uaLabelFont}]
+  \node at (157.17,8.32)   {$\sigma$};
+  \node at (157.17,202.58) {$\sigma$};
+  \node at (314.34,104.61) {$B$};
+  \node at (10.26,141.88)  {$y_{\mathrm{c}}$};
+  \node at (73.83,206.55)  {$x_{\mathrm{c}}$};
+  \node at (157.33,234.07) {$2A$};
+  \node at (130.90,106.18) {$R$};
+  \node at (111.01,117.36) {$(x_{\mathrm{c}},y_{\mathrm{c}})$};
+  \node at (31.55,179.39)  {$O$};
+  \node at (68.16,168.76)  {$x$};
+  \node at (31.27,142.73)  {$y$};
+  \node at (147.48,95.40)  {$P_0$};
+ \end{scope}
+ \begin{scope}[every node/.style={inner sep=0pt,font=\uaNoteFont,align=center}]
+  \node at (58.05,87.67)  {Вільний\\край};
+  \node at (256.34,87.67) {Вільний\\край};
+ \end{scope}
+ \pgfresetboundingbox\path (0,0) rectangle (324.30360183957583,244.03057876435287);
+\end{tikzpicture}
+\end{document}
