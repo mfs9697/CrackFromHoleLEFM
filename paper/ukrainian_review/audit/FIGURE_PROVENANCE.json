@@ -1,0 +1,871 @@
+{
+  "method": "Ukrainian text replaces glyphs in the existing vector exports. Original scientific curves, markers, meshes, ticks, axes, graphics boxes and all non-label drawing paths are preserved.",
+  "font_sha256": "9d7583b7dc9e812afd32a14280c5cac3160012efe50c8d08938f4fea266ff67f",
+  "pymupdf": "1.26.6",
+  "assets": {
+    "figures/geometry_loading/specimen_geometry.pdf": {
+      "sha256_english": "c2e347cd003a4bfcf08da1d26e333b3549606aefd51a7dc61c4fb4a0ce070700",
+      "sha256_ukrainian": "f0c61e97a7a610e1e3a1e86a6c1faeb7b9d8f91766084d3c6cb813c55f8a2553",
+      "vector_paths_preserved": 114,
+      "vector_geometry_check": "PASS",
+      "status": "localized",
+      "replacements": [
+        {
+          "original": "Free",
+          "ukrainian": "Вільний край",
+          "source_region_pt": [
+            45.0,
+            81.0,
+            70.0,
+            94.0
+          ],
+          "outlined_glyphs": 4,
+          "native_spans": 0,
+          "angle": 0,
+          "font_size_pt": 7.0,
+          "text_origin_pt": [
+            44.30506134033203,
+            89.9107649230957
+          ]
+        },
+        {
+          "original": "Free",
+          "ukrainian": "Вільний край",
+          "source_region_pt": [
+            243.0,
+            81.0,
+            270.0,
+            94.0
+          ],
+          "outlined_glyphs": 4,
+          "native_spans": 0,
+          "angle": 0,
+          "font_size_pt": 7.0,
+          "text_origin_pt": [
+            226.59890747070312,
+            89.9107649230957
+          ]
+        }
+      ]
+    },
+    "figures/mesh_levels/tip_mesh_H2.pdf": {
+      "sha256_english": "9989f4b92ff14a5275f9561919a2c524939fcb43bf5319c9fe7d110ec6338fe8",
+      "sha256_ukrainian": "9989f4b92ff14a5275f9561919a2c524939fcb43bf5319c9fe7d110ec6338fe8",
+      "vector_paths_preserved": 693,
+      "vector_geometry_check": "PASS",
+      "status": "symbolic-labels-and-international-units",
+      "replacements": []
+    },
+    "figures/mesh_levels/tip_mesh_H1.pdf": {
+      "sha256_english": "7a17571b8397e83d96644d4ef178ea1b73fc8b2a1e38061b7fc9776247efc6fb",
+      "sha256_ukrainian": "7a17571b8397e83d96644d4ef178ea1b73fc8b2a1e38061b7fc9776247efc6fb",
+      "vector_paths_preserved": 2295,
+      "vector_geometry_check": "PASS",
+      "status": "symbolic-labels-and-international-units",
+      "replacements": []
+    },
+    "figures/mesh_levels/tip_mesh_H0.pdf": {
+      "sha256_english": "e9f4f60b7371b27fe7a7274f0fd6b6ad4e32d7a83d30178d5b46a66062daefc5",
+      "sha256_ukrainian": "e9f4f60b7371b27fe7a7274f0fd6b6ad4e32d7a83d30178d5b46a66062daefc5",
+      "vector_paths_preserved": 8165,
+      "vector_geometry_check": "PASS",
+      "status": "symbolic-labels-and-international-units",
+      "replacements": []
+    },
+    "figures/trajectory/overview.pdf": {
+      "sha256_english": "cdbc41fba1a4cb8097f700d842dab0d1f899388e1182e5d8a2da478dd325761d",
+      "sha256_ukrainian": "ee0d807c1a4da21fb769c9ccc54110cf81b6e497d949fa08dd14ef82692c8019",
+      "vector_paths_preserved": 160,
+      "vector_geometry_check": "PASS",
+      "status": "localized",
+      "replacements": [
+        {
+          "original": "Accepted",
+          "ukrainian": "Прийнята",
+          "source_region_pt": [
+            245.0,
+            17.0,
+            295.7,
+            30.5
+          ],
+          "outlined_glyphs": 8,
+          "native_spans": 0,
+          "angle": 0,
+          "font_size_pt": 9.53,
+          "text_origin_pt": [
+            246.029052734375,
+            27.80288959369661
+          ]
+        },
+        {
+          "original": "Qualified, unsolved extension",
+          "ukrainian": "Перевірене продовження без розв’язку",
+          "source_region_pt": [
+            245.0,
+            30.0,
+            401.0,
+            43.0
+          ],
+          "outlined_glyphs": 26,
+          "native_spans": 0,
+          "angle": 0,
+          "font_size_pt": 7.571,
+          "text_origin_pt": [
+            246.31895446777344,
+            39.84244051700232
+          ]
+        }
+      ]
+    },
+    "figures/trajectory/late_detail.pdf": {
+      "sha256_english": "1ab21b0532afa581063d8cf0658ec620b7ccc6f0c7fd91073c3a78f243864cbf",
+      "sha256_ukrainian": "333e51e5b2852018ca8b3fca11a52a5aba2fcff9cb3f9ce6b5e7b31ec0a3bc97",
+      "vector_paths_preserved": 121,
+      "vector_geometry_check": "PASS",
+      "status": "localized",
+      "replacements": [
+        {
+          "original": "unsolved",
+          "ukrainian": "без розв’язку",
+          "source_region_pt": [
+            312.0,
+            54.0,
+            358.0,
+            66.0
+          ],
+          "outlined_glyphs": 8,
+          "native_spans": 0,
+          "angle": 0,
+          "font_size_pt": 6.724,
+          "text_origin_pt": [
+            313.02789306640625,
+            62.24771583124
+          ]
+        }
+      ]
+    },
+    "figures/intensities/KI.pdf": {
+      "sha256_english": "8bf485d916d81ee7e1debecfd7fc780374779e62802b540dbe9295fef8f7cf80",
+      "sha256_ukrainian": "8bf485d916d81ee7e1debecfd7fc780374779e62802b540dbe9295fef8f7cf80",
+      "vector_paths_preserved": 122,
+      "vector_geometry_check": "PASS",
+      "status": "symbolic-labels-and-international-units",
+      "replacements": []
+    },
+    "figures/intensities/KII.pdf": {
+      "sha256_english": "cd777217983f07e4400ce43cea5da6d8a9ba55b36b3a2e10ee72063de8747f58",
+      "sha256_ukrainian": "cd777217983f07e4400ce43cea5da6d8a9ba55b36b3a2e10ee72063de8747f58",
+      "vector_paths_preserved": 121,
+      "vector_geometry_check": "PASS",
+      "status": "symbolic-labels-and-international-units",
+      "replacements": []
+    },
+    "figures/intensities/theta.pdf": {
+      "sha256_english": "0c39915f6da323ab60a81cfda0b26c9a14c381c0df2e2a39b02232dd1b99675a",
+      "sha256_ukrainian": "782c057b1fe8109879bebe44c79049f43e7f72543b411b9d7423a916bfb92228",
+      "vector_paths_preserved": 99,
+      "vector_geometry_check": "PASS",
+      "status": "localized",
+      "replacements": [
+        {
+          "original": "[deg]",
+          "ukrainian": "[град]",
+          "source_region_pt": [
+            4.0,
+            70.0,
+            18.0,
+            94.0
+          ],
+          "outlined_glyphs": 5,
+          "native_spans": 0,
+          "angle": 90,
+          "font_size_pt": 8.174,
+          "text_origin_pt": [
+            14.096318759918214,
+            94.0
+          ]
+        }
+      ]
+    },
+    "figures/late/mode_mixity.pdf": {
+      "sha256_english": "9a61eeb6d2295017362985857917cd8eee5581ab121913ce5bfbeda54bf30229",
+      "sha256_ukrainian": "9a61eeb6d2295017362985857917cd8eee5581ab121913ce5bfbeda54bf30229",
+      "vector_paths_preserved": 81,
+      "vector_geometry_check": "PASS",
+      "status": "symbolic-labels-and-international-units",
+      "replacements": []
+    },
+    "figures/late/turn.pdf": {
+      "sha256_english": "5dafefb090503f71c0b587154e91fb8ea7db9c0b269fad3bd9ec7ed0e1d94abd",
+      "sha256_ukrainian": "8091cd63fc84c62d57e1cea9df66d01ce5aaf12674312e65a54f3c611d6b672f",
+      "vector_paths_preserved": 91,
+      "vector_geometry_check": "PASS",
+      "status": "localized",
+      "replacements": [
+        {
+          "original": "[deg]",
+          "ukrainian": "[град]",
+          "source_region_pt": [
+            4.0,
+            61.0,
+            18.0,
+            84.0
+          ],
+          "outlined_glyphs": 5,
+          "native_spans": 0,
+          "angle": 90,
+          "font_size_pt": 7.834,
+          "text_origin_pt": [
+            14.097762489318848,
+            84.0
+          ]
+        }
+      ]
+    },
+    "figures/cod/turn_linear.pdf": {
+      "sha256_english": "872f25275b03a43fce3f52fceaaa0af3444db581d1217405a090fed9c6cef114",
+      "sha256_ukrainian": "b6b735ec0f91c9a2bf140b69c0aa08a0ff8133196e1293b29add867d46b36808",
+      "vector_paths_preserved": 81,
+      "vector_geometry_check": "PASS",
+      "status": "localized",
+      "replacements": [
+        {
+          "original": "COD–EDI turn [deg]",
+          "ukrainian": "Кут COD–EDI [град]",
+          "source_region_pt": [
+            4.0,
+            12.0,
+            18.0,
+            116.0
+          ],
+          "outlined_glyphs": 16,
+          "native_spans": 0,
+          "angle": 90,
+          "font_size_pt": 10.8,
+          "text_origin_pt": [
+            14.097762279510498,
+            115.66720026135445
+          ]
+        }
+      ]
+    },
+    "figures/cod/turn_quadratic.pdf": {
+      "sha256_english": "cb39967e39a52580c32d53f01eeda67547fd2f5195dba5a5f5d312e60b1f07c5",
+      "sha256_ukrainian": "6bd239f20549c39ab5180dba80e8d6708f17a1994245c2fd0a6042872ff07866",
+      "vector_paths_preserved": 83,
+      "vector_geometry_check": "PASS",
+      "status": "localized",
+      "replacements": [
+        {
+          "original": "COD–EDI turn [deg]",
+          "ukrainian": "Кут COD–EDI [град]",
+          "source_region_pt": [
+            4.0,
+            12.0,
+            18.0,
+            116.0
+          ],
+          "outlined_glyphs": 16,
+          "native_spans": 0,
+          "angle": 90,
+          "font_size_pt": 10.8,
+          "text_origin_pt": [
+            14.097762279510498,
+            115.66720026135445
+          ]
+        }
+      ]
+    },
+    "figures/cod/mixity_linear.pdf": {
+      "sha256_english": "b005f7d3bb7c52adbd9f96727289ae43a9a5ff2e3756fc9d98b73437d8a38f2a",
+      "sha256_ukrainian": "c1e7e4cc039b1256b28a4ba96576a797453cdef513311e2face379e3c678411e",
+      "vector_paths_preserved": 104,
+      "vector_geometry_check": "PASS",
+      "status": "localized",
+      "replacements": [
+        {
+          "original": "mode mixity",
+          "ukrainian": "змішаність мод",
+          "source_region_pt": [
+            4.0,
+            8.4,
+            20.0,
+            69.5
+          ],
+          "outlined_glyphs": 10,
+          "native_spans": 0,
+          "angle": 90,
+          "font_size_pt": 7.697,
+          "text_origin_pt": [
+            16.322746295928955,
+            69.5
+          ]
+        },
+        {
+          "original": "Crack length",
+          "ukrainian": "Довжина тріщини",
+          "source_region_pt": [
+            70.0,
+            150.5,
+            136.0,
+            164.0
+          ],
+          "outlined_glyphs": 11,
+          "native_spans": 0,
+          "angle": 0,
+          "font_size_pt": 6.723,
+          "text_origin_pt": [
+            73.86703491210938,
+            159.66571005883688
+          ]
+        }
+      ]
+    },
+    "figures/cod/mixity_quadratic.pdf": {
+      "sha256_english": "e0f10bf129d2d567e8bc3b36f1d4d119d07005efb174fc2ec04ae8b2fc10b99a",
+      "sha256_ukrainian": "530146770a139c31e3881b55fdf77e28d51f099150f01e5c85af33403f81eb0e",
+      "vector_paths_preserved": 156,
+      "vector_geometry_check": "PASS",
+      "status": "localized",
+      "replacements": [
+        {
+          "original": "mode mixity",
+          "ukrainian": "змішаність мод",
+          "source_region_pt": [
+            4.0,
+            8.4,
+            20.0,
+            69.5
+          ],
+          "outlined_glyphs": 9,
+          "native_spans": 0,
+          "angle": 90,
+          "font_size_pt": 7.697,
+          "text_origin_pt": [
+            15.926862316131592,
+            69.5
+          ]
+        },
+        {
+          "original": "Crack length",
+          "ukrainian": "Довжина тріщини",
+          "source_region_pt": [
+            70.0,
+            150.5,
+            136.0,
+            164.0
+          ],
+          "outlined_glyphs": 11,
+          "native_spans": 0,
+          "angle": 0,
+          "font_size_pt": 6.723,
+          "text_origin_pt": [
+            73.86703491210938,
+            159.66571005883688
+          ]
+        }
+      ]
+    },
+    "figures/tip_resolution_sensitivity/trajectory.pdf": {
+      "sha256_english": "14514a478554b36f6064a7649427ef8e2593deda1a609ca1ce19970c3b0882f8",
+      "sha256_ukrainian": "fa122be9fcc217a9d1e981e8c1b7eb690a8a2dfd94989dd3cb5cf58ee8d3f30e",
+      "vector_paths_preserved": 164,
+      "vector_geometry_check": "PASS",
+      "status": "localized",
+      "replacements": [
+        {
+          "original": "M0 exterior",
+          "ukrainian": "Зовнішня сітка M0",
+          "source_region_pt": [
+            267.0,
+            13.0,
+            319.0,
+            29.0
+          ],
+          "outlined_glyphs": 0,
+          "native_spans": 1,
+          "angle": 0,
+          "font_size_pt": 9.0,
+          "text_origin_pt": [
+            268.0679626464844,
+            23.582417373657226
+          ]
+        },
+        {
+          "original": "local symmetry: 84.146 mm",
+          "ukrainian": "локальна симетрія: 84.146 mm",
+          "source_region_pt": [
+            282.0,
+            60.0,
+            412.0,
+            71.8
+          ],
+          "outlined_glyphs": 22,
+          "native_spans": 0,
+          "angle": 0,
+          "font_size_pt": 9.0,
+          "text_origin_pt": [
+            283.0408630371094,
+            69.69632804870605
+          ]
+        },
+        {
+          "original": "last accepted",
+          "ukrainian": "останній прийнятий",
+          "source_region_pt": [
+            299.0,
+            72.0,
+            412.0,
+            83.0
+          ],
+          "outlined_glyphs": 12,
+          "native_spans": 0,
+          "angle": 0,
+          "font_size_pt": 9.0,
+          "text_origin_pt": [
+            304.5878601074219,
+            81.02981079101562
+          ]
+        }
+      ]
+    },
+    "figures/tip_resolution_sensitivity/vertical_deviation.pdf": {
+      "sha256_english": "dfda3062c50bce233045940c223dc30672036c8675c6296279ef7252eab04b5f",
+      "sha256_ukrainian": "dfda3062c50bce233045940c223dc30672036c8675c6296279ef7252eab04b5f",
+      "vector_paths_preserved": 104,
+      "vector_geometry_check": "PASS",
+      "status": "symbolic-labels-and-international-units",
+      "replacements": []
+    },
+    "figures/tip_resolution_sensitivity/direction_deviation.pdf": {
+      "sha256_english": "75af69808070f7b8f9b20415b17247243aa1de306ed3d35e9ebda363c955f950",
+      "sha256_ukrainian": "6efa1bdbee39f15ed6051646b4e8ee3f3a0f283bd4f7e8a4f4236e0a1da7a1e0",
+      "vector_paths_preserved": 118,
+      "vector_geometry_check": "PASS",
+      "status": "localized",
+      "replacements": [
+        {
+          "original": "[mdeg]",
+          "ukrainian": "[мград]",
+          "source_region_pt": [
+            4.0,
+            35.0,
+            18.0,
+            68.0
+          ],
+          "outlined_glyphs": 6,
+          "native_spans": 0,
+          "angle": 90,
+          "font_size_pt": 8.864,
+          "text_origin_pt": [
+            14.086894397735596,
+            68.0
+          ]
+        }
+      ]
+    },
+    "figures/tip_resolution_sensitivity/mode_mixity.pdf": {
+      "sha256_english": "75ee7d9e61b93612a63d6486d27c60cac030d54390a4203f26f2d91ee6e7b9a1",
+      "sha256_ukrainian": "ddc0bc6250bb6a2b1ea18f14adcdbbf4f1a16107c207e6424bb780fdb2fa0323",
+      "vector_paths_preserved": 139,
+      "vector_geometry_check": "PASS",
+      "status": "localized",
+      "replacements": [
+        {
+          "original": "M0 exterior",
+          "ukrainian": "Зовнішня M0",
+          "source_region_pt": [
+            51.0,
+            97.5,
+            103.0,
+            113.0
+          ],
+          "outlined_glyphs": 0,
+          "native_spans": 1,
+          "angle": 0,
+          "font_size_pt": 8.4,
+          "text_origin_pt": [
+            52.049686431884766,
+            108.11589459228516
+          ]
+        }
+      ]
+    },
+    "figures/m1_mesh_sensitivity/trajectory.pdf": {
+      "sha256_english": "fb578075fa0a99349c1ce89dd98fb1baf7ff7b86e9a416ea35d6f5c287d06a15",
+      "sha256_ukrainian": "18098ef10b1c190cbfe95ab8ec0bdde1fae723cc8bfabf81eb59ee5affe3749c",
+      "vector_paths_preserved": 145,
+      "vector_geometry_check": "PASS",
+      "status": "localized",
+      "replacements": [
+        {
+          "original": "M0 q max: P17",
+          "ukrainian": "M0, макс. q: P17",
+          "source_region_pt": [
+            291.0,
+            38.0,
+            360.0,
+            54.0
+          ],
+          "outlined_glyphs": 0,
+          "native_spans": 1,
+          "angle": 0,
+          "font_size_pt": 8.432,
+          "text_origin_pt": [
+            293.3928527832031,
+            48.784579403083434
+          ]
+        },
+        {
+          "original": "local symmetry: 84.146 mm",
+          "ukrainian": "локальна симетрія: 84.146 mm",
+          "source_region_pt": [
+            290.0,
+            53.0,
+            413.0,
+            68.0
+          ],
+          "outlined_glyphs": 0,
+          "native_spans": 1,
+          "angle": 0,
+          "font_size_pt": 7.669,
+          "text_origin_pt": [
+            292.5007019042969,
+            62.77837582823435
+          ]
+        },
+        {
+          "original": "P23: last accepted",
+          "ukrainian": "P23: останній прийнятий",
+          "source_region_pt": [
+            290.0,
+            65.0,
+            413.0,
+            81.0
+          ],
+          "outlined_glyphs": 0,
+          "native_spans": 1,
+          "angle": 0,
+          "font_size_pt": 9.142,
+          "text_origin_pt": [
+            291.6771545410156,
+            75.5922891705514
+          ]
+        }
+      ]
+    },
+    "figures/m1_mesh_sensitivity/vertical_deviation.pdf": {
+      "sha256_english": "775f841eb48229dc620699dad30d152d68a03ae77676c6dd3542798914c96355",
+      "sha256_ukrainian": "775f841eb48229dc620699dad30d152d68a03ae77676c6dd3542798914c96355",
+      "vector_paths_preserved": 104,
+      "vector_geometry_check": "PASS",
+      "status": "symbolic-labels-and-international-units",
+      "replacements": []
+    },
+    "figures/m1_mesh_sensitivity/direction_deviation.pdf": {
+      "sha256_english": "67ca2e408088d9b23879e457191a70db785be11cdf0d152e3492986bd2afb7c0",
+      "sha256_ukrainian": "1dc3988d6ecca7b51729cd231e10c870f868b380ed000ac1880a5d1e59e71476",
+      "vector_paths_preserved": 106,
+      "vector_geometry_check": "PASS",
+      "status": "localized",
+      "replacements": [
+        {
+          "original": "[mdeg]",
+          "ukrainian": "[мград]",
+          "source_region_pt": [
+            4.0,
+            34.0,
+            18.0,
+            67.0
+          ],
+          "outlined_glyphs": 6,
+          "native_spans": 0,
+          "angle": 90,
+          "font_size_pt": 8.864,
+          "text_origin_pt": [
+            14.047908592224122,
+            67.0
+          ]
+        }
+      ]
+    },
+    "figures/m1_mesh_sensitivity/mode_mixity.pdf": {
+      "sha256_english": "dd1f8b5dc91ef05b97567f14f4e41b04a4eefd0a877a27fd188550d43b695098",
+      "sha256_ukrainian": "dd1f8b5dc91ef05b97567f14f4e41b04a4eefd0a877a27fd188550d43b695098",
+      "vector_paths_preserved": 134,
+      "vector_geometry_check": "PASS",
+      "status": "symbolic-labels-and-international-units",
+      "replacements": []
+    },
+    "figures/increment_sensitivity/trajectory.pdf": {
+      "sha256_english": "1ced112c6c973c1c949ac6f6160c1a5fa46ddf4fcc6d45f842c7258c31fde761",
+      "sha256_ukrainian": "afd1a34ba9ddd0bb149708f1d7e018a84a75a33b1ab47fcf398995579749ec50",
+      "vector_paths_preserved": 201,
+      "vector_geometry_check": "PASS",
+      "status": "localized",
+      "replacements": [
+        {
+          "original": "Scaled M1",
+          "ukrainian": "Масштабована M1",
+          "source_region_pt": [
+            311.0,
+            13.0,
+            359.0,
+            29.0
+          ],
+          "outlined_glyphs": 0,
+          "native_spans": 1,
+          "angle": 0,
+          "font_size_pt": 9.0,
+          "text_origin_pt": [
+            311.9892883300781,
+            23.582417373657226
+          ]
+        }
+      ]
+    },
+    "figures/increment_sensitivity/vertical_deviation.pdf": {
+      "sha256_english": "0a0e894f173b05ce9004bd26360a31cf5546b24af22241994dd21f38a080b997",
+      "sha256_ukrainian": "641b59c7317f91ce0312c74619f589ff78691c99aa60840a537dfeeed21e98f7",
+      "vector_paths_preserved": 112,
+      "vector_geometry_check": "PASS",
+      "status": "localized",
+      "replacements": [
+        {
+          "original": "Successive",
+          "ukrainian": "Послідовні",
+          "source_region_pt": [
+            4.0,
+            67.5,
+            18.0,
+            120.0
+          ],
+          "outlined_glyphs": 10,
+          "native_spans": 0,
+          "angle": 90,
+          "font_size_pt": 9.475,
+          "text_origin_pt": [
+            12.272339496612549,
+            120.0
+          ]
+        }
+      ]
+    },
+    "figures/increment_sensitivity/direction_deviation.pdf": {
+      "sha256_english": "cdcba3ba38889b643fe054c124577a882fdcd1515ef45bea3ed633bd517acc32",
+      "sha256_ukrainian": "32f35731a8dff33ac31536a09c77adb75c1c668229ee4580264da7e9d58cfd67",
+      "vector_paths_preserved": 102,
+      "vector_geometry_check": "PASS",
+      "status": "localized",
+      "replacements": [
+        {
+          "original": "Direction difference [mdeg]",
+          "ukrainian": "Різниця напрямів [мград]",
+          "source_region_pt": [
+            4.0,
+            9.0,
+            18.0,
+            140.0
+          ],
+          "outlined_glyphs": 24,
+          "native_spans": 0,
+          "angle": 90,
+          "font_size_pt": 10.044,
+          "text_origin_pt": [
+            14.086896095275879,
+            140.0
+          ]
+        }
+      ]
+    },
+    "figures/increment_sensitivity/turn_density.pdf": {
+      "sha256_english": "e4272255f2f6f2ccdf6bc7680bb3983c9852c345ed7d74009a9c4502aca0854a",
+      "sha256_ukrainian": "2e92aebc6eab81e82a1477109ee30c843d56984a8cd932dcaf560f29c7cc78f2",
+      "vector_paths_preserved": 251,
+      "vector_geometry_check": "PASS",
+      "status": "localized",
+      "replacements": [
+        {
+          "original": "Scaled M1",
+          "ukrainian": "Масшт. M1",
+          "source_region_pt": [
+            51.0,
+            13.0,
+            99.0,
+            29.0
+          ],
+          "outlined_glyphs": 0,
+          "native_spans": 1,
+          "angle": 0,
+          "font_size_pt": 8.4,
+          "text_origin_pt": [
+            52.049686431884766,
+            23.731252944946288
+          ]
+        },
+        {
+          "original": "deg",
+          "ukrainian": "град",
+          "source_region_pt": [
+            4.0,
+            56.0,
+            18.0,
+            76.0
+          ],
+          "outlined_glyphs": 3,
+          "native_spans": 0,
+          "angle": 90,
+          "font_size_pt": 9.025,
+          "text_origin_pt": [
+            13.84820177078247,
+            76.0
+          ]
+        }
+      ]
+    },
+    "figures/quality/min_angle.pdf": {
+      "sha256_english": "75dbe1fb654b0bd606e347009eca8f6ad7018473e400ca81c72eb57135e2fecb",
+      "sha256_ukrainian": "d4dec8d143775c985ac08e37118c0546c4a9d01bb6c451c6c394fe5abaa257fc",
+      "vector_paths_preserved": 84,
+      "vector_geometry_check": "PASS",
+      "status": "localized",
+      "replacements": [
+        {
+          "original": "Minimum angle [deg]",
+          "ukrainian": "Мінімальний кут [град]",
+          "source_region_pt": [
+            4.0,
+            13.0,
+            18.0,
+            118.0
+          ],
+          "outlined_glyphs": 17,
+          "native_spans": 0,
+          "angle": 90,
+          "font_size_pt": 8.688,
+          "text_origin_pt": [
+            14.097762279510498,
+            118.0
+          ]
+        }
+      ]
+    },
+    "figures/quality/size_ratio.pdf": {
+      "sha256_english": "639c213cb2ab09d3d8b68f41db657631f03d53efaa31987aae3bb31df19eaeda",
+      "sha256_ukrainian": "20a8915353e6535b6d66d50a8d14f50c46083c6c8d1e37397ef373eb8adb88ce",
+      "vector_paths_preserved": 99,
+      "vector_geometry_check": "PASS",
+      "status": "localized",
+      "replacements": [
+        {
+          "original": "Adjacent size ratio",
+          "ukrainian": "Відн. розмірів сусідніх ел.",
+          "source_region_pt": [
+            4.0,
+            17.0,
+            18.0,
+            112.0
+          ],
+          "outlined_glyphs": 17,
+          "native_spans": 0,
+          "angle": 90,
+          "font_size_pt": 7.294,
+          "text_origin_pt": [
+            13.431969299316407,
+            112.0
+          ]
+        }
+      ]
+    },
+    "figures/quality/iterations.pdf": {
+      "sha256_english": "38659aae3d18064c38e9dd1becffd04dd36eee3a5cb00d369a67f383d5d00130",
+      "sha256_ukrainian": "7a7fbb3b760f6b783caa0775cf40978b4a2761992824c13ee5a5fab797f49467",
+      "vector_paths_preserved": 96,
+      "vector_geometry_check": "PASS",
+      "status": "localized",
+      "replacements": [
+        {
+          "original": "PCG iterations",
+          "ukrainian": "Ітерації PCG",
+          "source_region_pt": [
+            4.0,
+            26.0,
+            18.0,
+            104.0
+          ],
+          "outlined_glyphs": 13,
+          "native_spans": 0,
+          "angle": 90,
+          "font_size_pt": 10.8,
+          "text_origin_pt": [
+            11.793100910186768,
+            98.13440003991127
+          ]
+        },
+        {
+          "original": "Crack length",
+          "ukrainian": "Довжина тріщини",
+          "source_region_pt": [
+            80.0,
+            139.0,
+            146.0,
+            153.0
+          ],
+          "outlined_glyphs": 11,
+          "native_spans": 0,
+          "angle": 0,
+          "font_size_pt": 6.723,
+          "text_origin_pt": [
+            82.47824096679688,
+            149.37792929711813
+          ]
+        }
+      ]
+    },
+    "figures/quality/true_residual.pdf": {
+      "sha256_english": "d14577ded719a4ea94cf40e0844ccc91da2bcc6b1fdac9f8352bed97c0714779",
+      "sha256_ukrainian": "d972ab9bdb458a2aa0294b8cd5f1401d4f44b0e9ca4c9528dff2ea9d76fed561",
+      "vector_paths_preserved": 99,
+      "vector_geometry_check": "PASS",
+      "status": "localized",
+      "replacements": [
+        {
+          "original": "True residual / gate",
+          "ukrainian": "Фактична нев’язка / поріг",
+          "source_region_pt": [
+            4.0,
+            14.0,
+            18.0,
+            115.0
+          ],
+          "outlined_glyphs": 17,
+          "native_spans": 0,
+          "angle": 90,
+          "font_size_pt": 7.738,
+          "text_origin_pt": [
+            14.097760581970215,
+            115.0
+          ]
+        },
+        {
+          "original": "Crack length",
+          "ukrainian": "Довжина тріщини",
+          "source_region_pt": [
+            80.0,
+            139.0,
+            146.0,
+            153.0
+          ],
+          "outlined_glyphs": 11,
+          "native_spans": 0,
+          "angle": 0,
+          "font_size_pt": 6.723,
+          "text_origin_pt": [
+            82.47824096679688,
+            149.3779445559072
+          ]
+        }
+      ]
+    }
+  }
+}
