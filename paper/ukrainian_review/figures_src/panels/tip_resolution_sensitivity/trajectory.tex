@@ -1,0 +1,31 @@
+% Fig. 7(a): independent trajectories for structured near-tip spacings h0 (reference) and 2h0, M0 exterior law,
+% equal x/y scale. Data: fig07_vertices.csv (P0..P23 of each), ua_constants.tex (hole, q-max states, interpolated LS
+% point of h0 = E.interpolatedZeroPoint_m, last accepted h0 state P23).
+\documentclass[border=0pt,multi=tikzpicture]{standalone}
+\input{../../ua_figstyle.tex}
+\input{../../data/ua_constants.tex}
+\newlength\uaAxW\newlength\uaAxH
+\begin{document}
+\setlength\uaAxW{\dimexpr\uaWide-17.5mm\relax}% L 14mm + axis + R 3.5mm
+\setlength\uaAxH{\dimexpr\uaAxW*70/165\relax}% equal scale: (15 - -55) / (300 - 135)
+\pgfplotstableread[col sep=comma]{../../data/fig07_vertices.csv}\V
+\begin{tikzpicture}[ua page={14mm}{3.5mm}]
+\begin{axis}[ua base,at={(0,0)},anchor=south west,width=\uaAxW,height=\uaAxH,
+  xmin=135,xmax=300,ymin=-55,ymax=15,xtick={140,160,...,300},ytick={-50,-40,...,10},
+  xlabel={$x$, мм},ylabel={$y$, мм},
+  legend style={at={(axis cs:298,13.5)},anchor=north east}]
+ \draw[ua geom path] (axis cs:\uaCHoleCxMm,\uaCHoleCyMm) ellipse [x radius=\uaCHoleRMm,y radius=\uaCHoleRMm];
+ \addlegendimage{empty legend}\addlegendentry{Закон M0 для зовнішніх елементів}
+ \addplot[ua ref] table[x=x_h0_mm,y=y_h0_mm]{\V};\addlegendentry{$h_0$}
+ \addplot[ua alt] table[x=x_2h0_mm,y=y_2h0_mm]{\V};\addlegendentry{$2h_0$}
+ \addplot[ua qmax] coordinates {(\uaCFigzerosevenQmaxHzeroXMm,\uaCFigzerosevenQmaxHzeroYMm)};
+ \addlegendentry{$\max q_{\mathrm{K}}$ для $h_0$: $P_{17}$}
+ \addplot[ua qmax,uaOrange,mark size=2.0pt,forget plot] coordinates {(\uaCFigzerosevenQmaxTwohzeroXMm,\uaCFigzerosevenQmaxTwohzeroYMm)};
+ \addplot[ua ls] coordinates {(\uaCXlsMm,\uaCYlsMm)};
+ \addlegendentry{Локальна симетрія для $h_0$: $a_{\mathrm{LS}}=\uaCAlsMmThreeDecimals$ мм}
+ \addplot[ua last accepted] coordinates {(\uaCFigzerosevenLastHzeroXMm,\uaCFigzerosevenLastHzeroYMm)};
+ \addlegendentry{$P_{23}$: останній прийнятий стан}
+\end{axis}
+\uaPage{14mm}{10.5mm}{3.5mm}{1mm}
+\end{tikzpicture}
+\end{document}

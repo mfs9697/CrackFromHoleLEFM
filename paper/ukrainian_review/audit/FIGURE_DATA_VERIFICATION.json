@@ -1,0 +1,2614 @@
+{
+ "schema": "AAM-UA7.FigureDataVerification.v1",
+ "verifier": "paper/ukrainian_review/scripts/verify_ua_figure_data.py",
+ "baseline": {
+  "schema": "AAM-UA7.FigureDataVerification.v1",
+  "records": {
+   "evidence.json": "db7c5908e2cad5c749c7914f4eb742b28d1d404b4124a03107f35b94ad013bd3",
+   "evidence_exact.mat": "7aba562a423eec46355f13cc486cea6b21b8349717ee0a8d64e429d2648ef5e7",
+   "isolated_tip_resolution.json": "c8e559b88efe38b5360683579a160a18d39ad8ee494f8a2f8f263198162512cb",
+   "increment_plot_records.mat": "a36b6f9b641023ad6f1ca63362b0e6ff95902aac505c5bd95993dcba0d147bbc",
+   "accepted_states.csv": "0cfb080eed703c37bf1cf146987b6ae9281f188124c376f13c61dcfa58d57733",
+   "cod_fits.csv": "169da1bfd1cf637baccb04aa7aa0b7c6de8398bd15dae68d7cba5ad98afd4972",
+   "qualification.csv": "b202b51e694c6f307ecadb0ee2ea8982812cae23d27b33bb82b686183e6d1131",
+   "increment_records_raw.json(record sha)": "a36b6f9b641023ad6f1ca63362b0e6ff95902aac505c5bd95993dcba0d147bbc"
+  },
+  "tables": {
+   "fig03_vertices": {
+    "rows": 25,
+    "columns": {
+     "x_mm": {
+      "pass": true,
+      "rule": "exact",
+      "maxAbsDiff": 0.0
+     },
+     "y_mm": {
+      "pass": true,
+      "rule": "exact",
+      "maxAbsDiff": 0.0
+     },
+     "k": {
+      "pass": true,
+      "rule": "exact",
+      "maxAbsDiff": 0.0
+     }
+    }
+   },
+   "fig04_states": {
+    "rows": 23,
+    "columns": {
+     "a_mm": {
+      "pass": true,
+      "rule": "exact",
+      "maxAbsDiff": 0.0
+     },
+     "KI": {
+      "pass": true,
+      "rule": "exact",
+      "maxAbsDiff": 0.0
+     },
+     "KII": {
+      "pass": true,
+      "rule": "exact",
+      "maxAbsDiff": 0.0
+     },
+     "KII_1e3": {
+      "pass": true,
+      "rule": "exact",
+      "maxAbsDiff": 0.0
+     },
+     "theta_deg": {
+      "pass": true,
+      "rule": "exact",
+      "maxAbsDiff": 0.0
+     }
+    }
+   },
+   "fig05_late": {
+    "rows": 8,
+    "columns": {
+     "a_mm": {
+      "pass": true,
+      "rule": "exact",
+      "maxAbsDiff": 0.0
+     },
+     "q": {
+      "pass": true,
+      "rule": "exact",
+      "maxAbsDiff": 0.0
+     },
+     "q_1e3": {
+      "pass": true,
+      "rule": "exact",
+      "maxAbsDiff": 0.0
+     },
+     "dtheta_next_deg": {
+      "pass": true,
+      "rule": "exact",
+      "maxAbsDiff": 0.0
+     }
+    }
+   },
+   "fig06_cod": {
+    "rows": 64,
+    "columns": {
+     "a_mm": {
+      "pass": true,
+      "rule": "exact",
+      "maxAbsDiff": 0.0
+     },
+     "turn_err_1e3deg": {
+      "pass": true,
+      "rule": "exact",
+      "maxAbsDiff": 0.0
+     },
+     "ratio_err_1e5": {
+      "pass": true,
+      "rule": "exact",
+      "maxAbsDiff": 0.0
+     }
+    }
+   },
+   "fig07_vertices": {
+    "rows": 24,
+    "columns": {
+     "x_h0_mm": {
+      "pass": true,
+      "rule": "exact",
+      "maxAbsDiff": 0.0
+     },
+     "y_h0_mm": {
+      "pass": true,
+      "rule": "exact",
+      "maxAbsDiff": 0.0
+     },
+     "x_2h0_mm": {
+      "pass": true,
+      "rule": "exact",
+      "maxAbsDiff": 0.0
+     },
+     "y_2h0_mm": {
+      "pass": true,
+      "rule": "exact",
+      "maxAbsDiff": 0.0
+     }
+    }
+   },
+   "fig07_metrics": {
+    "rows": 23,
+    "columns": {
+     "a_mm": {
+      "pass": true,
+      "rule": "<= 4 ulp",
+      "maxAbsDiff": 0.0
+     },
+     "dy_um": {
+      "pass": true,
+      "rule": "exact",
+      "maxAbsDiff": 0.0
+     },
+     "dtheta_mdeg": {
+      "pass": true,
+      "rule": "exact",
+      "maxAbsDiff": 0.0
+     },
+     "q_h0_1e3": {
+      "pass": true,
+      "rule": "exact",
+      "maxAbsDiff": 0.0
+     },
+     "q_2h0_1e3": {
+      "pass": true,
+      "rule": "exact",
+      "maxAbsDiff": 0.0
+     }
+    }
+   },
+   "fig09_metrics": {
+    "rows": 23,
+    "columns": {
+     "a_mm": {
+      "pass": true,
+      "rule": "exact",
+      "maxAbsDiff": 0.0
+     },
+     "dy_2m4_um": {
+      "pass": true,
+      "rule": "exact",
+      "maxAbsDiff": 0.0
+     },
+     "dy_1m2_um": {
+      "pass": true,
+      "rule": "exact",
+      "maxAbsDiff": 0.0
+     },
+     "dth_2m4_mdeg": {
+      "pass": true,
+      "rule": "exact",
+      "maxAbsDiff": 0.0
+     },
+     "dth_1m2_mdeg": {
+      "pass": true,
+      "rule": "exact",
+      "maxAbsDiff": 0.0
+     }
+    }
+   },
+   "fig09_native": {
+    "rows": 161,
+    "columns": {
+     "increment_mm": {
+      "pass": true,
+      "rule": "exact",
+      "maxAbsDiff": 0.0
+     },
+     "a_mm": {
+      "pass": true,
+      "rule": "exact",
+      "maxAbsDiff": 0.0
+     },
+     "turn_density_deg_per_mm": {
+      "pass": true,
+      "rule": "exact",
+      "maxAbsDiff": 0.0
+     }
+    }
+   },
+   "fig10_mesh": {
+    "rows": 22,
+    "columns": {
+     "s_mm": {
+      "pass": true,
+      "rule": "exact",
+      "maxAbsDiff": 0.0
+     },
+     "min_angle_deg": {
+      "pass": true,
+      "rule": "exact",
+      "maxAbsDiff": 0.0
+     },
+     "max_neighbor_ratio": {
+      "pass": true,
+      "rule": "exact",
+      "maxAbsDiff": 0.0
+     }
+    }
+   },
+   "fig10_solver": {
+    "rows": 22,
+    "columns": {
+     "a_mm": {
+      "pass": true,
+      "rule": "exact",
+      "maxAbsDiff": 0.0
+     },
+     "pcg_iterations": {
+      "pass": true,
+      "rule": "exact",
+      "maxAbsDiff": 0.0
+     },
+     "residual_over_gate": {
+      "pass": true,
+      "rule": "exact",
+      "maxAbsDiff": 0.0
+     }
+    }
+   }
+  },
+  "panels": {
+   "trajectory/overview": {
+    "transform": {
+     "limits": [
+      135.99999761893613,
+      302.00000071158195,
+      -54.000007242951824,
+      14.00000020526505
+     ],
+     "ticks": [
+      9,
+      7
+     ],
+     "tickResidual": [
+      7.115824899983636e-06,
+      4.9850276440110974e-06
+     ]
+    },
+    "fonts": {
+     "fonts": [
+      "NAJHLR+STIXTwoMath-Regular-Identity-H",
+      "FQLOCX+STIXTwoText-Regular-Identity-H"
+     ],
+     "sizes_pt": [
+      6.97,
+      9.96,
+      10.96
+     ],
+     "pass": true
+    },
+    "limits": true,
+    "accepted": {
+     "color": "blue",
+     "line": {
+      "pass": true,
+      "points": 24,
+      "maxAbsDx": 1.9811115464563045e-05,
+      "maxAbsDy": 1.1395252737855799e-05,
+      "tolX": 0.033200000618529166,
+      "tolY": 0.013600001489643377
+     },
+     "markerShape": "circle",
+     "markers": {
+      "pass": true,
+      "points": 24,
+      "maxAbsDx": 1.7668643408796925e-05,
+      "maxAbsDy": 1.0704748099499284e-05,
+      "tolX": 0.033200000618529166,
+      "tolY": 0.013600001489643377
+     },
+     "pass": true
+    },
+    "unsolved": {
+     "color": "orange",
+     "line": {
+      "pass": true,
+      "points": 2,
+      "maxAbsDx": 1.0108503431638383e-05,
+      "maxAbsDy": 7.936408966457975e-06,
+      "tolX": 0.033200000618529166,
+      "tolY": 0.013600001489643377
+     },
+     "markerShape": "x",
+     "markers": {
+      "pass": true,
+      "points": 2,
+      "maxAbsDx": 1.8979367837346217e-06,
+      "maxAbsDy": 3.831091678563325e-06,
+      "tolX": 0.033200000618529166,
+      "tolY": 0.013600001489643377
+     },
+     "pass": true
+    },
+    "lastAccepted": {
+     "pass": true,
+     "points": 1,
+     "maxAbsDx": 4.354765792413673e-07,
+     "maxAbsDy": 2.742256022258971e-07,
+     "tolX": 0.033200000618529166,
+     "tolY": 0.013600001489643377
+    },
+    "legend": [
+     {
+      "text": "Прийняті стани",
+      "color": "blue",
+      "pass": true
+     },
+     {
+      "text": "без розв’язку",
+      "color": "orange",
+      "pass": true
+     }
+    ]
+   },
+   "trajectory/late_detail": {
+    "transform": {
+     "limits": [
+      257.999999344694,
+      301.99999999032747,
+      -28.99999951031279,
+      -21.300000255725564
+     ],
+     "ticks": [
+      9,
+      4
+     ],
+     "tickResidual": [
+      1.6564010252295702e-06,
+      3.2645812098053284e-07
+     ]
+    },
+    "fonts": {
+     "fonts": [
+      "QVTWRR+STIXTwoMath-Regular-Identity-H",
+      "IVOMME+STIXTwoText-Regular-Identity-H"
+     ],
+     "sizes_pt": [
+      6.97,
+      9.96,
+      10.96
+     ],
+     "pass": true
+    },
+    "limits": true,
+    "accepted": {
+     "color": "blue",
+     "line": {
+      "pass": true,
+      "points": 9,
+      "maxAbsDx": 3.7434701312122343e-06,
+      "maxAbsDy": 1.358538295193057e-06,
+      "tolX": 0.008800000129126693,
+      "tolY": 0.0015399998509174452
+     },
+     "markerShape": "circle",
+     "markers": {
+      "pass": true,
+      "points": 9,
+      "maxAbsDx": 2.6553234988568875e-06,
+      "maxAbsDy": 1.6697356102213234e-06,
+      "tolX": 0.008800000129126693,
+      "tolY": 0.0015399998509174452
+     },
+     "pass": true
+    },
+    "unsolved": {
+     "color": "orange",
+     "line": {
+      "pass": true,
+      "points": 2,
+      "maxAbsDx": 1.981770822112594e-06,
+      "maxAbsDy": 5.986194793194954e-07,
+      "tolX": 0.008800000129126693,
+      "tolY": 0.0015399998509174452
+     },
+     "markerShape": "x",
+     "markers": {
+      "pass": true,
+      "points": 2,
+      "maxAbsDx": 4.158064086823288e-06,
+      "maxAbsDy": 5.986194793194954e-07,
+      "tolX": 0.008800000129126693,
+      "tolY": 0.0015399998509174452
+     },
+     "pass": true
+    },
+    "lastAccepted": {
+     "pass": true,
+     "points": 1,
+     "maxAbsDx": 8.207445034713601e-08,
+     "maxAbsDy": 1.822837383258502e-06,
+     "tolX": 0.008800000129126693,
+     "tolY": 0.0015399998509174452
+    },
+    "qmax": {
+     "pass": true,
+     "points": 1,
+     "maxAbsDx": 2.958325978852372e-06,
+     "maxAbsDy": 7.595003381766219e-07,
+     "tolX": 0.008800000129126693,
+     "tolY": 0.0015399998509174452
+    },
+    "ls": {
+     "pass": true,
+     "points": 1,
+     "maxAbsDx": 2.878246391446737e-06,
+     "maxAbsDy": 4.529756481019831e-08,
+     "tolX": 0.008800000129126693,
+     "tolY": 0.0015399998509174452
+    },
+    "labels": true
+   },
+   "intensities/KI": {
+    "transform": {
+     "limits": [
+      3.999998748486739,
+      91.999999729003,
+      0.1999999258460703,
+      1.3999999642962384
+     ],
+     "ticks": [
+      5,
+      7
+     ],
+     "tickResidual": [
+      1.4338203797592541e-06,
+      7.964682202654672e-08
+     ]
+    },
+    "fonts": {
+     "fonts": [
+      "ZLGOTS+STIXTwoMath-Regular-Identity-H",
+      "IYQLEW+STIXTwoText-Regular-Identity-H"
+     ],
+     "sizes_pt": [
+      7.67,
+      9.96,
+      10.96
+     ],
+     "pass": true
+    },
+    "limits": true,
+    "s": {
+     "color": "blue",
+     "line": {
+      "pass": true,
+      "points": 23,
+      "maxAbsDx": 1.2953655435410383e-05,
+      "maxAbsDy": 3.3091435103216327e-07,
+      "tolX": 0.017600000196103253,
+      "tolY": 0.00024000000769003365
+     },
+     "markerShape": "circle",
+     "markers": {
+      "pass": true,
+      "points": 23,
+      "maxAbsDx": 1.0268321766204735e-05,
+      "maxAbsDy": 1.8309566640617447e-07,
+      "tolX": 0.017600000196103253,
+      "tolY": 0.00024000000769003365
+     },
+     "pass": true
+    }
+   },
+   "intensities/KII": {
+    "transform": {
+     "limits": [
+      4.000001566855261,
+      92.00000019708854,
+      -8.000000384519534,
+      3.999999725343073
+     ],
+     "ticks": [
+      5,
+      7
+     ],
+     "tickResidual": [
+      2.9957481615383585e-06,
+      7.141078128825029e-07
+     ]
+    },
+    "fonts": {
+     "fonts": [
+      "QHFJZU+STIXTwoMath-Regular-Identity-H",
+      "CNUEKH+STIXTwoText-Regular-Identity-H"
+     ],
+     "sizes_pt": [
+      7.67,
+      9.96,
+      10.96
+     ],
+     "pass": true
+    },
+    "limits": true,
+    "s": {
+     "color": "blue",
+     "line": {
+      "pass": true,
+      "points": 23,
+      "maxAbsDx": 1.3200015470005155e-05,
+      "maxAbsDy": 2.720210280582336e-06,
+      "tolX": 0.017599999726046655,
+      "tolY": 0.0024000000219725217
+     },
+     "markerShape": "circle",
+     "markers": {
+      "pass": true,
+      "points": 23,
+      "maxAbsDx": 1.1660260028634184e-05,
+      "maxAbsDy": 2.0160228411114645e-06,
+      "tolX": 0.017599999726046655,
+      "tolY": 0.0024000000219725217
+     },
+     "pass": true
+    }
+   },
+   "intensities/theta": {
+    "transform": {
+     "limits": [
+      3.999998748486739,
+      91.999999729003,
+      -4.000000107663817,
+      0.1999999999999809
+     ],
+     "ticks": [
+      5,
+      5
+     ],
+     "tickResidual": [
+      1.4338203797592541e-06,
+      1.614957612083856e-07
+     ]
+    },
+    "fonts": {
+     "fonts": [
+      "IIZRKH+STIXTwoMath-Regular-Identity-H",
+      "EZXVPF+STIXTwoText-Regular-Identity-H"
+     ],
+     "sizes_pt": [
+      7.67,
+      9.96,
+      10.96
+     ],
+     "pass": true
+    },
+    "limits": true,
+    "s": {
+     "color": "blue",
+     "line": {
+      "pass": true,
+      "points": 23,
+      "maxAbsDx": 1.2953655435410383e-05,
+      "maxAbsDy": 8.807015217104919e-07,
+      "tolX": 0.017600000196103253,
+      "tolY": 0.0008400000215327597
+     },
+     "markerShape": "circle",
+     "markers": {
+      "pass": true,
+      "points": 23,
+      "maxAbsDx": 1.0268321766204735e-05,
+      "maxAbsDy": 8.793362111791936e-07,
+      "tolX": 0.017600000196103253,
+      "tolY": 0.0008400000215327597
+     },
+     "pass": true
+    }
+   },
+   "late/mode_mixity": {
+    "transform": {
+     "limits": [
+      59.999999193872405,
+      93.99999808544675,
+      -5.9999999417386185,
+      4.0000001456533765
+     ],
+     "ticks": [
+      5,
+      6
+     ],
+     "tickResidual": [
+      1.0076596055341724e-06,
+      5.010476940014996e-07
+     ]
+    },
+    "fonts": {
+     "fonts": [
+      "WCTYTW+STIXTwoMath-Regular-Identity-H",
+      "IYJHCP+STIXTwoText-Regular-Identity-H"
+     ],
+     "sizes_pt": [
+      7.67,
+      9.96,
+      10.96
+     ],
+     "pass": true
+    },
+    "limits": true,
+    "s": {
+     "color": "blue",
+     "line": {
+      "pass": true,
+      "points": 8,
+      "maxAbsDx": 4.836765882032523e-06,
+      "maxAbsDy": 1.6139738479026278e-06,
+      "tolX": 0.006799999778314869,
+      "tolY": 0.0020000000174783994
+     },
+     "markerShape": "circle",
+     "markers": {
+      "pass": true,
+      "points": 8,
+      "maxAbsDx": 4.635233992189569e-06,
+      "maxAbsDy": 8.627508254477334e-07,
+      "tolX": 0.006799999778314869,
+      "tolY": 0.0020000000174783994
+     },
+     "pass": true
+    },
+    "aLS": {
+     "pass": true,
+     "x": 84.14636114226874
+    }
+   },
+   "late/turn": {
+    "transform": {
+     "limits": [
+      59.999998790808505,
+      93.9999982365955,
+      -0.4000000288379555,
+      0.7999999868918239
+     ],
+     "ticks": [
+      5,
+      7
+     ],
+     "tickResidual": [
+      1.209191623274819e-06,
+      9.17571653102911e-08
+     ]
+    },
+    "fonts": {
+     "fonts": [
+      "RILTXK+STIXTwoMath-Regular-Identity-H",
+      "SZEALX+STIXTwoText-Regular-Identity-H"
+     ],
+     "sizes_pt": [
+      7.67,
+      9.96,
+      10.96
+     ],
+     "pass": true
+    },
+    "limits": true,
+    "s": {
+     "color": "blue",
+     "line": {
+      "pass": true,
+      "points": 8,
+      "maxAbsDx": 2.3176171737304685e-06,
+      "maxAbsDy": 1.1769233071445839e-07,
+      "tolX": 0.0067999998891574,
+      "tolY": 0.0002400000031459559
+     },
+     "markerShape": "circle",
+     "markers": {
+      "pass": true,
+      "points": 8,
+      "maxAbsDx": 2.6199150795491732e-06,
+      "maxAbsDy": 1.247102957568913e-07,
+      "tolX": 0.0067999998891574,
+      "tolY": 0.0002400000031459559
+     },
+     "pass": true
+    },
+    "aLS": {
+     "pass": true,
+     "x": 84.14636457937272
+    }
+   },
+   "cod/turn_linear": {
+    "transform": {
+     "limits": [
+      60.00000016981168,
+      94.00000125236105,
+      -10.938463978417902,
+      2.173565349331587
+     ],
+     "ticks": [
+      3,
+      3
+     ],
+     "tickResidual": [
+      3.396233410057903e-07,
+      5.347173530623195e-07
+     ]
+    },
+    "fonts": {
+     "fonts": [
+      "MQOXKV+STIXTwoMath-Regular-Identity-H",
+      "VAHZEG+STIXTwoText-Regular-Identity-H"
+     ],
+     "sizes_pt": [
+      7.67,
+      9.96,
+      10.96
+     ],
+     "pass": true
+    },
+    "xlimits": true,
+    "window1": {
+     "color": "blue",
+     "line": {
+      "pass": true,
+      "points": 8,
+      "maxAbsDx": 3.3537805421701705e-06,
+      "maxAbsDy": 1.731093603574152e-06,
+      "tolX": 0.006800000216509874,
+      "tolY": 0.002622405865549898
+     },
+     "markerShape": "circle",
+     "markers": {
+      "pass": true,
+      "points": 8,
+      "maxAbsDx": 2.462269293346253e-06,
+      "maxAbsDy": 2.414017147067682e-06,
+      "tolX": 0.006800000216509874,
+      "tolY": 0.002622405865549898
+     },
+     "pass": true
+    },
+    "window2": {
+     "color": "orange",
+     "line": {
+      "pass": true,
+      "points": 8,
+      "maxAbsDx": 3.3537805421701705e-06,
+      "maxAbsDy": 2.239424693017966e-06,
+      "tolX": 0.006800000216509874,
+      "tolY": 0.002622405865549898
+     },
+     "markerShape": "square",
+     "markers": {
+      "pass": true,
+      "points": 8,
+      "maxAbsDx": 5.900955585502743e-06,
+      "maxAbsDy": 2.3462969145349177e-06,
+      "tolX": 0.006800000216509874,
+      "tolY": 0.002622405865549898
+     },
+     "pass": true
+    },
+    "window3": {
+     "color": "green",
+     "line": {
+      "pass": true,
+      "points": 8,
+      "maxAbsDx": 3.3537805421701705e-06,
+      "maxAbsDy": 1.09944614035129e-06,
+      "tolX": 0.006800000216509874,
+      "tolY": 0.002622405865549898
+     },
+     "markerShape": "triangle",
+     "markers": {
+      "pass": true,
+      "points": 8,
+      "maxAbsDx": 3.438686377421618e-06,
+      "maxAbsDy": 1.3338352438108103e-06,
+      "tolX": 0.006800000216509874,
+      "tolY": 0.002622405865549898
+     },
+     "pass": true
+    },
+    "window4": {
+     "color": "purple",
+     "line": {
+      "pass": true,
+      "points": 8,
+      "maxAbsDx": 3.3537805421701705e-06,
+      "maxAbsDy": 1.2829714028939065e-06,
+      "tolX": 0.006800000216509874,
+      "tolY": 0.002622405865549898
+     },
+     "markerShape": "diamond",
+     "markers": {
+      "pass": true,
+      "points": 8,
+      "maxAbsDx": 3.3537805421701705e-06,
+      "maxAbsDy": 1.0824523957175813e-06,
+      "tolX": 0.006800000216509874,
+      "tolY": 0.002622405865549898
+     },
+     "pass": true
+    }
+   },
+   "cod/turn_quadratic": {
+    "transform": {
+     "limits": [
+      60.0,
+      93.99999694339006,
+      -4.285097603767599,
+      2.6897580655672746
+     ],
+     "ticks": [
+      3,
+      4
+     ],
+     "tickResidual": [
+      0.0,
+      1.7066225277417857e-07
+     ]
+    },
+    "fonts": {
+     "fonts": [
+      "DBRCLT+STIXTwoMath-Regular-Identity-H",
+      "IOUJVY+STIXTwoText-Regular-Identity-H"
+     ],
+     "sizes_pt": [
+      7.67,
+      9.96,
+      10.96
+     ],
+     "pass": true
+    },
+    "xlimits": true,
+    "window1": {
+     "color": "blue",
+     "line": {
+      "pass": true,
+      "points": 8,
+      "maxAbsDx": 3.0566100122086937e-06,
+      "maxAbsDy": 6.764143567483671e-07,
+      "tolX": 0.006799999388678012,
+      "tolY": 0.0013949711338669749
+     },
+     "markerShape": "circle",
+     "markers": {
+      "pass": true,
+      "points": 8,
+      "maxAbsDx": 2.0377400602455964e-06,
+      "maxAbsDy": 5.37411071199756e-07,
+      "tolX": 0.006799999388678012,
+      "tolY": 0.0013949711338669749
+     },
+     "pass": true
+    },
+    "window2": {
+     "color": "orange",
+     "line": {
+      "pass": true,
+      "points": 8,
+      "maxAbsDx": 3.0566100122086937e-06,
+      "maxAbsDy": 9.528618005738565e-07,
+      "tolX": 0.006799999388678012,
+      "tolY": 0.0013949711338669749
+     },
+     "markerShape": "square",
+     "markers": {
+      "pass": true,
+      "points": 8,
+      "maxAbsDx": 5.603784970276138e-06,
+      "maxAbsDy": 1.30978045298491e-06,
+      "tolX": 0.006799999388678012,
+      "tolY": 0.0013949711338669749
+     },
+     "pass": true
+    },
+    "window3": {
+     "color": "green",
+     "line": {
+      "pass": true,
+      "points": 8,
+      "maxAbsDx": 3.0566100122086937e-06,
+      "maxAbsDy": 4.0179802174300505e-07,
+      "tolX": 0.006799999388678012,
+      "tolY": 0.0013949711338669749
+     },
+     "markerShape": "triangle",
+     "markers": {
+      "pass": true,
+      "points": 8,
+      "maxAbsDx": 2.0377400460347417e-06,
+      "maxAbsDy": 8.59097123662167e-07,
+      "tolX": 0.006799999388678012,
+      "tolY": 0.0013949711338669749
+     },
+     "pass": true
+    },
+    "window4": {
+     "color": "purple",
+     "line": {
+      "pass": true,
+      "points": 8,
+      "maxAbsDx": 3.0566100122086937e-06,
+      "maxAbsDy": 1.4587762151574424e-06,
+      "tolX": 0.006799999388678012,
+      "tolY": 0.0013949711338669749
+     },
+     "markerShape": "diamond",
+     "markers": {
+      "pass": true,
+      "points": 8,
+      "maxAbsDx": 3.0566100122086937e-06,
+      "maxAbsDy": 1.0321205892172003e-06,
+      "tolX": 0.006799999388678012,
+      "tolY": 0.0013949711338669749
+     },
+     "pass": true
+    }
+   },
+   "cod/mixity_linear": {
+    "transform": {
+     "limits": [
+      60.00000016981168,
+      94.00000125236105,
+      -1.897001862096925,
+      9.547551799920853
+     ],
+     "ticks": [
+      3,
+      5
+     ],
+     "tickResidual": [
+      3.396233410057903e-07,
+      5.600502310798561e-07
+     ]
+    },
+    "fonts": {
+     "fonts": [
+      "AADVUS+STIXTwoMath-Regular-Identity-H",
+      "AWGUAY+STIXTwoText-Regular-Identity-H"
+     ],
+     "sizes_pt": [
+      7.67,
+      9.96,
+      10.96
+     ],
+     "pass": true
+    },
+    "xlimits": true,
+    "window1": {
+     "color": "blue",
+     "line": {
+      "pass": true,
+      "points": 8,
+      "maxAbsDx": 3.3537805421701705e-06,
+      "maxAbsDy": 1.1167900166864086e-06,
+      "tolX": 0.006800000216509874,
+      "tolY": 0.0022889107324035557
+     },
+     "markerShape": "circle",
+     "markers": {
+      "pass": true,
+      "points": 8,
+      "maxAbsDx": 2.462269293346253e-06,
+      "maxAbsDy": 1.287117844528396e-06,
+      "tolX": 0.006800000216509874,
+      "tolY": 0.0022889107324035557
+     },
+     "pass": true
+    },
+    "window2": {
+     "color": "orange",
+     "line": {
+      "pass": true,
+      "points": 8,
+      "maxAbsDx": 3.3537805421701705e-06,
+      "maxAbsDy": 1.5405515487731947e-06,
+      "tolX": 0.006800000216509874,
+      "tolY": 0.0022889107324035557
+     },
+     "markerShape": "square",
+     "markers": {
+      "pass": true,
+      "points": 8,
+      "maxAbsDx": 5.900955585502743e-06,
+      "maxAbsDy": 1.802295049646574e-06,
+      "tolX": 0.006800000216509874,
+      "tolY": 0.0022889107324035557
+     },
+     "pass": true
+    },
+    "window3": {
+     "color": "green",
+     "line": {
+      "pass": true,
+      "points": 8,
+      "maxAbsDx": 3.3537805421701705e-06,
+      "maxAbsDy": 1.2874769478310455e-06,
+      "tolX": 0.006800000216509874,
+      "tolY": 0.0022889107324035557
+     },
+     "markerShape": "triangle",
+     "markers": {
+      "pass": true,
+      "points": 8,
+      "maxAbsDx": 3.438686377421618e-06,
+      "maxAbsDy": 1.420329021395439e-06,
+      "tolX": 0.006800000216509874,
+      "tolY": 0.0022889107324035557
+     },
+     "pass": true
+    },
+    "window4": {
+     "color": "purple",
+     "line": {
+      "pass": true,
+      "points": 8,
+      "maxAbsDx": 3.3537805421701705e-06,
+      "maxAbsDy": 1.9453201440811085e-06,
+      "tolX": 0.006800000216509874,
+      "tolY": 0.0022889107324035557
+     },
+     "markerShape": "diamond",
+     "markers": {
+      "pass": true,
+      "points": 8,
+      "maxAbsDx": 3.3537805421701705e-06,
+      "maxAbsDy": 1.2452573558974223e-06,
+      "tolX": 0.006800000216509874,
+      "tolY": 0.0022889107324035557
+     },
+     "pass": true
+    }
+   },
+   "cod/mixity_quadratic": {
+    "transform": {
+     "limits": [
+      60.00000016981168,
+      94.00000125236105,
+      -2.3474564294623805,
+      3.740210279595111
+     ],
+     "ticks": [
+      3,
+      3
+     ],
+     "tickResidual": [
+      3.396233410057903e-07,
+      2.220446049250313e-16
+     ]
+    },
+    "fonts": {
+     "fonts": [
+      "FAPRGJ+STIXTwoMath-Regular-Identity-H",
+      "ZVIETU+STIXTwoText-Regular-Identity-H"
+     ],
+     "sizes_pt": [
+      7.67,
+      9.96,
+      10.96
+     ],
+     "pass": true
+    },
+    "xlimits": true,
+    "window1": {
+     "color": "blue",
+     "line": {
+      "pass": true,
+      "points": 8,
+      "maxAbsDx": 3.3537805421701705e-06,
+      "maxAbsDy": 5.23173472766203e-07,
+      "tolX": 0.006800000216509874,
+      "tolY": 0.0012175333418114984
+     },
+     "markerShape": "circle",
+     "markers": {
+      "pass": true,
+      "points": 8,
+      "maxAbsDx": 2.462269293346253e-06,
+      "maxAbsDy": 8.645343334556799e-07,
+      "tolX": 0.006800000216509874,
+      "tolY": 0.0012175333418114984
+     },
+     "pass": true
+    },
+    "window2": {
+     "color": "orange",
+     "line": {
+      "pass": true,
+      "points": 8,
+      "maxAbsDx": 3.3537805421701705e-06,
+      "maxAbsDy": 1.0312429297165693e-06,
+      "tolX": 0.006800000216509874,
+      "tolY": 0.0012175333418114984
+     },
+     "markerShape": "square",
+     "markers": {
+      "pass": true,
+      "points": 8,
+      "maxAbsDx": 5.900955585502743e-06,
+      "maxAbsDy": 1.1017866290430334e-06,
+      "tolX": 0.006800000216509874,
+      "tolY": 0.0012175333418114984
+     },
+     "pass": true
+    },
+    "window3": {
+     "color": "green",
+     "line": {
+      "pass": true,
+      "points": 8,
+      "maxAbsDx": 3.3537805421701705e-06,
+      "maxAbsDy": 6.887871137895019e-07,
+      "tolX": 0.006800000216509874,
+      "tolY": 0.0012175333418114984
+     },
+     "markerShape": "triangle",
+     "markers": {
+      "pass": true,
+      "points": 8,
+      "maxAbsDx": 3.438686377421618e-06,
+      "maxAbsDy": 7.985426573320353e-07,
+      "tolX": 0.006800000216509874,
+      "tolY": 0.0012175333418114984
+     },
+     "pass": true
+    },
+    "window4": {
+     "color": "purple",
+     "line": {
+      "pass": true,
+      "points": 8,
+      "maxAbsDx": 3.3537805421701705e-06,
+      "maxAbsDy": 5.149462870557286e-07,
+      "tolX": 0.006800000216509874,
+      "tolY": 0.0012175333418114984
+     },
+     "markerShape": "diamond",
+     "markers": {
+      "pass": true,
+      "points": 8,
+      "maxAbsDx": 3.3537805421701705e-06,
+      "maxAbsDy": 5.804733658187899e-07,
+      "tolX": 0.006800000216509874,
+      "tolY": 0.0012175333418114984
+     },
+     "pass": true
+    },
+    "legend": [
+     {
+      "text": "[0.04, 0.20]",
+      "color": "blue",
+      "pass": true
+     },
+     {
+      "text": "[0.04, 0.30]",
+      "color": "orange",
+      "pass": true
+     },
+     {
+      "text": "[0.08, 0.30]",
+      "color": "green",
+      "pass": true
+     },
+     {
+      "text": "[0.12, 0.30]",
+      "color": "purple",
+      "pass": true
+     }
+    ]
+   },
+   "tip_resolution_sensitivity/trajectory": {
+    "transform": {
+     "limits": [
+      134.99999793422253,
+      300.00000210139433,
+      -55.000003205639885,
+      14.99999679436013
+     ],
+     "ticks": [
+      9,
+      7
+     ],
+     "tickResidual": [
+      4.737042047509021e-06,
+      3.552713678800501e-15
+     ]
+    },
+    "fonts": {
+     "fonts": [
+      "BWMOVM+STIXTwoMath-Regular-Identity-H",
+      "YDOZUQ+STIXTwoText-Regular-Identity-H"
+     ],
+     "sizes_pt": [
+      6.97,
+      9.96,
+      10.96
+     ],
+     "pass": true
+    },
+    "limits": true,
+    "h0": {
+     "color": "blue",
+     "line": {
+      "pass": true,
+      "points": 24,
+      "maxAbsDx": 1.803737848149467e-05,
+      "maxAbsDy": 1.1167486587027042e-05,
+      "tolX": 0.03300000083343436,
+      "tolY": 0.014000000000000004
+     },
+     "markerShape": "circle",
+     "markers": {
+      "pass": true,
+      "points": 24,
+      "maxAbsDx": 1.643255461658555e-05,
+      "maxAbsDy": 1.0261289670410179e-05,
+      "tolX": 0.03300000083343436,
+      "tolY": 0.014000000000000004
+     },
+     "pass": true
+    },
+    "h2": {
+     "color": "orange",
+     "line": {
+      "pass": true,
+      "points": 24,
+      "maxAbsDx": 1.891108576046463e-05,
+      "maxAbsDy": 1.0021448829888868e-05,
+      "tolX": 0.03300000083343436,
+      "tolY": 0.014000000000000004
+     },
+     "markerShape": "square",
+     "markers": {
+      "pass": true,
+      "points": 24,
+      "maxAbsDx": 1.784393282378005e-05,
+      "maxAbsDy": 7.741927149140793e-06,
+      "tolX": 0.03300000083343436,
+      "tolY": 0.014000000000000004
+     },
+     "pass": true
+    },
+    "legend": [
+     {
+      "text": "Закон M0",
+      "pass": true
+     },
+     {
+      "text": "ℎ0",
+      "color": "blue",
+      "pass": true
+     },
+     {
+      "text": "2ℎ0",
+      "color": "orange",
+      "pass": true
+     },
+     {
+      "text": "max",
+      "color": "purple",
+      "pass": true
+     },
+     {
+      "text": "Локальна симетрія",
+      "color": "green",
+      "pass": true
+     },
+     {
+      "text": "останній прийнятий",
+      "color": "blue",
+      "pass": true
+     }
+    ]
+   },
+   "tip_resolution_sensitivity/vertical_deviation": {
+    "transform": {
+     "limits": [
+      -2.1853714144981495e-06,
+      99.99999781462799,
+      -0.008891175863972978,
+      0.15000000397320135
+     ],
+     "ticks": [
+      3,
+      4
+     ],
+     "tickResidual": [
+      4.37074341874677e-06,
+      7.94640381274192e-09
+     ]
+    },
+    "fonts": {
+     "fonts": [
+      "OINOAP+STIXTwoMath-Regular-Identity-H",
+      "DQPGKF+STIXTwoText-Regular-Identity-H"
+     ],
+     "sizes_pt": [
+      5.48,
+      7.67,
+      9.96,
+      10.96
+     ],
+     "pass": true
+    },
+    "s": {
+     "color": "blue",
+     "line": {
+      "pass": true,
+      "points": 23,
+      "maxAbsDx": 2.194113211118065e-05,
+      "maxAbsDy": 2.8022739045896472e-08,
+      "tolX": 0.019999999999999882,
+      "tolY": 3.177823596743487e-05
+     },
+     "markerShape": "circle",
+     "markers": {
+      "pass": true,
+      "points": 23,
+      "maxAbsDx": 9.353391291710977e-06,
+      "maxAbsDy": 2.8179785074855523e-08,
+      "tolX": 0.019999999999999882,
+      "tolY": 3.177823596743487e-05
+     },
+     "pass": true
+    }
+   },
+   "tip_resolution_sensitivity/direction_deviation": {
+    "transform": {
+     "limits": [
+      2.185371805296654e-06,
+      100.00000218537124,
+      -0.05752881766220669,
+      0.24998867411795045
+     ],
+     "ticks": [
+      3,
+      6
+     ],
+     "tickResidual": [
+      4.370743027948265e-06,
+      4.479667490370209e-06
+     ]
+    },
+    "fonts": {
+     "fonts": [
+      "RMBABE+STIXTwoMath-Regular-Identity-H",
+      "RGUSCK+STIXTwoText-Regular-Identity-H"
+     ],
+     "sizes_pt": [
+      5.48,
+      7.67,
+      9.96,
+      10.96
+     ],
+     "pass": true
+    },
+    "s": {
+     "color": "purple",
+     "line": {
+      "pass": true,
+      "points": 23,
+      "maxAbsDx": 2.4913235449730564e-05,
+      "maxAbsDy": 1.112702070035776e-05,
+      "tolX": 0.019999999999999886,
+      "tolY": 6.150349835603143e-05
+     },
+     "markerShape": "circle",
+     "markers": {
+      "pass": true,
+      "points": 23,
+      "maxAbsDx": 1.2675154380303866e-05,
+      "maxAbsDy": 1.1117408516864158e-05,
+      "tolX": 0.019999999999999886,
+      "tolY": 6.150349835603143e-05
+     },
+     "pass": true
+    }
+   },
+   "tip_resolution_sensitivity/mode_mixity": {
+    "transform": {
+     "limits": [
+      2.185371805296654e-06,
+      100.00000218537124,
+      -6.251048990482832,
+      4.0
+     ],
+     "ticks": [
+      3,
+      6
+     ],
+     "tickResidual": [
+      4.370743027948265e-06,
+      8.881784197001252e-16
+     ]
+    },
+    "fonts": {
+     "fonts": [
+      "OBNMVH+STIXTwoMath-Regular-Identity-H",
+      "SAMEFG+STIXTwoText-Regular-Identity-H"
+     ],
+     "sizes_pt": [
+      6.97,
+      7.67,
+      9.96,
+      10.96
+     ],
+     "pass": true
+    },
+    "h0": {
+     "color": "blue",
+     "line": {
+      "pass": true,
+      "points": 23,
+      "maxAbsDx": 2.4913235449730564e-05,
+      "maxAbsDy": 1.1439785423950077e-06,
+      "tolX": 0.019999999999999886,
+      "tolY": 0.0020502097980965666
+     },
+     "markerShape": "circle",
+     "markers": {
+      "pass": true,
+      "points": 23,
+      "maxAbsDx": 1.2675154380303866e-05,
+      "maxAbsDy": 1.414774585040135e-06,
+      "tolX": 0.019999999999999886,
+      "tolY": 0.0020502097980965666
+     },
+     "pass": true
+    },
+    "2h0": {
+     "color": "orange",
+     "line": {
+      "pass": true,
+      "points": 23,
+      "maxAbsDx": 2.4913235449730564e-05,
+      "maxAbsDy": 1.4941586523598005e-06,
+      "tolX": 0.019999999999999886,
+      "tolY": 0.0020502097980965666
+     },
+     "markerShape": "square",
+     "markers": {
+      "pass": true,
+      "points": 23,
+      "maxAbsDx": 2.3164938035336036e-05,
+      "maxAbsDy": 1.5823933390279876e-06,
+      "tolX": 0.019999999999999886,
+      "tolY": 0.0020502097980965666
+     },
+     "pass": true
+    },
+    "aLS": {
+     "pass": true,
+     "x": 84.14637312465055
+    },
+    "legend": [
+     {
+      "text": "ℎ",
+      "color": "blue",
+      "pass": true
+     },
+     {
+      "text": "2ℎ",
+      "color": "orange",
+      "pass": true
+     }
+    ]
+   },
+   "increment_sensitivity/vertical_deviation": {
+    "transform": {
+     "limits": [
+      2.185371805296654e-06,
+      100.00000218537124,
+      -49.2552463691114,
+      1.9999971162126327
+     ],
+     "ticks": [
+      3,
+      5
+     ],
+     "tickResidual": [
+      4.370743027948265e-06,
+      4.4858905141609284e-06
+     ]
+    },
+    "fonts": {
+     "fonts": [
+      "PROMIL+STIXTwoMath-Regular-Identity-H",
+      "RVCSMB+STIXTwoText-Regular-Identity-H"
+     ],
+     "sizes_pt": [
+      6.97,
+      9.96,
+      10.96
+     ],
+     "pass": true
+    },
+    "2m4": {
+     "color": "orange",
+     "line": {
+      "pass": true,
+      "points": 23,
+      "maxAbsDx": 2.4913235478152274e-05,
+      "maxAbsDy": 9.779958135780475e-06,
+      "tolX": 0.019999999999999886,
+      "tolY": 0.010251048697064806
+     },
+     "markerShape": "square",
+     "markers": {
+      "pass": true,
+      "points": 23,
+      "maxAbsDx": 2.3164938113495737e-05,
+      "maxAbsDy": 8.353485049905629e-06,
+      "tolX": 0.019999999999999886,
+      "tolY": 0.010251048697064806
+     },
+     "pass": true
+    },
+    "1m2": {
+     "color": "yellow",
+     "line": {
+      "pass": true,
+      "points": 23,
+      "maxAbsDx": 2.4913235478152274e-05,
+      "maxAbsDy": 1.0402303274759106e-05,
+      "tolX": 0.019999999999999886,
+      "tolY": 0.010251048697064806
+     },
+     "markerShape": "triangle",
+     "markers": {
+      "pass": true,
+      "points": 23,
+      "maxAbsDx": 1.6171749422255743e-05,
+      "maxAbsDy": 7.931796602633767e-06,
+      "tolX": 0.019999999999999886,
+      "tolY": 0.010251048697064806
+     },
+     "pass": true
+    }
+   },
+   "increment_sensitivity/direction_deviation": {
+    "transform": {
+     "limits": [
+      -7.105427357601002e-15,
+      100.0,
+      -170.04182664052365,
+      240.00002880697662
+     ],
+     "ticks": [
+      3,
+      8
+     ],
+     "tickResidual": [
+      7.105427357601002e-15,
+      2.92952389884249e-05
+     ]
+    },
+    "fonts": {
+     "fonts": [
+      "DPGDVL+STIXTwoMath-Regular-Identity-H",
+      "RNOJNU+STIXTwoText-Regular-Identity-H"
+     ],
+     "sizes_pt": [
+      6.97,
+      9.96,
+      10.96
+     ],
+     "pass": true
+    },
+    "2m4": {
+     "color": "orange",
+     "line": {
+      "pass": true,
+      "points": 23,
+      "maxAbsDx": 2.3427183670321483e-05,
+      "maxAbsDy": 6.488507185764547e-05,
+      "tolX": 0.02,
+      "tolY": 0.08200837108950006
+     },
+     "markerShape": "square",
+     "markers": {
+      "pass": true,
+      "points": 23,
+      "maxAbsDx": 2.2203375571905326e-05,
+      "maxAbsDy": 4.427245373506139e-05,
+      "tolX": 0.02,
+      "tolY": 0.08200837108950006
+     },
+     "pass": true
+    },
+    "1m2": {
+     "color": "yellow",
+     "line": {
+      "pass": true,
+      "points": 23,
+      "maxAbsDx": 2.3427183670321483e-05,
+      "maxAbsDy": 6.289329213871042e-05,
+      "tolX": 0.02,
+      "tolY": 0.08200837108950006
+     },
+     "markerShape": "triangle",
+     "markers": {
+      "pass": true,
+      "points": 23,
+      "maxAbsDx": 1.6142611634961668e-05,
+      "maxAbsDy": 4.3506405123849845e-05,
+      "tolX": 0.02,
+      "tolY": 0.08200837108950006
+     },
+     "pass": true
+    }
+   },
+   "increment_sensitivity/turn_density": {
+    "transform": {
+     "limits": [
+      1.4569144184406468e-06,
+      100.00000145691416,
+      -0.11054408428829021,
+      0.31999999946167973
+     ],
+     "ticks": [
+      3,
+      5
+     ],
+     "tickResidual": [
+      2.9138285597696267e-06,
+      1.8841170068562008e-08
+     ]
+    },
+    "fonts": {
+     "fonts": [
+      "LNGGGL+STIXTwoMath-Regular-Identity-H",
+      "LSYPPQ+STIXTwoText-Regular-Identity-H"
+     ],
+     "sizes_pt": [
+      9.96,
+      10.96
+     ],
+     "pass": true
+    },
+    "4mm": {
+     "color": "blue",
+     "line": {
+      "pass": true,
+      "points": 23,
+      "maxAbsDx": 2.348545829278237e-05,
+      "maxAbsDy": 5.267883351062208e-08,
+      "tolX": 0.01999999999999995,
+      "tolY": 8.6108816749994e-05
+     },
+     "markerShape": "circle",
+     "markers": {
+      "pass": true,
+      "points": 23,
+      "maxAbsDx": 1.305395198869519e-05,
+      "maxAbsDy": 5.602012612127005e-08,
+      "tolX": 0.01999999999999995,
+      "tolY": 8.6108816749994e-05
+     },
+     "pass": true
+    },
+    "2mm": {
+     "color": "orange",
+     "line": {
+      "pass": true,
+      "points": 46,
+      "maxAbsDx": 2.610790402712837e-05,
+      "maxAbsDy": 6.359252824328365e-08,
+      "tolX": 0.01999999999999995,
+      "tolY": 8.6108816749994e-05
+     },
+     "markerShape": "square",
+     "markers": {
+      "pass": true,
+      "points": 46,
+      "maxAbsDx": 2.4359606790369526e-05,
+      "maxAbsDy": 6.812736668727892e-08,
+      "tolX": 0.01999999999999995,
+      "tolY": 8.6108816749994e-05
+     },
+     "pass": true
+    },
+    "1mm": {
+     "color": "yellow",
+     "line": {
+      "pass": true,
+      "points": 92,
+      "maxAbsDx": 2.610790402712837e-05,
+      "maxAbsDy": 6.73586855910735e-08,
+      "tolX": 0.01999999999999995,
+      "tolY": 8.6108816749994e-05
+     },
+     "markerShape": "triangle",
+     "markers": {
+      "pass": true,
+      "points": 92,
+      "maxAbsDx": 1.6200886896911015e-05,
+      "maxAbsDy": 5.1499265102394887e-08,
+      "tolX": 0.01999999999999995,
+      "tolY": 8.6108816749994e-05
+     },
+     "pass": true
+    }
+   },
+   "quality/min_angle": {
+    "transform": {
+     "limits": [
+      8.000001272889811,
+      91.99999999999989,
+      19.0,
+      27.0
+     ],
+     "ticks": [
+      4,
+      4
+     ],
+     "tickResidual": [
+      2.5457793171312915e-06,
+      0.0
+     ]
+    },
+    "fonts": {
+     "fonts": [
+      "HSIKYS+STIXTwoMath-Regular-Identity-H",
+      "FQVCHZ+STIXTwoText-Regular-Identity-H"
+     ],
+     "sizes_pt": [
+      9.96,
+      10.96
+     ],
+     "pass": true
+    },
+    "s": {
+     "color": "blue",
+     "line": {
+      "pass": true,
+      "points": 22,
+      "maxAbsDx": 9.819434708902008e-06,
+      "maxAbsDy": 1.8716269956087217e-06,
+      "tolX": 0.016799999745422015,
+      "tolY": 0.0016
+     },
+     "markerShape": "circle",
+     "markers": {
+      "pass": true,
+      "points": 22,
+      "maxAbsDx": 7.455496792374561e-06,
+      "maxAbsDy": 1.0551861713281596e-06,
+      "tolX": 0.016799999745422015,
+      "tolY": 0.0016
+     },
+     "pass": true
+    }
+   },
+   "quality/size_ratio": {
+    "transform": {
+     "limits": [
+      8.000001272889811,
+      91.99999999999989,
+      1.779999999677021,
+      1.8039999987726762
+     ],
+     "ticks": [
+      4,
+      5
+     ],
+     "tickResidual": [
+      2.5457793171312915e-06,
+      6.459592860608154e-10
+     ]
+    },
+    "fonts": {
+     "fonts": [
+      "QOZVBX+STIXTwoMath-Regular-Identity-H",
+      "CAEHYU+STIXTwoText-Regular-Identity-H"
+     ],
+     "sizes_pt": [
+      9.96,
+      10.96
+     ],
+     "pass": true
+    },
+    "s": {
+     "color": "blue",
+     "line": {
+      "pass": true,
+      "points": 22,
+      "maxAbsDx": 9.819434708902008e-06,
+      "maxAbsDy": 1.0381004722503917e-08,
+      "tolX": 0.016799999745422015,
+      "tolY": 4.79999981913104e-06
+     },
+     "markerShape": "circle",
+     "markers": {
+      "pass": true,
+      "points": 22,
+      "maxAbsDx": 7.455496792374561e-06,
+      "maxAbsDy": 8.903776382851447e-09,
+      "tolX": 0.016799999745422015,
+      "tolY": 4.79999981913104e-06
+     },
+     "pass": true
+    }
+   },
+   "quality/iterations": {
+    "transform": {
+     "limits": [
+      8.000000763733901,
+      92.00000050915587,
+      2399.9999707969737,
+      3019.999955361073
+     ],
+     "ticks": [
+      4,
+      4
+     ],
+     "tickResidual": [
+      1.018311806433303e-06,
+      3.754675390155171e-05
+     ]
+    },
+    "fonts": {
+     "fonts": [
+      "UFZVAH+STIXTwoMath-Regular-Identity-H",
+      "PNOSYI+STIXTwoText-Regular-Identity-H"
+     ],
+     "sizes_pt": [
+      9.96,
+      10.96
+     ],
+     "pass": true
+    },
+    "s": {
+     "color": "blue",
+     "line": {
+      "pass": true,
+      "points": 22,
+      "maxAbsDx": 3.855037650879467e-06,
+      "maxAbsDy": 7.636593454662943e-05,
+      "tolX": 0.016799999949084394,
+      "tolY": 0.12399999691281983
+     },
+     "markerShape": "circle",
+     "markers": {
+      "pass": true,
+      "points": 22,
+      "maxAbsDx": 1.0255854803631337e-05,
+      "maxAbsDy": 6.228590063983575e-05,
+      "tolX": 0.016799999949084394,
+      "tolY": 0.12399999691281983
+     },
+     "pass": true
+    }
+   },
+   "quality/true_residual": {
+    "transform": {
+     "limits": [
+      8.000001272889811,
+      91.99999999999989,
+      -6.69671180730802e-08,
+      1.0999999742704982
+     ],
+     "ticks": [
+      4,
+      6
+     ],
+     "tickResidual": [
+      2.5457793171312915e-06,
+      1.2970477414331327e-07
+     ]
+    },
+    "fonts": {
+     "fonts": [
+      "FVTTTL+STIXTwoMath-Regular-Identity-H",
+      "BXCTHO+STIXTwoText-Regular-Identity-H"
+     ],
+     "sizes_pt": [
+      9.96,
+      10.96
+     ],
+     "pass": true
+    },
+    "s": {
+     "color": "blue",
+     "line": {
+      "pass": true,
+      "points": 22,
+      "maxAbsDx": 9.819434694691154e-06,
+      "maxAbsDy": 2.2538314822795336e-07,
+      "tolX": 0.016799999745422015,
+      "tolY": 0.00022000000824752328
+     },
+     "markerShape": "circle",
+     "markers": {
+      "pass": true,
+      "points": 22,
+      "maxAbsDx": 7.455496785269133e-06,
+      "maxAbsDy": 2.82170851628738e-07,
+      "tolX": 0.016799999745422015,
+      "tolY": 0.00022000000824752328
+     },
+     "pass": true
+    }
+   },
+   "m1_mesh_sensitivity/trajectory": {
+    "source": "paper/data/retained_figure_7_9/m1_trajectory.pdf",
+    "sourceSHA256": "c0cf18c3d6e8ba1e935e049e785832ef0f6b4bf0b6534d2fbb406d9aa01d1e58",
+    "layerSHA256": "df77ef3ddedba170173b8f951e316de61b813a85dcbc6e46cd209989cd1d93ca",
+    "spanUnchanged": true,
+    "layerPaints": 55,
+    "spanPaints": 55,
+    "noText": true,
+    "layerEmbeddedUnchanged": true,
+    "fonts": {
+     "fonts": [
+      "UMFCAE+STIXTwoMath-Regular-Identity-H",
+      "KCQTMM+STIXTwoText-Regular-Identity-H"
+     ],
+     "sizes_pt": [
+      6.97,
+      9.96,
+      10.96
+     ],
+     "pass": true
+    },
+    "transform": {
+     "limits": [
+      134.99999793422253,
+      300.00000210139433,
+      -55.000003205639885,
+      14.99999679436013
+     ],
+     "ticks": [
+      9,
+      7
+     ]
+    },
+    "hole": {
+     "centre": [
+      170.0015762239987,
+      -19.997185448190127
+     ],
+     "radius": 30.001095004646004,
+     "pass": true
+    },
+    "M0_vs_reference": {
+     "pass": true,
+     "points": 24,
+     "maxAbsDx": 0.006015990483263067,
+     "maxAbsDy": 0.002759703444404238,
+     "tolX": 0.0825000020835859,
+     "tolY": 0.03500000000000001
+    },
+    "legend": [
+     {
+      "text": "M0",
+      "color": "blue",
+      "pass": true
+     },
+     {
+      "text": "M1",
+      "color": "orange",
+      "pass": true
+     },
+     {
+      "text": "для M0: ",
+      "color": "purple",
+      "pass": true
+     },
+     {
+      "text": "Локальна симетрія",
+      "color": "green",
+      "pass": true
+     },
+     {
+      "text": "останній прийнятий",
+      "color": "blue",
+      "pass": true
+     }
+    ]
+   },
+   "m1_mesh_sensitivity/vertical_deviation": {
+    "source": "paper/data/retained_figure_7_9/m1_vertical_deviation.pdf",
+    "sourceSHA256": "06f3d677063551b7232aaf127bb8dd53ad9ecc36a0674f078749184c7e397786",
+    "layerSHA256": "1183a788ea3cebed7b2a32475e9a51e7000361a38c00672f1050543fd0e874a7",
+    "spanUnchanged": true,
+    "layerPaints": 48,
+    "spanPaints": 48,
+    "noText": true,
+    "layerEmbeddedUnchanged": true,
+    "fonts": {
+     "fonts": [
+      "VZKGDT+STIXTwoMath-Regular-Identity-H",
+      "GMGOVC+STIXTwoText-Regular-Identity-H"
+     ],
+     "sizes_pt": [
+      7.67,
+      9.96,
+      10.96
+     ],
+     "pass": true
+    },
+    "transform": {
+     "limits": [
+      7.284953582598064e-07,
+      100.00000072849528,
+      -0.0017573015127436004,
+      0.070000016149
+     ],
+     "ticks": [
+      3,
+      4
+     ]
+    },
+    "maximumVsManuscript": {
+     "plotted": 0.06733958491057043,
+     "quoted": 0.06734,
+     "pass": true,
+     "vertices": 23
+    }
+   },
+   "m1_mesh_sensitivity/direction_deviation": {
+    "source": "paper/data/retained_figure_7_9/m1_direction_deviation.pdf",
+    "sourceSHA256": "e05616ce0d72a396a4e6cdfaf84d69959da3ba229297f90c2934b29676206b20",
+    "layerSHA256": "b0beac7c4fed4666e8ee0f5625011d3d347b4054b602b3f717c4dbb74347f590",
+    "spanUnchanged": true,
+    "layerPaints": 48,
+    "spanPaints": 48,
+    "noText": true,
+    "layerEmbeddedUnchanged": true,
+    "fonts": {
+     "fonts": [
+      "WYMTVV+STIXTwoMath-Regular-Identity-H",
+      "QMUNAZ+STIXTwoText-Regular-Identity-H"
+     ],
+     "sizes_pt": [
+      7.67,
+      9.96,
+      10.96
+     ],
+     "pass": true
+    },
+    "transform": {
+     "limits": [
+      -7.284952303621139e-07,
+      99.99999927150469,
+      -0.002008450407585183,
+      0.0799999958984573
+     ],
+     "ticks": [
+      3,
+      5
+     ]
+    },
+    "maximumVsManuscript": {
+     "plotted": 0.07304836364355966,
+     "quoted": 0.07304,
+     "pass": true,
+     "vertices": 23
+    }
+   },
+   "m1_mesh_sensitivity/mode_mixity": {
+    "source": "paper/data/retained_figure_7_9/m1_mode_mixity.pdf",
+    "sourceSHA256": "47d6e70bde884b2c79c2cafd5d25af364ee94638562b8d99137d17614e01338e",
+    "layerSHA256": "4a6f1fc4cc8301b5aff7f772fd3e3440281f4faf517e73db6af40f2b7fc3972b",
+    "spanUnchanged": true,
+    "layerPaints": 96,
+    "spanPaints": 96,
+    "noText": true,
+    "layerEmbeddedUnchanged": true,
+    "fonts": {
+     "fonts": [
+      "UOYJTM+STIXTwoMath-Regular-Identity-H",
+      "SOLFJB+STIXTwoText-Regular-Identity-H"
+     ],
+     "sizes_pt": [
+      7.67,
+      9.96,
+      10.96
+     ],
+     "pass": true
+    },
+    "transform": {
+     "limits": [
+      2.185371805296654e-06,
+      100.00000218537124,
+      -6.251048365769398,
+      4.000001281601079
+     ],
+     "ticks": [
+      3,
+      6
+     ]
+    },
+    "M0_vs_reference": {
+     "pass": true,
+     "points": 23,
+     "maxAbsDx": 0.0037802556487349648,
+     "maxAbsDy": 0.00019796711180886106,
+     "tolX": 0.04999999999999972,
+     "tolY": 0.005125524823685238
+    },
+    "aLS": {
+     "pass": true,
+     "x": 84.14990468502111
+    },
+    "legend": [
+     {
+      "text": "M0",
+      "color": "blue",
+      "pass": true
+     },
+     {
+      "text": "M1",
+      "color": "orange",
+      "pass": true
+     }
+    ]
+   },
+   "increment_sensitivity/trajectory": {
+    "source": "paper/data/retained_figure_7_9/increment_trajectory.pdf",
+    "sourceSHA256": "562cf7b2f445e7d6b8a70604d8ad195c157e25d9b7a392d6557a8c4ed053c2f9",
+    "layerSHA256": "2b9f0340414f5ffd839282d83968fc7b4f7e4d3b7f4ebc40dc8fe0e5b68faf24",
+    "spanUnchanged": true,
+    "layerPaints": 148,
+    "spanPaints": 148,
+    "noText": true,
+    "layerEmbeddedUnchanged": true,
+    "fonts": {
+     "fonts": [
+      "NQBLFI+STIXTwoMath-Regular-Identity-H",
+      "VNATAX+STIXTwoText-Regular-Identity-H"
+     ],
+     "sizes_pt": [
+      9.96,
+      10.96
+     ],
+     "pass": true
+    },
+    "transform": {
+     "limits": [
+      134.99999793422253,
+      300.00000210139433,
+      -55.000003205639885,
+      14.99999679436013
+     ],
+     "ticks": [
+      9,
+      7
+     ]
+    },
+    "hole": {
+     "centre": [
+      170.00098079919482,
+      -19.998178395141277
+     ],
+     "radius": 30.000773651555335,
+     "pass": true
+    },
+    "legend": [
+     {
+      "text": "Масштабовані",
+      "pass": true
+     },
+     {
+      "text": "= 4",
+      "color": "blue",
+      "pass": true
+     },
+     {
+      "text": "= 2",
+      "color": "orange",
+      "pass": true
+     },
+     {
+      "text": "= 1",
+      "color": "yellow",
+      "pass": true
+     }
+    ],
+    "recordVertices": {
+     "4mm": {
+      "polylineVertices": 24,
+      "recordPoints": 23,
+      "maxDeviationOverTolerance": 0.05111396262935028,
+      "pass": true
+     },
+     "2mm": {
+      "polylineVertices": 47,
+      "recordPoints": 23,
+      "maxDeviationOverTolerance": 0.051097519149477306,
+      "pass": true
+     },
+     "1mm": {
+      "polylineVertices": 93,
+      "recordPoints": 23,
+      "maxDeviationOverTolerance": 0.051053187088001536,
+      "pass": true
+     }
+    }
+   },
+   "geometry_loading/specimen_geometry": {
+    "source": "paper/figures/geometry_loading/specimen_geometry.pdf",
+    "sourceSHA256": "c2e347cd003a4bfcf08da1d26e333b3549606aefd51a7dc61c4fb4a0ce070700",
+    "layerSHA256": "1ab1d7e2b059b2d721a26fddc12d40e2c17ab4368c7789edc48db301a8e6f1fc",
+    "changedOperators": 33,
+    "changedAllGlyphFillsToN": true,
+    "lengthEqual": true,
+    "layerEmbeddedUnchanged": true,
+    "fonts": {
+     "fonts": [
+      "PFSBQM+STIXTwoMath-Regular-Identity-H",
+      "JHUVAL+STIXTwoText-Regular-Identity-H"
+     ],
+     "sizes_pt": [
+      7.67,
+      9.96,
+      10.96
+     ],
+     "pass": true
+    },
+    "labels": {
+     "𝜎": true,
+     "𝐵": true,
+     "2𝐴": true,
+     "𝑅": true,
+     "𝑂": true,
+     "Вільний": true,
+     "край": true
+    }
+   },
+   "mesh_levels/tip_mesh_H2": {
+    "source": "paper/figures/mesh_levels/tip_mesh_H2.pdf",
+    "sourceSHA256": "9989f4b92ff14a5275f9561919a2c524939fcb43bf5319c9fe7d110ec6338fe8",
+    "layerSHA256": "ae5945d4adc181888f41164407dbe3a905dc0cb25459cc16fe0c00be715b85c0",
+    "lengthEqual": true,
+    "changedOperators": 44,
+    "neutralized": {
+     "deco": 18,
+     "glyph": 23,
+     "bg": 3,
+     "OTHER": 0
+    },
+    "allChangesAreNeutralizedPaints": true,
+    "meshAndCrackStrokesKept": 649,
+    "meshAndCrackStrokesSource": 649,
+    "layerEmbeddedUnchanged": true,
+    "fonts": {
+     "fonts": [
+      "EMMDEC+STIXTwoMath-Regular-Identity-H",
+      "FNAIIR+STIXTwoText-Regular-Identity-H"
+     ],
+     "sizes_pt": [
+      7.67,
+      9.96,
+      10.96
+     ],
+     "pass": true
+    },
+    "transform": {
+     "limits": [
+      -3.1500007733592357,
+      0.8500003249023171,
+      -1.6500006965826948,
+      1.6500004932008825
+     ],
+     "ticks": [
+      4,
+      3
+     ]
+    },
+    "crack": {
+     "x1_mm": [
+      -2.999919033702863,
+      0.0002565966557597221
+     ],
+     "x2_mm": [
+      0.00011674116034021687,
+      0.00011674116034021687
+     ],
+     "pass": true
+    },
+    "labels": {
+     "мм": true,
+     "noLatinMm": true
+    }
+   },
+   "mesh_levels/tip_mesh_H1": {
+    "source": "paper/figures/mesh_levels/tip_mesh_H1.pdf",
+    "sourceSHA256": "7a17571b8397e83d96644d4ef178ea1b73fc8b2a1e38061b7fc9776247efc6fb",
+    "layerSHA256": "225dec70c86b626c9f41c919b169e455d8a000f0b4630c9cb5107e75d15e6ec4",
+    "lengthEqual": true,
+    "changedOperators": 44,
+    "neutralized": {
+     "deco": 18,
+     "glyph": 23,
+     "bg": 3,
+     "OTHER": 0
+    },
+    "allChangesAreNeutralizedPaints": true,
+    "meshAndCrackStrokesKept": 2251,
+    "meshAndCrackStrokesSource": 2251,
+    "layerEmbeddedUnchanged": true,
+    "fonts": {
+     "fonts": [
+      "JYCGID+STIXTwoMath-Regular-Identity-H",
+      "BVCHPY+STIXTwoText-Regular-Identity-H"
+     ],
+     "sizes_pt": [
+      7.67,
+      9.96,
+      10.96
+     ],
+     "pass": true
+    },
+    "transform": {
+     "limits": [
+      -3.1500007733592357,
+      0.8500003249023171,
+      -1.6500006965826948,
+      1.6500004932008825
+     ],
+     "ticks": [
+      4,
+      3
+     ]
+    },
+    "crack": {
+     "x1_mm": [
+      -2.999919033702863,
+      0.0002565966557597221
+     ],
+     "x2_mm": [
+      0.00011674116034021687,
+      0.00011674116034021687
+     ],
+     "pass": true
+    },
+    "labels": {
+     "мм": true,
+     "noLatinMm": true
+    }
+   },
+   "mesh_levels/tip_mesh_H0": {
+    "source": "paper/figures/mesh_levels/tip_mesh_H0.pdf",
+    "sourceSHA256": "e9f4f60b7371b27fe7a7274f0fd6b6ad4e32d7a83d30178d5b46a66062daefc5",
+    "layerSHA256": "3a079b1b6b34b853568d8242de4e9fd79722e4ebaa86f3e0e741e64954c8eccb",
+    "lengthEqual": true,
+    "changedOperators": 44,
+    "neutralized": {
+     "deco": 18,
+     "glyph": 23,
+     "bg": 3,
+     "OTHER": 0
+    },
+    "allChangesAreNeutralizedPaints": true,
+    "meshAndCrackStrokesKept": 8121,
+    "meshAndCrackStrokesSource": 8121,
+    "layerEmbeddedUnchanged": true,
+    "fonts": {
+     "fonts": [
+      "SSEJUO+STIXTwoMath-Regular-Identity-H",
+      "KHBOSG+STIXTwoText-Regular-Identity-H"
+     ],
+     "sizes_pt": [
+      7.67,
+      9.96,
+      10.96
+     ],
+     "pass": true
+    },
+    "transform": {
+     "limits": [
+      -3.1500007733592357,
+      0.8500003249023171,
+      -1.6500006965826948,
+      1.6500004932008825
+     ],
+     "ticks": [
+      4,
+      3
+     ]
+    },
+    "crack": {
+     "x1_mm": [
+      -2.999919033702863,
+      0.0002565966557597221
+     ],
+     "x2_mm": [
+      0.00011674116034021687,
+      0.00011674116034021687
+     ],
+     "pass": true
+    },
+    "labels": {
+     "мм": true,
+     "noLatinMm": true
+    }
+   }
+  },
+  "problems": [],
+  "interpolationCheck": {
+   "fraction_recomputed": 0.03659247798524719,
+   "fraction_record": 0.03659247798524719,
+   "xLS_recomputed": 284.0177399633381,
+   "xLS_record": 284.0177399633381,
+   "aLS_recomputed": 84.14636991194091,
+   "aLS_record": 84.14636991194091
+  },
+  "retainedSourcesUnchanged": {
+   "paper/data/retained_figure_7_9/m1_trajectory.pdf": true,
+   "paper/data/retained_figure_7_9/m1_vertical_deviation.pdf": true,
+   "paper/data/retained_figure_7_9/m1_direction_deviation.pdf": true,
+   "paper/data/retained_figure_7_9/m1_mode_mixity.pdf": true,
+   "paper/data/retained_figure_7_9/increment_trajectory.pdf": true,
+   "paper/figures/geometry_loading/specimen_geometry.pdf": true,
+   "paper/figures/mesh_levels/tip_mesh_H2.pdf": true,
+   "paper/figures/mesh_levels/tip_mesh_H1.pdf": true,
+   "paper/figures/mesh_levels/tip_mesh_H0.pdf": true
+  },
+  "pass": true
+ },
+ "baselinePass": true,
+ "negativeControls": [
+  {
+   "id": "C1_modified_value",
+   "mutation": "modified numerical value: K_I of state 10 multiplied by 1.01",
+   "panel": "intensities/KI",
+   "built": true,
+   "L2": {
+    "rejected": true,
+    "problems": [
+     "KI:blue:line: coordinates differ (max |dx| 1.3e-05 > 0.0176 or |dy| 0.00624 > 0.00024)",
+     "KI:blue:markers: 22 plotted points vs 23 expected"
+    ]
+   },
+   "L1": {
+    "rejected": true,
+    "problems": [
+     "fig04_states: KI: values differ from the record (max |d| 0.00624, rule exact)"
+    ]
+   },
+   "detected": true
+  },
+  {
+   "id": "C2_reversed_sign",
+   "mutation": "reversed sign: 1e3 K_II/K_I of the late states negated",
+   "panel": "late/mode_mixity",
+   "built": true,
+   "L2": {
+    "rejected": true,
+    "problems": [
+     "late/q:blue:line: coordinates differ (max |dx| 4.84e-06 > 0.0068 or |dy| 10.9 > 0.002)",
+     "late/q:blue:line: a plotted point lies outside the axis limits (clipped data)",
+     "late/q:blue:markers: 0 plotted points vs 8 expected"
+    ]
+   },
+   "L1": {
+    "rejected": true,
+    "problems": [
+     "fig05_late: q_1e3: values differ from the record (max |d| 10.9, rule exact)"
+    ]
+   },
+   "detected": true
+  },
+  {
+   "id": "C3_unit_conversion",
+   "mutation": "incorrect unit conversion: 1e2 instead of 1e3 for the K_II axis (10^3 K_II)",
+   "panel": "intensities/KII",
+   "built": true,
+   "L2": {
+    "rejected": true,
+    "problems": [
+     "KII:blue:line: coordinates differ (max |dx| 1.32e-05 > 0.0176 or |dy| 6.1 > 0.0024)",
+     "KII:blue:markers: 1 plotted points vs 23 expected"
+    ]
+   },
+   "L1": {
+    "rejected": true,
+    "problems": [
+     "fig04_states: KII_1e3: values differ from the record (max |d| 6.1, rule exact)"
+    ]
+   },
+   "detected": true
+  },
+  {
+   "id": "C4_missing_curve",
+   "mutation": "missing curve: 2h0 series not plotted (legend entry kept)",
+   "panel": "tip_resolution_sensitivity/mode_mixity",
+   "built": true,
+   "L2": {
+    "rejected": true,
+    "problems": [
+     "tipres/q:2h0:orange:line: 3 plotted points vs 23 expected",
+     "tipres/q:2h0:orange:markers: 0 plotted points vs 23 expected"
+    ]
+   },
+   "detected": true
+  },
+  {
+   "id": "C5_swapped_series",
+   "mutation": "swapped series identity: y(2)-y(4) and y(1)-y(2) columns exchanged",
+   "panel": "increment_sensitivity/vertical_deviation",
+   "built": true,
+   "L2": {
+    "rejected": true,
+    "problems": [
+     "inc/dy:2-4:orange:line: coordinates differ (max |dx| 2.49e-05 > 0.02 or |dy| 17.2 > 0.0103)",
+     "inc/dy:2-4:orange:markers: 1 plotted points vs 23 expected",
+     "inc/dy:1-2:yellow:line: coordinates differ (max |dx| 2.49e-05 > 0.02 or |dy| 17.2 > 0.0103)",
+     "inc/dy:1-2:yellow:markers: 1 plotted points vs 23 expected"
+    ]
+   },
+   "L1": {
+    "rejected": true,
+    "problems": [
+     "fig09_metrics: dy_2m4_um: values differ from the record (max |d| 17.2, rule exact)",
+     "fig09_metrics: dy_1m2_um: values differ from the record (max |d| 17.2, rule exact)"
+    ]
+   },
+   "detected": true
+  },
+  {
+   "id": "C6_unsolved_as_accepted",
+   "mutation": "state status: unsolved P24 drawn as part of the accepted trajectory",
+   "panel": "trajectory/overview",
+   "built": true,
+   "L2": {
+    "rejected": true,
+    "problems": [
+     "trajectory/overview:blue:line: 25 plotted points vs 24 expected"
+    ]
+   },
+   "detected": true
+  },
+  {
+   "id": "C7_small_coordinate_shift",
+   "mutation": "modified numerical value (small): y of P20 scaled by 1.001 (0.025 mm)",
+   "panel": "trajectory/late_detail",
+   "built": true,
+   "L2": {
+    "rejected": true,
+    "problems": [
+     "trajectory/late_detail:blue:line: coordinates differ (max |dx| 3.74e-06 > 0.0088 or |dy| 0.0245 > 0.00154)",
+     "trajectory/late_detail:blue:markers: 8 plotted points vs 9 expected"
+    ]
+   },
+   "L1": {
+    "rejected": true,
+    "problems": [
+     "fig03_vertices: y_mm: values differ from the record (max |d| 0.0245, rule exact)"
+    ]
+   },
+   "detected": true
+  },
+  {
+   "id": "C8_retained_layer_vertex",
+   "mutation": "retained vector layer altered: one drawing operand moved by 1 pt",
+   "panel": "m1_mesh_sensitivity/vertical_deviation",
+   "built": true,
+   "L2": {
+    "rejected": true,
+    "problems": [
+     "m1_mesh_sensitivity/vertical_deviation: the placed Form XObject does not carry the layer operators unchanged"
+    ]
+   },
+   "detected": true
+  },
+  {
+   "id": "C9_mesh_calibration",
+   "mutation": "retained mesh layer misplaced: left page edge of the calibration shifted by 0.05 mm",
+   "panel": "mesh_levels/tip_mesh_H1",
+   "built": true,
+   "L2": {
+    "rejected": true,
+    "problems": [
+     "mesh_levels/tip_mesh_H1: crack line at x1 [-2.962616878312311, 0.010310267792442929], x2 [0.00011674116034021687, 0.00011674116034021687] instead of [-3, 0] x 0"
+    ]
+   },
+   "detected": true
+  }
+ ],
+ "negativeControlsDetected": 9,
+ "negativeControlsTotal": 9,
+ "pass": true
+}

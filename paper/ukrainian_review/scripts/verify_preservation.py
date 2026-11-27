@@ -36,9 +36,20 @@ FIGURE_PROVENANCE = (
     "paper/EVIDENCE_AND_PROVENANCE.md",
     "paper/FINAL_TYPESETTING_REVIEW.md",
 )
-# This is the only localized text command inside math. All operators, signs,
-# indices, numbers and math-mode unit symbols remain literally interchangeable.
-MATH_TEXT = {r"\text{in }": r"\text{в }"}
+# Explicit localizations inside math (English form: Ukrainian form). Everything else -- operators, signs,
+# indices and numbers -- must remain literally identical. AAM-UA7 (WP5, findings T-01..T-06, T-14) adds the
+# Cyrillic unit symbols, one-to-one, and the sentence-final period of one display after which the Ukrainian
+# text starts a new sentence (the English continues with "and with ..."). Negative controls below check that
+# a different unit is still detected.
+MATH_TEXT = {
+    r"\text{in }": r"\text{в }",
+    r"\mathrm{mm}": r"\text{мм}",
+    r"\mu\mathrm{m}": r"\text{мкм}",
+    r"\mathrm{MPa}": r"\text{МПа}",
+    r"\mathrm m": r"\text{м}",
+    r"[$\mu$m]": "[мкм]",   # table headers (T-05); the unit itself is checked by table_units
+    "\\frac{L_{\\mathrm{tr}}}{\\Delta a}=1.00,\n\\]": "\\frac{L_{\\mathrm{tr}}}{\\Delta a}=1.00.\n\\]",
+}
 UNIT_TEXT = {
     "mm": "mm", "мм": "mm", "deg": "deg", "град": "deg", "mdeg": "mdeg",
     "мград": "mdeg", "m": "m", "м": "m", "GPa": "GPa", "ГПа": "GPa",
@@ -113,12 +124,13 @@ def table_cells(text):
 def units_in_tables(text):
     headers = [t.group().split(r"\midrule")[0].split(r"\toprule")[-1]
                for t in table_sources(text)]
-    return [re.findall(r"\[(mm|мм|deg|град|mdeg|мград|\$\\mu\$[mм])(?=[\]$\/])", h)
+    return [re.findall(r"\[(mm|мм|deg|град|mdeg|мград|мкм|\$\\mu\$[mм])(?=[\]$\/])", h)
             for h in headers]
 
 
 def normalized_units_in_tables(text):
-    return [[x.replace("м", "m") if x.startswith("$") else UNIT_TEXT[x] for x in t]
+    # micrometre: English "$\mu$m" and the Ukrainian symbol "мкм" (AAM-UA7, T-05) are the same unit "um"
+    return [["um" if x.startswith("$") else UNIT_TEXT[x] for x in t]
             for t in units_in_tables(text)]
 
 
@@ -166,6 +178,11 @@ def negative_controls(en, ua):
         "math_sign": (r"-3K_{\mathrm{II}}", r"+3K_{\mathrm{II}}", "all_math_tokens"),
         "missing_citation": (r"\cite{Bowie1956}", "", "citation_groups"),
         "missing_figure": (GRAPHIC.search(ua)[0], "", "graphics_identity_and_order"),
+        # AAM-UA7: the localized units remain checked one-to-one
+        "wrong_unit_in_display": (r"2h_0=0.054025\ \text{мм}", r"2h_0=0.054025\ \text{м}", "all_math_tokens"),
+        "wrong_unit_in_text": (r"$3.04~\text{мкм}$", r"$3.04~\text{мм}$", "all_math_tokens"),
+        "wrong_unit_in_table_header": ("[мкм]", "[мм]", "table_units"),
+        "display_punctuation": (r"\Delta a}=1.00.", r"\Delta a}=1.01.", "all_math_tokens"),
     }
     results = {}
     for name, (old, new, check) in mutations.items():
@@ -235,11 +252,17 @@ def main():
                                                   ":(exclude)paper/ukrainian_review/**").strip()
     manifest = inventory(en)
     if not args.source_only:
-        figures = json.loads((EDITION / "audit/FIGURE_PROVENANCE.json").read_text(encoding="utf-8"))["assets"]
-        report["all_graphic_hashes"] = all(
-            f["sha256"] == figures[path]["sha256_english"] and
-            hash_bytes((EDITION / path).read_bytes()) == figures[path]["sha256_ukrainian"] and
-            figures[path]["vector_geometry_check"] == "PASS"
+        # AAM-UA7: every graphic is a reconstruction (or retained vector layer) recorded in FIGURE_SOURCE_MANIFEST.json;
+        # the English asset must be the pinned one, the packaged Ukrainian file must match the manifest, and the
+        # independent data verification (FIGURE_DATA_VERIFICATION.json, incl. negative controls) must have passed.
+        figures = {a["path"].removeprefix("paper/ukrainian_review/"): a for a in json.loads(
+            (EDITION / "audit/FIGURE_SOURCE_MANIFEST.json").read_text(encoding="utf-8"))["assets"]}
+        verification = json.loads((EDITION / "audit/FIGURE_DATA_VERIFICATION.json").read_text(encoding="utf-8"))
+        report["all_graphic_hashes"] = verification["pass"] and len(figures) == len(manifest["graphic_assets"]) and all(
+            f["sha256"] == figures[path]["englishAsset"]["sha256"] and
+            hash_bytes((EDITION / path).read_bytes()) == figures[path]["ukrainianSHA256"] and
+            figures[path]["independentVerification"] == "PASS" and
+            figures[path]["panelId"] in verification["baseline"]["panels"]
             for f in manifest["graphic_assets"] for path in [f["path"].removeprefix("paper/")]
         )
     controls = negative_controls(en, ua)
@@ -256,7 +279,7 @@ def main():
     if args.write_audit:
         for path, data in [(EDITION / "SOURCE_MANIFEST.json", manifest),
                            (EDITION / "audit/PRESERVATION_CHECKS.json", result)]:
-            path.write_text(json.dumps(data, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
+            path.write_text(json.dumps(data, ensure_ascii=False, indent=2) + "\n", encoding="utf-8", newline="\n")
     if not all(report.values()) or not all(c["detected"] for c in controls.values()):
         raise SystemExit(1)
 

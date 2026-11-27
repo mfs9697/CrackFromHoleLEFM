@@ -1,0 +1,1263 @@
+{
+ "schema": "AAM-UA7.FigureSourceManifest.v1",
+ "pinnedEnglishBase": "7597cba1a378e6f436a3bfab304f85702902ee4e",
+ "backend": "PGFPlots 1.18 in standalone XeLaTeX documents; STIX Two Text and STIX Two Math (stix2-otf), the manuscript fonts",
+ "extraction": "scripts/extract_ua_figure_data.m (MATLAB, read-only on records) -> figures_src/data/*.csv (%.17g) + DATA_MANIFEST.json",
+ "records": {
+  "evidence": {
+   "path": "paper/data/evidence_exact.mat",
+   "sha256": "7aba562a423eec46355f13cc486cea6b21b8349717ee0a8d64e429d2648ef5e7",
+   "bytes": 46242
+  },
+  "isolated": {
+   "path": "paper/data/isolated_tip_resolution.json",
+   "sha256": "c8e559b88efe38b5360683579a160a18d39ad8ee494f8a2f8f263198162512cb",
+   "bytes": 36205
+  },
+  "increment": {
+   "path": "paper/data/increment_plot_records.mat",
+   "sha256": "a36b6f9b641023ad6f1ca63362b0e6ff95902aac505c5bd95993dcba0d147bbc",
+   "bytes": 9308
+  }
+ },
+ "counts": {
+  "graphics": 31,
+  "reconstructedFromRecords": 22,
+  "retainedVectorLayers": 9,
+  "unchangedEnglishFiles": 0
+ },
+ "assets": [
+  {
+   "path": "paper/ukrainian_review/figures/geometry_loading/specimen_geometry.pdf",
+   "figure": 1,
+   "panel": "",
+   "panelId": "geometry_loading/specimen_geometry",
+   "englishAsset": {
+    "path": "paper/figures/geometry_loading/specimen_geometry.pdf",
+    "sha256": "c2e347cd003a4bfcf08da1d26e333b3549606aefd51a7dc61c4fb4a0ce070700",
+    "gitBlobEqualsPinnedBase": true
+   },
+   "ukrainianSHA256": "2926de2e9c580315eeddd6c96730d51ee42f8f4c1739e01b43c454dddf5e1163",
+   "panelSource": "paper/ukrainian_review/figures_src/panels/geometry_loading/specimen_geometry.tex",
+   "panelSourceSHA256": "6bb1d42c6b1f737bf7f006129474651f05191c2415bcf8c8f46a23826a385e84",
+   "printedSlot_mm": 129.48,
+   "measuredWidth_mm": 129.48,
+   "height_mm": 97.43,
+   "includeScale": 1.0,
+   "fonts": [
+    "STIXTwoMath-Regular-Identity-H",
+    "STIXTwoText-Regular-Identity-H"
+   ],
+   "textSizes_pt": [
+    7.67,
+    9.96,
+    10.96
+   ],
+   "method": "retained vector layer, text typeset anew",
+   "retainedLayer": {
+    "source": "paper/figures/geometry_loading/specimen_geometry.pdf",
+    "sourceSHA256": "c2e347cd003a4bfcf08da1d26e333b3549606aefd51a7dc61c4fb4a0ce070700",
+    "layer": "paper/ukrainian_review/figures_src/retained/specimen_geometry_layer.pdf",
+    "layerSHA256": "1ab1d7e2b059b2d721a26fddc12d40e2c17ab4368c7789edc48db301a8e6f1fc",
+    "mode": "glyphs",
+    "calibration": null
+   },
+   "justification": "Symbolic schematic without numerical parameters (illustrative crack): every geometry path of the approved composition is kept; the outlined label glyphs were removed and the labels typeset anew in STIX Two.",
+   "dataTables": [],
+   "independentVerification": "PASS"
+  },
+  {
+   "path": "paper/ukrainian_review/figures/mesh_levels/tip_mesh_H2.pdf",
+   "figure": 2,
+   "panel": "a",
+   "panelId": "mesh_levels/tip_mesh_H2",
+   "englishAsset": {
+    "path": "paper/figures/mesh_levels/tip_mesh_H2.pdf",
+    "sha256": "9989f4b92ff14a5275f9561919a2c524939fcb43bf5319c9fe7d110ec6338fe8",
+    "gitBlobEqualsPinnedBase": true
+   },
+   "ukrainianSHA256": "76d07678f950f69f8bf0bb6b6ef986c8c293795f667336b6db523f13368200de",
+   "panelSource": "paper/ukrainian_review/figures_src/panels/mesh_levels/tip_mesh_H2.tex",
+   "panelSourceSHA256": "63a8a9997fa9e1f419b8e64391d168f576d8f79025e3118005a4e2eb3183b02b",
+   "printedSlot_mm": 52.29,
+   "measuredWidth_mm": 52.289,
+   "height_mm": 41.113,
+   "includeScale": 0.99998,
+   "fonts": [
+    "STIXTwoMath-Regular-Identity-H",
+    "STIXTwoText-Regular-Identity-H"
+   ],
+   "textSizes_pt": [
+    7.67,
+    9.96,
+    10.96
+   ],
+   "method": "retained mesh layer, axes typeset anew",
+   "retainedLayer": {
+    "source": "paper/figures/mesh_levels/tip_mesh_H2.pdf",
+    "sourceSHA256": "9989f4b92ff14a5275f9561919a2c524939fcb43bf5319c9fe7d110ec6338fe8",
+    "layer": "paper/ukrainian_review/figures_src/retained/tip_mesh_H2_layer.pdf",
+    "layerSHA256": "ae5945d4adc181888f41164407dbe3a905dc0cb25459cc16fe0c00be715b85c0",
+    "mode": "mesh",
+    "calibration": "axes frame = generator limits (XLim/YLim defaults), tick marks at integers as cross-check"
+   },
+   "justification": "Mesh coordinates/connectivity were not saved and remeshing is prohibited: every mesh and crack stroke is kept unchanged; the MATLAB frame/ticks, outlined Computer Modern labels (\"[mm]\") and backgrounds were neutralized; axes typeset anew in STIX Two.",
+   "dataTables": [],
+   "independentVerification": "PASS"
+  },
+  {
+   "path": "paper/ukrainian_review/figures/mesh_levels/tip_mesh_H1.pdf",
+   "figure": 2,
+   "panel": "b",
+   "panelId": "mesh_levels/tip_mesh_H1",
+   "englishAsset": {
+    "path": "paper/figures/mesh_levels/tip_mesh_H1.pdf",
+    "sha256": "7a17571b8397e83d96644d4ef178ea1b73fc8b2a1e38061b7fc9776247efc6fb",
+    "gitBlobEqualsPinnedBase": true
+   },
+   "ukrainianSHA256": "709b509aabcc4202a9e5e29878ddba9bbdda5ac3a9f61d8292114340ccd8d4ea",
+   "panelSource": "paper/ukrainian_review/figures_src/panels/mesh_levels/tip_mesh_H1.tex",
+   "panelSourceSHA256": "6344f1fb1a242d20b436ae9309d11525a7b2ed78c3802357f507d7b76723bfc1",
+   "printedSlot_mm": 52.29,
+   "measuredWidth_mm": 52.289,
+   "height_mm": 41.113,
+   "includeScale": 0.99998,
+   "fonts": [
+    "STIXTwoMath-Regular-Identity-H",
+    "STIXTwoText-Regular-Identity-H"
+   ],
+   "textSizes_pt": [
+    7.67,
+    9.96,
+    10.96
+   ],
+   "method": "retained mesh layer, axes typeset anew",
+   "retainedLayer": {
+    "source": "paper/figures/mesh_levels/tip_mesh_H1.pdf",
+    "sourceSHA256": "7a17571b8397e83d96644d4ef178ea1b73fc8b2a1e38061b7fc9776247efc6fb",
+    "layer": "paper/ukrainian_review/figures_src/retained/tip_mesh_H1_layer.pdf",
+    "layerSHA256": "225dec70c86b626c9f41c919b169e455d8a000f0b4630c9cb5107e75d15e6ec4",
+    "mode": "mesh",
+    "calibration": "axes frame = generator limits (XLim/YLim defaults), tick marks at integers as cross-check"
+   },
+   "justification": "Mesh coordinates/connectivity were not saved and remeshing is prohibited: every mesh and crack stroke is kept unchanged; the MATLAB frame/ticks, outlined Computer Modern labels (\"[mm]\") and backgrounds were neutralized; axes typeset anew in STIX Two.",
+   "dataTables": [],
+   "independentVerification": "PASS"
+  },
+  {
+   "path": "paper/ukrainian_review/figures/mesh_levels/tip_mesh_H0.pdf",
+   "figure": 2,
+   "panel": "c",
+   "panelId": "mesh_levels/tip_mesh_H0",
+   "englishAsset": {
+    "path": "paper/figures/mesh_levels/tip_mesh_H0.pdf",
+    "sha256": "e9f4f60b7371b27fe7a7274f0fd6b6ad4e32d7a83d30178d5b46a66062daefc5",
+    "gitBlobEqualsPinnedBase": true
+   },
+   "ukrainianSHA256": "4fa2a0774f7f37f501cf6c9b1ed10ad1108e2d36d6bd65a1a32bf15ec9c5fb1d",
+   "panelSource": "paper/ukrainian_review/figures_src/panels/mesh_levels/tip_mesh_H0.tex",
+   "panelSourceSHA256": "726775a50733acd04466cc2733cade620ff8ec94ec01381080e0358bab3589be",
+   "printedSlot_mm": 52.29,
+   "measuredWidth_mm": 52.289,
+   "height_mm": 41.113,
+   "includeScale": 0.99998,
+   "fonts": [
+    "STIXTwoMath-Regular-Identity-H",
+    "STIXTwoText-Regular-Identity-H"
+   ],
+   "textSizes_pt": [
+    7.67,
+    9.96,
+    10.96
+   ],
+   "method": "retained mesh layer, axes typeset anew",
+   "retainedLayer": {
+    "source": "paper/figures/mesh_levels/tip_mesh_H0.pdf",
+    "sourceSHA256": "e9f4f60b7371b27fe7a7274f0fd6b6ad4e32d7a83d30178d5b46a66062daefc5",
+    "layer": "paper/ukrainian_review/figures_src/retained/tip_mesh_H0_layer.pdf",
+    "layerSHA256": "3a079b1b6b34b853568d8242de4e9fd79722e4ebaa86f3e0e741e64954c8eccb",
+    "mode": "mesh",
+    "calibration": "axes frame = generator limits (XLim/YLim defaults), tick marks at integers as cross-check"
+   },
+   "justification": "Mesh coordinates/connectivity were not saved and remeshing is prohibited: every mesh and crack stroke is kept unchanged; the MATLAB frame/ticks, outlined Computer Modern labels (\"[mm]\") and backgrounds were neutralized; axes typeset anew in STIX Two.",
+   "dataTables": [],
+   "independentVerification": "PASS"
+  },
+  {
+   "path": "paper/ukrainian_review/figures/trajectory/overview.pdf",
+   "figure": 3,
+   "panel": "a",
+   "panelId": "trajectory/overview",
+   "englishAsset": {
+    "path": "paper/figures/trajectory/overview.pdf",
+    "sha256": "cdbc41fba1a4cb8097f700d842dab0d1f899388e1182e5d8a2da478dd325761d",
+    "gitBlobEqualsPinnedBase": true
+   },
+   "ukrainianSHA256": "2e7423891aac92fd0fea17685de197592e318f052e488fe16be611cc4801be17",
+   "panelSource": "paper/ukrainian_review/figures_src/panels/trajectory/overview.tex",
+   "panelSourceSHA256": "5211c066c5db495289ed046f3036bd92627e488ab0e9a7f774adfebc3794a635",
+   "printedSlot_mm": 124.832,
+   "measuredWidth_mm": 124.83,
+   "height_mm": 56.081,
+   "includeScale": 0.99999,
+   "fonts": [
+    "STIXTwoMath-Regular-Identity-H",
+    "STIXTwoText-Regular-Identity-H"
+   ],
+   "textSizes_pt": [
+    6.97,
+    9.96,
+    10.96
+   ],
+   "method": "reconstructed from authoritative records (PGFPlots, XeLaTeX)",
+   "dataTables": [
+    {
+     "table": "fig03_vertices",
+     "csv": "paper/ukrainian_review/figures_src/data/fig03_vertices.csv",
+     "sha256": "d90d296e53d9dae98865d3c1dab94fab1824db50755275564d53b36e2d99428d",
+     "sources": [
+      "paper/data/evidence_exact.mat"
+     ],
+     "transformation": "k = P_k index; x_mm=1e3*E.vertices_m(:,1), y_mm=1e3*E.vertices_m(:,2); P24 = qualified unsolved extension end (no accepted solution)"
+    }
+   ],
+   "independentVerification": "PASS"
+  },
+  {
+   "path": "paper/ukrainian_review/figures/trajectory/late_detail.pdf",
+   "figure": 3,
+   "panel": "b",
+   "panelId": "trajectory/late_detail",
+   "englishAsset": {
+    "path": "paper/figures/trajectory/late_detail.pdf",
+    "sha256": "1ab21b0532afa581063d8cf0658ec620b7ccc6f0c7fd91073c3a78f243864cbf",
+    "gitBlobEqualsPinnedBase": true
+   },
+   "ukrainianSHA256": "3a05de21f7813c7d0bf02c1c7f87d74393a529ead6ddc6acdad631c5dfc2a2c1",
+   "panelSource": "paper/ukrainian_review/figures_src/panels/trajectory/late_detail.tex",
+   "panelSourceSHA256": "cc7b55ff46ffebac13fb6b9a0ec219b4b9f4d5a8edec3208be2993cae784fe7f",
+   "printedSlot_mm": 124.832,
+   "measuredWidth_mm": 124.83,
+   "height_mm": 30.547,
+   "includeScale": 0.99999,
+   "fonts": [
+    "STIXTwoMath-Regular-Identity-H",
+    "STIXTwoText-Regular-Identity-H"
+   ],
+   "textSizes_pt": [
+    6.97,
+    9.96,
+    10.96
+   ],
+   "method": "reconstructed from authoritative records (PGFPlots, XeLaTeX)",
+   "dataTables": [
+    {
+     "table": "fig03_vertices",
+     "csv": "paper/ukrainian_review/figures_src/data/fig03_vertices.csv",
+     "sha256": "d90d296e53d9dae98865d3c1dab94fab1824db50755275564d53b36e2d99428d",
+     "sources": [
+      "paper/data/evidence_exact.mat"
+     ],
+     "transformation": "k = P_k index; x_mm=1e3*E.vertices_m(:,1), y_mm=1e3*E.vertices_m(:,2); P24 = qualified unsolved extension end (no accepted solution)"
+    }
+   ],
+   "independentVerification": "PASS"
+  },
+  {
+   "path": "paper/ukrainian_review/figures/intensities/KI.pdf",
+   "figure": 4,
+   "panel": "a",
+   "panelId": "intensities/KI",
+   "englishAsset": {
+    "path": "paper/figures/intensities/KI.pdf",
+    "sha256": "8bf485d916d81ee7e1debecfd7fc780374779e62802b540dbe9295fef8f7cf80",
+    "gitBlobEqualsPinnedBase": true
+   },
+   "ukrainianSHA256": "7ff7ed03a83374930011a24b19defda99f18e4167aa9b2dc032774529c270955",
+   "panelSource": "paper/ukrainian_review/figures_src/panels/intensities/KI.tex",
+   "panelSourceSHA256": "2c8cb2d3292dbd9b99a5eb17b42c10d5a30b4b72909b89b68066822adecd99b0",
+   "printedSlot_mm": 52.29,
+   "measuredWidth_mm": 52.289,
+   "height_mm": 54.0,
+   "includeScale": 0.99998,
+   "fonts": [
+    "STIXTwoMath-Regular-Identity-H",
+    "STIXTwoText-Regular-Identity-H"
+   ],
+   "textSizes_pt": [
+    7.67,
+    9.96,
+    10.96
+   ],
+   "method": "reconstructed from authoritative records (PGFPlots, XeLaTeX)",
+   "dataTables": [
+    {
+     "table": "fig04_states",
+     "csv": "paper/ukrainian_review/figures_src/data/fig04_states.csv",
+     "sha256": "1c186a62d9e5e7a0659f899a4417fb98a52cd3d43256a94b4269af315c2aa71b",
+     "sources": [
+      "paper/data/evidence_exact.mat"
+     ],
+     "transformation": "T.crack_length_mm, T.KI_unit, T.KII_unit (MPa*m^1/2 at unit load), KII_1e3 = 1e3*T.KII_unit, T.theta_deg"
+    }
+   ],
+   "independentVerification": "PASS"
+  },
+  {
+   "path": "paper/ukrainian_review/figures/intensities/KII.pdf",
+   "figure": 4,
+   "panel": "b",
+   "panelId": "intensities/KII",
+   "englishAsset": {
+    "path": "paper/figures/intensities/KII.pdf",
+    "sha256": "cd777217983f07e4400ce43cea5da6d8a9ba55b36b3a2e10ee72063de8747f58",
+    "gitBlobEqualsPinnedBase": true
+   },
+   "ukrainianSHA256": "e637413436ece51545315a039fe3cd08dfd39322afb2998a673dcccd62550450",
+   "panelSource": "paper/ukrainian_review/figures_src/panels/intensities/KII.tex",
+   "panelSourceSHA256": "3962f8eea264fec62fa61dee3c1f73482491055aca02fb1d29a2c51ba117f661",
+   "printedSlot_mm": 52.29,
+   "measuredWidth_mm": 52.289,
+   "height_mm": 54.0,
+   "includeScale": 0.99998,
+   "fonts": [
+    "STIXTwoMath-Regular-Identity-H",
+    "STIXTwoText-Regular-Identity-H"
+   ],
+   "textSizes_pt": [
+    7.67,
+    9.96,
+    10.96
+   ],
+   "method": "reconstructed from authoritative records (PGFPlots, XeLaTeX)",
+   "dataTables": [
+    {
+     "table": "fig04_states",
+     "csv": "paper/ukrainian_review/figures_src/data/fig04_states.csv",
+     "sha256": "1c186a62d9e5e7a0659f899a4417fb98a52cd3d43256a94b4269af315c2aa71b",
+     "sources": [
+      "paper/data/evidence_exact.mat"
+     ],
+     "transformation": "T.crack_length_mm, T.KI_unit, T.KII_unit (MPa*m^1/2 at unit load), KII_1e3 = 1e3*T.KII_unit, T.theta_deg"
+    }
+   ],
+   "independentVerification": "PASS"
+  },
+  {
+   "path": "paper/ukrainian_review/figures/intensities/theta.pdf",
+   "figure": 4,
+   "panel": "c",
+   "panelId": "intensities/theta",
+   "englishAsset": {
+    "path": "paper/figures/intensities/theta.pdf",
+    "sha256": "0c39915f6da323ab60a81cfda0b26c9a14c381c0df2e2a39b02232dd1b99675a",
+    "gitBlobEqualsPinnedBase": true
+   },
+   "ukrainianSHA256": "3db8a8bd4e9d59565cc6f6c13a1ab16d0a0711252c12fa6c4c8991558bb8c378",
+   "panelSource": "paper/ukrainian_review/figures_src/panels/intensities/theta.tex",
+   "panelSourceSHA256": "ebe10167377399cc7025cf934d1d97fb89fd62c808eed0108c17c6093e684d84",
+   "printedSlot_mm": 52.29,
+   "measuredWidth_mm": 52.289,
+   "height_mm": 54.0,
+   "includeScale": 0.99998,
+   "fonts": [
+    "STIXTwoMath-Regular-Identity-H",
+    "STIXTwoText-Regular-Identity-H"
+   ],
+   "textSizes_pt": [
+    7.67,
+    9.96,
+    10.96
+   ],
+   "method": "reconstructed from authoritative records (PGFPlots, XeLaTeX)",
+   "dataTables": [
+    {
+     "table": "fig04_states",
+     "csv": "paper/ukrainian_review/figures_src/data/fig04_states.csv",
+     "sha256": "1c186a62d9e5e7a0659f899a4417fb98a52cd3d43256a94b4269af315c2aa71b",
+     "sources": [
+      "paper/data/evidence_exact.mat"
+     ],
+     "transformation": "T.crack_length_mm, T.KI_unit, T.KII_unit (MPa*m^1/2 at unit load), KII_1e3 = 1e3*T.KII_unit, T.theta_deg"
+    }
+   ],
+   "independentVerification": "PASS"
+  },
+  {
+   "path": "paper/ukrainian_review/figures/late/mode_mixity.pdf",
+   "figure": 5,
+   "panel": "a",
+   "panelId": "late/mode_mixity",
+   "englishAsset": {
+    "path": "paper/figures/late/mode_mixity.pdf",
+    "sha256": "9a61eeb6d2295017362985857917cd8eee5581ab121913ce5bfbeda54bf30229",
+    "gitBlobEqualsPinnedBase": true
+   },
+   "ukrainianSHA256": "71df4dc01befc84762ede1c37e522b1badadf46db10e6156f4ebf22f47b3ccbd",
+   "panelSource": "paper/ukrainian_review/figures_src/panels/late/mode_mixity.tex",
+   "panelSourceSHA256": "29749729e4e0a40d4716e6f73d05a4323529573b8f9c96964c5e573de33468b3",
+   "printedSlot_mm": 64.408,
+   "measuredWidth_mm": 64.407,
+   "height_mm": 56.0,
+   "includeScale": 0.99998,
+   "fonts": [
+    "STIXTwoMath-Regular-Identity-H",
+    "STIXTwoText-Regular-Identity-H"
+   ],
+   "textSizes_pt": [
+    7.67,
+    9.96,
+    10.96
+   ],
+   "method": "reconstructed from authoritative records (PGFPlots, XeLaTeX)",
+   "dataTables": [
+    {
+     "table": "fig05_late",
+     "csv": "paper/ukrainian_review/figures_src/data/fig05_late.csv",
+     "sha256": "c3e63da546f3e1dfe76220a7b82796ab9a3c8bccdbd506c3891e42f0b8a253c4",
+     "sources": [
+      "paper/data/evidence_exact.mat"
+     ],
+     "transformation": "rows with T.crack_length_mm >= 60; q_1e3 = 1e3*T.KII_over_KI; dtheta_next_deg = T.delta_theta_next_deg"
+    }
+   ],
+   "independentVerification": "PASS"
+  },
+  {
+   "path": "paper/ukrainian_review/figures/late/turn.pdf",
+   "figure": 5,
+   "panel": "b",
+   "panelId": "late/turn",
+   "englishAsset": {
+    "path": "paper/figures/late/turn.pdf",
+    "sha256": "5dafefb090503f71c0b587154e91fb8ea7db9c0b269fad3bd9ec7ed0e1d94abd",
+    "gitBlobEqualsPinnedBase": true
+   },
+   "ukrainianSHA256": "39ee1455cee9551fa5d2420f6dfaa160aed20d7d6dc4b3b6f4fb9501196f7ae6",
+   "panelSource": "paper/ukrainian_review/figures_src/panels/late/turn.tex",
+   "panelSourceSHA256": "3d3909602e418800168c504c85e28d2c3bd563e2be07569d08170c15819a002c",
+   "printedSlot_mm": 64.408,
+   "measuredWidth_mm": 64.407,
+   "height_mm": 56.0,
+   "includeScale": 0.99998,
+   "fonts": [
+    "STIXTwoMath-Regular-Identity-H",
+    "STIXTwoText-Regular-Identity-H"
+   ],
+   "textSizes_pt": [
+    7.67,
+    9.96,
+    10.96
+   ],
+   "method": "reconstructed from authoritative records (PGFPlots, XeLaTeX)",
+   "dataTables": [
+    {
+     "table": "fig05_late",
+     "csv": "paper/ukrainian_review/figures_src/data/fig05_late.csv",
+     "sha256": "c3e63da546f3e1dfe76220a7b82796ab9a3c8bccdbd506c3891e42f0b8a253c4",
+     "sources": [
+      "paper/data/evidence_exact.mat"
+     ],
+     "transformation": "rows with T.crack_length_mm >= 60; q_1e3 = 1e3*T.KII_over_KI; dtheta_next_deg = T.delta_theta_next_deg"
+    }
+   ],
+   "independentVerification": "PASS"
+  },
+  {
+   "path": "paper/ukrainian_review/figures/cod/turn_linear.pdf",
+   "figure": 6,
+   "panel": "a",
+   "panelId": "cod/turn_linear",
+   "englishAsset": {
+    "path": "paper/figures/cod/turn_linear.pdf",
+    "sha256": "872f25275b03a43fce3f52fceaaa0af3444db581d1217405a090fed9c6cef114",
+    "gitBlobEqualsPinnedBase": true
+   },
+   "ukrainianSHA256": "03a6586732d818b506afd93ff6d8a53e1825b042f25f0d0ed8754e498bc1a637",
+   "panelSource": "paper/ukrainian_review/figures_src/panels/cod/turn_linear.tex",
+   "panelSourceSHA256": "ab579bcb76bb76fd9c9773ebbd81fcdb92dd8cb5ba0eec1961b8289eb4078386",
+   "printedSlot_mm": 64.408,
+   "measuredWidth_mm": 64.407,
+   "height_mm": 51.498,
+   "includeScale": 0.99998,
+   "fonts": [
+    "STIXTwoMath-Regular-Identity-H",
+    "STIXTwoText-Regular-Identity-H"
+   ],
+   "textSizes_pt": [
+    7.67,
+    9.96,
+    10.96
+   ],
+   "method": "reconstructed from authoritative records (PGFPlots, XeLaTeX)",
+   "dataTables": [
+    {
+     "table": "fig06_cod",
+     "csv": "paper/ukrainian_review/figures_src/data/fig06_cod.csv",
+     "sha256": "fd10cabf4e3aa4316c1072c04587aafe254f6b4adff75def0d53cff403b59c01",
+     "sources": [
+      "paper/data/evidence_exact.mat"
+     ],
+     "transformation": "COD rows with crack_length_mm >= 60, selected by degree and window (|bound-W|<1e-12), sorted by a; turn_err_1e3deg = 1e3*turn_error_deg; ratio_err_1e5 = 1e5*ratio_error"
+    }
+   ],
+   "independentVerification": "PASS"
+  },
+  {
+   "path": "paper/ukrainian_review/figures/cod/turn_quadratic.pdf",
+   "figure": 6,
+   "panel": "b",
+   "panelId": "cod/turn_quadratic",
+   "englishAsset": {
+    "path": "paper/figures/cod/turn_quadratic.pdf",
+    "sha256": "cb39967e39a52580c32d53f01eeda67547fd2f5195dba5a5f5d312e60b1f07c5",
+    "gitBlobEqualsPinnedBase": true
+   },
+   "ukrainianSHA256": "ed30fed09005da43e955d5a8a9fe8cb851d028016b783d064c2eda6149f3dd8c",
+   "panelSource": "paper/ukrainian_review/figures_src/panels/cod/turn_quadratic.tex",
+   "panelSourceSHA256": "be6cfd755cb8513bd31d5a1090b600fd58fd0f975f56fa8fbe56c5a25aba075e",
+   "printedSlot_mm": 64.408,
+   "measuredWidth_mm": 64.407,
+   "height_mm": 51.498,
+   "includeScale": 0.99998,
+   "fonts": [
+    "STIXTwoMath-Regular-Identity-H",
+    "STIXTwoText-Regular-Identity-H"
+   ],
+   "textSizes_pt": [
+    7.67,
+    9.96,
+    10.96
+   ],
+   "method": "reconstructed from authoritative records (PGFPlots, XeLaTeX)",
+   "dataTables": [
+    {
+     "table": "fig06_cod",
+     "csv": "paper/ukrainian_review/figures_src/data/fig06_cod.csv",
+     "sha256": "fd10cabf4e3aa4316c1072c04587aafe254f6b4adff75def0d53cff403b59c01",
+     "sources": [
+      "paper/data/evidence_exact.mat"
+     ],
+     "transformation": "COD rows with crack_length_mm >= 60, selected by degree and window (|bound-W|<1e-12), sorted by a; turn_err_1e3deg = 1e3*turn_error_deg; ratio_err_1e5 = 1e5*ratio_error"
+    }
+   ],
+   "independentVerification": "PASS"
+  },
+  {
+   "path": "paper/ukrainian_review/figures/cod/mixity_linear.pdf",
+   "figure": 6,
+   "panel": "c",
+   "panelId": "cod/mixity_linear",
+   "englishAsset": {
+    "path": "paper/figures/cod/mixity_linear.pdf",
+    "sha256": "b005f7d3bb7c52adbd9f96727289ae43a9a5ff2e3756fc9d98b73437d8a38f2a",
+    "gitBlobEqualsPinnedBase": true
+   },
+   "ukrainianSHA256": "40194aec2cd5128453f11e11586e62d24ed737e112eeec69ad852e408eef5011",
+   "panelSource": "paper/ukrainian_review/figures_src/panels/cod/mixity_linear.tex",
+   "panelSourceSHA256": "255ff20e5a999397b0bc0d29cabebda7f1fad0133357871c8701bc5a97fd4706",
+   "printedSlot_mm": 64.408,
+   "measuredWidth_mm": 64.407,
+   "height_mm": 56.0,
+   "includeScale": 0.99998,
+   "fonts": [
+    "STIXTwoMath-Regular-Identity-H",
+    "STIXTwoText-Regular-Identity-H"
+   ],
+   "textSizes_pt": [
+    7.67,
+    9.96,
+    10.96
+   ],
+   "method": "reconstructed from authoritative records (PGFPlots, XeLaTeX)",
+   "dataTables": [
+    {
+     "table": "fig06_cod",
+     "csv": "paper/ukrainian_review/figures_src/data/fig06_cod.csv",
+     "sha256": "fd10cabf4e3aa4316c1072c04587aafe254f6b4adff75def0d53cff403b59c01",
+     "sources": [
+      "paper/data/evidence_exact.mat"
+     ],
+     "transformation": "COD rows with crack_length_mm >= 60, selected by degree and window (|bound-W|<1e-12), sorted by a; turn_err_1e3deg = 1e3*turn_error_deg; ratio_err_1e5 = 1e5*ratio_error"
+    }
+   ],
+   "independentVerification": "PASS"
+  },
+  {
+   "path": "paper/ukrainian_review/figures/cod/mixity_quadratic.pdf",
+   "figure": 6,
+   "panel": "d",
+   "panelId": "cod/mixity_quadratic",
+   "englishAsset": {
+    "path": "paper/figures/cod/mixity_quadratic.pdf",
+    "sha256": "e0f10bf129d2d567e8bc3b36f1d4d119d07005efb174fc2ec04ae8b2fc10b99a",
+    "gitBlobEqualsPinnedBase": true
+   },
+   "ukrainianSHA256": "20bfdba7608d456204912a022fa095b04844f3c6ceea335199c0fcb38838cd42",
+   "panelSource": "paper/ukrainian_review/figures_src/panels/cod/mixity_quadratic.tex",
+   "panelSourceSHA256": "27d626ee3b11b3bd1d20bc579dbc15b77f8d6fd69475854c6450eb9b568139f6",
+   "printedSlot_mm": 64.408,
+   "measuredWidth_mm": 64.407,
+   "height_mm": 56.0,
+   "includeScale": 0.99998,
+   "fonts": [
+    "STIXTwoMath-Regular-Identity-H",
+    "STIXTwoText-Regular-Identity-H"
+   ],
+   "textSizes_pt": [
+    7.67,
+    9.96,
+    10.96
+   ],
+   "method": "reconstructed from authoritative records (PGFPlots, XeLaTeX)",
+   "dataTables": [
+    {
+     "table": "fig06_cod",
+     "csv": "paper/ukrainian_review/figures_src/data/fig06_cod.csv",
+     "sha256": "fd10cabf4e3aa4316c1072c04587aafe254f6b4adff75def0d53cff403b59c01",
+     "sources": [
+      "paper/data/evidence_exact.mat"
+     ],
+     "transformation": "COD rows with crack_length_mm >= 60, selected by degree and window (|bound-W|<1e-12), sorted by a; turn_err_1e3deg = 1e3*turn_error_deg; ratio_err_1e5 = 1e5*ratio_error"
+    }
+   ],
+   "independentVerification": "PASS"
+  },
+  {
+   "path": "paper/ukrainian_review/figures/tip_resolution_sensitivity/trajectory.pdf",
+   "figure": 7,
+   "panel": "a",
+   "panelId": "tip_resolution_sensitivity/trajectory",
+   "englishAsset": {
+    "path": "paper/figures/tip_resolution_sensitivity/trajectory.pdf",
+    "sha256": "14514a478554b36f6064a7649427ef8e2593deda1a609ca1ce19970c3b0882f8",
+    "gitBlobEqualsPinnedBase": true
+   },
+   "ukrainianSHA256": "6ba608a41e73f916ef7484247b47f9b40ade45739aa610db0bade39b516045a5",
+   "panelSource": "paper/ukrainian_review/figures_src/panels/tip_resolution_sensitivity/trajectory.tex",
+   "panelSourceSHA256": "e00487a2d756be73fc37740c3a8eff6e68b6750fd30be72a3c6bfc2c00818818",
+   "printedSlot_mm": 156.04,
+   "measuredWidth_mm": 156.041,
+   "height_mm": 70.273,
+   "includeScale": 1.0,
+   "fonts": [
+    "STIXTwoMath-Regular-Identity-H",
+    "STIXTwoText-Regular-Identity-H"
+   ],
+   "textSizes_pt": [
+    6.97,
+    9.96,
+    10.96
+   ],
+   "method": "reconstructed from authoritative records (PGFPlots, XeLaTeX)",
+   "dataTables": [
+    {
+     "table": "fig07_vertices",
+     "csv": "paper/ukrainian_review/figures_src/data/fig07_vertices.csv",
+     "sha256": "5b602057b54698de37ff03447e5fc8d9f1ebe793076d36e882a59d0def2b4e2a",
+     "sources": [
+      "paper/data/evidence_exact.mat",
+      "paper/data/isolated_tip_resolution.json"
+     ],
+     "transformation": "h0: 1e3*E.vertices_m(1:24,:); 2h0: 1e3*[mouth_m; independent tip_x_m, tip_y_m] (isolated_tip_resolution.json)"
+    }
+   ],
+   "independentVerification": "PASS"
+  },
+  {
+   "path": "paper/ukrainian_review/figures/tip_resolution_sensitivity/vertical_deviation.pdf",
+   "figure": 7,
+   "panel": "b",
+   "panelId": "tip_resolution_sensitivity/vertical_deviation",
+   "englishAsset": {
+    "path": "paper/figures/tip_resolution_sensitivity/vertical_deviation.pdf",
+    "sha256": "dfda3062c50bce233045940c223dc30672036c8675c6296279ef7252eab04b5f",
+    "gitBlobEqualsPinnedBase": true
+   },
+   "ukrainianSHA256": "5cfdd83a55cbda965442f61aa0210b3cbeb359898195fea9e7eeb3a2af47aefe",
+   "panelSource": "paper/ukrainian_review/figures_src/panels/tip_resolution_sensitivity/vertical_deviation.tex",
+   "panelSourceSHA256": "f89ba0c33015551b558afc2b7228d41654eb502d199f0e09e3a8a8cd728d174b",
+   "printedSlot_mm": 52.29,
+   "measuredWidth_mm": 52.289,
+   "height_mm": 54.0,
+   "includeScale": 0.99998,
+   "fonts": [
+    "STIXTwoMath-Regular-Identity-H",
+    "STIXTwoText-Regular-Identity-H"
+   ],
+   "textSizes_pt": [
+    5.48,
+    7.67,
+    9.96,
+    10.96
+   ],
+   "method": "reconstructed from authoritative records (PGFPlots, XeLaTeX)",
+   "dataTables": [
+    {
+     "table": "fig07_metrics",
+     "csv": "paper/ukrainian_review/figures_src/data/fig07_metrics.csv",
+     "sha256": "551be6c02f8a5e061d6335a399aa65805a3f8b6381f87393abf6467147865aae",
+     "sources": [
+      "paper/data/evidence_exact.mat",
+      "paper/data/isolated_tip_resolution.json"
+     ],
+     "transformation": "a_mm = 1e3*|V1-V0|*segment (as plot_tip2h0_vs_reference_publication.m); dy_um = 1e6*(y_2h0 - y_h0); dtheta_mdeg = 1e3*(theta_2h0 - theta_h0); q = KII/KI; q_*_1e3 = 1e3*q"
+    }
+   ],
+   "independentVerification": "PASS"
+  },
+  {
+   "path": "paper/ukrainian_review/figures/tip_resolution_sensitivity/direction_deviation.pdf",
+   "figure": 7,
+   "panel": "c",
+   "panelId": "tip_resolution_sensitivity/direction_deviation",
+   "englishAsset": {
+    "path": "paper/figures/tip_resolution_sensitivity/direction_deviation.pdf",
+    "sha256": "75af69808070f7b8f9b20415b17247243aa1de306ed3d35e9ebda363c955f950",
+    "gitBlobEqualsPinnedBase": true
+   },
+   "ukrainianSHA256": "f7c8a330dea4a41eb5a0e6deb86fc7ed502a37865386a021e7337278ba318b85",
+   "panelSource": "paper/ukrainian_review/figures_src/panels/tip_resolution_sensitivity/direction_deviation.tex",
+   "panelSourceSHA256": "472dfa095963fa58962005cc15df493fd2333759bb8808cac218bfc048a9e0ee",
+   "printedSlot_mm": 52.29,
+   "measuredWidth_mm": 52.289,
+   "height_mm": 54.0,
+   "includeScale": 0.99998,
+   "fonts": [
+    "STIXTwoMath-Regular-Identity-H",
+    "STIXTwoText-Regular-Identity-H"
+   ],
+   "textSizes_pt": [
+    5.48,
+    7.67,
+    9.96,
+    10.96
+   ],
+   "method": "reconstructed from authoritative records (PGFPlots, XeLaTeX)",
+   "dataTables": [
+    {
+     "table": "fig07_metrics",
+     "csv": "paper/ukrainian_review/figures_src/data/fig07_metrics.csv",
+     "sha256": "551be6c02f8a5e061d6335a399aa65805a3f8b6381f87393abf6467147865aae",
+     "sources": [
+      "paper/data/evidence_exact.mat",
+      "paper/data/isolated_tip_resolution.json"
+     ],
+     "transformation": "a_mm = 1e3*|V1-V0|*segment (as plot_tip2h0_vs_reference_publication.m); dy_um = 1e6*(y_2h0 - y_h0); dtheta_mdeg = 1e3*(theta_2h0 - theta_h0); q = KII/KI; q_*_1e3 = 1e3*q"
+    }
+   ],
+   "independentVerification": "PASS"
+  },
+  {
+   "path": "paper/ukrainian_review/figures/tip_resolution_sensitivity/mode_mixity.pdf",
+   "figure": 7,
+   "panel": "d",
+   "panelId": "tip_resolution_sensitivity/mode_mixity",
+   "englishAsset": {
+    "path": "paper/figures/tip_resolution_sensitivity/mode_mixity.pdf",
+    "sha256": "75ee7d9e61b93612a63d6486d27c60cac030d54390a4203f26f2d91ee6e7b9a1",
+    "gitBlobEqualsPinnedBase": true
+   },
+   "ukrainianSHA256": "159e1f3c9639b293d9255c790c3a2101d61426cd4f8c7bfbc66997c141041d80",
+   "panelSource": "paper/ukrainian_review/figures_src/panels/tip_resolution_sensitivity/mode_mixity.tex",
+   "panelSourceSHA256": "7e23041857978bce1d2c5f5a9cb51cbd1165f74fc97c6f6e3c013b7d7339aede",
+   "printedSlot_mm": 52.29,
+   "measuredWidth_mm": 52.289,
+   "height_mm": 54.0,
+   "includeScale": 0.99998,
+   "fonts": [
+    "STIXTwoMath-Regular-Identity-H",
+    "STIXTwoText-Regular-Identity-H"
+   ],
+   "textSizes_pt": [
+    6.97,
+    7.67,
+    9.96,
+    10.96
+   ],
+   "method": "reconstructed from authoritative records (PGFPlots, XeLaTeX)",
+   "dataTables": [
+    {
+     "table": "fig07_metrics",
+     "csv": "paper/ukrainian_review/figures_src/data/fig07_metrics.csv",
+     "sha256": "551be6c02f8a5e061d6335a399aa65805a3f8b6381f87393abf6467147865aae",
+     "sources": [
+      "paper/data/evidence_exact.mat",
+      "paper/data/isolated_tip_resolution.json"
+     ],
+     "transformation": "a_mm = 1e3*|V1-V0|*segment (as plot_tip2h0_vs_reference_publication.m); dy_um = 1e6*(y_2h0 - y_h0); dtheta_mdeg = 1e3*(theta_2h0 - theta_h0); q = KII/KI; q_*_1e3 = 1e3*q"
+    }
+   ],
+   "independentVerification": "PASS"
+  },
+  {
+   "path": "paper/ukrainian_review/figures/m1_mesh_sensitivity/trajectory.pdf",
+   "figure": 8,
+   "panel": "a",
+   "panelId": "m1_mesh_sensitivity/trajectory",
+   "englishAsset": {
+    "path": "paper/figures/m1_mesh_sensitivity/trajectory.pdf",
+    "sha256": "fb578075fa0a99349c1ce89dd98fb1baf7ff7b86e9a416ea35d6f5c287d06a15",
+    "gitBlobEqualsPinnedBase": true
+   },
+   "ukrainianSHA256": "99779b941453bf3b4fc73a3d509b1be72a0bc85a26ece50d0be81ecf1e0c186d",
+   "panelSource": "paper/ukrainian_review/figures_src/panels/m1_mesh_sensitivity/trajectory.tex",
+   "panelSourceSHA256": "487a7640629e1c9fe2dd8d7b0170e0fbd800aa42f00f594fdcf7271acc5ef2eb",
+   "printedSlot_mm": 156.04,
+   "measuredWidth_mm": 156.041,
+   "height_mm": 70.273,
+   "includeScale": 1.0,
+   "fonts": [
+    "STIXTwoMath-Regular-Identity-H",
+    "STIXTwoText-Regular-Identity-H"
+   ],
+   "textSizes_pt": [
+    6.97,
+    9.96,
+    10.96
+   ],
+   "method": "retained vector layer, text typeset anew",
+   "retainedLayer": {
+    "source": "paper/data/retained_figure_7_9/m1_trajectory.pdf",
+    "sourceSHA256": "c0cf18c3d6e8ba1e935e049e785832ef0f6b4bf0b6534d2fbb406d9aa01d1e58",
+    "layer": "paper/ukrainian_review/figures_src/retained/m1_trajectory_layer.pdf",
+    "layerSHA256": "df77ef3ddedba170173b8f951e316de61b813a85dcbc6e46cd209989cd1d93ca",
+    "mode": "span",
+    "calibration": "hole contour (centre 170,-20 mm; R 30 mm)"
+   },
+   "justification": "No numerical history survives (paper/data/retained_figure_7_9, pinned in profiles.json) and digitization is prohibited: the drawing operators of the pinned graph span are kept unchanged; axes, ticks, labels and legend are typeset anew in STIX Two.",
+   "dataTables": [],
+   "independentVerification": "PASS"
+  },
+  {
+   "path": "paper/ukrainian_review/figures/m1_mesh_sensitivity/vertical_deviation.pdf",
+   "figure": 8,
+   "panel": "b",
+   "panelId": "m1_mesh_sensitivity/vertical_deviation",
+   "englishAsset": {
+    "path": "paper/figures/m1_mesh_sensitivity/vertical_deviation.pdf",
+    "sha256": "775f841eb48229dc620699dad30d152d68a03ae77676c6dd3542798914c96355",
+    "gitBlobEqualsPinnedBase": true
+   },
+   "ukrainianSHA256": "b2d0a2461978b631fad0a3d65767512d1ce01551c830c600f44e5ab55042bfa0",
+   "panelSource": "paper/ukrainian_review/figures_src/panels/m1_mesh_sensitivity/vertical_deviation.tex",
+   "panelSourceSHA256": "6355403f22aaac3783840dac63e12715b7c60842ceca33b176eb3c942dcea22e",
+   "printedSlot_mm": 52.29,
+   "measuredWidth_mm": 52.289,
+   "height_mm": 54.0,
+   "includeScale": 0.99998,
+   "fonts": [
+    "STIXTwoMath-Regular-Identity-H",
+    "STIXTwoText-Regular-Identity-H"
+   ],
+   "textSizes_pt": [
+    7.67,
+    9.96,
+    10.96
+   ],
+   "method": "retained vector layer, text typeset anew",
+   "retainedLayer": {
+    "source": "paper/data/retained_figure_7_9/m1_vertical_deviation.pdf",
+    "sourceSHA256": "06f3d677063551b7232aaf127bb8dd53ad9ecc36a0674f078749184c7e397786",
+    "layer": "paper/ukrainian_review/figures_src/retained/m1_vertical_deviation_layer.pdf",
+    "layerSHA256": "1183a788ea3cebed7b2a32475e9a51e7000361a38c00672f1050543fd0e874a7",
+    "mode": "span",
+    "calibration": "tick labels snapped to tick marks, linear least squares"
+   },
+   "justification": "No numerical history survives (paper/data/retained_figure_7_9, pinned in profiles.json) and digitization is prohibited: the drawing operators of the pinned graph span are kept unchanged; axes, ticks, labels and legend are typeset anew in STIX Two.",
+   "dataTables": [],
+   "independentVerification": "PASS"
+  },
+  {
+   "path": "paper/ukrainian_review/figures/m1_mesh_sensitivity/direction_deviation.pdf",
+   "figure": 8,
+   "panel": "c",
+   "panelId": "m1_mesh_sensitivity/direction_deviation",
+   "englishAsset": {
+    "path": "paper/figures/m1_mesh_sensitivity/direction_deviation.pdf",
+    "sha256": "67ca2e408088d9b23879e457191a70db785be11cdf0d152e3492986bd2afb7c0",
+    "gitBlobEqualsPinnedBase": true
+   },
+   "ukrainianSHA256": "71fbec407c199be79be60f5f989d01ee0fa9167eef9ece5c040528e84f17a9af",
+   "panelSource": "paper/ukrainian_review/figures_src/panels/m1_mesh_sensitivity/direction_deviation.tex",
+   "panelSourceSHA256": "65d068ad76903c69652b94dea9692fa36c7fb35430b06eb0e9293ace5b15a479",
+   "printedSlot_mm": 52.29,
+   "measuredWidth_mm": 52.289,
+   "height_mm": 54.0,
+   "includeScale": 0.99998,
+   "fonts": [
+    "STIXTwoMath-Regular-Identity-H",
+    "STIXTwoText-Regular-Identity-H"
+   ],
+   "textSizes_pt": [
+    7.67,
+    9.96,
+    10.96
+   ],
+   "method": "retained vector layer, text typeset anew",
+   "retainedLayer": {
+    "source": "paper/data/retained_figure_7_9/m1_direction_deviation.pdf",
+    "sourceSHA256": "e05616ce0d72a396a4e6cdfaf84d69959da3ba229297f90c2934b29676206b20",
+    "layer": "paper/ukrainian_review/figures_src/retained/m1_direction_deviation_layer.pdf",
+    "layerSHA256": "b0beac7c4fed4666e8ee0f5625011d3d347b4054b602b3f717c4dbb74347f590",
+    "mode": "span",
+    "calibration": "tick labels snapped to tick marks, linear least squares"
+   },
+   "justification": "No numerical history survives (paper/data/retained_figure_7_9, pinned in profiles.json) and digitization is prohibited: the drawing operators of the pinned graph span are kept unchanged; axes, ticks, labels and legend are typeset anew in STIX Two.",
+   "dataTables": [],
+   "independentVerification": "PASS"
+  },
+  {
+   "path": "paper/ukrainian_review/figures/m1_mesh_sensitivity/mode_mixity.pdf",
+   "figure": 8,
+   "panel": "d",
+   "panelId": "m1_mesh_sensitivity/mode_mixity",
+   "englishAsset": {
+    "path": "paper/figures/m1_mesh_sensitivity/mode_mixity.pdf",
+    "sha256": "dd1f8b5dc91ef05b97567f14f4e41b04a4eefd0a877a27fd188550d43b695098",
+    "gitBlobEqualsPinnedBase": true
+   },
+   "ukrainianSHA256": "5047421cb4916c4c7175a92b745d90af09a3178a19a78cb4fadcb45a875eea99",
+   "panelSource": "paper/ukrainian_review/figures_src/panels/m1_mesh_sensitivity/mode_mixity.tex",
+   "panelSourceSHA256": "5e813e0ee15c4cd6ee0565a390e335817802138b1ba991dfc70c7b7a519ce465",
+   "printedSlot_mm": 52.29,
+   "measuredWidth_mm": 52.289,
+   "height_mm": 54.0,
+   "includeScale": 0.99998,
+   "fonts": [
+    "STIXTwoMath-Regular-Identity-H",
+    "STIXTwoText-Regular-Identity-H"
+   ],
+   "textSizes_pt": [
+    7.67,
+    9.96,
+    10.96
+   ],
+   "method": "retained vector layer, text typeset anew",
+   "retainedLayer": {
+    "source": "paper/data/retained_figure_7_9/m1_mode_mixity.pdf",
+    "sourceSHA256": "47d6e70bde884b2c79c2cafd5d25af364ee94638562b8d99137d17614e01338e",
+    "layer": "paper/ukrainian_review/figures_src/retained/m1_mode_mixity_layer.pdf",
+    "layerSHA256": "4a6f1fc4cc8301b5aff7f772fd3e3440281f4faf517e73db6af40f2b7fc3972b",
+    "mode": "span",
+    "calibration": "tick labels snapped to tick marks, linear least squares"
+   },
+   "justification": "No numerical history survives (paper/data/retained_figure_7_9, pinned in profiles.json) and digitization is prohibited: the drawing operators of the pinned graph span are kept unchanged; axes, ticks, labels and legend are typeset anew in STIX Two.",
+   "dataTables": [],
+   "independentVerification": "PASS"
+  },
+  {
+   "path": "paper/ukrainian_review/figures/increment_sensitivity/trajectory.pdf",
+   "figure": 9,
+   "panel": "a",
+   "panelId": "increment_sensitivity/trajectory",
+   "englishAsset": {
+    "path": "paper/figures/increment_sensitivity/trajectory.pdf",
+    "sha256": "1ced112c6c973c1c949ac6f6160c1a5fa46ddf4fcc6d45f842c7258c31fde761",
+    "gitBlobEqualsPinnedBase": true
+   },
+   "ukrainianSHA256": "da6a19c5dd782be8632aacf2e4b69b7dd709016283287f2d19597cf109e745a0",
+   "panelSource": "paper/ukrainian_review/figures_src/panels/increment_sensitivity/trajectory.tex",
+   "panelSourceSHA256": "475276be94d567b2a7db516b369a71997db302c93105d6e48a4cf0571172258c",
+   "printedSlot_mm": 156.04,
+   "measuredWidth_mm": 156.041,
+   "height_mm": 70.273,
+   "includeScale": 1.0,
+   "fonts": [
+    "STIXTwoMath-Regular-Identity-H",
+    "STIXTwoText-Regular-Identity-H"
+   ],
+   "textSizes_pt": [
+    9.96,
+    10.96
+   ],
+   "method": "retained vector layer, text typeset anew",
+   "retainedLayer": {
+    "source": "paper/data/retained_figure_7_9/increment_trajectory.pdf",
+    "sourceSHA256": "562cf7b2f445e7d6b8a70604d8ad195c157e25d9b7a392d6557a8c4ed053c2f9",
+    "layer": "paper/ukrainian_review/figures_src/retained/increment_trajectory_layer.pdf",
+    "layerSHA256": "2b9f0340414f5ffd839282d83968fc7b4f7e4d3b7f4ebc40dc8fe0e5b68faf24",
+    "mode": "span",
+    "calibration": "hole contour (centre 170,-20 mm; R 30 mm)"
+   },
+   "justification": "No numerical history survives (paper/data/retained_figure_7_9, pinned in profiles.json) and digitization is prohibited: the drawing operators of the pinned graph span are kept unchanged; axes, ticks, labels and legend are typeset anew in STIX Two.",
+   "dataTables": [],
+   "independentVerification": "PASS"
+  },
+  {
+   "path": "paper/ukrainian_review/figures/increment_sensitivity/vertical_deviation.pdf",
+   "figure": 9,
+   "panel": "b",
+   "panelId": "increment_sensitivity/vertical_deviation",
+   "englishAsset": {
+    "path": "paper/figures/increment_sensitivity/vertical_deviation.pdf",
+    "sha256": "0a0e894f173b05ce9004bd26360a31cf5546b24af22241994dd21f38a080b997",
+    "gitBlobEqualsPinnedBase": true
+   },
+   "ukrainianSHA256": "e2468c4b2c93de93f830c08e054a925d848f7c5e0a256b245ed7020835cd2b5a",
+   "panelSource": "paper/ukrainian_review/figures_src/panels/increment_sensitivity/vertical_deviation.tex",
+   "panelSourceSHA256": "f9e907e067d4658daf06f6420b63f7bb8ffec4f6a0720248f95b6e17fc081010",
+   "printedSlot_mm": 52.29,
+   "measuredWidth_mm": 52.289,
+   "height_mm": 54.0,
+   "includeScale": 0.99998,
+   "fonts": [
+    "STIXTwoMath-Regular-Identity-H",
+    "STIXTwoText-Regular-Identity-H"
+   ],
+   "textSizes_pt": [
+    6.97,
+    9.96,
+    10.96
+   ],
+   "method": "reconstructed from authoritative records (PGFPlots, XeLaTeX)",
+   "dataTables": [
+    {
+     "table": "fig09_metrics",
+     "csv": "paper/ukrainian_review/figures_src/data/fig09_metrics.csv",
+     "sha256": "c35338d3fe6a8cd3e5ab79cc35c84cf9b8fcc022f50aa33e75fc0262be2cc7b4",
+     "sources": [
+      "paper/data/increment_plot_records.mat"
+     ],
+     "transformation": "Increment.metrics: crack_length_mm, dy_2minus4_um, dy_1minus2_um, dtheta_2minus4_mdeg, dtheta_1minus2_mdeg; no transformation"
+    }
+   ],
+   "independentVerification": "PASS"
+  },
+  {
+   "path": "paper/ukrainian_review/figures/increment_sensitivity/direction_deviation.pdf",
+   "figure": 9,
+   "panel": "c",
+   "panelId": "increment_sensitivity/direction_deviation",
+   "englishAsset": {
+    "path": "paper/figures/increment_sensitivity/direction_deviation.pdf",
+    "sha256": "cdcba3ba38889b643fe054c124577a882fdcd1515ef45bea3ed633bd517acc32",
+    "gitBlobEqualsPinnedBase": true
+   },
+   "ukrainianSHA256": "98d103be1b235d9b66e6f8bef3bc6c8d54953023cd0bd96a9b900809379492ac",
+   "panelSource": "paper/ukrainian_review/figures_src/panels/increment_sensitivity/direction_deviation.tex",
+   "panelSourceSHA256": "a8b671412f1b9813d912851251e982c38b4741ad15d338313f1c6a5ebca3b6e4",
+   "printedSlot_mm": 52.29,
+   "measuredWidth_mm": 52.289,
+   "height_mm": 54.0,
+   "includeScale": 0.99998,
+   "fonts": [
+    "STIXTwoMath-Regular-Identity-H",
+    "STIXTwoText-Regular-Identity-H"
+   ],
+   "textSizes_pt": [
+    6.97,
+    9.96,
+    10.96
+   ],
+   "method": "reconstructed from authoritative records (PGFPlots, XeLaTeX)",
+   "dataTables": [
+    {
+     "table": "fig09_metrics",
+     "csv": "paper/ukrainian_review/figures_src/data/fig09_metrics.csv",
+     "sha256": "c35338d3fe6a8cd3e5ab79cc35c84cf9b8fcc022f50aa33e75fc0262be2cc7b4",
+     "sources": [
+      "paper/data/increment_plot_records.mat"
+     ],
+     "transformation": "Increment.metrics: crack_length_mm, dy_2minus4_um, dy_1minus2_um, dtheta_2minus4_mdeg, dtheta_1minus2_mdeg; no transformation"
+    }
+   ],
+   "independentVerification": "PASS"
+  },
+  {
+   "path": "paper/ukrainian_review/figures/increment_sensitivity/turn_density.pdf",
+   "figure": 9,
+   "panel": "d",
+   "panelId": "increment_sensitivity/turn_density",
+   "englishAsset": {
+    "path": "paper/figures/increment_sensitivity/turn_density.pdf",
+    "sha256": "e4272255f2f6f2ccdf6bc7680bb3983c9852c345ed7d74009a9c4502aca0854a",
+    "gitBlobEqualsPinnedBase": true
+   },
+   "ukrainianSHA256": "da31f099e6e7ccfd3606814bd2a32287599d8ef4064c082f98ba562ddf49616e",
+   "panelSource": "paper/ukrainian_review/figures_src/panels/increment_sensitivity/turn_density.tex",
+   "panelSourceSHA256": "1e0eb1404dc53ae9f772c1f6b57a72092cfce02a0033a5f8aab9cf9fb9d79fa9",
+   "printedSlot_mm": 52.29,
+   "measuredWidth_mm": 52.289,
+   "height_mm": 54.0,
+   "includeScale": 0.99998,
+   "fonts": [
+    "STIXTwoMath-Regular-Identity-H",
+    "STIXTwoText-Regular-Identity-H"
+   ],
+   "textSizes_pt": [
+    9.96,
+    10.96
+   ],
+   "method": "reconstructed from authoritative records (PGFPlots, XeLaTeX)",
+   "dataTables": [
+    {
+     "table": "fig09_native",
+     "csv": "paper/ukrainian_review/figures_src/data/fig09_native.csv",
+     "sha256": "9c0cb9e2023c08829f9258da44331558a4d59548d58d00471266060f5f34b829",
+     "sources": [
+      "paper/data/increment_plot_records.mat"
+     ],
+     "transformation": "Increment.native rows (record order): increment_mm, crack_length_mm, turn_density_deg_per_mm; no transformation"
+    }
+   ],
+   "independentVerification": "PASS"
+  },
+  {
+   "path": "paper/ukrainian_review/figures/quality/min_angle.pdf",
+   "figure": 10,
+   "panel": "a",
+   "panelId": "quality/min_angle",
+   "englishAsset": {
+    "path": "paper/figures/quality/min_angle.pdf",
+    "sha256": "75dbe1fb654b0bd606e347009eca8f6ad7018473e400ca81c72eb57135e2fecb",
+    "gitBlobEqualsPinnedBase": true
+   },
+   "ukrainianSHA256": "1ff837d5c51e7e5aca48dc948e7fdf292e5a7e9aa106b018125cadfe65ed69a7",
+   "panelSource": "paper/ukrainian_review/figures_src/panels/quality/min_angle.tex",
+   "panelSourceSHA256": "05ac21d42097cb45954ca6aa05da7aca4aec5b268dab85761d56e9941e413f55",
+   "printedSlot_mm": 64.408,
+   "measuredWidth_mm": 64.407,
+   "height_mm": 47.502,
+   "includeScale": 0.99998,
+   "fonts": [
+    "STIXTwoMath-Regular-Identity-H",
+    "STIXTwoText-Regular-Identity-H"
+   ],
+   "textSizes_pt": [
+    9.96,
+    10.96
+   ],
+   "method": "reconstructed from authoritative records (PGFPlots, XeLaTeX)",
+   "dataTables": [
+    {
+     "table": "fig10_mesh",
+     "csv": "paper/ukrainian_review/figures_src/data/fig10_mesh.csv",
+     "sha256": "06442ce4a6ce88fe830f6ec615f9f3edff824434383baddb634082456ad7396b",
+     "sources": [
+      "paper/data/evidence_exact.mat"
+     ],
+     "transformation": "Q rows with segment <= 23: s_mm = 1e3*Q.path_length_m, Q.min_angle_deg, Q.max_neighbor_ratio"
+    }
+   ],
+   "independentVerification": "PASS"
+  },
+  {
+   "path": "paper/ukrainian_review/figures/quality/size_ratio.pdf",
+   "figure": 10,
+   "panel": "b",
+   "panelId": "quality/size_ratio",
+   "englishAsset": {
+    "path": "paper/figures/quality/size_ratio.pdf",
+    "sha256": "639c213cb2ab09d3d8b68f41db657631f03d53efaa31987aae3bb31df19eaeda",
+    "gitBlobEqualsPinnedBase": true
+   },
+   "ukrainianSHA256": "311ba6331028b690ba708ee31af2107ce6669dcdcfe801fba17e7bfdc37ffa54",
+   "panelSource": "paper/ukrainian_review/figures_src/panels/quality/size_ratio.tex",
+   "panelSourceSHA256": "451b66b8e5b2b62b59a49c944d185694b1aa02ceeb150f1bacac3d7096a3e339",
+   "printedSlot_mm": 64.408,
+   "measuredWidth_mm": 64.407,
+   "height_mm": 47.502,
+   "includeScale": 0.99998,
+   "fonts": [
+    "STIXTwoMath-Regular-Identity-H",
+    "STIXTwoText-Regular-Identity-H"
+   ],
+   "textSizes_pt": [
+    9.96,
+    10.96
+   ],
+   "method": "reconstructed from authoritative records (PGFPlots, XeLaTeX)",
+   "dataTables": [
+    {
+     "table": "fig10_mesh",
+     "csv": "paper/ukrainian_review/figures_src/data/fig10_mesh.csv",
+     "sha256": "06442ce4a6ce88fe830f6ec615f9f3edff824434383baddb634082456ad7396b",
+     "sources": [
+      "paper/data/evidence_exact.mat"
+     ],
+     "transformation": "Q rows with segment <= 23: s_mm = 1e3*Q.path_length_m, Q.min_angle_deg, Q.max_neighbor_ratio"
+    }
+   ],
+   "independentVerification": "PASS"
+  },
+  {
+   "path": "paper/ukrainian_review/figures/quality/iterations.pdf",
+   "figure": 10,
+   "panel": "c",
+   "panelId": "quality/iterations",
+   "englishAsset": {
+    "path": "paper/figures/quality/iterations.pdf",
+    "sha256": "38659aae3d18064c38e9dd1becffd04dd36eee3a5cb00d369a67f383d5d00130",
+    "gitBlobEqualsPinnedBase": true
+   },
+   "ukrainianSHA256": "edbfb2f7b17709a12bc5f3fc2649ccb2e3a14c5a68c2893925e48fd65a3b34ea",
+   "panelSource": "paper/ukrainian_review/figures_src/panels/quality/iterations.tex",
+   "panelSourceSHA256": "bcea0603a92fae67fcd5641ec9a051bf1cdd93dea4a41eea627a6c392ef615b9",
+   "printedSlot_mm": 64.408,
+   "measuredWidth_mm": 64.407,
+   "height_mm": 51.999,
+   "includeScale": 0.99998,
+   "fonts": [
+    "STIXTwoMath-Regular-Identity-H",
+    "STIXTwoText-Regular-Identity-H"
+   ],
+   "textSizes_pt": [
+    9.96,
+    10.96
+   ],
+   "method": "reconstructed from authoritative records (PGFPlots, XeLaTeX)",
+   "dataTables": [
+    {
+     "table": "fig10_solver",
+     "csv": "paper/ukrainian_review/figures_src/data/fig10_solver.csv",
+     "sha256": "c864c9f94612bccf02d0b2995cb3e8b923d73cae81c668b54e8fc424dfa60f57",
+     "sources": [
+      "paper/data/evidence_exact.mat"
+     ],
+     "transformation": "T rows with segment >= 2 (newly solved states): PCG_iterations, true_rel_residual, residual_over_gate = true_rel_residual/5e-10 (gate stated in the manuscript)"
+    }
+   ],
+   "independentVerification": "PASS"
+  },
+  {
+   "path": "paper/ukrainian_review/figures/quality/true_residual.pdf",
+   "figure": 10,
+   "panel": "d",
+   "panelId": "quality/true_residual",
+   "englishAsset": {
+    "path": "paper/figures/quality/true_residual.pdf",
+    "sha256": "d14577ded719a4ea94cf40e0844ccc91da2bcc6b1fdac9f8352bed97c0714779",
+    "gitBlobEqualsPinnedBase": true
+   },
+   "ukrainianSHA256": "b05e46cbeb25fb976ec0fe264fafd57d3190b52158f4bd996bbc8b6039c1ed5b",
+   "panelSource": "paper/ukrainian_review/figures_src/panels/quality/true_residual.tex",
+   "panelSourceSHA256": "e6f0b2671c75b984dcccda5b6ef8492fc6494cfe947116c5fa9e1a441947c579",
+   "printedSlot_mm": 64.408,
+   "measuredWidth_mm": 64.407,
+   "height_mm": 51.999,
+   "includeScale": 0.99998,
+   "fonts": [
+    "STIXTwoMath-Regular-Identity-H",
+    "STIXTwoText-Regular-Identity-H"
+   ],
+   "textSizes_pt": [
+    9.96,
+    10.96
+   ],
+   "method": "reconstructed from authoritative records (PGFPlots, XeLaTeX)",
+   "dataTables": [
+    {
+     "table": "fig10_solver",
+     "csv": "paper/ukrainian_review/figures_src/data/fig10_solver.csv",
+     "sha256": "c864c9f94612bccf02d0b2995cb3e8b923d73cae81c668b54e8fc424dfa60f57",
+     "sources": [
+      "paper/data/evidence_exact.mat"
+     ],
+     "transformation": "T rows with segment >= 2 (newly solved states): PCG_iterations, true_rel_residual, residual_over_gate = true_rel_residual/5e-10 (gate stated in the manuscript)"
+    }
+   ],
+   "independentVerification": "PASS"
+  }
+ ]
+}

@@ -1,0 +1,22 @@
+% Fig. 5(b): MTS turn Delta theta_{k+1} (deg) of the current accepted field (predicts the next segment), a >= 60 mm.
+% Data: fig05_late.csv (a_mm, dtheta_next_deg); a_LS from ua_constants.tex.
+\documentclass[border=0pt,multi=tikzpicture]{standalone}
+\input{../../ua_figstyle.tex}
+\input{../../data/ua_constants.tex}
+\newlength\uaAxW\newlength\uaAxH
+\begin{document}
+\setlength\uaAxW{\dimexpr\uaHalfP-19mm\relax}% L 15mm + axis + R 4mm
+\setlength\uaAxH{44mm}%
+\pgfplotstableread[col sep=comma]{../../data/fig05_late.csv}\T
+\begin{tikzpicture}[ua page={15mm}{4mm}]
+\begin{axis}[ua base,at={(0,0)},anchor=south west,width=\uaAxW,height=\uaAxH,
+  xmin=60,xmax=94,xtick={60,68,...,92},ymin=-0.4,ymax=0.8,ytick={-0.4,-0.2,...,0.8},
+  yticklabel style={/pgf/number format/.cd,fixed,fixed zerofill,precision=1},
+  xlabel={$a$, мм},ylabel={$\Delta\theta_{k+1}$, град}]
+ \addplot[ua zero] coordinates {(60,0) (94,0)};
+ \addplot[ua lsline] coordinates {(\uaCAlsMm,-0.4) (\uaCAlsMm,0.8)};
+ \addplot[ua single] table[x=a_mm,y=dtheta_next_deg]{\T};
+\end{axis}
+\uaPage{15mm}{10.5mm}{4mm}{1.5mm}
+\end{tikzpicture}
+\end{document}

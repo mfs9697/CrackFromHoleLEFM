@@ -1,0 +1,24 @@
+% Fig. 9(d): turning density Delta theta / Delta a (deg/mm) at the computed lengths of each trajectory (scaled M1).
+% Data: fig09_native.csv (Increment.native rows selected by increment_mm = 4, 2, 1; no transformation).
+\documentclass[border=0pt,multi=tikzpicture]{standalone}
+\input{../../ua_figstyle.tex}
+\newlength\uaAxW\newlength\uaAxH
+\begin{document}
+\setlength\uaAxW{\dimexpr\uaThird-21.5mm\relax}% L 17.5mm + axis + R 4mm
+\setlength\uaAxH{42mm}%
+\pgfplotstableread[col sep=comma]{../../data/fig09_native.csv}\T
+\begin{tikzpicture}[ua page={17.5mm}{4mm}]
+\begin{axis}[ua base,at={(0,0)},anchor=south west,width=\uaAxW,height=\uaAxH,
+  xmin=0,xmax=100,xtick={0,50,100},ymin=-0.1,ymax=0.32,ytick={-0.1,0,...,0.3},
+  yticklabel style={/pgf/number format/.cd,fixed,fixed zerofill,precision=1},
+  xlabel={$a$, мм},ylabel={$\Delta\theta/\Delta a$, град/мм},
+  legend style={at={(axis description cs:0.03,0.97)},anchor=north west,cells={align=left}}]
+ \addplot[ua zero] coordinates {(0,0) (100,0)};
+ \addlegendimage{empty legend}\addlegendentry{Масштабовані\\сітки M1}
+ \addplot[ua ref]   table[x=a_mm,y=turn_density_deg_per_mm,restrict expr to domain={\thisrow{increment_mm}}{4:4}]{\T};\addlegendentry{$\Delta a=4$ мм}
+ \addplot[ua inc two]   table[x=a_mm,y=turn_density_deg_per_mm,restrict expr to domain={\thisrow{increment_mm}}{2:2}]{\T};\addlegendentry{$\Delta a=2$ мм}
+ \addplot[ua inc one] table[x=a_mm,y=turn_density_deg_per_mm,restrict expr to domain={\thisrow{increment_mm}}{1:1}]{\T};\addlegendentry{$\Delta a=1$ мм}
+\end{axis}
+\uaPage{17.5mm}{10.5mm}{4mm}{1.5mm}
+\end{tikzpicture}
+\end{document}

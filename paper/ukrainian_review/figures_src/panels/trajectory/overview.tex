@@ -1,0 +1,26 @@
+% Fig. 3(a): accepted trajectory P0..P23 and qualified unsolved extension P23-P24 (equal x/y scale).
+% Data: fig03_vertices.csv; hole circle and right boundary x = 2A from ua_constants.tex (E.C.hole, E.C.A).
+\documentclass[border=0pt,multi=tikzpicture]{standalone}
+\input{../../ua_figstyle.tex}
+\input{../../data/ua_constants.tex}
+\newlength\uaAxW\newlength\uaAxH
+\begin{document}
+\setlength\uaAxW{\dimexpr\uaWideP-16mm\relax}% slot 124.832 mm = L 14 mm + axis + R 2 mm
+\setlength\uaAxH{\dimexpr\uaAxW*68/166\relax}% equal scale: (14 - -54) / (302 - 136)
+\pgfplotstableread[col sep=comma]{../../data/fig03_vertices.csv}\V
+\begin{tikzpicture}[ua page={14mm}{2mm}]
+\begin{axis}[ua base,at={(0,0)},anchor=south west,width=\uaAxW,height=\uaAxH,
+  xmin=136,xmax=302,ymin=-54,ymax=14,xtick={140,160,...,300},ytick={-50,-40,...,10},
+  xlabel={$x$, мм},ylabel={$y$, мм},
+  legend style={at={(axis cs:298,12.5)},anchor=north east}]
+ \draw[ua geom path] (axis cs:\uaCHoleCxMm,\uaCHoleCyMm) ellipse [x radius=\uaCHoleRMm,y radius=\uaCHoleRMm];
+ \addplot[ua geom] coordinates {(\uaCRightBoundaryXMm,-54) (\uaCRightBoundaryXMm,14)};
+ \addplot[ua ref] table[x=x_mm,y=y_mm,restrict expr to domain={\thisrow{k}}{0:23}]{\V};
+ \addlegendentry{Прийняті стани $P_0$–$P_{23}$}
+ \addplot[ua unsolved] table[x=x_mm,y=y_mm,restrict expr to domain={\thisrow{k}}{23:24}]{\V};
+ \addlegendentry{Продовження $P_{23}P_{24}$ без розв’язку}
+ \addplot[ua last accepted,forget plot] table[x=x_mm,y=y_mm,restrict expr to domain={\thisrow{k}}{23:23}]{\V};
+\end{axis}
+\uaPage{14mm}{10.5mm}{2mm}{1mm}
+\end{tikzpicture}
+\end{document}

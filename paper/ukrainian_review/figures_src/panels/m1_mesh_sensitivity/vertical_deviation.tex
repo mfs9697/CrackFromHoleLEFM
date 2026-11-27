@@ -1,0 +1,21 @@
+% Fig. 8(b): y_M1 - y_M0 (micrometres) -- RETAINED VECTOR LAYER (paper/data/retained_figure_7_9/m1_vertical_deviation.pdf,
+% graph span unchanged; tick calibration of the source axes); axes, ticks and labels typeset anew. Not digitized.
+\documentclass[border=0pt,multi=tikzpicture]{standalone}
+\input{../../ua_figstyle.tex}
+\input{../../retained/m1_vertical_deviation_calib.tex}
+\newlength\uaAxW\newlength\uaAxH
+\begin{document}
+\setlength\uaAxW{\dimexpr\uaThird-21.5mm\relax}% L 17.5 mm + axis + R 4 mm
+\setlength\uaAxH{42mm}%
+\pgfmathsetlengthmacro\uaRW{(\uaRxR-\uaRxL)/(\uaRxmax-\uaRxmin)*\uaAxW}%
+\pgfmathsetlengthmacro\uaRH{(\uaRyT-\uaRyB)/(\uaRymax-\uaRymin)*\uaAxH}%
+\begin{tikzpicture}[ua page={17.5mm}{4mm}]
+\begin{axis}[ua base,at={(0,0)},anchor=south west,width=\uaAxW,height=\uaAxH,
+  xmin=\uaRxmin,xmax=\uaRxmax,ymin=\uaRymin,ymax=\uaRymax,xtick={0,50,100},ytick={0,0.02,...,0.06},
+  yticklabel style={/pgf/number format/.cd,fixed,fixed zerofill,precision=2},
+  xlabel={$a$, мм},ylabel={$y_{\mathrm{M1}}-y_{\mathrm{M0}}$, мкм}]
+ \node[anchor=south west,inner sep=0pt,outer sep=0pt] at (axis cs:\uaRxL,\uaRyB) {\includegraphics[width=\uaRW,height=\uaRH]{\uaRetainedLayer}};
+\end{axis}
+\uaPage{17.5mm}{10.5mm}{4mm}{1.5mm}
+\end{tikzpicture}
+\end{document}

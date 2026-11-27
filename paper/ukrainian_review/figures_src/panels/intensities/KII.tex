@@ -1,0 +1,19 @@
+% Fig. 4(b): sliding-mode SIF, 1e3 x K_II (MPa*m^1/2 at unit remote load), signed, P1..P23.
+% Data: fig04_states.csv (a_mm, KII_1e3 = 1e3*KII).
+\documentclass[border=0pt,multi=tikzpicture]{standalone}
+\input{../../ua_figstyle.tex}
+\newlength\uaAxW\newlength\uaAxH
+\begin{document}
+\setlength\uaAxW{\dimexpr\uaThird-19.5mm\relax}% slot 52.29 mm = L 15.5 mm + axis + R 4 mm
+\setlength\uaAxH{42mm}%
+\pgfplotstableread[col sep=comma]{../../data/fig04_states.csv}\T
+\begin{tikzpicture}[ua page={15.5mm}{4mm}]
+\begin{axis}[ua base,at={(0,0)},anchor=south west,width=\uaAxW,height=\uaAxH,
+  xmin=4,xmax=92,xtick={4,24,44,64,92},ymin=-8,ymax=4,ytick={-8,-6,...,4},
+  xlabel={$a$, мм},ylabel={$10^{3}\,K_{\mathrm{II}}$, МПа$\sqrt{\text{м}}$}]
+ \addplot[ua zero] coordinates {(4,0) (92,0)};
+ \addplot[ua single] table[x=a_mm,y=KII_1e3]{\T};
+\end{axis}
+\uaPage{15.5mm}{10.5mm}{4mm}{1.5mm}
+\end{tikzpicture}
+\end{document}

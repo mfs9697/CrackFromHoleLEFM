@@ -1,0 +1,645 @@
+{
+ "schema": "AAM-UA7.RetainedLayers.v1",
+ "assets": [
+  {
+   "name": "m1_trajectory",
+   "source": "paper/data/retained_figure_7_9/m1_trajectory.pdf",
+   "sourceSHA256": "c0cf18c3d6e8ba1e935e049e785832ef0f6b4bf0b6534d2fbb406d9aa01d1e58",
+   "panel": "m1_mesh_sensitivity/trajectory",
+   "mode": "span",
+   "operators": 2038,
+   "span": [
+    637,
+    1859
+   ],
+   "textOpsRemoved": 92,
+   "textStateOpsRemoved": 5,
+   "paintsNeutralizedOutsideSpan": 47,
+   "glyphPathsRemoved": 0,
+   "fontResourcesRemoved": true,
+   "layer": "paper/ukrainian_review/figures_src/retained/m1_trajectory_layer.pdf",
+   "layerSHA256": "df77ef3ddedba170173b8f951e316de61b813a85dcbc6e46cd209989cd1d93ca",
+   "keptPaintOperators": 55,
+   "page_pt": [
+    491.0,
+    227.0
+   ],
+   "calibration": {
+    "method": "hole contour (centre 170,-20 mm; R 30 mm)",
+    "circle_bbox_pt": [
+     41.94776153564453,
+     18.729150772094727,
+     207.54776000976562,
+     184.3291473388672
+    ],
+    "pt_per_mm": 2.759999974568685,
+    "aspect_check_pt": 2.759999942779541
+   },
+   "edges": {
+    "xL": 124.80153553544875,
+    "xR": 302.7000878992872,
+    "yB": -65.4604536596515,
+    "yT": 16.785923909780934
+   },
+   "axis": {
+    "xmin": 135,
+    "xmax": 300,
+    "ymin": -55,
+    "ymax": 15
+   }
+  },
+  {
+   "name": "m1_vertical_deviation",
+   "source": "paper/data/retained_figure_7_9/m1_vertical_deviation.pdf",
+   "sourceSHA256": "06f3d677063551b7232aaf127bb8dd53ad9ecc36a0674f078749184c7e397786",
+   "panel": "m1_mesh_sensitivity/vertical_deviation",
+   "mode": "span",
+   "operators": 1408,
+   "span": [
+    623,
+    1407
+   ],
+   "textOpsRemoved": 88,
+   "textStateOpsRemoved": 10,
+   "paintsNeutralizedOutsideSpan": 34,
+   "glyphPathsRemoved": 0,
+   "fontResourcesRemoved": true,
+   "layer": "paper/ukrainian_review/figures_src/retained/m1_vertical_deviation_layer.pdf",
+   "layerSHA256": "1183a788ea3cebed7b2a32475e9a51e7000361a38c00672f1050543fd0e874a7",
+   "keptPaintOperators": 48,
+   "page_pt": [
+    173.0,
+    242.0
+   ],
+   "calibration": {
+    "method": "tick labels snapped to tick marks, linear least squares",
+    "xTicks": [
+     [
+      33.09375,
+      0.0
+     ],
+     [
+      59.7337532043457,
+      20.0
+     ],
+     [
+      86.3737564086914,
+      40.0
+     ],
+     [
+      113.01375579833984,
+      60.0
+     ],
+     [
+      139.6537628173828,
+      80.0
+     ],
+     [
+      166.29376220703125,
+      100.0
+     ]
+    ],
+    "yTicks": [
+     [
+      216.078125,
+      0.0
+     ],
+     [
+      185.64956665039062,
+      0.01
+     ],
+     [
+      155.22097778320312,
+      0.02
+     ],
+     [
+      124.79241943359375,
+      0.03
+     ],
+     [
+      94.36386108398438,
+      0.04
+     ],
+     [
+      63.935272216796875,
+      0.05
+     ],
+     [
+      33.5067138671875,
+      0.06
+     ],
+     [
+      3.078125,
+      0.07
+     ]
+    ],
+    "xResidual": 1.6910567666172938e-06,
+    "yResidual": 4.537042304353367e-09,
+    "axes_bbox_pt": [
+     33.09375019125,
+     3.07812224125,
+     166.29375019125,
+     216.07812490375
+    ],
+    "yTickUnit": "1",
+    "profileYlim": [
+     0,
+     0.07
+    ],
+    "ylimFromTicks": [
+     1.7031738519523998e-09,
+     0.07000000424971474
+    ]
+   },
+   "edges": {
+    "xL": -24.845155551841668,
+    "xR": 105.03471189390505,
+    "yB": -0.0085189245882204,
+    "yT": 0.07101159374282603
+   },
+   "axis": {
+    "xmin": -1.2916996183776064e-07,
+    "xmax": 99.99999029726624,
+    "ymin": 1.7031738519523998e-09,
+    "ymax": 0.07000000424971474
+   }
+  },
+  {
+   "name": "m1_direction_deviation",
+   "source": "paper/data/retained_figure_7_9/m1_direction_deviation.pdf",
+   "sourceSHA256": "e05616ce0d72a396a4e6cdfaf84d69959da3ba229297f90c2934b29676206b20",
+   "panel": "m1_mesh_sensitivity/direction_deviation",
+   "mode": "span",
+   "operators": 1331,
+   "span": [
+    546,
+    1330
+   ],
+   "textOpsRemoved": 76,
+   "textStateOpsRemoved": 9,
+   "paintsNeutralizedOutsideSpan": 30,
+   "glyphPathsRemoved": 0,
+   "fontResourcesRemoved": true,
+   "layer": "paper/ukrainian_review/figures_src/retained/m1_direction_deviation_layer.pdf",
+   "layerSHA256": "b0beac7c4fed4666e8ee0f5625011d3d347b4054b602b3f717c4dbb74347f590",
+   "keptPaintOperators": 48,
+   "page_pt": [
+    162.0,
+    242.0
+   ],
+   "calibration": {
+    "method": "tick labels snapped to tick marks, linear least squares",
+    "xTicks": [
+     [
+      33.34375,
+      0.0
+     ],
+     [
+      94.24374389648438,
+      50.0
+     ],
+     [
+      155.14376831054688,
+      100.0
+     ]
+    ],
+    "yTicks": [
+     [
+      216.078125,
+      0.0
+     ],
+     [
+      189.453125,
+      0.01
+     ],
+     [
+      162.828125,
+      0.02
+     ],
+     [
+      136.203125,
+      0.03
+     ],
+     [
+      109.578125,
+      0.04
+     ],
+     [
+      82.953125,
+      0.05
+     ],
+     [
+      56.328125,
+      0.06
+     ],
+     [
+      29.703125,
+      0.07
+     ],
+     [
+      3.078125,
+      0.08
+     ]
+    ],
+    "xResidual": 8.351826366492787e-06,
+    "yResidual": 1.3877787807814457e-17,
+    "axes_bbox_pt": [
+     33.34374389625,
+     3.07812224125,
+     155.14374389625,
+     216.07812490375
+    ],
+    "yTickUnit": "1",
+    "profileYlim": [
+     0,
+     0.08
+    ],
+    "ylimFromTicks": [
+     3.615023558278807e-11,
+     0.08000000103615022
+    ]
+   },
+   "edges": {
+    "xL": -27.375812726661724,
+    "xR": 105.629093386697,
+    "yB": -0.009735915492957742,
+    "yT": 0.08115610328638496
+   },
+   "axis": {
+    "xmin": -8.353740170718993e-07,
+    "xmax": 99.99998413133642,
+    "ymin": 3.615023558278807e-11,
+    "ymax": 0.08000000103615022
+   }
+  },
+  {
+   "name": "m1_mode_mixity",
+   "source": "paper/data/retained_figure_7_9/m1_mode_mixity.pdf",
+   "sourceSHA256": "47d6e70bde884b2c79c2cafd5d25af364ee94638562b8d99137d17614e01338e",
+   "panel": "m1_mesh_sensitivity/mode_mixity",
+   "mode": "span",
+   "operators": 2281,
+   "span": [
+    725,
+    2178
+   ],
+   "textOpsRemoved": 108,
+   "textStateOpsRemoved": 11,
+   "paintsNeutralizedOutsideSpan": 46,
+   "glyphPathsRemoved": 0,
+   "fontResourcesRemoved": true,
+   "layer": "paper/ukrainian_review/figures_src/retained/m1_mode_mixity_layer.pdf",
+   "layerSHA256": "4a6f1fc4cc8301b5aff7f772fd3e3440281f4faf517e73db6af40f2b7fc3972b",
+   "keptPaintOperators": 96,
+   "page_pt": [
+    160.0,
+    250.0
+   ],
+   "calibration": {
+    "method": "tick labels snapped to tick marks, linear least squares",
+    "xTicks": [
+     [
+      25.45001220703125,
+      0.0
+     ],
+     [
+      50.890045166015625,
+      20.0
+     ],
+     [
+      76.33001708984375,
+      40.0
+     ],
+     [
+      101.77001953125,
+      60.0
+     ],
+     [
+      127.20999145507812,
+      80.0
+     ],
+     [
+      152.6500244140625,
+      100.0
+     ]
+    ],
+    "yTicks": [
+     [
+      223.734375,
+      -6.0
+     ],
+     [
+      202.43438720703125,
+      -5.0
+     ],
+     [
+      181.1343994140625,
+      -4.0
+     ],
+     [
+      159.83438110351562,
+      -3.0
+     ],
+     [
+      138.53439331054688,
+      -2.0
+     ],
+     [
+      117.234375,
+      -1.0
+     ],
+     [
+      95.93438720703125,
+      0.0
+     ],
+     [
+      74.63436889648438,
+      1.0
+     ],
+     [
+      53.334381103515625,
+      2.0
+     ],
+     [
+      32.034393310546875,
+      3.0
+     ],
+     [
+      10.734375,
+      4.0
+     ]
+    ],
+    "xResidual": 1.7822490598007334e-05,
+    "yResidual": 6.772999991966344e-07,
+    "axes_bbox_pt": [
+     25.45,
+     10.73437224125,
+     152.65,
+     223.73437490375
+    ],
+    "yTickUnit": "1e-3",
+    "profileYlim": [
+     -0.006,
+     0.004
+    ],
+    "ylimFromTicks": [
+     -0.005999999474481093,
+     0.0040000003900187075
+    ]
+   },
+   "edges": {
+    "xL": -20.0078837085384,
+    "xR": 105.77829360928808,
+    "yB": -7.233127381149167,
+    "yT": 4.503961514977364
+   },
+   "axis": {
+    "xmin": -1.9878921627025647e-05,
+    "xmax": 99.99999108875043,
+    "ymin": -5.999999474481093,
+    "ymax": 4.000000390018707
+   }
+  },
+  {
+   "name": "increment_trajectory",
+   "source": "paper/data/retained_figure_7_9/increment_trajectory.pdf",
+   "sourceSHA256": "562cf7b2f445e7d6b8a70604d8ad195c157e25d9b7a392d6557a8c4ed053c2f9",
+   "panel": "increment_sensitivity/trajectory",
+   "mode": "span",
+   "operators": 3531,
+   "span": [
+    669,
+    3254
+   ],
+   "textOpsRemoved": 172,
+   "textStateOpsRemoved": 15,
+   "paintsNeutralizedOutsideSpan": 45,
+   "glyphPathsRemoved": 0,
+   "fontResourcesRemoved": true,
+   "layer": "paper/ukrainian_review/figures_src/retained/increment_trajectory_layer.pdf",
+   "layerSHA256": "2b9f0340414f5ffd839282d83968fc7b4f7e4d3b7f4ebc40dc8fe0e5b68faf24",
+   "keptPaintOperators": 148,
+   "page_pt": [
+    379.0,
+    176.0
+   ],
+   "calibration": {
+    "method": "hole contour (centre 170,-20 mm; R 30 mm)",
+    "circle_bbox_pt": [
+     28.351654052734375,
+     14.758512496948242,
+     152.25616455078125,
+     138.66302490234375
+    ],
+    "pt_per_mm": 2.065075174967448,
+    "aspect_check_pt": 2.0650752067565916
+   },
+   "edges": {
+    "xL": 126.2708852460147,
+    "xR": 309.7993129730945,
+    "yB": -68.0802018754204,
+    "yT": 17.14671970760348
+   },
+   "axis": {
+    "xmin": 135,
+    "xmax": 300,
+    "ymin": -55,
+    "ymax": 15
+   }
+  },
+  {
+   "name": "specimen_geometry",
+   "source": "paper/figures/geometry_loading/specimen_geometry.pdf",
+   "sourceSHA256": "c2e347cd003a4bfcf08da1d26e333b3549606aefd51a7dc61c4fb4a0ce070700",
+   "panel": "geometry_loading/specimen_geometry",
+   "mode": "glyphs",
+   "operators": 3401,
+   "textOpsRemoved": 0,
+   "textStateOpsRemoved": 0,
+   "paintsNeutralizedOutsideSpan": 0,
+   "glyphPathsRemoved": 33,
+   "layer": "paper/ukrainian_review/figures_src/retained/specimen_geometry_layer.pdf",
+   "layerSHA256": "1ab1d7e2b059b2d721a26fddc12d40e2c17ab4368c7789edc48db301a8e6f1fc",
+   "keptPaintOperators": 89,
+   "page_pt": [
+    324.3035888671875,
+    244.03057861328125
+   ],
+   "edges": {
+    "W_pt": 324.3035888671875,
+    "H_pt": 244.03057861328125
+   }
+  },
+  {
+   "name": "tip_mesh_H2",
+   "source": "paper/figures/mesh_levels/tip_mesh_H2.pdf",
+   "sourceSHA256": "9989f4b92ff14a5275f9561919a2c524939fcb43bf5319c9fe7d110ec6338fe8",
+   "panel": "mesh_levels/tip_mesh_H2",
+   "mode": "mesh",
+   "operators": 10536,
+   "decorationStrokes": 18,
+   "glyphFills": 23,
+   "backgroundFills": 3,
+   "layer": "paper/ukrainian_review/figures_src/retained/tip_mesh_H2_layer.pdf",
+   "layerSHA256": "ae5945d4adc181888f41164407dbe3a905dc0cb25459cc16fe0c00be715b85c0",
+   "keptPaintOperators": 649,
+   "page_pt": [
+    143.75088500976562,
+    127.37315368652344
+   ],
+   "calibration": {
+    "method": "axes frame = generator limits (XLim/YLim defaults), tick marks at integers as cross-check",
+    "frame_pt": [
+     32.59968566894531,
+     6.716233253479004,
+     137.03721618652344,
+     93.08934783935547
+    ],
+    "pt_per_mm_x": 26.10938262939453,
+    "pt_per_mm_y": 26.173671086629234,
+    "sourceAnisotropy": -0.0024562262214544717,
+    "tickValuesFromMarks_x": [
+     -3.0,
+     -2.0,
+     -1.0,
+     0.0
+    ],
+    "tickValuesFromMarks_y": [
+     -1.0,
+     0.0,
+     1.0
+    ],
+    "tickResidual": [
+     0.0,
+     0.0
+    ]
+   },
+   "edges": {
+    "xL": -4.398581252635359,
+    "xR": 1.1071362532212383,
+    "yB": -2.959858511390929,
+    "yT": 1.9066026458898224
+   },
+   "axis": {
+    "xmin": -3.15,
+    "xmax": 0.85,
+    "ymin": -1.65,
+    "ymax": 1.65
+   }
+  },
+  {
+   "name": "tip_mesh_H1",
+   "source": "paper/figures/mesh_levels/tip_mesh_H1.pdf",
+   "sourceSHA256": "7a17571b8397e83d96644d4ef178ea1b73fc8b2a1e38061b7fc9776247efc6fb",
+   "panel": "mesh_levels/tip_mesh_H1",
+   "mode": "mesh",
+   "operators": 34376,
+   "decorationStrokes": 18,
+   "glyphFills": 23,
+   "backgroundFills": 3,
+   "layer": "paper/ukrainian_review/figures_src/retained/tip_mesh_H1_layer.pdf",
+   "layerSHA256": "225dec70c86b626c9f41c919b169e455d8a000f0b4630c9cb5107e75d15e6ec4",
+   "keptPaintOperators": 2251,
+   "page_pt": [
+    143.75088500976562,
+    127.37315368652344
+   ],
+   "calibration": {
+    "method": "axes frame = generator limits (XLim/YLim defaults), tick marks at integers as cross-check",
+    "frame_pt": [
+     32.59968566894531,
+     6.716233253479004,
+     137.03721618652344,
+     93.08934783935547
+    ],
+    "pt_per_mm_x": 26.10938262939453,
+    "pt_per_mm_y": 26.173671086629234,
+    "sourceAnisotropy": -0.0024562262214544717,
+    "tickValuesFromMarks_x": [
+     -3.0,
+     -2.0,
+     -1.0,
+     0.0
+    ],
+    "tickValuesFromMarks_y": [
+     -1.0,
+     0.0,
+     1.0
+    ],
+    "tickResidual": [
+     0.0,
+     0.0
+    ]
+   },
+   "edges": {
+    "xL": -4.398581252635359,
+    "xR": 1.1071362532212383,
+    "yB": -2.959858511390929,
+    "yT": 1.9066026458898224
+   },
+   "axis": {
+    "xmin": -3.15,
+    "xmax": 0.85,
+    "ymin": -1.65,
+    "ymax": 1.65
+   }
+  },
+  {
+   "name": "tip_mesh_H0",
+   "source": "paper/figures/mesh_levels/tip_mesh_H0.pdf",
+   "sourceSHA256": "e9f4f60b7371b27fe7a7274f0fd6b6ad4e32d7a83d30178d5b46a66062daefc5",
+   "panel": "mesh_levels/tip_mesh_H0",
+   "mode": "mesh",
+   "operators": 122028,
+   "decorationStrokes": 18,
+   "glyphFills": 23,
+   "backgroundFills": 3,
+   "layer": "paper/ukrainian_review/figures_src/retained/tip_mesh_H0_layer.pdf",
+   "layerSHA256": "3a079b1b6b34b853568d8242de4e9fd79722e4ebaa86f3e0e741e64954c8eccb",
+   "keptPaintOperators": 8121,
+   "page_pt": [
+    143.75088500976562,
+    127.37315368652344
+   ],
+   "calibration": {
+    "method": "axes frame = generator limits (XLim/YLim defaults), tick marks at integers as cross-check",
+    "frame_pt": [
+     32.59968566894531,
+     6.716233253479004,
+     137.03721618652344,
+     93.08934783935547
+    ],
+    "pt_per_mm_x": 26.10938262939453,
+    "pt_per_mm_y": 26.173671086629234,
+    "sourceAnisotropy": -0.0024562262214544717,
+    "tickValuesFromMarks_x": [
+     -3.0,
+     -2.0,
+     -1.0,
+     0.0
+    ],
+    "tickValuesFromMarks_y": [
+     -1.0,
+     0.0,
+     1.0
+    ],
+    "tickResidual": [
+     0.0,
+     0.0
+    ]
+   },
+   "edges": {
+    "xL": -4.398581252635359,
+    "xR": 1.1071362532212383,
+    "yB": -2.959858511390929,
+    "yT": 1.9066026458898224
+   },
+   "axis": {
+    "xmin": -3.15,
+    "xmax": 0.85,
+    "ymin": -1.65,
+    "ymax": 1.65
+   }
+  }
+ ]
+}

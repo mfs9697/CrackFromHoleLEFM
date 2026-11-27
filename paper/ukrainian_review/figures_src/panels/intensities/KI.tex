@@ -1,0 +1,19 @@
+% Fig. 4(a): opening-mode SIF K_I (MPa*m^1/2 at unit remote load) along accepted states P1..P23.
+% Data: fig04_states.csv (a_mm, KI); no transformation.
+\documentclass[border=0pt,multi=tikzpicture]{standalone}
+\input{../../ua_figstyle.tex}
+\newlength\uaAxW\newlength\uaAxH
+\begin{document}
+\setlength\uaAxW{\dimexpr\uaThird-19.5mm\relax}% slot 52.29 mm = L 15.5 mm + axis + R 4 mm
+\setlength\uaAxH{42mm}%
+\pgfplotstableread[col sep=comma]{../../data/fig04_states.csv}\T
+\begin{tikzpicture}[ua page={15.5mm}{4mm}]
+\begin{axis}[ua base,at={(0,0)},anchor=south west,width=\uaAxW,height=\uaAxH,
+  xmin=4,xmax=92,xtick={4,24,44,64,92},ymin=0.2,ymax=1.4,ytick={0.2,0.4,...,1.4},
+  yticklabel style={/pgf/number format/.cd,fixed,fixed zerofill,precision=1},
+  xlabel={$a$, мм},ylabel={$K_{\mathrm{I}}$, МПа$\sqrt{\text{м}}$}]
+ \addplot[ua single] table[x=a_mm,y=KI]{\T};
+\end{axis}
+\uaPage{15.5mm}{10.5mm}{4mm}{1.5mm}
+\end{tikzpicture}
+\end{document}

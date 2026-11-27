@@ -1,0 +1,20 @@
+% Fig. 10(d): true relative residual normalized by the acceptance gate 5e-10, newly solved states P2..P23.
+% Data: fig10_solver.csv (residual_over_gate = true_rel_residual / 5e-10).
+\documentclass[border=0pt,multi=tikzpicture]{standalone}
+\input{../../ua_figstyle.tex}
+\newlength\uaAxW\newlength\uaAxH
+\begin{document}
+\setlength\uaAxW{\dimexpr\uaHalfP-20mm\relax}% L 16mm + axis + R 4mm
+\setlength\uaAxH{40mm}
+\pgfplotstableread[col sep=comma]{../../data/fig10_solver.csv}\T
+\begin{tikzpicture}[ua page={16mm}{4mm}]
+\begin{axis}[ua base,at={(0,0)},anchor=south west,width=\uaAxW,height=\uaAxH,
+  xmin=8,xmax=92,xtick={8,36,64,92},ymin=0,ymax=1.1,ytick={0,0.2,...,1.0},
+  yticklabel style={/pgf/number format/.cd,fixed,fixed zerofill,precision=1},
+  xlabel={$a$, мм},ylabel={Нормована нев’язка}]
+ \addplot[ua gate] coordinates {(8,1) (92,1)};
+ \addplot[ua single] table[x=a_mm,y=residual_over_gate]{\T};
+\end{axis}
+\uaPage{16mm}{10.5mm}{4mm}{1.5mm}
+\end{tikzpicture}
+\end{document}

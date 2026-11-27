@@ -1,0 +1,27 @@
+% Fig. 6(d): 1e5 x (q_K^COD - q_K^EDI) for quadratic COD extrapolation, four normalized fitting windows, a >= 60 mm.
+% Data: fig06_cod.csv (degree 2, windows 1..4; ratio_err_1e5 = 1e5*ratio_error). Legend for all four panels here.
+\documentclass[border=0pt,multi=tikzpicture]{standalone}
+\input{../../ua_figstyle.tex}
+\newlength\uaAxW\newlength\uaAxH
+\begin{document}
+\setlength\uaAxW{\dimexpr\uaHalfP-19.5mm\relax}% L 15.5mm + axis + R 4mm
+\setlength\uaAxH{44mm}
+\pgfplotstableread[col sep=comma]{../../data/fig06_cod.csv}\T
+\begin{tikzpicture}[ua page={15.5mm}{4mm}]
+\begin{axis}[ua base,at={(0,0)},anchor=south west,width=\uaAxW,height=\uaAxH,
+  xmin=60,xmax=94,xtick={60,76,92},enlarge y limits=0.06,
+  xlabel={$a$, мм},ylabel={$10^{5}\,(q_{\mathrm{K}}^{\mathrm{COD}}-q_{\mathrm{K}}^{\mathrm{EDI}})$},
+  legend style={at={(axis description cs:0.02,0.98)},anchor=north west}]
+ \addplot[ua zero] coordinates {(60,0) (94,0)};
+ \addplot[ua ref]    table[x=a_mm,y=ratio_err_1e5,restrict expr to domain={\thisrow{degree}*10+\thisrow{window}}{21:21}]{\T};
+ \addlegendentry{$[0.04,\,0.20]\,\Delta a$}
+ \addplot[ua alt]    table[x=a_mm,y=ratio_err_1e5,restrict expr to domain={\thisrow{degree}*10+\thisrow{window}}{22:22}]{\T};
+ \addlegendentry{$[0.04,\,0.30]\,\Delta a$}
+ \addplot[ua third]  table[x=a_mm,y=ratio_err_1e5,restrict expr to domain={\thisrow{degree}*10+\thisrow{window}}{23:23}]{\T};
+ \addlegendentry{$[0.08,\,0.30]\,\Delta a$}
+ \addplot[ua fourth] table[x=a_mm,y=ratio_err_1e5,restrict expr to domain={\thisrow{degree}*10+\thisrow{window}}{24:24}]{\T};
+ \addlegendentry{$[0.12,\,0.30]\,\Delta a$}
+\end{axis}
+\uaPage{15.5mm}{10.5mm}{4mm}{1.5mm}
+\end{tikzpicture}
+\end{document}

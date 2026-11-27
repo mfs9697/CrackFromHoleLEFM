@@ -1,0 +1,22 @@
+% Fig. 6(b): 1e3 x (Delta theta^COD - Delta theta^EDI) in deg, quadratic COD extrapolation, four windows, a >= 60 mm.
+% Data: fig06_cod.csv (degree 2, windows 1..4; turn_err_1e3deg = 1e3*turn_error_deg). Top row: no x label.
+\documentclass[border=0pt,multi=tikzpicture]{standalone}
+\input{../../ua_figstyle.tex}
+\newlength\uaAxW\newlength\uaAxH
+\begin{document}
+\setlength\uaAxW{\dimexpr\uaHalfP-19.5mm\relax}% L 15.5mm + axis + R 4mm
+\setlength\uaAxH{44mm}%
+\pgfplotstableread[col sep=comma]{../../data/fig06_cod.csv}\T
+\begin{tikzpicture}[ua page={15.5mm}{4mm}]
+\begin{axis}[ua base,at={(0,0)},anchor=south west,width=\uaAxW,height=\uaAxH,
+  xmin=60,xmax=94,xtick={60,76,92},enlarge y limits=0.06,
+  ylabel={$10^{3}\,(\Delta\theta^{\mathrm{COD}}-\Delta\theta^{\mathrm{EDI}})$, град}]
+ \addplot[ua zero] coordinates {(60,0) (94,0)};
+ \addplot[ua ref]    table[x=a_mm,y=turn_err_1e3deg,restrict expr to domain={\thisrow{degree}*10+\thisrow{window}}{21:21}]{\T};
+ \addplot[ua alt]    table[x=a_mm,y=turn_err_1e3deg,restrict expr to domain={\thisrow{degree}*10+\thisrow{window}}{22:22}]{\T};
+ \addplot[ua third]  table[x=a_mm,y=turn_err_1e3deg,restrict expr to domain={\thisrow{degree}*10+\thisrow{window}}{23:23}]{\T};
+ \addplot[ua fourth] table[x=a_mm,y=turn_err_1e3deg,restrict expr to domain={\thisrow{degree}*10+\thisrow{window}}{24:24}]{\T};
+\end{axis}
+\uaPage{15.5mm}{6mm}{4mm}{1.5mm}
+\end{tikzpicture}
+\end{document}

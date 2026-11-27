@@ -1,0 +1,23 @@
+% Fig. 7(d): 1e3 x K_II/K_I for h0 and 2h0 at P1..P23; dotted line: interpolated a_LS of h0.
+% Data: fig07_metrics.csv (q_h0_1e3, q_2h0_1e3 = 1e3*KII/KI); a_LS from ua_constants.tex.
+\documentclass[border=0pt,multi=tikzpicture]{standalone}
+\input{../../ua_figstyle.tex}
+\input{../../data/ua_constants.tex}
+\newlength\uaAxW\newlength\uaAxH
+\begin{document}
+\setlength\uaAxW{\dimexpr\uaThird-21.5mm\relax}% L 17.5mm + axis + R 4mm
+\setlength\uaAxH{42mm}%
+\pgfplotstableread[col sep=comma]{../../data/fig07_metrics.csv}\T
+\begin{tikzpicture}[ua page={17.5mm}{4mm}]
+\begin{axis}[ua base,at={(0,0)},anchor=south west,width=\uaAxW,height=\uaAxH,
+  xmin=0,xmax=100,xtick={0,50,100},ymin=-6,ymax=4,ytick={-6,-4,...,4},
+  xlabel={$a$, мм},ylabel={$10^{3}\,K_{\mathrm{II}}/K_{\mathrm{I}}$},
+  legend style={at={(axis description cs:0.03,0.03)},anchor=south west}]
+ \addplot[ua zero] coordinates {(0,0) (100,0)};
+ \addplot[ua lsline] coordinates {(\uaCAlsMm,-6) (\uaCAlsMm,4)};
+ \addplot[ua ref] table[x=a_mm,y=q_h0_1e3]{\T};\addlegendentry{$h_0$}
+ \addplot[ua alt] table[x=a_mm,y=q_2h0_1e3]{\T};\addlegendentry{$2h_0$}
+\end{axis}
+\uaPage{17.5mm}{10.5mm}{4mm}{1.5mm}
+\end{tikzpicture}
+\end{document}

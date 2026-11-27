@@ -1,0 +1,30 @@
+% Fig. 8(a): M0 and M1 exterior sizing laws -- RETAINED VECTOR LAYER (no numerical history survives; not digitized).
+% The original drawing operators of the pinned graph span (paper/data/retained_figure_7_9/m1_trajectory.pdf) are
+% placed unchanged by the hole-contour calibration (build_retained_layers.py); axes, ticks, labels and the legend are
+% typeset anew. Legend identities copied from the retained legend span (M0 blue solid circle, M1 orange dashed square,
+% M0 q max purple circle, M0 local-symmetry estimate green diamond, last accepted M0 state P23 blue square).
+\documentclass[border=0pt,multi=tikzpicture]{standalone}
+\input{../../ua_figstyle.tex}
+\input{../../data/ua_constants.tex}
+\input{../../retained/m1_trajectory_calib.tex}
+\newlength\uaAxW\newlength\uaAxH
+\begin{document}
+\setlength\uaAxW{\dimexpr\uaWide-17.5mm\relax}% L 14 mm + axis + R 3.5 mm
+\setlength\uaAxH{\dimexpr\uaAxW*70/165\relax}% equal scale: (15 - -55) / (300 - 135)
+\pgfmathsetlengthmacro\uaRW{(\uaRxR-\uaRxL)/(\uaRxmax-\uaRxmin)*\uaAxW}%
+\pgfmathsetlengthmacro\uaRH{(\uaRyT-\uaRyB)/(\uaRymax-\uaRymin)*\uaAxH}%
+\begin{tikzpicture}[ua page={14mm}{3.5mm}]
+\begin{axis}[ua base,at={(0,0)},anchor=south west,width=\uaAxW,height=\uaAxH,
+  xmin=\uaRxmin,xmax=\uaRxmax,ymin=\uaRymin,ymax=\uaRymax,xtick={140,160,...,300},ytick={-50,-40,...,10},
+  xlabel={$x$, мм},ylabel={$y$, мм},
+  legend style={at={(axis cs:298,13.5)},anchor=north east}]
+ \node[anchor=south west,inner sep=0pt,outer sep=0pt] at (axis cs:\uaRxL,\uaRyB) {\includegraphics[width=\uaRW,height=\uaRH]{\uaRetainedLayer}};
+ \addlegendimage{ua ref}\addlegendentry{M0}
+ \addlegendimage{ua alt}\addlegendentry{M1}
+ \addlegendimage{ua qmax}\addlegendentry{$\max q_{\mathrm{K}}$ для M0: $P_{17}$}
+ \addlegendimage{ua ls}\addlegendentry{Локальна симетрія для M0: $a_{\mathrm{LS}}=\uaCAlsMmThreeDecimals$ мм}
+ \addlegendimage{ua last accepted}\addlegendentry{$P_{23}$: останній прийнятий стан}
+\end{axis}
+\uaPage{14mm}{10.5mm}{3.5mm}{1mm}
+\end{tikzpicture}
+\end{document}
