@@ -6,14 +6,13 @@
 Відповідність Git blob, SHA-256, історію PR і відмінності пізнішої гілки
 зафіксовано в [аудиті джерела](audit/SOURCE_REVIEW.md).
 
-[PDF для читання](AAM_UA_Bogdanov_review.pdf) ·
+[Попередній PDF PR #89 (НЕ відповідає новому TeX)](AAM_UA_Bogdanov_review.pdf) ·
 [Початкові файли та ідентифікатори](SOURCE_MANIFEST.json) ·
 [Наукові питання](audit/SCIENTIFIC_QUESTIONS.md)
 
 ## Відтворення PDF
 
-Потрібні XeLaTeX, BibTeX, шрифт Noto Serif та українські шаблони
-переносу слів у дистрибутиві TeX. З кореня репозиторію у PowerShell:
+Потрібні XeLaTeX, BibTeX, STIX Two Text (Regular, Bold, Italic, Bold Italic), STIX Two Math, пакет unicode-math та українські шаблони переносу слів. Файли STIXTwoText-*.otf і STIXTwoMath-Regular.otf мають бути доступні XeLaTeX (наприклад, пакет stix2-otf у TeX Live). Noto Serif залишається потрібним лише для повторної локалізації рисунків. З кореня репозиторію у PowerShell:
 
 ```powershell
 .\paper\ukrainian_review\build_ua.ps1
@@ -55,5 +54,4 @@ python paper/ukrainian_review/scripts/verify_review_pdf.py paper/ukrainian_revie
 [паспорта рисунків](audit/FIGURE_PROVENANCE.json).
 Скінченно-елементний розрахунок та MATLAB для збірки не потрібні.
 
-Етап завершено на `REVIEW_STOP_AAM_UA_TRANSLATION`. Склад і порядок
-авторів робочого видання підлягають погодженню.
+Етап перекладу PR #89 завершено на `REVIEW_STOP_AAM_UA_TRANSLATION`. За вказівкою дослідника авторами робочого рукопису зазначено Вячеслава Богданова та Данила Селіванова у цьому порядку. Поточна редакторська гілка містить відредагований TeX, але **повну повторну компіляцію ще не виконано**. PDF та BUILD_VERIFICATION.json успадковані з PR #89 і є історичними доказами, а не результатами перевірки нового джерела. Перед переданням Claude або Богданову необхідно зібрати і перевірити новий PDF. Див. [редакторський аудит](audit/PRE_CLAUDE_REVIEW.md).
