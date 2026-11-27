@@ -1,4 +1,4 @@
-# Run from any directory with XeLaTeX, BibTeX, Noto Serif and Ukrainian language support installed.
+# Run from any directory with XeLaTeX, BibTeX, STIX Two Text, STIX Two Math, unicode-math and Ukrainian language support installed.
 $ErrorActionPreference = 'Stop'
 
 function Invoke-BuildCommand {
