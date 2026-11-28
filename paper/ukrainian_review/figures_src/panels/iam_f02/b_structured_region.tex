@@ -1,0 +1,36 @@
+% IAM-UA8-F02 panel (b): structured crack-tip region of P21 in the local frame of the last segment (x1 along the last segment, x2 normal).
+% Mesh layer (exact vector edges): core edges dark, exterior edges light, elements of the interaction-integral domain (q varies,
+% r_in <= r <= r_out) shaded, outer boundary of the structured core (r_core) bold. Here: crack (last segment), local axes at the tip,
+% circles r_in and r_out, labels, position of panel (c).
+\documentclass[border=0pt,multi=tikzpicture]{standalone}
+\input{../../ua_figstyle.tex}
+\input{../../iam_f02/layers/iam_f02_constants.tex}
+\usetikzlibrary{arrows.meta}
+\newlength\uaAxW\newlength\uaAxH
+\begin{document}
+\setlength\uaAxW{\iamFBAxW}\setlength\uaAxH{\iamFBAxH}%
+\pgfplotstableread[col sep=comma]{../../iam_f02/layers/window_c_in_local.csv}\Wc
+\begin{tikzpicture}[ua page={\iamFBL}{\iamFBR}]
+\begin{axis}[ua base,at={(0,0)},anchor=south west,width=\uaAxW,height=\uaAxH,
+  xmin=\iamFBxmin,xmax=\iamFBxmax,ymin=\iamFBymin,ymax=\iamFBymax,xtick={-3,-2,...,3},ytick={-3,-2,...,3},
+  xlabel={$x_1$, мм},ylabel={$x_2$, мм}]
+ \node[anchor=south west,inner sep=0pt,outer sep=0pt] at (axis cs:\iamFBxmin,\iamFBymin) {\includegraphics{../../iam_f02/layers/iam_f02_b_structured_region.pdf}};
+ \draw[black,line width=1.3pt] (axis cs:\iamFBxmin,0) -- (axis cs:0,0);
+ \draw[black,line width=0.6pt,dash pattern=on 3pt off 1.5pt] (axis cs:0,0) circle [radius=\iamFrIn];
+ \draw[black,line width=0.6pt,dash pattern=on 3pt off 1.5pt] (axis cs:0,0) circle [radius=\iamFrOut];
+ \draw[black,line width=0.7pt,-{Stealth[length=4pt]}] (axis cs:0,0) -- (axis cs:1.35,0) node[font=\uaNoteFont,anchor=south west,inner sep=1pt,fill=white,fill opacity=0.85,text opacity=1] {$x_1$};
+ \draw[black,line width=0.7pt,-{Stealth[length=4pt]}] (axis cs:0,0) -- (axis cs:0,1.35) node[font=\uaNoteFont,anchor=south west,inner sep=1pt,fill=white,fill opacity=0.85,text opacity=1] {$x_2$};
+ \addplot[black,line width=0.5pt,forget plot] table[x=x,y=y]{\Wc};
+ \begin{scope}[every node/.style={font=\uaNoteFont,inner sep=1pt,fill=white,fill opacity=0.85,text opacity=1}]
+  \node[anchor=north west] (ni) at (axis cs:0.62,-0.62) {$r_{\mathrm{in}}$};
+  \draw[black,line width=0.4pt] (ni.north west) -- (axis cs:0.2828,-0.2828);
+  \node[anchor=north west] (no) at (axis cs:2.05,-2.05) {$r_{\mathrm{out}}$};
+  \draw[black,line width=0.4pt] (no.north west) -- (axis cs:1.8385,-1.8385);
+  \node[anchor=south west] (nc) at (axis cs:2.25,2.45) {$r_{\mathrm{core}}$};
+  \draw[black,line width=0.4pt] (nc.south west) -- (axis cs:2.1213,2.1213);
+  \node[anchor=north] at (axis cs:-0.12,-0.2) {(c)};
+ \end{scope}
+\end{axis}
+\uaPage{\iamFBL}{10.5mm}{\iamFBR}{1.5mm}
+\end{tikzpicture}
+\end{document}

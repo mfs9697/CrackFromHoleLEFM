@@ -1,0 +1,19 @@
+% IAM-UA8-F02 preview preamble: the page geometry, fonts and caption settings of main_ua.tex (A4, 12 pt, margins 22 mm,
+% text width 166 mm, STIX Two Text/Math, Ukrainian), so the previews show the figure at its intended printed size.
+\documentclass[a4paper,12pt]{article}
+\usepackage[margin=22mm]{geometry}
+\usepackage{fontspec}
+\usepackage{polyglossia}
+\setdefaultlanguage{ukrainian}
+\setotherlanguage{english}
+\setmainfont{STIXTwoText-Regular.otf}[BoldFont=STIXTwoText-Bold.otf,ItalicFont=STIXTwoText-Italic.otf,BoldItalicFont=STIXTwoText-BoldItalic.otf]
+\newfontfamily\cyrillicfont{STIXTwoText-Regular.otf}[Script=Cyrillic,Ligatures=TeX,BoldFont=STIXTwoText-Bold.otf,ItalicFont=STIXTwoText-Italic.otf,BoldItalicFont=STIXTwoText-BoldItalic.otf]
+\usepackage{amsmath}
+\usepackage{unicode-math}
+\setmathfont{STIXTwoMath-Regular.otf}[Scale=1.0]
+\usepackage{graphicx}
+\usepackage{subcaption}
+\captionsetup{font=small}
+\captionsetup[subfigure]{font=small,skip=3pt,justification=raggedright}
+\pagestyle{empty}
+\graphicspath{{../../figures/iam_f02/}}

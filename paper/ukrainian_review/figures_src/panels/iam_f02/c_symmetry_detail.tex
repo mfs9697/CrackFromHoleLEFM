@@ -1,0 +1,36 @@
+% IAM-UA8-F02 panel (c): enlarged detail of the structured core at the tip of P21 (production mesh scale, no coarsening).
+% Mesh layer: every edge in the window; three representative upper elements shaded together with their exact mirror elements.
+% Here: crack faces (coincident lines, distinct nodes), crack-face node pairs (open circles: an upper and a lower node at the same point),
+% shared ligament nodes ahead of the tip (filled), the tip node.
+\documentclass[border=0pt,multi=tikzpicture]{standalone}
+\input{../../ua_figstyle.tex}
+\input{../../iam_f02/layers/iam_f02_constants.tex}
+\newlength\uaAxW\newlength\uaAxH
+\begin{document}
+\setlength\uaAxW{\iamFCAxW}\setlength\uaAxH{\iamFCAxH}%
+\pgfplotstableread[col sep=comma]{../../iam_f02/layers/face_pairs_c.csv}\Fp
+\pgfplotstableread[col sep=comma]{../../iam_f02/layers/ligament_c.csv}\Lg
+\begin{tikzpicture}[ua page={\iamFCL}{\iamFCR}]
+\begin{axis}[ua base,at={(0,0)},anchor=south west,width=\uaAxW,height=\uaAxH,
+  xmin=\iamFCxmin,xmax=\iamFCxmax,ymin=\iamFCymin,ymax=\iamFCymax,xtick={-0.4,-0.3,...,0.1},ytick={-0.1,0,0.1},
+  xticklabel style={/pgf/number format/precision=1},yticklabel style={/pgf/number format/precision=1},
+  xlabel={$x_1$, мм},ylabel={$x_2$, мм},
+  legend style={at={(axis description cs:0.015,0.975)},anchor=north west,fill=white,fill opacity=0.92,text opacity=1}]
+ \node[anchor=south west,inner sep=0pt,outer sep=0pt] at (axis cs:\iamFCxmin,\iamFCymin) {\includegraphics{../../iam_f02/layers/iam_f02_c_symmetry_detail.pdf}};
+ \draw[black,line width=1.6pt] (axis cs:\iamFCxmin,0) -- (axis cs:0,0);
+ \addplot[only marks,mark=o,mark size=2.6pt,mark options={line width=0.8pt,fill=white},black] table[x=x,y=y]{\Fp};
+ \addlegendentry{пари вузлів верхнього й нижнього берегів}
+ \addplot[only marks,mark=*,mark size=1.8pt,black] table[x=x,y=y]{\Lg};
+ \addlegendentry{спільні вузли перед вершиною}
+ \addplot[only marks,mark=square*,mark size=2.4pt,mark options={fill=white,line width=0.9pt},black] coordinates {(0,0)};
+ \addlegendentry{вершина тріщини}
+ \addlegendimage{area legend,fill=black!45,draw=black!75}
+ \addlegendentry{дзеркально симетричні пари елементів}
+ \begin{scope}[every node/.style={font=\uaNoteFont,inner sep=1pt,fill=white,fill opacity=0.9,text opacity=1}]
+  \node[anchor=south west] at (axis cs:-0.385,0.004) {верхній берег};
+  \node[anchor=north west] at (axis cs:-0.385,-0.004) {нижній берег};
+ \end{scope}
+\end{axis}
+\uaPage{\iamFCL}{10.5mm}{\iamFCR}{1.5mm}
+\end{tikzpicture}
+\end{document}

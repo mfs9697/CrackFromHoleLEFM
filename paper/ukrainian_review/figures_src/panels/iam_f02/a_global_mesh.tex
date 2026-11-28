@@ -1,0 +1,26 @@
+% IAM-UA8-F02 panel (a): global finite-element mesh of the accepted M0 state P21 (a = 84 mm), whole plate in true proportions.
+% Mesh layer: figures_src/iam_f02/layers/iam_f02_a_global_mesh.pdf (exact vector edges of the regenerated P21 T3 mesh, page = axis box,
+% scale 1). Crack polyline P0..P21 from crack_global.csv; hole contour; position of panel (b) (square in the local frame of the last segment).
+\documentclass[border=0pt,multi=tikzpicture]{standalone}
+\input{../../ua_figstyle.tex}
+\input{../../iam_f02/layers/iam_f02_constants.tex}
+\newlength\uaAxW\newlength\uaAxH
+\begin{document}
+\setlength\uaAxW{\iamFAAxW}\setlength\uaAxH{\iamFAAxH}%
+\pgfplotstableread[col sep=comma]{../../iam_f02/layers/crack_global.csv}\Cr
+\pgfplotstableread[col sep=comma]{../../iam_f02/layers/window_b_in_global.csv}\Wb
+\begin{tikzpicture}[ua page={\iamFAL}{\iamFAR}]
+\begin{axis}[ua base,at={(0,0)},anchor=south west,width=\uaAxW,height=\uaAxH,
+  xmin=\iamFAxmin,xmax=\iamFAxmax,ymin=\iamFAymin,ymax=\iamFAymax,xtick={0,100,200,300},ytick={-100,0,100},
+  xlabel={$x$, мм},ylabel={$y$, мм}]
+ \node[anchor=south west,inner sep=0pt,outer sep=0pt] at (axis cs:\iamFAxmin,\iamFAymin) {\includegraphics{../../iam_f02/layers/iam_f02_a_global_mesh.pdf}};
+ \draw[black,line width=0.5pt] (axis cs:\iamFholeX,\iamFholeY) circle [radius=\iamFholeR];
+ \addplot[black,line width=1.0pt,forget plot] table[x=x,y=y]{\Cr};
+ \addplot[black,line width=0.6pt,forget plot] table[x=x,y=y]{\Wb};
+ \node[font=\uaNoteFont,anchor=south,inner sep=1pt,fill=white,fill opacity=0.85,text opacity=1] (lb) at (axis cs:262,28) {(b)};
+ \draw[black,line width=0.4pt] (lb.south) -- (axis cs:\iamFtipX,\iamFtipY+4);
+ \node[font=\uaNoteFont,anchor=north,inner sep=1pt,fill=white,fill opacity=0.85,text opacity=1] at (axis cs:\iamFtipX,\iamFtipY-6) {$P_{21}$};
+\end{axis}
+\uaPage{\iamFAL}{10.5mm}{\iamFAR}{1.5mm}
+\end{tikzpicture}
+\end{document}

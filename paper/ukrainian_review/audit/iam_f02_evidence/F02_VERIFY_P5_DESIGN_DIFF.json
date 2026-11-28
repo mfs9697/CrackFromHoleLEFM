@@ -1,0 +1,8 @@
+{
+  "exteriorDesign": [
+    "exteriorDesign.calibration.verbose preserved=true regenerated=false"
+  ],
+  "structuredDesign": [
+    "structuredDesign.exteriorCalibration.verbose preserved=true regenerated=false"
+  ]
+}
