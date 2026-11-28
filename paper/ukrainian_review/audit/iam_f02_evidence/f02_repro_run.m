@@ -1,0 +1,6 @@
+% Reproducibility test of the committed scripts/iam_f02_regenerate_mesh.m into a fresh folder (P5 bitwise + P21 export).
+addpath('<repo>\paper\ukrainian_review\scripts');
+R=iam_f02_regenerate_mesh('<generator_cfdf0f1>', ...
+ '<scratch>\f02\repro', ...
+ '<investigator_codex_work>\2026-10-04\files-pasted-by-the-user-you\work\incremental-profile\phaseA_baseline\fresh5\step_005_candidate.mat');
+disp(R.P5);fprintf('REPRO_DONE\n');

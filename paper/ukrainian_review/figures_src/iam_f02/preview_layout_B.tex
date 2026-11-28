@@ -1,0 +1,35 @@
+% IAM-UA8-F02 layout B (three panels, recommended): global mesh, structured region with the integration domain, symmetry detail.
+% Preview at the printed size; not part of main_ua.tex.
+\input{preview_preamble.tex}
+\begin{document}
+\begin{figure}[t]
+  \centering
+  \begin{minipage}{\textwidth}
+  \begin{subfigure}[t]{0.485\linewidth}
+    \centering
+    \includegraphics[width=\linewidth]{a_global_mesh.pdf}
+    \caption{Сітка всієї пластини.}
+  \end{subfigure}\hfill
+  \begin{subfigure}[t]{0.485\linewidth}
+    \centering
+    \includegraphics[width=\linewidth]{b_structured_region.pdf}
+    \caption{Структурована привершинна область.}
+  \end{subfigure}
+
+  \vspace{4pt}
+  \centering
+  \begin{subfigure}[t]{0.94\linewidth}
+    \centering
+    \includegraphics[width=\linewidth]{c_symmetry_detail.pdf}
+    \caption{Дзеркальна симетрія сітки біля вершини.}
+  \end{subfigure}
+  \end{minipage}
+  \caption{Скінченно-елементна сітка для прийнятого стану $P_{21}$ (${a=84}$~мм) траєкторії M0.
+  (a)~Уся пластина з отвором, ламаною тріщиною та згущенням сітки біля поточної вершини; квадратом позначено область~(b).
+  (b)~Структурована область радіуса ${r_{\mathrm{core}}=3}$~мм у локальній системі координат останньої ланки та перехід до
+  неструктурованої зовнішньої сітки. Сірим виділено елементи, у яких вагова функція інтеграла взаємодії змінюється між
+  ${r_{\mathrm{in}}=0.4}$~мм і ${r_{\mathrm{out}}=2.6}$~мм; прямокутником позначено область~(c).
+  (c)~Фрагмент тієї самої сітки з кроком ${h_0=0.027012}$~мм: три пари дзеркально симетричних елементів, пари різних вузлів
+  верхнього й нижнього берегів в одній точці та спільні вузли перемички перед вершиною.}
+\end{figure}
+\end{document}

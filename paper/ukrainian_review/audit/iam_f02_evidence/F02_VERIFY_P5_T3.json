@@ -1,0 +1,19 @@
+{
+  "preservedP_vs_regenCandidateP_bitwise": true,
+  "preservedT_vs_regenCandidateT_exact": true,
+  "preservedP_vs_meshCoord3_bitwise": true,
+  "preservedP_vs_localCoord3_bitwise": false,
+  "preservedT_vs_connect3_exact": true,
+  "maxAbs_p_minus_regen_p_m": 0,
+  "crackStructEqual": true,
+  "gatesEqual": true,
+  "matEqual": true,
+  "exteriorDesignEqual": false,
+  "structuredDesignEqual": false,
+  "supportEqual": true,
+  "exteriorIDsEqual": true,
+  "pairedNodesEqual": true,
+  "regenFieldsMissingInPreserved": [],
+  "preservedFieldsMissingInRegen": [],
+  "note": "synthetic fields differ by design: the preserved candidate ran the synthetic EDI replay, the illustrative regeneration did not (RunSynthetic=false)"
+}

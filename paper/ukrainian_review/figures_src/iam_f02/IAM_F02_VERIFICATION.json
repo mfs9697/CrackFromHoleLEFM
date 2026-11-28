@@ -1,0 +1,394 @@
+{
+ "schema": "IAM-UA8-F02.Verification.v1",
+ "pass": true,
+ "problems": [],
+ "checks": {
+  "hash_X3_mm": true,
+  "hash_XL3_mm": true,
+  "hash_T3": true,
+  "hash_upperNodes": true,
+  "hash_lowerNodes": true,
+  "hash_tipNode": true,
+  "hash_pathGlobal_mm": true,
+  "hash_pairedElementIDs": true,
+  "hash_exteriorElementIDs": true,
+  "hash_EDIsupportIDs": true,
+  "hash_pairedNodeIDs": true,
+  "hash_pairedMirrorLocal": true,
+  "pathEqualsAcceptedP0toP21": true,
+  "incrementAll4mm": true,
+  "localFrameLastSegment": true,
+  "positiveAreas": true,
+  "plateAndHole": true,
+  "boundaryClearance": true,
+  "coreCounts": true,
+  "coreRadii": true,
+  "mirrorNodesBitwise": true,
+  "mirrorElementsComplete": true,
+  "crackFacePairsAndSharedLigament": true,
+  "crackFacesTopologicallyDistinct": true,
+  "EDIsupportEqualsQnonzeroDisk": true,
+  "EDIvaryingQelements": true,
+  "selectedPairsMirrorExact": true
+ },
+ "detail": {
+  "pathEqualsAcceptedP0toP21": 0.0,
+  "incrementAll4mm": {
+   "segments": 21,
+   "maxDev_mm": 4.4853010194856324e-14
+  },
+  "localFrameLastSegment": {
+   "maxLocalDiff_mm": 1.7053025658242404e-13,
+   "thetaLast_deg": -5.197255423867504,
+   "tip_mm": [
+    283.8719739752734,
+    -24.870031146913096
+   ]
+  },
+  "positiveAreas": {
+   "T3": 56900,
+   "nodes": 29658,
+   "minArea_mm2": 0.0003056966961683817
+  },
+  "plateAndHole": {
+   "xRange": [
+    -5.551115123125783e-14,
+    300.0
+   ],
+   "yRange": [
+    -100.00000000000001,
+    100.00000000000003
+   ],
+   "nodesOnR": 480,
+   "nodesInsideR_nearMouth": 4,
+   "minDistToHoleCentre_mm": 29.998986885005436
+  },
+  "boundaryClearance": {
+   "clearance_mm": 16.12802602472658,
+   "record_mm": 16.128026024726573
+  },
+  "coreCounts": {
+   "coreElements": 12678,
+   "coreNodes": 6486,
+   "upperNodes": 3273,
+   "EDIsupport": 11316,
+   "exterior": 44222
+  },
+  "coreRadii": {
+   "firstRing_mm": 0.0270123254,
+   "outerRing_mm": 3.0000000000000004,
+   "h0_record_mm": 0.027012325400000002,
+   "rIn_mm": 0.4,
+   "rOut_mm": 2.6000000000000005,
+   "rCore_mm": 3.0,
+   "increment_mm": 3.9999999999999956
+  },
+  "mirrorElementsComplete": {
+   "upperElements": 6339,
+   "mirroredFound": 6339,
+   "missing": 0,
+   "selfMirror": 0
+  },
+  "crackFacePairsAndSharedLigament": {
+   "corePairedFaceNodes": 59,
+   "coreSharedLigamentNodes": 60
+  },
+  "crackFacesTopologicallyDistinct": {
+   "globalFacePairs": 810,
+   "sharedFaceNodes(tip)": 1,
+   "pairsSharingAnElement": 0
+  },
+  "EDIsupportEqualsQnonzeroDisk": {
+   "support": 11316,
+   "qNonzeroDisk": 11316,
+   "maxOuterRadius_mm": 2.6386420243228135
+  },
+  "EDIvaryingQelements": {
+   "elementsWithVaryingQ": 10278,
+   "elementsWithQ1": 1038,
+   "codeSkipConstantFingerprint": 10278
+  },
+  "coreOuterBoundaryEdges": 174,
+  "selectedPairsMirrorExact": [
+   {
+    "gray": 0.55,
+    "upperElement": 3,
+    "mirrorElement": 6342,
+    "upperNodes_mm": [
+     [
+      0.0,
+      0.0
+     ],
+     [
+      -0.013506162699999994,
+      0.02339336001169165
+     ],
+     [
+      -0.027012325400000002,
+      0.0
+     ]
+    ],
+    "mirrorNodes_mm": [
+     [
+      0.0,
+      0.0
+     ],
+     [
+      -0.027012325400000002,
+      -0.0
+     ],
+     [
+      -0.013506162699999994,
+      -0.02339336001169165
+     ]
+    ],
+    "mirrorExact": true
+   },
+   {
+    "gray": 0.72,
+    "upperElement": 1,
+    "mirrorElement": 6340,
+    "upperNodes_mm": [
+     [
+      0.0,
+      0.0
+     ],
+     [
+      0.027012325400000002,
+      0.0
+     ],
+     [
+      0.013506162700000003,
+      0.023393360011691646
+     ]
+    ],
+    "mirrorNodes_mm": [
+     [
+      0.0,
+      0.0
+     ],
+     [
+      0.013506162700000003,
+      -0.023393360011691646
+     ],
+     [
+      0.027012325400000002,
+      0.0
+     ]
+    ],
+    "mirrorExact": true
+   },
+   {
+    "gray": 0.86,
+    "upperElement": 108,
+    "mirrorElement": 6447,
+    "upperNodes_mm": [
+     [
+      -0.126467203982879,
+      0.0
+     ],
+     [
+      -0.15052970184635991,
+      0.026542447833514077
+     ],
+     [
+      -0.15285186513402063,
+      0.0
+     ]
+    ],
+    "mirrorNodes_mm": [
+     [
+      -0.126467203982879,
+      -0.0
+     ],
+     [
+      -0.15285186513402063,
+      -0.0
+     ],
+     [
+      -0.15052970184635991,
+      -0.026542447833514077
+     ]
+    ],
+    "mirrorExact": true
+   }
+  ]
+ },
+ "layout_mm": {
+  "a": {
+   "slot": 80.50999999999999,
+   "L": 16.0,
+   "R": 4.5,
+   "win": [
+    0.0,
+    300.0,
+    -100.0,
+    100.0
+   ],
+   "W": 60.00999999999999,
+   "H": 40.00666666666666
+  },
+  "b": {
+   "slot": 80.50999999999999,
+   "L": 14.5,
+   "R": 2.5,
+   "win": [
+    -3.4,
+    3.4,
+    -3.4,
+    3.4
+   ],
+   "W": 63.50999999999999,
+   "H": 63.50999999999999
+  },
+  "c": {
+   "slot": 156.04,
+   "L": 14.5,
+   "R": 2.5,
+   "win": [
+    -0.4,
+    0.16,
+    -0.12,
+    0.12
+   ],
+   "W": 139.04,
+   "H": 59.58857142857142
+  }
+ },
+ "layers": {
+  "a": {
+   "file": "figures_src/iam_f02/layers/iam_f02_a_global_mesh.pdf",
+   "sha256": "f972c5b29c5681908b5d903e6c8c0c39c745317bacc03bcdb32f2416cdff99c3",
+   "bytes": 458997,
+   "W_mm": 60.00999999999999,
+   "H_mm": 40.00666666666666
+  },
+  "b": {
+   "file": "figures_src/iam_f02/layers/iam_f02_b_structured_region.pdf",
+   "sha256": "b331b675af3a2a6e8711e709297f41b2813152735e1156cc158a32781cb84a4d",
+   "bytes": 204486,
+   "W_mm": 63.50999999999999,
+   "H_mm": 63.50999999999999
+  },
+  "c": {
+   "file": "figures_src/iam_f02/layers/iam_f02_c_symmetry_detail.pdf",
+   "sha256": "e00edf0e095acbd6182645be2a5ac2e8eebf32f5e13ef4f42fe430a0c80b3afe",
+   "bytes": 5426,
+   "W_mm": 139.04,
+   "H_mm": 59.58857142857142
+  }
+ },
+ "selectedMirrorPairs": [
+  {
+   "gray": 0.55,
+   "upperElement": 3,
+   "mirrorElement": 6342,
+   "upperNodes_mm": [
+    [
+     0.0,
+     0.0
+    ],
+    [
+     -0.013506162699999994,
+     0.02339336001169165
+    ],
+    [
+     -0.027012325400000002,
+     0.0
+    ]
+   ],
+   "mirrorNodes_mm": [
+    [
+     0.0,
+     0.0
+    ],
+    [
+     -0.027012325400000002,
+     -0.0
+    ],
+    [
+     -0.013506162699999994,
+     -0.02339336001169165
+    ]
+   ],
+   "mirrorExact": true
+  },
+  {
+   "gray": 0.72,
+   "upperElement": 1,
+   "mirrorElement": 6340,
+   "upperNodes_mm": [
+    [
+     0.0,
+     0.0
+    ],
+    [
+     0.027012325400000002,
+     0.0
+    ],
+    [
+     0.013506162700000003,
+     0.023393360011691646
+    ]
+   ],
+   "mirrorNodes_mm": [
+    [
+     0.0,
+     0.0
+    ],
+    [
+     0.013506162700000003,
+     -0.023393360011691646
+    ],
+    [
+     0.027012325400000002,
+     0.0
+    ]
+   ],
+   "mirrorExact": true
+  },
+  {
+   "gray": 0.86,
+   "upperElement": 108,
+   "mirrorElement": 6447,
+   "upperNodes_mm": [
+    [
+     -0.126467203982879,
+     0.0
+    ],
+    [
+     -0.15052970184635991,
+     0.026542447833514077
+    ],
+    [
+     -0.15285186513402063,
+     0.0
+    ]
+   ],
+   "mirrorNodes_mm": [
+    [
+     -0.126467203982879,
+     -0.0
+    ],
+    [
+     -0.15285186513402063,
+     -0.0
+    ],
+    [
+     -0.15052970184635991,
+     -0.026542447833514077
+    ]
+   ],
+   "mirrorExact": true
+  }
+ ],
+ "state": {
+  "segment": 21,
+  "a_mm": 84.0,
+  "tip_mm": [
+   283.8719739752734,
+   -24.870031146913096
+  ],
+  "KIIoverKI": 8.134267373465366e-05
+ }
+}

@@ -1,0 +1,175 @@
+{
+  "generator": "cfdf0f110010d688a4e3c48f6d88a00fd17dc698",
+  "noFEM": true,
+  "runSynthetic": false,
+  "P5": {
+    "structuralGatesPass": true,
+    "fingerprint": {
+      "T3_nodes": {
+        "regenerated": 26365,
+        "production": 26365,
+        "equal": true
+      },
+      "T3_elements": {
+        "regenerated": 51512,
+        "production": 51512,
+        "equal": true
+      },
+      "T6_nodes": {
+        "regenerated": 104242,
+        "production": 104242,
+        "equal": true
+      },
+      "core_T3_elements": {
+        "regenerated": 12678,
+        "production": 12678,
+        "equal": true
+      },
+      "exterior_T3_elements": {
+        "regenerated": 38834,
+        "production": 38834,
+        "equal": true
+      },
+      "EDI_elements": {
+        "regenerated": 11316,
+        "production": 11316,
+        "equal": true
+      },
+      "physical_clearance_m": {
+        "regenerated": 0.019999997111166724,
+        "production": 0.019999997111166724,
+        "equal": true
+      },
+      "exterior_crack_m": {
+        "regenerated": 0.017,
+        "production": 0.017,
+        "equal": true
+      },
+      "area_rel_error": {
+        "regenerated": 6.068368507650581E-16,
+        "production": 6.068368507650581E-16,
+        "equal": true
+      },
+      "min_angle_deg": {
+        "regenerated": 25.001445894846473,
+        "production": 25.001445894846473,
+        "equal": true
+      },
+      "max_neighbor_ratio": {
+        "regenerated": 1.7962913556382374,
+        "production": 1.7962913556382374,
+        "equal": true
+      },
+      "min_T6_detJ_m2": {
+        "regenerated": 6.1139339233738473E-10,
+        "production": 6.1139339233738473E-10,
+        "equal": true
+      },
+      "core_coord_error_m": {
+        "regenerated": 0,
+        "production": 0,
+        "equal": true
+      },
+      "pair_error_T3_m": {
+        "regenerated": 0,
+        "production": 0,
+        "equal": true
+      },
+      "pair_error_T6_m": {
+        "regenerated": 0,
+        "production": 0,
+        "equal": true
+      }
+    },
+    "fingerprintAllEqual": true,
+    "preservedPathEqualsAccepted": true,
+    "T3NodesBitwise": true,
+    "T3ConnectivityExact": true,
+    "crackEqual": true,
+    "gatesEqual": true,
+    "pairedNodesEqual": true,
+    "mirrorMapEqual": true,
+    "EDIsupportEqual": true
+  },
+  "P21": {
+    "structuralGatesPass": true,
+    "fingerprint": {
+      "T3_nodes": {
+        "regenerated": 29658,
+        "production": 29658,
+        "equal": true
+      },
+      "T3_elements": {
+        "regenerated": 56900,
+        "production": 56900,
+        "equal": true
+      },
+      "T6_nodes": {
+        "regenerated": 116216,
+        "production": 116216,
+        "equal": true
+      },
+      "core_T3_elements": {
+        "regenerated": 12678,
+        "production": 12678,
+        "equal": true
+      },
+      "exterior_T3_elements": {
+        "regenerated": 44222,
+        "production": 44222,
+        "equal": true
+      },
+      "EDI_elements": {
+        "regenerated": 11316,
+        "production": 11316,
+        "equal": true
+      },
+      "physical_clearance_m": {
+        "regenerated": 0.016128026024726572,
+        "production": 0.016128026024726572,
+        "equal": true
+      },
+      "exterior_crack_m": {
+        "regenerated": 0.080999999999999919,
+        "production": 0.080999999999999919,
+        "equal": true
+      },
+      "area_rel_error": {
+        "regenerated": 7.2820422091806933E-16,
+        "production": 7.2820422091806933E-16,
+        "equal": true
+      },
+      "min_angle_deg": {
+        "regenerated": 25.008627396081479,
+        "production": 25.008627396081479,
+        "equal": true
+      },
+      "max_neighbor_ratio": {
+        "regenerated": 1.7997360980884147,
+        "production": 1.7997360980884147,
+        "equal": true
+      },
+      "min_T6_detJ_m2": {
+        "regenerated": 6.1139339233738473E-10,
+        "production": 6.1139339233738473E-10,
+        "equal": true
+      },
+      "core_coord_error_m": {
+        "regenerated": 0,
+        "production": 0,
+        "equal": true
+      },
+      "pair_error_T3_m": {
+        "regenerated": 0,
+        "production": 0,
+        "equal": true
+      },
+      "pair_error_T6_m": {
+        "regenerated": 0,
+        "production": 0,
+        "equal": true
+      }
+    },
+    "fingerprintAllEqual": true
+  }
+}

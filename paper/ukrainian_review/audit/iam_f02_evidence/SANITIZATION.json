@@ -1,0 +1,179 @@
+{
+ "schema": "IAM-UA8-F02.Sanitization.v1",
+ "rule": "local paths replaced by placeholders; UTF-16 logs converted to UTF-8; MATLAB startup path warnings removed",
+ "files": [
+  {
+   "file": "f02_regenerate.m",
+   "source": "f02_regenerate.m",
+   "sourceSHA256": "cf2d6b1ccd2a747669a885b4dce10217fd633b12417e8ee2e57567cb0d673e26",
+   "publishedSHA256": "ca9f80864b849d273a50c8965060178ac199140a72b940ced1d137c69ec9a12f",
+   "replacements": {
+    "<scratch>": 1,
+    "<generator_cfdf0f1>": 1,
+    "<repo>": 1,
+    "<investigator_codex_work>": 1
+   }
+  },
+  {
+   "file": "f02_regen.log",
+   "source": "f02_regen.log",
+   "sourceSHA256": "1491a0e7094f69a712a027b3d259ba384284de204012e7416aacefaeebecc964",
+   "publishedSHA256": "776d26e55c82124ee434501b2a012f22196c8b3d88d463710bf0562ca5bc2566",
+   "replacements": {
+    "<generator_cfdf0f1>": 1,
+    "<drive>": 2
+   }
+  },
+  {
+   "file": "f02_verify_export.m",
+   "source": "f02_verify_export.m",
+   "sourceSHA256": "f764c0da204c6820cb0182800655cd8775588e7e52b93f35dc71546303a963a1",
+   "publishedSHA256": "bf8deeeea9fd19d9c3d8a195e59c7bfe4d618d9012bc61171fcf8087c6759639",
+   "replacements": {
+    "<scratch>": 1,
+    "<repo>": 1,
+    "<investigator_codex_work>": 1,
+    "<home>": 1
+   }
+  },
+  {
+   "file": "f02_verify_attempt1_FAILED.log",
+   "source": "f02_verify_attempt1_FAILED.log",
+   "sourceSHA256": "e36066cee21fc67089b001582b97d580ccb1e538ffb5b72626f2d1ca4969ac7d",
+   "publishedSHA256": "23852aab358d1adcf4478ac51f92a0f729cb7126f3c03fc8b3cb4e21489065bc",
+   "replacements": {
+    "<scratch>": 1,
+    "<drive>": 2
+   }
+  },
+  {
+   "file": "f02_verify.log",
+   "source": "f02_verify.log",
+   "sourceSHA256": "650381d54cfa321173702a15e5bebccd83e41f360020bb4cba0651a264290f66",
+   "publishedSHA256": "69cf4bf1fdbf3a02a489e84da5a8c41b3fd9c9d05a981dd2cdf389d4dc7d1afe",
+   "replacements": {
+    "<drive>": 2
+   }
+  },
+  {
+   "file": "F02_VERIFY.json",
+   "source": "F02_VERIFY.json",
+   "sourceSHA256": "165a7517e5a251cf4c5079f803e5dca1cf85fbbcbbab003462c82c3c7890277e",
+   "publishedSHA256": "165a7517e5a251cf4c5079f803e5dca1cf85fbbcbbab003462c82c3c7890277e",
+   "replacements": {}
+  },
+  {
+   "file": "f02_verify_p5_t3.m",
+   "source": "f02_verify_p5_t3.m",
+   "sourceSHA256": "7b07b78923160d453e265456425aaeff3b2970fa97230c8cf437463fc3e66727",
+   "publishedSHA256": "58be31cb2c73b566ee1c7117ede58fcb1f459be8116b86db89e43584274c047e",
+   "replacements": {
+    "<scratch>": 1,
+    "<investigator_codex_work>": 1
+   }
+  },
+  {
+   "file": "f02_verify_p5.log",
+   "source": "f02_verify_p5.log",
+   "sourceSHA256": "ae7dbc263674559cc2dfacca8018bb752d41021093692eac95c8da4914309123",
+   "publishedSHA256": "be6e11fbea4cede4f269b1b2a04709fd08e757fcf11dafe32c8183e7811210c2",
+   "replacements": {
+    "<drive>": 2
+   }
+  },
+  {
+   "file": "F02_VERIFY_P5_T3.json",
+   "source": "F02_VERIFY_P5_T3.json",
+   "sourceSHA256": "296e3ff0982fc427a26d074d3343470507032121907decd6f690d73eca92c961",
+   "publishedSHA256": "296e3ff0982fc427a26d074d3343470507032121907decd6f690d73eca92c961",
+   "replacements": {}
+  },
+  {
+   "file": "f02_design_diff.m",
+   "source": "f02_design_diff.m",
+   "sourceSHA256": "354b4a73360166a8ce5cffbc9e1e7699b1c7ae307f1cb8ce1f7372680e6a0316",
+   "publishedSHA256": "30059492bf7e2127f65a92369c39266aac7d681da32f607c9f1013d2dd6072b4",
+   "replacements": {
+    "<scratch>": 1,
+    "<investigator_codex_work>": 1
+   }
+  },
+  {
+   "file": "f02_design_diff_attempt1_FAILED.log",
+   "source": "f02_design_diff_attempt1_FAILED.log",
+   "sourceSHA256": "415ffdec5ba45e483b0c88f79b19d2605653a4959434cf662ec1ef5c368ecafd",
+   "publishedSHA256": "d03f65da9fd31ca6e3fe253c8b31b639a2be4478ad39452504e97f46716a27c6",
+   "replacements": {
+    "<scratch>": 1,
+    "<drive>": 2
+   }
+  },
+  {
+   "file": "f02_design_diff.log",
+   "source": "f02_design_diff.log",
+   "sourceSHA256": "ef74783c2ede26c7b5c7faaa8cc6a7c4697393afd7a4a9c0f3c6076c912620dc",
+   "publishedSHA256": "76907b9c0953cfe8febe8a768bdb7e16d8284b7eace757d5cf589b29fced9060",
+   "replacements": {
+    "<drive>": 2
+   }
+  },
+  {
+   "file": "F02_VERIFY_P5_DESIGN_DIFF.json",
+   "source": "F02_VERIFY_P5_DESIGN_DIFF.json",
+   "sourceSHA256": "094dea6b1fe3b003dc1ccf2480e3915bb17291098dcca14a8c75e2c038bc5a19",
+   "publishedSHA256": "094dea6b1fe3b003dc1ccf2480e3915bb17291098dcca14a8c75e2c038bc5a19",
+   "replacements": {}
+  },
+  {
+   "file": "f02_probe.py",
+   "source": "f02_probe.py",
+   "sourceSHA256": "e8648c14e58f4d69cad6ff8ebc6735919e6a7c6208caf71ea86cd462828634a8",
+   "publishedSHA256": "e8648c14e58f4d69cad6ff8ebc6735919e6a7c6208caf71ea86cd462828634a8",
+   "replacements": {}
+  },
+  {
+   "file": "f02_repro_run.m",
+   "source": "f02_repro_run.m",
+   "sourceSHA256": "ca2c19523c7d8e7deeaec2899ee570978f6f821add93a5e8b55a779333847d21",
+   "publishedSHA256": "3d48d13080e1c3ecf1449d260ada2bc57719e8af7faca1945e8db9026e17abcc",
+   "replacements": {
+    "<scratch>": 1,
+    "<generator_cfdf0f1>": 1,
+    "<repo>": 1,
+    "<investigator_codex_work>": 1
+   }
+  },
+  {
+   "file": "f02_repro.log",
+   "source": "f02_repro.log",
+   "sourceSHA256": "0243ad2cd04e2c149334a054fcfb067d40737327f6d1bb5a18dab1cbd165653b",
+   "publishedSHA256": "b97c51fe15bcd9d8f5de94f25c06c5278b4269fc463ae1a3bfb23af40b0cd1c5",
+   "replacements": {
+    "<drive>": 2
+   }
+  },
+  {
+   "file": "repro_IAM_F02_REGENERATION.json",
+   "source": "repro/IAM_F02_REGENERATION.json",
+   "sourceSHA256": "859dbf85b2053dc58022930eb88c54d6cbe2a1e6d6881160ad0fc263d15b8e39",
+   "publishedSHA256": "859dbf85b2053dc58022930eb88c54d6cbe2a1e6d6881160ad0fc263d15b8e39",
+   "replacements": {}
+  },
+  {
+   "file": "publish_evidence.py",
+   "source": "publish_evidence.py",
+   "sourceSHA256": "0ccc953cdbaf584bcfb67a6c01de10b0a3861f0a175fae1fd588d59bc0dc68c9",
+   "publishedSHA256": "2069219069c0070975bf5bd515a19afdc67f3ffe52fd0b994c2d210d4fbcc35e",
+   "replacements": {
+    "<scratch>": 1,
+    "<temp>": 1,
+    "<generator_cfdf0f1>": 1,
+    "<repo>": 2,
+    "<investigator_codex_work>": 1,
+    "<matlabroot>": 1,
+    "<drive>": 1,
+    "<home>": 1
+   }
+  }
+ ]
+}

@@ -1,0 +1,921 @@
+{
+  "preservedFile": "<home>\\Documents\\Codex\\2026-10-04\\files-pasted-by-the-user-you\\work\\incremental-profile\\phaseA_baseline\\fresh5\\step_005_candidate.mat",
+  "preservedSHA256": "196f1f2a309d3ea351f795a7ecf0333cbff4b91e7bfa413908ec16a9bf77ed8f",
+  "preservedSizes": {
+    "p": [
+      26365,
+      2
+    ],
+    "t": [
+      51512,
+      3
+    ]
+  },
+  "regenSizes": {
+    "coord": [
+      104242,
+      2
+    ],
+    "connect": [
+      51512,
+      6
+    ],
+    "coord3": [
+      26365,
+      2
+    ],
+    "connect3": [
+      51512,
+      3
+    ]
+  },
+  "preservedCrackFields": [
+    "Pmid",
+    "x0",
+    "xtip",
+    "tipNode",
+    "upperNodes",
+    "lowerNodes",
+    "upperS",
+    "lowerS",
+    "nUpper",
+    "nLower",
+    "sameCount",
+    "upperTarget",
+    "lowerTarget",
+    "lowerMatchForUpper"
+  ],
+  "P5_T6nodesBitwise": false,
+  "P5_T6connectExact": false,
+  "P5_crackFacesExact": true,
+  "P5_pairedElementsExact": true,
+  "P5_mirrorMapExact": true,
+  "P5_maxNodeDiff_m": null,
+  "P5_fingerprint": {
+    "T3_nodes": {
+      "regenerated": 26365,
+      "production": 26365,
+      "equal": true,
+      "relDiff": 0
+    },
+    "T3_elements": {
+      "regenerated": 51512,
+      "production": 51512,
+      "equal": true,
+      "relDiff": 0
+    },
+    "T6_nodes": {
+      "regenerated": 104242,
+      "production": 104242,
+      "equal": true,
+      "relDiff": 0
+    },
+    "core_T3_elements": {
+      "regenerated": 12678,
+      "production": 12678,
+      "equal": true,
+      "relDiff": 0
+    },
+    "exterior_T3_elements": {
+      "regenerated": 38834,
+      "production": 38834,
+      "equal": true,
+      "relDiff": 0
+    },
+    "EDI_elements": {
+      "regenerated": 11316,
+      "production": 11316,
+      "equal": true,
+      "relDiff": 0
+    },
+    "physical_clearance_m": {
+      "regenerated": 0.019999997111166724,
+      "production": 0.019999997111166724,
+      "equal": true,
+      "relDiff": 0
+    },
+    "exterior_crack_m": {
+      "regenerated": 0.017,
+      "production": 0.017,
+      "equal": true,
+      "relDiff": 0
+    },
+    "area_rel_error": {
+      "regenerated": 6.068368507650581E-16,
+      "production": 6.068368507650581E-16,
+      "equal": true,
+      "relDiff": 0
+    },
+    "min_angle_deg": {
+      "regenerated": 25.001445894846473,
+      "production": 25.001445894846473,
+      "equal": true,
+      "relDiff": 0
+    },
+    "max_neighbor_ratio": {
+      "regenerated": 1.7962913556382374,
+      "production": 1.7962913556382374,
+      "equal": true,
+      "relDiff": 0
+    },
+    "min_T6_detJ_m2": {
+      "regenerated": 6.1139339233738473E-10,
+      "production": 6.1139339233738473E-10,
+      "equal": true,
+      "relDiff": 0
+    },
+    "core_coord_error_m": {
+      "regenerated": 0,
+      "production": 0,
+      "equal": true,
+      "relDiff": 0
+    },
+    "pair_error_T3_m": {
+      "regenerated": 0,
+      "production": 0,
+      "equal": true,
+      "relDiff": 0
+    },
+    "pair_error_T6_m": {
+      "regenerated": 0,
+      "production": 0,
+      "equal": true,
+      "relDiff": 0
+    }
+  },
+  "P21_fingerprint": {
+    "T3_nodes": {
+      "regenerated": 29658,
+      "production": 29658,
+      "equal": true,
+      "relDiff": 0
+    },
+    "T3_elements": {
+      "regenerated": 56900,
+      "production": 56900,
+      "equal": true,
+      "relDiff": 0
+    },
+    "T6_nodes": {
+      "regenerated": 116216,
+      "production": 116216,
+      "equal": true,
+      "relDiff": 0
+    },
+    "core_T3_elements": {
+      "regenerated": 12678,
+      "production": 12678,
+      "equal": true,
+      "relDiff": 0
+    },
+    "exterior_T3_elements": {
+      "regenerated": 44222,
+      "production": 44222,
+      "equal": true,
+      "relDiff": 0
+    },
+    "EDI_elements": {
+      "regenerated": 11316,
+      "production": 11316,
+      "equal": true,
+      "relDiff": 0
+    },
+    "physical_clearance_m": {
+      "regenerated": 0.016128026024726572,
+      "production": 0.016128026024726572,
+      "equal": true,
+      "relDiff": 0
+    },
+    "exterior_crack_m": {
+      "regenerated": 0.080999999999999919,
+      "production": 0.080999999999999919,
+      "equal": true,
+      "relDiff": 0
+    },
+    "area_rel_error": {
+      "regenerated": 7.2820422091806933E-16,
+      "production": 7.2820422091806933E-16,
+      "equal": true,
+      "relDiff": 0
+    },
+    "min_angle_deg": {
+      "regenerated": 25.008627396081479,
+      "production": 25.008627396081479,
+      "equal": true,
+      "relDiff": 0
+    },
+    "max_neighbor_ratio": {
+      "regenerated": 1.7997360980884147,
+      "production": 1.7997360980884147,
+      "equal": true,
+      "relDiff": 0
+    },
+    "min_T6_detJ_m2": {
+      "regenerated": 6.1139339233738473E-10,
+      "production": 6.1139339233738473E-10,
+      "equal": true,
+      "relDiff": 0
+    },
+    "core_coord_error_m": {
+      "regenerated": 0,
+      "production": 0,
+      "equal": true,
+      "relDiff": 0
+    },
+    "pair_error_T3_m": {
+      "regenerated": 0,
+      "production": 0,
+      "equal": true,
+      "relDiff": 0
+    },
+    "pair_error_T6_m": {
+      "regenerated": 0,
+      "production": 0,
+      "equal": true,
+      "relDiff": 0
+    }
+  },
+  "mirrorMapClass": "double",
+  "mirrorMapSize": [
+    3273,
+    1
+  ],
+  "P21": {
+    "tip_mm": [
+      283.87197397527342,
+      -24.870031146913096
+    ],
+    "directionLast": [
+      0.99588873894528962,
+      -0.090584875348817651
+    ],
+    "thetaCurrentDeg": -3.6366426457284811,
+    "design": {
+      "family": "explicit three-sector radial zipper",
+      "scale": 1,
+      "hBase_m": 2.70123254E-5,
+      "slope": 0.028,
+      "radialFactor": 0.8660254037844386,
+      "metricStep": 0.85328374976395693,
+      "angularIntervalsUpper": [
+        3,
+        6,
+        9,
+        12,
+        15,
+        18,
+        18,
+        21,
+        24,
+        27,
+        27,
+        30,
+        33,
+        33,
+        36,
+        36,
+        39,
+        42,
+        42,
+        45,
+        45,
+        48,
+        48,
+        51,
+        51,
+        54,
+        54,
+        57,
+        57,
+        60,
+        60,
+        63,
+        63,
+        63,
+        66,
+        66,
+        69,
+        69,
+        69,
+        72,
+        72,
+        72,
+        75,
+        75,
+        75,
+        75,
+        78,
+        78,
+        78,
+        81,
+        81,
+        81,
+        81,
+        84,
+        84,
+        84,
+        84,
+        87,
+        87
+      ],
+      "tipTriangles": 6,
+      "tipIncidentTopologicalEdges": 7,
+      "hLaw": "h(r)=scale*(hBase+0.028*r)",
+      "connectivityRule": "three sector strips; shortest new bridge; fixed parity ties",
+      "usesDelaunayInPairedRegion": false,
+      "usesRandomness": false,
+      "usesSmoothingInPairedRegion": false,
+      "allBandWidthsIncreasing": true,
+      "nRings": 59,
+      "ringTable": [
+        {
+          "ring": 1,
+          "radius_mm": 0.027012325400000002,
+          "targetH_mm": 0.0277686705112,
+          "bandWidth_mm": null,
+          "upperAngularIntervals": 3,
+          "arcSpacing_mm": 0.028287241011005656
+        },
+        {
+          "ring": 2,
+          "radius_mm": 0.050992202975729879,
+          "targetH_mm": 0.028440107083320437,
+          "bandWidth_mm": 0.023979877575729881,
+          "upperAngularIntervals": 6,
+          "arcSpacing_mm": 0.026699455043152093
+        },
+        {
+          "ring": 3,
+          "radius_mm": 0.0755519054585553,
+          "targetH_mm": 0.029127778752839548,
+          "bandWidth_mm": 0.024559702482825414,
+          "upperAngularIntervals": 9,
+          "arcSpacing_mm": 0.026372590128145322
+        },
+        {
+          "ring": 4,
+          "radius_mm": 0.10070545280841196,
+          "targetH_mm": 0.029832078078635534,
+          "bandWidth_mm": 0.025153547349856663,
+          "upperAngularIntervals": 12,
+          "arcSpacing_mm": 0.026364625893278384
+        },
+        {
+          "ring": 5,
+          "radius_mm": 0.126467203982879,
+          "targetH_mm": 0.030553407111520613,
+          "bandWidth_mm": 0.025761751174467031,
+          "upperAngularIntervals": 15,
+          "arcSpacing_mm": 0.026487229263510294
+        },
+        {
+          "ring": 6,
+          "radius_mm": 0.15285186513402063,
+          "targetH_mm": 0.031292177623752575,
+          "bandWidth_mm": 0.026384661151141631,
+          "upperAngularIntervals": 18,
+          "arcSpacing_mm": 0.026677683144029834
+        },
+        {
+          "ring": 7,
+          "radius_mm": 0.17987449800342356,
+          "targetH_mm": 0.032048811344095859,
+          "bandWidth_mm": 0.027022632869402933,
+          "upperAngularIntervals": 18,
+          "arcSpacing_mm": 0.031394022305317071
+        },
+        {
+          "ring": 8,
+          "radius_mm": 0.20755052852022909,
+          "targetH_mm": 0.032823740198566417,
+          "bandWidth_mm": 0.027676030516805551,
+          "upperAngularIntervals": 21,
+          "arcSpacing_mm": 0.0310494864594205
+        },
+        {
+          "ring": 9,
+          "radius_mm": 0.23589575560705425,
+          "targetH_mm": 0.03361740655699752,
+          "bandWidth_mm": 0.028345227086825162,
+          "upperAngularIntervals": 24,
+          "arcSpacing_mm": 0.030878682201172288
+        },
+        {
+          "ring": 10,
+          "radius_mm": 0.26492636019884408,
+          "targetH_mm": 0.034430263485567637,
+          "bandWidth_mm": 0.029030604591789813,
+          "upperAngularIntervals": 27,
+          "arcSpacing_mm": 0.03082558173862859
+        },
+        {
+          "ring": 11,
+          "radius_mm": 0.29465891447979281,
+          "targetH_mm": 0.0352627750054342,
+          "bandWidth_mm": 0.029732554280948755,
+          "upperAngularIntervals": 27,
+          "arcSpacing_mm": 0.03428512152016519
+        },
+        {
+          "ring": 12,
+          "radius_mm": 0.32511039134361214,
+          "targetH_mm": 0.036115416357621138,
+          "bandWidth_mm": 0.030451476863819289,
+          "upperAngularIntervals": 30,
+          "arcSpacing_mm": 0.034045480568359814
+        },
+        {
+          "ring": 13,
+          "radius_mm": 0.35629817408254316,
+          "targetH_mm": 0.036988674274311212,
+          "bandWidth_mm": 0.031187782738931028,
+          "upperAngularIntervals": 33,
+          "arcSpacing_mm": 0.0339195068540962
+        },
+        {
+          "ring": 14,
+          "radius_mm": 0.38824006631064917,
+          "targetH_mm": 0.03788304725669818,
+          "bandWidth_mm": 0.031941892228106027,
+          "upperAngularIntervals": 33,
+          "arcSpacing_mm": 0.036960367883356042
+        },
+        {
+          "ring": 15,
+          "radius_mm": 0.42095430212704565,
+          "targetH_mm": 0.038799045859557277,
+          "bandWidth_mm": 0.032714235816396507,
+          "upperAngularIntervals": 36,
+          "arcSpacing_mm": 0.036735192862759579
+        },
+        {
+          "ring": 16,
+          "radius_mm": 0.4544595565248773,
+          "targetH_mm": 0.039737192982696568,
+          "bandWidth_mm": 0.0335052543978316,
+          "upperAngularIntervals": 36,
+          "arcSpacing_mm": 0.039659077892561935
+        },
+        {
+          "ring": 17,
+          "radius_mm": 0.48877495605197663,
+          "targetH_mm": 0.040698024169455345,
+          "bandWidth_mm": 0.034315399527099326,
+          "upperAngularIntervals": 39,
+          "arcSpacing_mm": 0.039372610543373425
+        },
+        {
+          "ring": 18,
+          "radius_mm": 0.52392008972929915,
+          "targetH_mm": 0.041682087912420375,
+          "bandWidth_mm": 0.035145133677322568,
+          "upperAngularIntervals": 42,
+          "arcSpacing_mm": 0.039189131070515984
+        },
+        {
+          "ring": 19,
+          "radius_mm": 0.55991502023335438,
+          "targetH_mm": 0.042689945966533922,
+          "bandWidth_mm": 0.035994930504055229,
+          "upperAngularIntervals": 42,
+          "arcSpacing_mm": 0.04188154557618301
+        },
+        {
+          "ring": 20,
+          "radius_mm": 0.59678029534903254,
+          "targetH_mm": 0.043722173669772914,
+          "bandWidth_mm": 0.036865275115678144,
+          "upperAngularIntervals": 45,
+          "arcSpacing_mm": 0.041663124259459276
+        },
+        {
+          "ring": 21,
+          "radius_mm": 0.63453695969935064,
+          "targetH_mm": 0.044779360271581817,
+          "bandWidth_mm": 0.037756664350318145,
+          "upperAngularIntervals": 45,
+          "arcSpacing_mm": 0.044299036689392945
+        },
+        {
+          "ring": 22,
+          "radius_mm": 0.6732065667588224,
+          "targetH_mm": 0.045862109269247026,
+          "bandWidth_mm": 0.038669607059471665,
+          "upperAngularIntervals": 48,
+          "arcSpacing_mm": 0.044061266759956724
+        },
+        {
+          "ring": 23,
+          "radius_mm": 0.71281119115730518,
+          "targetH_mm": 0.046971038752404548,
+          "bandWidth_mm": 0.039604624398482835,
+          "upperAngularIntervals": 48,
+          "arcSpacing_mm": 0.046653383365341243
+        },
+        {
+          "ring": 24,
+          "radius_mm": 0.75337344128135153,
+          "targetH_mm": 0.048106781755877841,
+          "bandWidth_mm": 0.040562250124046323,
+          "upperAngularIntervals": 51,
+          "arcSpacing_mm": 0.046407695461552066
+        },
+        {
+          "ring": 25,
+          "radius_mm": 0.794916472180257,
+          "targetH_mm": 0.049269986621047195,
+          "bandWidth_mm": 0.0415430308989054,
+          "upperAngularIntervals": 51,
+          "arcSpacing_mm": 0.048966740180764905
+        },
+        {
+          "ring": 26,
+          "radius_mm": 0.83746399878416977,
+          "targetH_mm": 0.050461317365956757,
+          "bandWidth_mm": 0.042547526603912804,
+          "upperAngularIntervals": 54,
+          "arcSpacing_mm": 0.048721680485671832
+        },
+        {
+          "ring": 27,
+          "radius_mm": 0.88104030944180967,
+          "targetH_mm": 0.05168145406437067,
+          "bandWidth_mm": 0.043576310657639943,
+          "upperAngularIntervals": 54,
+          "arcSpacing_mm": 0.0512568474751642
+        },
+        {
+          "ring": 28,
+          "radius_mm": 0.925670279785527,
+          "targetH_mm": 0.052931093233994753,
+          "bandWidth_mm": 0.044629970343717296,
+          "upperAngularIntervals": 57,
+          "arcSpacing_mm": 0.051018928958256486
+        },
+        {
+          "ring": 29,
+          "radius_mm": 0.97137938693161119,
+          "targetH_mm": 0.054210948234085114,
+          "bandWidth_mm": 0.04570910714608422,
+          "upperAngularIntervals": 57,
+          "arcSpacing_mm": 0.053538216593559763
+        },
+        {
+          "ring": 30,
+          "radius_mm": 1.0181937240239569,
+          "targetH_mm": 0.055521749672670796,
+          "bandWidth_mm": 0.046814337092345629,
+          "upperAngularIntervals": 60,
+          "arcSpacing_mm": 0.053312498722081596
+        },
+        {
+          "ring": 31,
+          "radius_mm": 1.0661400151293943,
+          "targetH_mm": 0.056864245823623039,
+          "bandWidth_mm": 0.047946291105437383,
+          "upperAngularIntervals": 60,
+          "arcSpacing_mm": 0.055822960653810254
+        },
+        {
+          "ring": 32,
+          "radius_mm": 1.1152456304931804,
+          "targetH_mm": 0.058239203053809051,
+          "bandWidth_mm": 0.049105615363786215,
+          "upperAngularIntervals": 63,
+          "arcSpacing_mm": 0.055613452058817334
+        },
+        {
+          "ring": 33,
+          "radius_mm": 1.1655386021633631,
+          "targetH_mm": 0.059647406260574166,
+          "bandWidth_mm": 0.050292971670182637,
+          "upperAngularIntervals": 63,
+          "arcSpacing_mm": 0.058121389048122821
+        },
+        {
+          "ring": 34,
+          "radius_mm": 1.2170476399929377,
+          "targetH_mm": 0.061089659319802259,
+          "bandWidth_mm": 0.051509037829574687,
+          "upperAngularIntervals": 63,
+          "arcSpacing_mm": 0.06068996706143822
+        },
+        {
+          "ring": 35,
+          "radius_mm": 1.2698021480289294,
+          "targetH_mm": 0.06256678554481003,
+          "bandWidth_mm": 0.05275450803599166,
+          "upperAngularIntervals": 66,
+          "arcSpacing_mm": 0.060442440905457924
+        },
+        {
+          "ring": 36,
+          "radius_mm": 1.3238322412977577,
+          "targetH_mm": 0.064079628156337221,
+          "bandWidth_mm": 0.05403009326882826,
+          "upperAngularIntervals": 66,
+          "arcSpacing_mm": 0.063014267331005236
+        },
+        {
+          "ring": 37,
+          "radius_mm": 1.3791687629964644,
+          "targetH_mm": 0.065629050763901,
+          "bandWidth_mm": 0.055336521698706814,
+          "upperAngularIntervals": 69,
+          "arcSpacing_mm": 0.062794006578119052
+        },
+        {
+          "ring": 38,
+          "radius_mm": 1.4358433020996226,
+          "targetH_mm": 0.067215937858789432,
+          "bandWidth_mm": 0.056674539103158214,
+          "upperAngularIntervals": 69,
+          "arcSpacing_mm": 0.06537441695046789
+        },
+        {
+          "ring": 39,
+          "radius_mm": 1.4938882113919685,
+          "targetH_mm": 0.068841195318975118,
+          "bandWidth_mm": 0.058044909292345778,
+          "upperAngularIntervals": 69,
+          "arcSpacing_mm": 0.068017220727440639
+        },
+        {
+          "ring": 40,
+          "radius_mm": 1.5533366259370622,
+          "targetH_mm": 0.070505750926237745,
+          "bandWidth_mm": 0.059448414545093704,
+          "upperAngularIntervals": 72,
+          "arcSpacing_mm": 0.0677770962860532
+        },
+        {
+          "ring": 41,
+          "radius_mm": 1.6142224819925102,
+          "targetH_mm": 0.072210554895790285,
+          "bandWidth_mm": 0.060885856055447989,
+          "upperAngularIntervals": 72,
+          "arcSpacing_mm": 0.070433742926210449
+        },
+        {
+          "ring": 42,
+          "radius_mm": 1.6765805363825526,
+          "targetH_mm": 0.073956580418711476,
+          "bandWidth_mm": 0.062358054390042369,
+          "upperAngularIntervals": 72,
+          "arcSpacing_mm": 0.0731546263368203
+        },
+        {
+          "ring": 43,
+          "radius_mm": 1.740446386339072,
+          "targetH_mm": 0.075744824217494011,
+          "bandWidth_mm": 0.063865849956519422,
+          "upperAngularIntervals": 75,
+          "arcSpacing_mm": 0.072903647750529751
+        },
+        {
+          "ring": 44,
+          "radius_mm": 1.8058564898223517,
+          "targetH_mm": 0.077576307115025847,
+          "bandWidth_mm": 0.065410103483279788,
+          "upperAngularIntervals": 75,
+          "arcSpacing_mm": 0.075643539758178016
+        },
+        {
+          "ring": 45,
+          "radius_mm": 1.8728481863331827,
+          "targetH_mm": 0.079452074617329116,
+          "bandWidth_mm": 0.066991696510830964,
+          "upperAngularIntervals": 75,
+          "arcSpacing_mm": 0.078449681379643921
+        },
+        {
+          "ring": 46,
+          "radius_mm": 1.9414597182281956,
+          "targetH_mm": 0.081373197510389475,
+          "bandWidth_mm": 0.068611531895012956,
+          "upperAngularIntervals": 75,
+          "arcSpacing_mm": 0.081323674507016108
+        },
+        {
+          "ring": 47,
+          "radius_mm": 2.0117302525506005,
+          "targetH_mm": 0.083340772471416816,
+          "bandWidth_mm": 0.070270534322404779,
+          "upperAngularIntervals": 78,
+          "arcSpacing_mm": 0.081026115159196221
+        },
+        {
+          "ring": 48,
+          "radius_mm": 2.0836999033887738,
+          "targetH_mm": 0.085355922694885664,
+          "bandWidth_mm": 0.071969650838173138,
+          "upperAngularIntervals": 78,
+          "arcSpacing_mm": 0.083924824471435025
+        },
+        {
+          "ring": 49,
+          "radius_mm": 2.1574097547754749,
+          "targetH_mm": 0.087419798533713317,
+          "bandWidth_mm": 0.073709851386701525,
+          "upperAngularIntervals": 78,
+          "arcSpacing_mm": 0.086893623543404991
+        },
+        {
+          "ring": 50,
+          "radius_mm": 2.2329018841407575,
+          "targetH_mm": 0.089533578155941207,
+          "bandWidth_mm": 0.0754921293652823,
+          "upperAngularIntervals": 81,
+          "arcSpacing_mm": 0.086603310560535926
+        },
+        {
+          "ring": 51,
+          "radius_mm": 2.3102193863319611,
+          "targetH_mm": 0.091698468217294923,
+          "bandWidth_mm": 0.07731750219120391,
+          "upperAngularIntervals": 81,
+          "arcSpacing_mm": 0.0896020771886569
+        },
+        {
+          "ring": 52,
+          "radius_mm": 2.3894063982145,
+          "targetH_mm": 0.093915704550006,
+          "bandWidth_mm": 0.079187011882538877,
+          "upperAngularIntervals": 81,
+          "arcSpacing_mm": 0.092673352926803967
+        },
+        {
+          "ring": 53,
+          "radius_mm": 2.4705081238674889,
+          "targetH_mm": 0.096186552868289685,
+          "bandWidth_mm": 0.081101725652988746,
+          "upperAngularIntervals": 81,
+          "arcSpacing_mm": 0.095818891019456856
+        },
+        {
+          "ring": 54,
+          "radius_mm": 2.5535708603885894,
+          "targetH_mm": 0.098512309490880509,
+          "bandWidth_mm": 0.083062736521100689,
+          "upperAngularIntervals": 84,
+          "arcSpacing_mm": 0.095503326850211429
+        },
+        {
+          "ring": 55,
+          "radius_mm": 2.638642024322813,
+          "targetH_mm": 0.10089430208103876,
+          "bandWidth_mm": 0.085071163934223329,
+          "upperAngularIntervals": 84,
+          "arcSpacing_mm": 0.0986849809412601
+        },
+        {
+          "ring": 56,
+          "radius_mm": 2.7257701787303552,
+          "targetH_mm": 0.10333389040444996,
+          "bandWidth_mm": 0.08712815440754243,
+          "upperAngularIntervals": 84,
+          "arcSpacing_mm": 0.10194356629611216
+        },
+        {
+          "ring": 57,
+          "radius_mm": 2.8150050609089319,
+          "targetH_mm": 0.10583246710545009,
+          "bandWidth_mm": 0.089234882178576391,
+          "upperAngularIntervals": 84,
+          "arcSpacing_mm": 0.10528094308535223
+        },
+        {
+          "ring": 58,
+          "radius_mm": 2.9063976107864118,
+          "targetH_mm": 0.10839145850201953,
+          "bandWidth_mm": 0.091392549877479953,
+          "upperAngularIntervals": 87,
+          "arcSpacing_mm": 0.10495077451100594
+        },
+        {
+          "ring": 59,
+          "radius_mm": 3,
+          "targetH_mm": 0.11101232540000001,
+          "bandWidth_mm": 0.093602389213588363,
+          "upperAngularIntervals": 87,
+          "arcSpacing_mm": 0.10833078115826873
+        }
+      ],
+      "a0_m": 0.004,
+      "hTipOverA0": 0.00675308135,
+      "rCoreOverA0": 0.75,
+      "hTip_m": 2.70123254E-5,
+      "rCore_m": 0.003,
+      "rings": [
+        2.70123254E-5,
+        5.0992202975729881E-5,
+        7.55519054585553E-5,
+        0.00010070545280841196,
+        0.000126467203982879,
+        0.00015285186513402062,
+        0.00017987449800342355,
+        0.0002075505285202291,
+        0.00023589575560705427,
+        0.00026492636019884408,
+        0.00029465891447979283,
+        0.00032511039134361212,
+        0.00035629817408254315,
+        0.00038824006631064917,
+        0.00042095430212704568,
+        0.00045445955652487728,
+        0.00048877495605197661,
+        0.00052392008972929917,
+        0.0005599150202333544,
+        0.00059678029534903255,
+        0.00063453695969935069,
+        0.00067320656675882236,
+        0.0007128111911573052,
+        0.00075337344128135152,
+        0.00079491647218025692,
+        0.00083746399878416972,
+        0.00088104030944180967,
+        0.000925670279785527,
+        0.00097137938693161118,
+        0.0010181937240239568,
+        0.0010661400151293942,
+        0.0011152456304931804,
+        0.001165538602163363,
+        0.0012170476399929377,
+        0.0012698021480289294,
+        0.0013238322412977576,
+        0.0013791687629964645,
+        0.0014358433020996227,
+        0.0014938882113919685,
+        0.0015533366259370622,
+        0.0016142224819925101,
+        0.0016765805363825525,
+        0.0017404463863390719,
+        0.0018058564898223517,
+        0.0018728481863331827,
+        0.0019414597182281956,
+        0.0020117302525506004,
+        0.0020836999033887736,
+        0.0021574097547754751,
+        0.0022329018841407574,
+        0.0023102193863319613,
+        0.0023894063982145,
+        0.0024705081238674889,
+        0.0025535708603885896,
+        0.0026386420243228129,
+        0.0027257701787303554,
+        0.0028150050609089317,
+        0.0029063976107864117,
+        0.003
+      ],
+      "source": "closed Step62 SIF-audit three-sector reflection-paired core",
+      "transitionLength_m": 0.004,
+      "farCap_m": 0.0025,
+      "exteriorCalibration": {
+        "verbose": false
+      }
+    },
+    "candidateFields": [
+      "p",
+      "t",
+      "crack",
+      "mat",
+      "nSegments",
+      "segmentLengths",
+      "currentIncrementLength",
+      "totalCrackLength",
+      "thetaSegments",
+      "thetaSegmentsDeg",
+      "deltaThetaSegmentsDeg",
+      "thetaCurrent",
+      "thetaCurrentDeg",
+      "thetaPreviousDeg",
+      "deltaThetaCurrentDeg",
+      "directionFirst",
+      "directionLast",
+      "path",
+      "priorTip",
+      "nMatFrozen",
+      "tHatFrozen",
+      "pairedElementIDs",
+      "exteriorElementIDs",
+      "primarySupportElementIDs",
+      "skipConstantSupportElementIDs",
+      "pairedNodeIDs",
+      "pairedMirrorLocal",
+      "structuredDesign",
+      "exteriorDesign",
+      "polylineCarrierEdgeIDs",
+      "maxChordDeviation",
+      "gates",
+      "synthetic",
+      "syntheticGates",
+      "syntheticReplayPerformed",
+      "scientificallyReadyForIncrementalPhysicalSolve",
+      "source"
+    ]
+  },
+  "R0hole": {
+    "A_m": 0.3,
+    "B_m": 0.1
+  }
+}

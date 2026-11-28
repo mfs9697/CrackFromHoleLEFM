@@ -1,0 +1,140 @@
+{
+ "schema": "IAM-UA8-F02.MeshData.v1",
+ "state": "P21 (21 segments, a = 84 mm) of the accepted M0 trajectory",
+ "origin": "deterministic regeneration with the pinned historical generator cfdf0f110010d688a4e3c48f6d88a00fd17dc698 (qualify_incremental_crack_candidate, RunSynthetic=false; no FEM, no SIF/EDI evaluation); see audit/IAM_F02_MESH_FIGURE_REPORT.md",
+ "units": "coordinates in mm; indices 1-based (MATLAB)",
+ "arrays": [
+  {
+   "name": "X3_mm",
+   "file": "X3_mm.f64.gz",
+   "shape": [
+    29658,
+    2
+   ],
+   "order": "column-major (MATLAB)",
+   "rawSHA256": "21d0b334732cc6ba2cbce36eeb93f2ad2c00781e1d754afdaa3ce4d1ace7188e",
+   "gzSHA256": "63ab2fa340964e84bf2f1dc2e9f4a4c7f8c46c88baf1cbdf209796d35e8c4fe8"
+  },
+  {
+   "name": "XL3_mm",
+   "file": "XL3_mm.f64.gz",
+   "shape": [
+    29658,
+    2
+   ],
+   "order": "column-major (MATLAB)",
+   "rawSHA256": "c6bf028b01304fdc869a92f9c53e10f1d71c1aba3968c476a13528bad21d6da1",
+   "gzSHA256": "4688725309b9ec96e51efe661094bd0a974cdbaa2fe66cc02212a17bfea66c45"
+  },
+  {
+   "name": "T3",
+   "file": "T3.f64.gz",
+   "shape": [
+    56900,
+    3
+   ],
+   "order": "column-major (MATLAB)",
+   "rawSHA256": "20b83d3957fc6cf6a6d10aa7660f83a7d5f810d09d0b57ceeb0b37375e3fc221",
+   "gzSHA256": "3343f7339ad69c81a4033cc191c25499a1b23c98bc0180b30811041dd4f3e7c1"
+  },
+  {
+   "name": "upperNodes",
+   "file": "upperNodes.f64.gz",
+   "shape": [
+    810,
+    1
+   ],
+   "order": "column-major (MATLAB)",
+   "rawSHA256": "1b9c56961085efa54a671ae089d86a84c4050c663cb53ff109b8308e3bf509ce",
+   "gzSHA256": "12b4f04ab307315a413ee440e3d6c58e069cf99099cb9cab343dde1cc41f359a"
+  },
+  {
+   "name": "lowerNodes",
+   "file": "lowerNodes.f64.gz",
+   "shape": [
+    810,
+    1
+   ],
+   "order": "column-major (MATLAB)",
+   "rawSHA256": "238aaee3eeb8960208a8d91868d6f6d2078f15db3ec7f210f45f94426e28667a",
+   "gzSHA256": "bbd2a0531480dc0cef5cb58a75dc5efc44ab1cffcc753c2ee348b5cc83c6f067"
+  },
+  {
+   "name": "tipNode",
+   "file": "tipNode.f64.gz",
+   "shape": [
+    1,
+    1
+   ],
+   "order": "column-major (MATLAB)",
+   "rawSHA256": "82a82eeb5e4d5c922376d425477f5107582ef48828c9456a53daf526c61b09ed",
+   "gzSHA256": "c10e7afc5c21d4481caa84b3643318972617d44ca3b47d9556b4d70206b4982c"
+  },
+  {
+   "name": "pathGlobal_mm",
+   "file": "pathGlobal_mm.f64.gz",
+   "shape": [
+    22,
+    2
+   ],
+   "order": "column-major (MATLAB)",
+   "rawSHA256": "0621970cb60726c0554b10b73eb84036895523273de028190aac3eeafe4f649c",
+   "gzSHA256": "84d5059708178f6ab45e4e91dd6e4ecd9ef585893458786e626f561127dcac5d"
+  },
+  {
+   "name": "pairedElementIDs",
+   "file": "pairedElementIDs.f64.gz",
+   "shape": [
+    12678,
+    1
+   ],
+   "order": "column-major (MATLAB)",
+   "rawSHA256": "6f9730adc8e380f7af25abccf0a1174305ea80923c523105cfb48fab5a752d25",
+   "gzSHA256": "0b61419a3f309a4a8a055c830eae7617994941427f303c09fab897fd9b67abbf"
+  },
+  {
+   "name": "exteriorElementIDs",
+   "file": "exteriorElementIDs.f64.gz",
+   "shape": [
+    44222,
+    1
+   ],
+   "order": "column-major (MATLAB)",
+   "rawSHA256": "8317fe1100fedc0f59e88788c1bd19dbff7f6b3cad6ed5bd24b514650b70179a",
+   "gzSHA256": "e301d53492929952bd4ea994b8da0f6ebc08c68a735bfdb31b03e943b8ce994a"
+  },
+  {
+   "name": "EDIsupportIDs",
+   "file": "EDIsupportIDs.f64.gz",
+   "shape": [
+    11316,
+    1
+   ],
+   "order": "column-major (MATLAB)",
+   "rawSHA256": "99efbb547a7fc343445fab86128e023a9f691693b33463f401fb6c06e1057251",
+   "gzSHA256": "2b397d00fc95a4952b60b0bba5159b3844fee5f769e49f93d8f676a5c1fc9e92"
+  },
+  {
+   "name": "pairedNodeIDs",
+   "file": "pairedNodeIDs.f64.gz",
+   "shape": [
+    6486,
+    1
+   ],
+   "order": "column-major (MATLAB)",
+   "rawSHA256": "2abddf9a011cc35539ebbe431395f88f0142c7d08bfdfdefffcba581751cfd33",
+   "gzSHA256": "338103e29fa0c47d80d4aaaa3bf72bd9ed71dd01d4d92ea4e4055c1207de64db"
+  },
+  {
+   "name": "pairedMirrorLocal",
+   "file": "pairedMirrorLocal.f64.gz",
+   "shape": [
+    3273,
+    1
+   ],
+   "order": "column-major (MATLAB)",
+   "rawSHA256": "be6c03492bff666394c58fc50ab9c1d480f21966c3a914ebcfa1a22e2d99395b",
+   "gzSHA256": "e2659c35ee04db1f4d8e1f6d8ba65d0bf102abf38c68a6c08163197051ab6089"
+  }
+ ]
+}
